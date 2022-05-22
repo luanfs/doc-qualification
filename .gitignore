@@ -274,3 +274,8 @@ TSWLatexianTemp*
 
 # Makeindex log files
 *.lpz
+
+# Makefile output
+latexmkrc-make
+mkidxhead.ist
+*.lop
