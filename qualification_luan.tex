@@ -108,11 +108,11 @@
 % armazenados nos metadados do PDF.
 \title{
     % Obrigatório nas duas línguas
-    titlept={Título do trabalho},
-    titleen={Title of the document},
+    titlept={Análise e desenvolvimento de métodos de volumes finitos para modelos da nova geração da dinâmica atmosférica baseados na esfera cubada},
+    titleen={Analysis and development of finite volume methods for the new generation of cubed sphere dynamical cores for the atmosphere},
     % Opcional, mas se houver deve existir nas duas línguas
-    subtitlept={um subtítulo},
-    subtitleen={a subtitle},
+    %subtitlept={um subtítulo},
+    %subtitleen={a subtitle},
 }
 
 \author{Luan da Fonseca Santos}
@@ -175,7 +175,7 @@
   % observe que apenas TCCs sob alguma licença Creative Commons serão
   % acrescentados ao BDTA. Se você tem alguma intenção de publicar o
   % trabalho comercialmente no futuro, sugerimos a licença CC-BY-NC-ND.
-  direitos={CC-BY}, % Creative Commons Attribution 4.0 International License
+  % direitos={CC-BY}, % Creative Commons Attribution 4.0 International License
   %direitos={Autorizo a reprodução e divulgação total ou parcial
   %          deste trabalho, por qualquer meio convencional ou
   %          eletrônico, para fins de estudo e pesquisa, desde que
@@ -206,10 +206,10 @@
 
 %%%%%%%%%%%%%%%% DEDICATÓRIA, AGRADECIMENTOS, RESUMO/ABSTRACT %%%%%%%%%%%%%%%%%%
 
-\begin{dedicatoria}
-Esta seção é opcional e fica numa página separada; ela pode ser usada para
-uma dedicatória ou epígrafe.
-\end{dedicatoria}
+%\begin{dedicatoria}
+%Esta seção é opcional e fica numa página separada; ela pode ser usada para
+%uma dedicatória ou epígrafe.
+%\end{dedicatoria}
 
 % Reinicia o contador de páginas (a próxima página recebe o número "i") para
 % que a página da dedicatória não seja contada.
@@ -220,13 +220,13 @@ uma dedicatória ou epígrafe.
 % esta página. A epígrafe, obviamente, é opcional; é possível colocar
 % epígrafes em todos os capítulos. O comando "\chapter*" faz esta seção
 % não ser incluída no sumário.
-\chapter*{Agradecimentos}
-\epigrafe{Do. Or do not. There is no try.}{Mestre Yoda}
+%\chapter*{Agradecimentos}
+%\epigrafe{Do. Or do not. There is no try.}{Mestre Yoda}
 
-Texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto texto texto texto texto texto texto texto texto texto
-texto texto texto texto. Texto opcional.
+%Texto texto texto texto texto texto texto texto texto texto texto texto texto
+%texto texto texto texto texto texto texto texto texto texto texto texto texto
+%texto texto texto texto texto texto texto texto texto texto texto texto texto
+%texto texto texto texto. Texto opcional.
 
 \input{conteudo/resumoabstract}
 
@@ -235,9 +235,9 @@ texto texto texto texto. Texto opcional.
 
 % Como as listas que se seguem podem não incluir uma quebra de página
 % obrigatória, inserimos uma quebra manualmente aqui.
-\makeatletter
-\if@openright\cleardoublepage\else\clearpage\fi
-\makeatother
+%\makeatletter
+%\if@openright\cleardoublepage\else\clearpage\fi
+%\makeatother
 
 % Todas as listas são opcionais; Usando "\chapter*" elas não são incluídas
 % no sumário. As listas geradas automaticamente também não são incluídas por
@@ -261,47 +261,47 @@ texto texto texto texto. Texto opcional.
 
 %%%%% Listas criadas manualmente
 
-%\chapter*{Lista de Abreviaturas}
-\disablenewpage{\chapter*{Lista de Abreviaturas}}
+%%\chapter*{Lista de Abreviaturas}
+%\disablenewpage{\chapter*{Lista de Abreviaturas}}
 
-\begin{tabular}{rl}
-   CFT & Transformada contínua de Fourier (\emph{Continuous Fourier Transform})\\
-   DFT & Transformada discreta de Fourier (\emph{Discrete Fourier Transform})\\
-  EIIP & Potencial de interação elétron-íon (\emph{Electron-Ion Interaction Potentials})\\
-  STFT & Transformada de Fourier de tempo reduzido (\emph{Short-Time Fourier Transform})\\
-  ABNT & Associação Brasileira de Normas Técnicas\\
-   URL & Localizador Uniforme de Recursos (\emph{Uniform Resource Locator})\\
-   IME & Instituto de Matemática e Estatística\\
-   USP & Universidade de São Paulo
-\end{tabular}
+%\begin{tabular}{rl}
+%   CFT & Transformada contínua de Fourier (\emph{Continuous Fourier Transform})\\
+%   DFT & Transformada discreta de Fourier (\emph{Discrete Fourier Transform})\\
+%  EIIP & Potencial de interação elétron-íon (\emph{Electron-Ion Interaction Potentials})\\
+%  STFT & Transformada de Fourier de tempo reduzido (\emph{Short-Time Fourier Transform})\\
+%  ABNT & Associação Brasileira de Normas Técnicas\\
+%   URL & Localizador Uniforme de Recursos (\emph{Uniform Resource Locator})\\
+%   IME & Instituto de Matemática e Estatística\\
+%   USP & Universidade de São Paulo
+%\end{tabular}
 
-%\chapter*{Lista de Símbolos}
-\disablenewpage{\chapter*{Lista de Símbolos}}
+%%\chapter*{Lista de Símbolos}
+%\disablenewpage{\chapter*{Lista de Símbolos}}
 
-\begin{tabular}{rl}
-  $\omega$ & Frequência angular\\
-    $\psi$ & Função de análise \emph{wavelet}\\
-    $\Psi$ & Transformada de Fourier de $\psi$\\
-\end{tabular}
+%\begin{tabular}{rl}
+%  $\omega$ & Frequência angular\\
+%    $\psi$ & Função de análise \emph{wavelet}\\
+%    $\Psi$ & Transformada de Fourier de $\psi$\\
+%\end{tabular}
 
 % Quebra de página manual
-\clearpage
+%\clearpage
 
 %%%%% Listas criadas automaticamente
 
 % Você pode escolher se quer ou não permitir a quebra de página
-%\listoffigures
-\disablenewpage{\listoffigures}
+%%\listoffigures
+%\disablenewpage{\listoffigures}
 
 % Você pode escolher se quer ou não permitir a quebra de página
-%\listoftables
-\disablenewpage{\listoftables}
+%%\listoftables
+%\disablenewpage{\listoftables}
 
 % Esta lista é criada "automaticamente" pela package float quando
 % definimos o novo tipo de float "program" (em utils.tex)
 % Você pode escolher se quer ou não permitir a quebra de página
-%\listof{program}{\programlistname}
-\disablenewpage{\listof{program}{\programlistname}}
+%%\listof{program}{\programlistname}
+%\disablenewpage{\listof{program}{\programlistname}}
 
 % Sumário (obrigatório)
 \tableofcontents
@@ -312,20 +312,20 @@ texto texto texto texto. Texto opcional.
 % pois o índice é opcional). É comum colocar esses itens no final do documento,
 % junto com o comando \printindex, mas em alguns casos isso torna necessário
 % executar texindy (ou makeindex) mais de uma vez, então colocar aqui é melhor.
-\index{Inglês|see{Língua estrangeira}}
-\index{Figuras|see{Floats}}
-\index{Tabelas|see{Floats}}
-\index{Código-fonte|see{Floats}}
-\index{Subcaptions|see{Subfiguras}}
-\index{Sublegendas|see{Subfiguras}}
-\index{Equações|see{Modo matemático}}
-\index{Fórmulas|see{Modo matemático}}
-\index{Rodapé, notas|see{Notas de rodapé}}
-\index{Captions|see{Legendas}}
-\index{Versão original|see{Tese/Dissertação, versões}}
-\index{Versão corrigida|see{Tese/Dissertação, versões}}
-\index{Palavras estrangeiras|see{Língua estrangeira}}
-\index{Floats!Algoritmo|see{Floats, ordem}}
+%\index{Inglês|see{Língua estrangeira}}
+%\index{Figuras|see{Floats}}
+%\index{Tabelas|see{Floats}}
+%\index{Código-fonte|see{Floats}}
+%\index{Subcaptions|see{Subfiguras}}
+%\index{Sublegendas|see{Subfiguras}}
+%\index{Equações|see{Modo matemático}}
+%\index{Fórmulas|see{Modo matemático}}
+%\index{Rodapé, notas|see{Notas de rodapé}}
+%\index{Captions|see{Legendas}}
+%\index{Versão original|see{Tese/Dissertação, versões}}
+%\index{Versão corrigida|see{Tese/Dissertação, versões}}
+%\index{Palavras estrangeiras|see{Língua estrangeira}}
+%\index{Floats!Algoritmo|see{Floats, ordem}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CAPÍTULOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -341,11 +341,11 @@ texto texto texto texto. Texto opcional.
 \singlespacing
 
 \input{conteudo/00-exemplo-introducao}
-\input{conteudo/01-exemplo-normas-ime}
-\input{conteudo/02-exemplo-usando-o-modelo}
-\input{conteudo/03-exemplo-latex}
-\input{conteudo/04-exemplo-tutorial}
-\input{conteudo/05-exemplo-exemplos}
+%\input{conteudo/01-exemplo-normas-ime}
+%\input{conteudo/02-exemplo-usando-o-modelo}
+%\input{conteudo/03-exemplo-latex}
+%\input{conteudo/04-exemplo-tutorial}
+%\input{conteudo/05-exemplo-exemplos}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% APÊNDICES E ANEXOS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -373,37 +373,37 @@ texto texto texto texto. Texto opcional.
 
 %%%% Apêndices %%%%
 
-\makeatletter
-\if@openright\cleardoublepage\else\clearpage\fi
-\makeatother
+%\makeatletter
+%\if@openright\cleardoublepage\else\clearpage\fi
+%\makeatother
 
-\pagestyle{appendix}
+%\pagestyle{appendix}
 
-\appendix
+%\appendix
 
 % \addappheadtotoc acrescenta a palavra "Apêndice" ao sumário; se
 % só há apêndices, sem anexos, provavelmente não é necessário.
-\addappheadtotoc
+%\addappheadtotoc
 
-\input{conteudo/apendice-exemplo-pseudocodigo}
-\par
+%\input{conteudo/apendice-exemplo-pseudocodigo}
+%\par
 
 %%%% Anexos %%%%
 
-\makeatletter
-\if@openright\cleardoublepage\else\clearpage\fi
-\makeatother
+%\makeatletter
+%\if@openright\cleardoublepage\else\clearpage\fi
+%\makeatother
 
-\pagestyle{appendix} % repete o anterior, caso você não use apêndices
+%\pagestyle{appendix} % repete o anterior, caso você não use apêndices
 
-\annex
+%\annex
 
 % \addappheadtotoc acrescenta a palavra "Anexo" ao sumário; se
 % só há anexos, sem apêndices, provavelmente não é necessário.
-\addappheadtotoc
+%\addappheadtotoc
 
-\input{conteudo/anexo-exemplo-faq}
-\par
+%\input{conteudo/anexo-exemplo-faq}
+%\par
 
 
 %%%%%%%%%%%%%%% SEÇÕES FINAIS (BIBLIOGRAFIA E ÍNDICE REMISSIVO) %%%%%%%%%%%%%%%%
