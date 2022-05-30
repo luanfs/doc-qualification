@@ -10,28 +10,26 @@ In this section, we are going to present the derivation of one-dimensional conse
 laws in the integral form. 
 The derivation presented here follows \citet{leveque:1990} and \citet{leveque:2002} closely and will
 be useful to fix some notation. \index{Conservation law}
- Let us assume that $x$ and $t$ represent the spatial and time coordinate, respectively.
-%Given $\Omega = ]a,b[ \times ]0,T[ \subset \mathbb{R}^2$, $a<b$, $T>0$, a spatial interval
+Let us assume that $x$ and $t$ represent the spatial and time coordinate, respectively.
 Given $[x_1, x_2] \subset \mathbb{R}$, $x_1 \leq x_2$, and a time 
 interval $[t_1, t_2] \subset ]0, +\infty[$, $t_1 \leq t_2$, 
-%such that $[x_1, x_2] \times [t_1, t_2] \subset \Omega$, 
 our aim is to describe how $m$ state variables given by functions 
 $q_1, \cdots, q_m: \mathbb{R}\times[0, +\infty[ \to \mathbb{R}$ 
-%\footnote{$\overline{\Omega}$ denotes the closure of $\Omega$. In this case, $\overline{\Omega} = [a,b]\times[0,T]$}
 evolve within time in the considered time interval, assuming that we have neither sinks nor sources 
-for the mass of each state variable and that the mass flow rate is known for all the state variables.
+for the mass of each state variable and also assuming that the mass
+flow rate is known for all the state variables.
 
-To put the problem in more mathematical terms, let us denote by 
+To set the problem in more mathematical terms, let us denote by 
 $\mathbf{q}: \mathbb{R}\times [0, \infty[\to \mathbb{R}^m$, 
 $\mathbf{q} = \mathbf{q}(x,t)$, the vector of state variables,
 \textit{i.e.}, $\mathbf{q}_k = q_k$ for $k=1, \cdots, m$.
-The total mass of $\mathbf{q}$ in $[x_1, x_2]$ at time $t$, denoted by $\mathbf{M}_{[x_1, x_2]}(t)$, is defined by:
+The mass of $\mathbf{q}$ in $[x_1, x_2]$ at time $t$ is defined by:
 \begin{equation}
 	\label{chp1-sec1-eq1}
 	\mathbf{M}_{[x_1, x_2]}(t) := \int_{x_1}^{x_2} \mathbf{q}(x,t) \,dx \in \mathbb{R}^m.
 \end{equation}
 
-Thus, the total mass in $[x_1, x_2]$ of the $k$-th state variable $q_k$ is equal to
+Thus, the mass in $[x_1, x_2]$ of the $k$-th state variable $q_k$ is equal to
 $(\mathbf{M}_{[x_1, x_2]}(t))_k$, $\forall k = 1, \cdots, m$.
 We are going to assume the following physical constraints concerning the total mass of each state variable:
 \begin{enumerate}
@@ -49,7 +47,7 @@ With the physical constraints that we imposed, the following equation must hold 
 	\mathbf{f}(\mathbf{q}(x_1,t)) - \mathbf{f}(\mathbf{q}(x_2,t)) .
 \end{equation}
 
-Equation \eqref{chp1-sec1-eq2} is known as a conservation law written in integral form and tell us how the total mass 
+Equation \eqref{chp1-sec1-eq2} is known as a conservation law written in integral form and tell us how the mass 
 $\mathbf{M}_{[x_1, x_2]}(t)$ varies with time. Another integral form of the conservation law may be obtained integrating
 Equation \eqref{chp1-sec1-eq2} with respect to time in $[t_1, t_2]$ leading to: \index{Conservation law !in integral form}
 \begin{equation}
@@ -95,13 +93,19 @@ $[x_1, x_2] \times [t_1, t_2] \subset \mathbb{R}\times ]0, +\infty[$, we obtain 
 	= 0, \quad \forall (x,t) \in \mathbb{R}\times ]0, +\infty[. 
 \end{equation}
 
-Hyperbolic and eigenvalues. Initial conditions.
+We shall assume that the eigenvalues of the Jacobian matrix of the flux function
+$D\mathbf{f}(q)$ are all real and that $D\mathbf{f}(q)$ is a diagonalizable matrix,
+$\forall q \in \mathbb{R}^m$, so that Equation \eqref{chp1-sec1-eq7}
+is a hyperbolic partial differential equation \citep{leveque:1990}. As we will 
+specify latter, some initial condition will also be suposed to be known as well.
 
 Many physical relevant equations may be written as Equation \eqref{chp1-sec1-eq7}.
 Some examples are the Euler equations for gas dynamics, obtained when $m = 3$,
 and the one-dimensional shallow-water equations, obtained $m = 2$.
 Another relevant equations are the Burgers equation, which is obtained when
-$m = 1$ and $f(q) = q^2$, and the linear advection equation, which is obtained
+$m = 1$ and $f(q) = q^2$. The Burgers equation is well known for developing shocks,
+even for smooth initial conditions and is a simple prototype to study shock formation.
+At last, the linear advection equation is another interesting example, which is obtained
 when $m = 1$ and $f(q(x,t)) = u(x,t)q(x,t)$, where $u(x,t)$ is a given velocity.
 Strictly speaking, the linear advection is not in the form given by Equation
 \eqref{chp1-sec1-eq7} since $f$ depends on $q$ but also on $(x,t)$.
@@ -119,7 +123,7 @@ $[x_1, x_2] \times [t_1, t_2] \subset \mathbb{R}\times ]0, +\infty[$.
 Therefore, Equations \eqref{chp1-sec1-eq3} and \eqref{chp1-sec1-eq7} are
 equivalent when $\mathbf{q}$ is $\mathcal{C}^1$.
 However, the problem \eqref{chp1-sec1-eq3} can be formulated
-functions that are not $\mathcal{C}^1$ and have discontinuities.
+to functions that are not $\mathcal{C}^1$ and have discontinuities.
 More generally speaking, we say that $\mathbf{q} \in L^{\infty}(\Omega, \mathbb{R}^m)$ 
 \footnote{$L^{\infty}(\Omega, \mathbb{R}^m) = \{q: \Omega \to \mathbb{R}^m$
 such that $q$ is bounded.$\}$}
@@ -176,7 +180,7 @@ in text are the periodic boundary conditions:
 \end{equation}
 
 Also, we assume that an initial condition $q_0(x) = q(x,0)$, $q_0 \in L^{\infty}([a,b],\mathbb{R}^m)$, is given.
-Thus we have specified a Cauchy problem.
+Thus, we have specified a Cauchy problem.
 We notice that Equations \eqref{chp1-sec1-eq10} and \eqref{chp1-sec1-eq11}
 hold for all $x_1, x_2, t_1$ and $t_2$ such that
 $[x_1, x_2] \times [t_1, t_2] \subset \Omega$.
@@ -235,7 +239,7 @@ Using this notation, Equations \eqref{chp1-sec1-eq14}
 and \eqref{chp1-sec1-eq15} lead to:
 \begin{equation}
         \label{chp1-sec1-eq17}
-        \frac{d}{dt} \mathbf{Q}_i(t) = \frac{1}{|X_i|}
+        \frac{d}{dt} \mathbf{Q}_i(t) = -\frac{1}{|X_i|}
 	\delta_x \mathbf{f}(\mathbf{q}(x_{i},t))
         \quad \forall i = 1, \cdots, N,
 \end{equation}
@@ -258,7 +262,8 @@ in terms of the average values $\mathbf{Q}$.
 Similarly, if $\mathbf{q}$ satisfies Equation
 $\eqref{chp1-sec1-eq3}$, $\forall [x_1, x_2] \times [t_1, t_2] \subset \Omega$,
 then Equation \eqref{chp1-sec1-eq18} is just Equation
-\eqref{chp1-sec1-eq3} evaluated in the control volumes, in the time instants $t_n$, and written
+\eqref{chp1-sec1-eq3} evaluated in the control volumes,
+at the time instants $t_n$, and written
 in terms of the average values $\mathbf{Q}$.
 
 Notice that in Equation \eqref{chp1-sec1-eq18} we divided and multiplied by $\Delta t$, so that 
@@ -268,10 +273,10 @@ This interpretation is very handy for the derivation of finite-volume schemes.
 
 The formulations given by Equations \eqref{chp1-sec1-eq17} and \eqref{chp1-sec1-eq18} are the cornerstone 
 of the development of finite volume methods for conservation laws. 
-On the right-hand side of Equation \eqref{chp1-sec1-eq14}, the flux function $\mathbf{f}$ 
+On the right-hand side of Equation \eqref{chp1-sec1-eq17}, the flux function $\mathbf{f}$ 
 may be discretized leading to an ordinary differential equation (ODE)
-that might be solved using classical ODE integrators \citep{leveque:2002}. 
-These methods are known as semi-discrete methods, since only the spatial coordinate is discretized.
+that might be solved using classical ODE integrators. 
+These methods are known as semi-discrete methods \citep{leveque:2002}, since only the spatial coordinate is discretized.
 In this work we shall restrict our attention to methods based on Equation \eqref{chp1-sec1-eq18}.
 
 \section{The finite-volume approach}
