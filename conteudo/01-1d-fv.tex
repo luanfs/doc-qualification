@@ -3,8 +3,377 @@
 % para saber mais: https://tex.stackexchange.com/q/78101
 
 \chapter{One-dimensional finite-volume methods}
+\label{chp1-1d-fv}
+\section{One-dimensional conservation laws in integral form}
+\label{chp1-sec1}
+In this section, we are going to present the derivation of one-dimensional conservation
+laws in the integral form. 
+The derivation presented here follows \citet{leveque:1990} and \citet{leveque:2002} closely and will
+be useful to fix some notation. \index{Conservation law}
+ Let us assume that $x$ and $t$ represent the spatial and time coordinate, respectively.
+%Given $\Omega = ]a,b[ \times ]0,T[ \subset \mathbb{R}^2$, $a<b$, $T>0$, a spatial interval
+Given $[x_1, x_2] \subset \mathbb{R}$, $x_1 \leq x_2$, and a time 
+interval $[t_1, t_2] \subset ]0, +\infty[$, $t_1 \leq t_2$, 
+%such that $[x_1, x_2] \times [t_1, t_2] \subset \Omega$, 
+our aim is to describe how $m$ state variables given by functions 
+$q_1, \cdots, q_m: \mathbb{R}\times[0, +\infty[ \to \mathbb{R}$ 
+%\footnote{$\overline{\Omega}$ denotes the closure of $\Omega$. In this case, $\overline{\Omega} = [a,b]\times[0,T]$}
+evolve within time in the considered time interval, assuming that we have neither sinks nor sources 
+for the mass of each state variable and that the mass flow rate is known for all the state variables.
 
+To put the problem in more mathematical terms, let us denote by 
+$\mathbf{q}: \mathbb{R}\times [0, \infty[\to \mathbb{R}^m$, 
+$\mathbf{q} = \mathbf{q}(x,t)$, the vector of state variables,
+\textit{i.e.}, $\mathbf{q}_k = q_k$ for $k=1, \cdots, m$.
+The total mass of $\mathbf{q}$ in $[x_1, x_2]$ at time $t$, denoted by $\mathbf{M}_{[x_1, x_2]}(t)$, is defined by:
+\begin{equation}
+	\label{chp1-sec1-eq1}
+	\mathbf{M}_{[x_1, x_2]}(t) := \int_{x_1}^{x_2} \mathbf{q}(x,t) \,dx \in \mathbb{R}^m.
+\end{equation}
+
+Thus, the total mass in $[x_1, x_2]$ of the $k$-th state variable $q_k$ is equal to
+$(\mathbf{M}_{[x_1, x_2]}(t))_k$, $\forall k = 1, \cdots, m$.
+We are going to assume the following physical constraints concerning the total mass of each state variable:
+\begin{enumerate}
+	\item No mass is created;
+	\item No mass is destroyed.
+\end{enumerate}
+
+Also, let us assume that the mass flow rate in a point $x$ and at a time 
+$t > 0$ is given by $\mathbf{f}(\mathbf{q}(x,t))$, where $\mathbf{f}:\mathbb{R}^m \to \mathbb{R}^m$ is 
+a continuously differentiable ($\mathcal{C}^1$) function. This function $\mathbf{f}$ is known as flux function.
+With the physical constraints that we imposed, the following equation must hold for the mass:
+\begin{equation}
+	\label{chp1-sec1-eq2}
+	\frac{d}{dt} \bigg( \int_{x_1}^{x_2} \mathbf{q}(x,t) \,dx \bigg) = 
+	\mathbf{f}(\mathbf{q}(x_1,t)) - \mathbf{f}(\mathbf{q}(x_2,t)) .
+\end{equation}
+
+Equation \eqref{chp1-sec1-eq2} is known as a conservation law written in integral form and tell us how the total mass 
+$\mathbf{M}_{[x_1, x_2]}(t)$ varies with time. Another integral form of the conservation law may be obtained integrating
+Equation \eqref{chp1-sec1-eq2} with respect to time in $[t_1, t_2]$ leading to: \index{Conservation law !in integral form}
+\begin{equation}
+	\label{chp1-sec1-eq3}
+	\int_{x_1}^{x_2} \mathbf{q}(x, t_2) \,dx = 
+	\int_{x_1}^{x_2} \mathbf{q}(x, t_1) \,dx + 
+	\int_{t_1}^{t_2} \mathbf{f}(\mathbf{q}(x_1, t)) \,dt -
+	\int_{t_1}^{t_2}\mathbf{f}(\mathbf{q}(x_2, t)) \,dt .
+\end{equation}
+
+Assuming that $\mathbf{q}$ is a $\mathcal{C}^1$ function, we may write:
+\begin{equation}
+	\label{chp1-sec1-eq4}
+	\int_{t_1}^{t_2} 
+	\frac{\partial}{\partial t} \mathbf{q}(x,t) \,dt
+	= \mathbf{q}(x, t_2) - \mathbf{q}(x, t_1) ,
+\end{equation}
+and
+\begin{equation}
+	\label{chp1-sec1-eq5}
+	\int_{x_1}^{x_2} \frac{\partial}{\partial x}\mathbf{f}(\mathbf{q}(x,t)) \,dx 
+	= \mathbf{f}(\mathbf{q}(x_2, t)) -
+	\mathbf{f}( \mathbf{q}(x_1, t)) .
+\end{equation}
+
+Replacing Equations \eqref{chp1-sec1-eq4} and \eqref{chp1-sec1-eq5}
+in \eqref{chp1-sec1-eq3} we get the differential form of the conservation law:
+\index{Conservation law !in differential form}
+\begin{equation}
+	\label{chp1-sec1-eq6}
+	\int_{t_1}^{t_2} \int_{x_1}^{x_2} 
+	\bigg( \frac{\partial}{\partial t}\mathbf{q}(x, t) 
+	+ \frac{\partial}{\partial x} \mathbf{f}(\mathbf{q}(x, t)) \bigg) 
+	\,dx \,dt  = 0.
+\end{equation}
+
+Since Equation \eqref{chp1-sec1-eq6} must hold for all $x_1, x_2, t_1$ and $t_2$ such that
+$[x_1, x_2] \times [t_1, t_2] \subset \mathbb{R}\times ]0, +\infty[$, we obtain the differential form of the conservation law:
+\begin{equation}
+	\label{chp1-sec1-eq7}
+	\frac{\partial}{\partial t}\mathbf{q}(x, t) +
+	\frac{\partial}{\partial x} \mathbf{f}(\mathbf{q}(x, t))
+	= 0, \quad \forall (x,t) \in \mathbb{R}\times ]0, +\infty[. 
+\end{equation}
+
+Hyperbolic and eigenvalues. Initial conditions.
+
+Many physical relevant equations may be written as Equation \eqref{chp1-sec1-eq7}.
+Some examples are the Euler equations for gas dynamics, obtained when $m = 3$,
+and the one-dimensional shallow-water equations, obtained $m = 2$.
+Another relevant equations are the Burgers equation, which is obtained when
+$m = 1$ and $f(q) = q^2$, and the linear advection equation, which is obtained
+when $m = 1$ and $f(q(x,t)) = u(x,t)q(x,t)$, where $u(x,t)$ is a given velocity.
+Strictly speaking, the linear advection is not in the form given by Equation
+\eqref{chp1-sec1-eq7} since $f$ depends on $q$ but also on $(x,t)$.
+But, one may check that Equation \eqref{chp1-sec1-eq7} is still hyperbolic
+in this case. The linear advection equation will play a key role in this work due to its importance
+to development of atmospheric dynamical cores.
+
+
+We say that $\mathbf{q}$ is a strong or classical solution to the conservation law \eqref{chp1-sec1-eq7}
+if it is $\mathcal{C}^1$ and satisfies the Equation \eqref{chp1-sec1-eq7}.
+Applying the steps from Equation \eqref{chp1-sec1-eq3} to Equation \eqref{chp1-sec1-eq7}
+in a reverse order, one may check that if $\mathbf{q}$ is a strong solution,
+then it satisfies the integral form \eqref{chp1-sec1-eq3} for all $x_1, x_2, t_1$ and $t_2$ such that
+$[x_1, x_2] \times [t_1, t_2] \subset \mathbb{R}\times ]0, +\infty[$. 
+Therefore, Equations \eqref{chp1-sec1-eq3} and \eqref{chp1-sec1-eq7} are
+equivalent when $\mathbf{q}$ is $\mathcal{C}^1$.
+However, the problem \eqref{chp1-sec1-eq3} can be formulated
+functions that are not $\mathcal{C}^1$ and have discontinuities.
+More generally speaking, we say that $\mathbf{q} \in L^{\infty}(\Omega, \mathbb{R}^m)$ 
+\footnote{$L^{\infty}(\Omega, \mathbb{R}^m) = \{q: \Omega \to \mathbb{R}^m$
+such that $q$ is bounded.$\}$}
+if it satisfies the Equation 
+\eqref{chp1-sec1-eq3} for all $x_1, x_2, t_1$ and $t_2$ such that
+$[x_1, x_2] \times [t_1, t_2] \subset \mathbb{R}\times ]0, +\infty[$.
+It can be shown that this notion of weak solution is equivalent to requiring that \citep{leveque:1990}:
+\begin{equation}
+	\label{chp1-sec1-eq8}
+	\int_{-\infty}^{+\infty} \int_{0}^{+\infty} \bigg(
+	\frac{\partial}{\partial t} \phi(x, t)\mathbf{q}(x, t) +
+	\frac{\partial}{\partial x} \phi(x ,t)\mathbf{f}(\mathbf{q}(x, t)) 
+	\bigg)\,dt \,dx = 
+	\int_{-\infty}^{+\infty} \phi(x, 0)\mathbf{q}(x, 0) \,dx  , \quad
+\end{equation}
+$\forall \phi \in C_{0}^{1}(\mathbb{R}\times[0, +\infty[)$
+where $C_{0}^{1}(\mathbb{R}\times[0, +\infty[)$ denotes the set
+of all continuously differentiable functions with compact support 
+in $\mathbb{R}\times[0, +\infty[$. This formulation of weak solution
+is more common employed on the construction of Discontinous Galerkin
+methods \citep{nair:2011}.
+
+In order to develop finite-volume methods for conservation laws, it is useful to define the vector of
+average values of the state variable vector $\mathbf{q}$ in the interval $[x_1, x_2]$ at a time $t$ by:
+\begin{equation}
+	\label{chp1-sec1-eq9}
+	\mathbf{Q}(t) = \frac{1}{\Delta x}
+	\int_{x_1}^{x_2} \mathbf{q}(x,t) \,dx
+	\in \mathbb{R}^m,
+\end{equation}
+where $\Delta x = x_2 - x_1$. The Equation \eqref{chp1-sec1-eq2} may be  rewritten in terms of $\mathbf{Q}$ as:
+\begin{equation}
+        \label{chp1-sec1-eq10}
+	\frac{d}{dt} \mathbf{Q}(t) = \frac{1}{\Delta x} 
+	(\mathbf{f}(\mathbf{q}(x_1,t)) - \mathbf{f}(\mathbf{q}(x_2,t))) ,
+\end{equation}
+and so is Equation \eqref{chp1-sec1-eq3}:
+\begin{equation}
+        \label{chp1-sec1-eq11}
+	\mathbf{Q}(t_2) =  \mathbf{Q}(t_1) + 
+	\frac{1}{\Delta x}\bigg( \int_{t_1}^{t_2} 
+	\mathbf{f}(\mathbf{q}(x_1, t)) \,dt - 
+	\int_{t_1}^{t_2}\mathbf{f}(\mathbf{q}(x_2, t)) \,dt \bigg).
+\end{equation}
+
+To move towards finite volume schemes, we will restrict our attention
+to a conservation law in a bounded domain of the form 
+$\Omega = [a,b]\times[0,T]$, $a<b$, $T>0$. However, we must 
+impose some boundary condition. One possible way and that we will adopted 
+in text are the periodic boundary conditions:
+\begin{equation}
+        \label{chp1-sec1-eq12}
+	\mathbf{q}(a, t) = \mathbf{q}(b, t),\quad \forall t \in [0, T].
+\end{equation}
+
+Also, we assume that an initial condition $q_0(x) = q(x,0)$, $q_0 \in L^{\infty}([a,b],\mathbb{R}^m)$, is given.
+Thus we have specified a Cauchy problem.
+We notice that Equations \eqref{chp1-sec1-eq10} and \eqref{chp1-sec1-eq11}
+hold for all $x_1, x_2, t_1$ and $t_2$ such that
+$[x_1, x_2] \times [t_1, t_2] \subset \Omega$.
+So, let us discretize the domain $\Omega$ and write 
+Equations \eqref{chp1-sec1-eq10} and \eqref{chp1-sec1-eq11} in terms of this discretization.
+Given a positive integer $N_T$, 
+we define the time step $\Delta t = \frac{T}{N_T}$, $t_n = n \Delta t$, for $n = 0, 1 ,\cdots, N_T$.
+For the spatial discretization, we consider a partition of $[a, b]$ given by: 
+\begin{equation}
+	\label{chp1-sec1-eq13}
+	[a,b] = \bigcup_{i=1}^N X_i, 
+	\text{ where } X_i= [x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}] \text{ and } 
+	a = x_{\frac{1}{2}} < x_{\frac{3}{2}} < \cdots < x_{N-\frac{1}{2}} < x_{N+\frac{1}{2}} = b.
+\end{equation}
+
+Each interval $X_i$ is refered to as control volume. \index{Control volume}
+We shall use the notations $|X_i| = x_{i+\frac{1}{2}} - x_{i-\frac{1}{2}}$ 
+and $x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}})$, $\forall i = 1, \cdots, N$, 
+to define the control volume length and midpoint, respectively.
+We also denote by $\mathbf{Q}_i(t) \in \mathbb{R}^m$ as the vector of 
+average values of state variable vector at time $t$
+in the control volume $X_i$, $\forall i = 1, \cdots, N$. Replacing $t_1, t_2, x_1$ and 
+$x_2$ by $t_{n}, t_{n+1}, x_{i-\frac{1}{2}}$ and $x_{i+\frac{1}{2}}$,
+respectively, in Equation \ref{chp1-sec1-eq10}, we get:
+\begin{equation}
+        \label{chp1-sec1-eq14}
+	\frac{d}{dt} \mathbf{Q}_i(t) = \frac{1}{|X_i|}
+	(\mathbf{f}(\mathbf{q}(x_{\frac{i-1}{2}},t)) -
+	\mathbf{f}(\mathbf{q}(x_{\frac{i+1}{2}},t))) ,
+	\quad \forall i = 1, \cdots, N.
+\end{equation}
+
+Similarly, Equation \eqref{chp1-sec1-eq11} becomes:
+\begin{equation}
+        \label{chp1-sec1-eq15}
+	\begin{aligned}
+		\mathbf{Q}_i(t_{n+1}) =  \mathbf{Q}_i(t_n) +
+		\frac{1}{|X_i|}\bigg( \int_{t_n}^{t_{n+1}}
+        	\mathbf{f}(\mathbf{q}(x_{i-\frac{1}{2}}, t)) \,dt -
+		\int_{t_n}^{t_{n+1}}\mathbf{f}(\mathbf{q}(x_{i+\frac{1}{2}}, t)) \,dt \bigg),
+       		\\
+		\quad \forall i = 1, \cdots, N,
+		\quad \forall n = 1, \cdots, N_T.
+	\end{aligned}
+\end{equation}
+
+In order to use a more compact notation, it is helpful to use the following centered difference notation:
+\begin{equation}
+	\label{chp1-sec1-eq16}
+	\delta_x \mathbf{g}(x_i,t) = 
+	\mathbf{g}(x_{i+\frac{1}{2}},t) - 
+	\mathbf{g}(x_{i-\frac{1}{2}},t),
+\end{equation}
+for an arbitrary vector valued function $\mathbf{g}$. 
+Using this notation, Equations \eqref{chp1-sec1-eq14}
+and \eqref{chp1-sec1-eq15} lead to:
+\begin{equation}
+        \label{chp1-sec1-eq17}
+        \frac{d}{dt} \mathbf{Q}_i(t) = \frac{1}{|X_i|}
+	\delta_x \mathbf{f}(\mathbf{q}(x_{i},t))
+        \quad \forall i = 1, \cdots, N,
+\end{equation}
+and
+\begin{equation}
+        \label{chp1-sec1-eq18}
+        \mathbf{Q}_i(t_{n+1}) =  \mathbf{Q}_i(t_n) -
+	\frac{\Delta t}{|X_i|} \delta _x\bigg( \frac{1}{\Delta t}\int_{t_n}^{t_{n+1}}
+        \mathbf{f}(\mathbf{q}(x_{i}, t)) \,dt \bigg),
+        \quad \forall i = 1, \cdots, N,
+        \quad \forall n = 1, \cdots, N_T,
+\end{equation}
+respectively.
+It is worth pointing out that we have made no approximation in Equations
+\eqref{chp1-sec1-eq17} and \eqref{chp1-sec1-eq18}. Indeed, if $\mathbf{q}$ satisfies Equation
+$\eqref{chp1-sec1-eq2}$, $\forall [x_1, x_2] \subset [a,b]$ and $\forall t \in [0,T]$,
+then Equation \eqref{chp1-sec1-eq17} is just Equation
+\eqref{chp1-sec1-eq2} evaluated in the control volumes and written
+in terms of the average values $\mathbf{Q}$. 
+Similarly, if $\mathbf{q}$ satisfies Equation
+$\eqref{chp1-sec1-eq3}$, $\forall [x_1, x_2] \times [t_1, t_2] \subset \Omega$,
+then Equation \eqref{chp1-sec1-eq18} is just Equation
+\eqref{chp1-sec1-eq3} evaluated in the control volumes, in the time instants $t_n$, and written
+in terms of the average values $\mathbf{Q}$.
+
+Notice that in Equation \eqref{chp1-sec1-eq18} we divided and multiplied by $\Delta t$, so that 
+we can interpret $\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}}
+\mathbf{f}(\mathbf{q}(x_{i}, t)) \,dt $ as a mean-time average flux.
+This interpretation is very handy for the derivation of finite-volume schemes.
+
+The formulations given by Equations \eqref{chp1-sec1-eq17} and \eqref{chp1-sec1-eq18} are the cornerstone 
+of the development of finite volume methods for conservation laws. 
+On the right-hand side of Equation \eqref{chp1-sec1-eq14}, the flux function $\mathbf{f}$ 
+may be discretized leading to an ordinary differential equation (ODE)
+that might be solved using classical ODE integrators \citep{leveque:2002}. 
+These methods are known as semi-discrete methods, since only the spatial coordinate is discretized.
+In this work we shall restrict our attention to methods based on Equation \eqref{chp1-sec1-eq18}.
+
+\section{The finite-volume approach}
+\label{chp1-sec2}
+We summarize the problem of the conservation law in the integral form 
+discussed in Section \ref{chp1-sec1} in Problem \ref{chp1-sec2-prob1}.
+
+\newtheoremstyle{problem} % nome do estilo
+{3pt} % espaço antes
+{3pt} % espaço depois
+{\itshape} % fonte do corpo
+{} % Indentação
+{\bfseries} % fonte do título
+{:} % pontuação após o título
+{.5em} % espaço após o título
+{\thmname{#1} \thmnumber{ #2}\thmnote{ (#3)}} % formato do título
+% vazio significa {\thmname{#1}\thmnumber{ #2}\thmnote{ (#3)}}
+
+\theoremstyle{problem} % As próximas definições usam este estilo
+\newtheorem{prob}{Problem}
+
+\begin{prob}
+	\label{chp1-sec2-prob1}
+	Given $ \Omega = [a,b] \times [0,T]$, a $\mathcal{C}^1$ 
+	flux function $\mathbf{f}: \mathbb{R}^m \to \mathbb{R}^m $,
+	$m \geq 1$, we would like to find the weak solution
+	$ \mathbf{q} \in L^{\infty}(\Omega, \mathbb{R}^m)$ 
+	of the conservation law in the integral form:
+	\begin{equation*}
+	        \int_{x_1}^{x_2} \mathbf{q}(x, t_2) \,dx = 
+       		\int_{x_1}^{x_2} \mathbf{q}(x, t_1) \,dx + 
+        	\int_{t_1}^{t_2} \mathbf{f}(\mathbf{q}(x_1, t)) \,dt -
+		\int_{t_1}^{t_2}\mathbf{f}(\mathbf{q}(x_2, t)) \,dt ,
+	\end{equation*}
+	$\forall [x_1, x_2]\times[t_1, t_2] \subset \Omega$, 
+	given the initial condition 
+	$\mathbf{q}(x,0) = \mathbf{q}_0(x)$, $\forall x \in [a,b]$, 
+	and assuming periodic boundary conditions, 
+	\textit{i.e.}, $\mathbf{q}(a,t) = \mathbf{q}(b,t)$, $\forall t \in [0,T]$.
+\end{prob}
+
+We point out that, for Problem \ref{chp1-sec2-prob1}, 
+the total mass in $[a,b]$ satisfies: 
+\begin{equation}
+	\mathbf{M}_{[a,b]}(t) = \mathbf{M}_{[a,b]}(0), \quad \forall t \in [0,T].
+\end{equation}
+This is the conservation of total mass proprierty and is highly desirable
+for any numerical scheme that intends to give a robust approximation of the 
+conservation law solution.
+
+In Section \ref{chp1-sec1} we introduced a version of Problem \ref{chp1-sec2-prob1}
+considering a discretization of the domain $\Omega$. 
+This idea is summarized in Problem \ref{chp1-sec2-prob2}.
+\begin{prob}
+        \label{chp1-sec2-prob2}
+	Assume the framework of Problem \ref{chp1-sec2-prob1}.
+        We consider positive integers $N$ and $N_T$, a spatial discretization of [a,b] given by
+        $X_i = [x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}]$,
+        $\forall i = 1, \cdots, N,$ 
+	$a = x_{\frac{1}{2}} < x_{\frac{3}{2}} < \cdots < x_{N-\frac{1}{2}} < x_{N+\frac{1}{2}} = b$,
+        a time discretization
+        $t_n = n\Delta t$, $\Delta t = \frac{T}{N_T}$, $\forall n = 1, \cdots, N_T$.
+	Since we are in the framework of Problem \ref{chp1-sec2-prob1}, it follows that:
+        \begin{equation*}
+                \mathbf{Q}_i(t_{n+1}) =  \mathbf{Q}_i(t_n) -
+                \frac{\Delta t}{|X_i|} \delta _x\bigg( \frac{1}{\Delta t}\int_{t_n}^{t_{n+1}}
+                \mathbf{f}(\mathbf{q}(x_{i}, t)) \,dt \bigg),
+                \quad \forall i = 1, \cdots, N,
+                \quad \forall n = 1, \cdots, N_T,
+        \end{equation*}
+        where $\mathbf{Q}_i(t) = \frac{1}{|X_i|}
+        \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \mathbf{q}(x,t) \,dx$.
+	
+	Our problem now consists of finding the values $\mathbf{Q}_i(t_{n})$, 
+	$\forall i = 1, \cdots, N$, $\forall n = 1, \cdots, N_T$,
+	given the initial values $\mathbf{Q}_i(0)$, $\forall i = 1, \cdots N$.
+	In other words, we would like to find the average values of $\mathbf{q}$
+	in each control volume $X_i$ at the considered time instants.
+\end{prob}
+
+Finally, we define the one-dimensional (1D) finite-volume (FV)
+scheme problem as follows in Problem \ref{chp1-sec2-prob3}.
+\begin{prob}[1D FV scheme]
+	\label{chp1-sec2-prob3}
+	Assume the framework defined in Problem \ref{chp1-sec2-prob2}.
+	The finite-volume approach of Problem \ref{chp1-sec2-prob2}
+	consists of a finding a scheme of the form:
+        \begin{equation*}
+		\mathbf{Q}_{i}^{n+1} =  \mathbf{Q}_{i}^{n} -
+		\frac{\Delta t}{|X_i|} (\mathbf{F}_{i+\frac{1}{2}}^{n} - \mathbf{F}_{i-\frac{1}{2}}^{n}),
+                \quad \forall i = 1, \cdots, N,
+                \quad \forall n = 1, \cdots, N_T,
+        \end{equation*}
+	where $\mathbf{Q}_{i}^{n} \in \mathbb{R}^m$ is intended to be an approximation
+	of $\mathbf{Q}_i(t_{n})$ in some sense.
+	The term $\mathbf{F}_{i+\frac{1}{2}}^{n}$ approximates
+	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \mathbf{f}(\mathbf{q}(x_{i+\frac{1}{2}}, t)) \,dt $
+	and the term
+        $\mathbf{F}_{i-\frac{1}{2}}^{n}$ approximates
+	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \mathbf{f}(\mathbf{q}(x_{i-\frac{1}{2}}, t)) \,dt $,
+	or, in other words, they estimate the time-averaged fluxes at the control volume $X_i$ boundaries.
+\end{prob}
 \section{The piecewise parabolic method}
-$q: [t_1, t_2] \times [x_1, x_2] \subset \mathbb{R}^2 \to \mathbb{R}$
-\index{Advection !equation}
+
 
