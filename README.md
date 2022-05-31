@@ -1,2 +1,2 @@
-# doc-qualifitication
-Report presented to the IME-USP for the doctor of science qualifying examination
+# doc-qualification
+Report to be presented to the IME-USP for the doctor of science qualifying examination
