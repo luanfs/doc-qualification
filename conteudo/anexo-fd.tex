@@ -1,0 +1,147 @@
+\chapter{Finite-difference estimatives}
+\label{anexo-fd}
+
+%\theoremstyle{plain} % As próximas definições usam este estilo
+%\newtheorem{lema-fd}{Lemma}
+
+\begin{lema}
+	\label{lemma:fd-est1}
+	Given $h>0$, $x_0 \in \mathbb{R}$, let $F \in \mathcal{C}^{3}([x_0-2h,x_0+2h])$.
+	Then, the following identity holds:
+	\begin{equation}	
+		\label{lemma:fd-est1-eq0}
+		F'(x_0) =  \frac{2}{3} \bigg(\frac{F(x_0+h) - F(x_0-h)}{h}\bigg)
+                      - \frac{1}{3} \bigg(\frac{F(x_0+2h) - F(x_0-2h)}{4h}\bigg)
+		      + Ch^2,
+	\end{equation}
+	where $C$ is a constant that depends only on $F$ and $h$.
+\end{lema}
+
+\begin{proof}
+	Given $\delta \in ]0,2h]$, then $x_0 + \delta \in ]x_0,x_0+2h]$ and $x_0 - \delta \in ]x_0-2h,x_0]$.
+	Then, we get using the Taylor expansion of $F$:
+	\begin{align*}
+		F(x_0 + \delta) = F(x_0) +  &F'(x_0)\delta + F^{(2)}(0)\frac{\delta ^2}{2} 
+		+ F^{(3)}(\theta_{\delta} )\frac{\delta ^3}{6},
+		\quad \theta_{\delta} \in [x_0,x_0+\delta ],\\
+		F(x_0 - \delta) = F(x_0) -&F'(x_0)\delta  + F^{(2)}(0)\frac{\delta ^2}{2}
+		- F^{(3)}(\theta_{-\delta})\frac{\delta ^3}{6},
+		\quad \theta_{-\delta} \in [x_0-\delta ,x_0].
+	\end{align*}
+	
+	Thus:
+	\begin{equation}
+		\label{lemma:fd-est1-eq1}
+		\frac{F(x_0 + \delta ) - F(x_0 - \delta )}{2\delta } = F'(x_0) + 
+		\bigg(F^{(3)}(\theta_{\delta}) + F^{(3)}(\theta_{-\delta})\bigg)\frac{\delta^2}{6}. 
+	\end{equation}
+	
+	Applying Equation \eqref{lemma:fd-est1-eq1} for $\delta  = h$ and 
+	$\delta  = 2h$, we get, respectively:
+	\begin{equation}
+		\label{lemma:fd-est1-eq2}
+		\frac{F(x_0 + h) - F(x_0-h)}{2h} = F'(x_0) +
+		\bigg(F^{(3)}(\theta_{h}) + F^{(3)}(\theta_{-h})\bigg)\frac{h^2}{6}, 
+		\quad \theta_{h} \in [x_0,x_0+h], \quad \theta_{-h}\in [x_0-h,x_0],
+	\end{equation}
+	and
+	\begin{equation}
+	        \label{lemma:fd-est1-eq3}
+		\frac{F(x_0+2h) - F(x_0-2h)}{4h} = F'(x_0) + 
+		\bigg( F^{(3)}(\theta_{2h}) + F^{(3)}(\theta_{-2h})\bigg) \frac{2h^2}{3}, 
+		\quad \theta_{2h} \in [x_0,x_0+2h], \quad \theta_{-2h}\in [x_0-2h,x_0].
+	\end{equation}
+
+	Using Equations \eqref{lemma:fd-est1-eq2} and \eqref{lemma:fd-est1-eq3}, we obtain:
+	\begin{align}
+		\label{lemma:fd-est1-eq4}
+		\frac{2}{3} \bigg(\frac{F(h) - F(-h)}{h}\bigg) &= \frac{4}{3} F'(x_0) +
+                \bigg( F^{(3)}(\theta_{h}) + F^{(3)}(\theta_{-h})\bigg)\frac{2h^2}{9},\\
+                \label{lemma:fd-est1-eq5}
+		\frac{1}{3} \bigg(\frac{F(2h) - F(-2h)}{4h}\bigg) &= \frac{1}{3} F'(x_0)+
+		\bigg( F^{(3)}(\theta_{2h}) + F^{(3)}(\theta_{-2h})\bigg) \frac{2h^2}{9} 
+	\end{align}
+
+	Subtracting Equation \eqref{lemma:fd-est1-eq5} from Equation \eqref{lemma:fd-est1-eq4} we get 
+	the desired Equation \eqref{lemma:fd-est1-eq0} with
+	\begin{equation}
+		\label{lemma:fd-est1-eq6}
+		C = -\frac{2}{9}\bigg( F^{(3)}(\theta_{h}) + F^{(3)}(\theta_{-h})\bigg)
+		+ \frac{2}{9}\bigg( F^{(3)}(\theta_{2h}) + F^{(3)}(\theta_{-2h})\bigg), 
+	\end{equation}
+	where $\theta_{h} \in [x_0,x_0+h], \theta_{-h}\in [x_0-h,x_0]$, 
+	$\theta_{2h} \in [x_0,x_0+2h], \theta_{-2h}\in [x_0-2h,x_0]$,
+	which concludes the proof.
+
+		% "QED" que o ambiente proof acrescenta automaticamente.
+  \renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
+\end{proof}
+
+
+\begin{lema}
+	\label{lemma:fd-bound1}
+	Assume the hypothesis of Lemma \ref{lemma:fd-est1}. If we also assume that
+	$F \in \mathcal{C}^{4}([x_0-2h,x_0+2h])$, then the following inequality holds:
+	\begin{equation}
+                \label{lemma:fd-bound1-eq1}
+		\bigg|F'(x_0) - \bigg[ \frac{2}{3} \bigg(\frac{F(x_0+h) - F(x_0-h)}{h}\bigg)
+                      - \frac{1}{3} \bigg(\frac{F(x_0+2h) - F(x_0-2h)}{4h}\bigg)
+		       \bigg] \bigg|  \leq Mh^3,
+        \end{equation}
+        where $M$ is a constant that depends only on $F$.
+\end{lema}
+
+\begin{proof}
+	From Lemma \ref{lemma:fd-est1}, we have:
+	\begin{equation*}
+        	\bigg|F'(x_0) - \bigg[ \frac{2}{3} \bigg(\frac{F(x_0+h) - F(x_0-h)}{h}\bigg)
+               - \frac{1}{3} \bigg(\frac{F(x_0+2h) - F(x_0-2h)}{4h}\bigg)
+		\bigg] \bigg| = |C|h^2,
+	\end{equation*}
+	where $C$ is given by Equation \eqref{lemma:fd-est1-eq6}. 
+	Using the intermediate value theorem, we get:
+	\begin{equation}
+                \label{lemma:fd-bound1-eq2}
+		F^{(3)}(\theta_{h}) + F^{(3)}(\theta_{-h}) = 
+		2 F^{(3)}(\psi_{h})
+		\quad \text{ where } \psi_{h} \in ]\theta_{-h},\theta_{h}[,
+        \end{equation}
+	and	
+	\begin{equation}
+                \label{lemma:fd-bound1-eq3}
+		F^{(2)}(\theta_{2h}) + F^{(2)}(\theta_{-2h}) = 
+		2 F^{(2)}(\psi_{2h})
+		\quad \text{ where } \psi_{2h} \in ]\theta_{-2h},\theta_{2h}[.
+       \end{equation}
+
+       Then, the constant $C$ may be rewritten as:
+       \begin{equation}
+               \label{lemma:fd-bound1-eq4}
+		       C = \frac{4}{9}\bigg(F^{(2)}(\psi_{2h}) - F^{(2)}(\psi_{h})\bigg), 
+       \end{equation}
+
+       From the mean value theorem, we have:
+       \begin{equation}
+               \label{lemma:fd-found1-eq5}
+	       F^{(3)}(\psi_{2h})- F^{(3)}(\psi_{h}) = F^{(3)}(\lambda_h) (\psi_{2h} - \psi_{h}), 
+	       \quad \text{ where } \lambda_{h} \in ]\psi_h, \psi_{2h}[,
+	       \quad \text{ or }   \lambda_{h} \in ]\psi_{2h}, \psi_{h}[,
+       \end{equation}
+
+       and the constant $C$ is rewritten again as:
+	\begin{equation}
+               \label{lemma:fd-bound1-eq6}
+               C = \frac{4}{9} F^{(4)}(\lambda_h) (\psi_{2h} - \psi_{h}).
+	\end{equation}
+
+	Since $\psi_{h}, \psi_{2h} \in [x_0-2h,x_0+2h]$, then $|\psi_{h} - \psi_{2h}| \leq 4h$.
+	Combining this with  Equation \eqref{lemma:fd-bound1-eq6}, 
+	we have the desired Inequality \eqref{lemma:fd-bound1-eq1}:
+	\begin{align*}
+                \label{lemma:fd-bound1-eq7}
+		|C|h^2  &\leq \bigg( \frac{4}{9} \big|F^{(4)}(\lambda_h)\big| |\psi_{h} - \psi_{2h}| \bigg) h^2\\
+			&\leq \bigg( \frac{16}{9} \max_{x \in [x_0-2h,x_0+2h]}{|F^{(4)}(x)|} \bigg) h^3,
+        \end{align*}
+	by choosing $M = \frac{16}{9}\max_{x \in [x_0-2h,x_0+2h]}{|F^{(4)}(x)|}$.
+	\renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
+\end{proof}
