@@ -1,4 +1,4 @@
-% Arquivo LaTeX de exemplo de dissertação/tese a ser apresentada à CPG do IME-USP
+% Arquvo LaTeX de exemplo de dissertação/tese a ser apresentada à CPG do IME-USP
 %
 % Criação: Jesús P. Mena-Chalco
 % Revisão: Fabio Kon e Paulo Feofiloff
@@ -73,11 +73,11 @@
 
 % Bibliografia
 \usepackage[
-  style=extras/plainnat-ime, % variante de autor-data, similar a plainnat
+  %style=extras/plainnat-ime, % variante de autor-data, similar a plainnat
   %style=alphabetic, % similar a alpha
   %style=numeric, % comum em artigos
   %style=authoryear-comp, % autor-data "padrão" do biblatex
-  %style=apa, % variante de autor-data, muito usado
+  style=apa, % variante de autor-data, muito usado
   %style=abnt,
 ]{biblatex}
 
@@ -275,17 +275,23 @@
 %   USP & Universidade de São Paulo
 %\end{tabular}
 
-%%\chapter*{Lista de Símbolos}
-%\disablenewpage{\chapter*{Lista de Símbolos}}
+%chapter*{Notation}
+%disablenewpage{\chapter*{Lista de Símbolos}}
 
-%\begin{tabular}{rl}
-%  $\omega$ & Frequência angular\\
-%    $\psi$ & Função de análise \emph{wavelet}\\
-%    $\Psi$ & Transformada de Fourier de $\psi$\\
-%\end{tabular}
+%begin{tabular}{rl}
+%$\mathbb{R}$ & Real numbers\\
+%$\mathbb{R}^m$ & m-fold Cartesian product of $\mathbb{R}$\\
+%$\mathcal{P}_n$ & Set of polynomials of degree $\leq n$\\
+%$\mathcal{C}(\Omega)$ & Set of continuous functions from $\Omega$ to $\mathbb{R}$\\
+%$\mathcal{C}^k(\Omega)$ & Set of functions $k$ time continuously differentiable
+%functions from $\Omega$ to $\mathbb{R}$\\
+%${L}^{\infty}(\Omega)$ & 
+%Set of bounded functions from $\Omega$ to $\mathbb{R}$\\
+%${L}^{\infty}(\Omega,\mathbb{R}^m)$ 
+%& Set of bounded functions from $\Omega$ to $\mathbb{R}^m$\\
+%end{tabular}
 
-% Quebra de página manual
-%\clearpage
+%clearpage
 
 %%%%% Listas criadas automaticamente
 
@@ -372,20 +378,20 @@
 
 %%%% Apêndices %%%%
 
-%\makeatletter
-%\if@openright\cleardoublepage\else\clearpage\fi
-%\makeatother
+\makeatletter
+\if@openright\cleardoublepage\else\clearpage\fi
+\makeatother
 
-%\pagestyle{appendix}
+\pagestyle{appendix}
 
-%\appendix
+\appendix
 
 % \addappheadtotoc acrescenta a palavra "Apêndice" ao sumário; se
 % só há apêndices, sem anexos, provavelmente não é necessário.
-%\addappheadtotoc
+\addappheadtotoc
 
-%\input{conteudo/apendice-exemplo-pseudocodigo}
-%\par
+\input{conteudo/anexo-fd}
+\par
 
 %%%% Anexos %%%%
 
@@ -401,7 +407,7 @@
 % só há anexos, sem apêndices, provavelmente não é necessário.
 %\addappheadtotoc
 
-%\input{conteudo/anexo-exemplo-faq}
+%\input{conteudo/anexo-fd}
 %\par
 
 
@@ -423,6 +429,6 @@
   heading=bibintoc, % Inclui a bibliografia no sumário
 ]
 
-\printindex % imprime o índice remissivo no documento (opcional)
+%\printindex % imprime o índice remissivo no documento (opcional)
 
 \end{document}
