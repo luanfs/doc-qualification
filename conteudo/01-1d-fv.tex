@@ -490,7 +490,7 @@ $q_{i+\frac{1}{2}} = \frac{d}{dx}Q_{i4}(x_{i+k+\frac{1}{2}})$.
 
 \begin{prop}
 	\label{prop:bound1}
-	Given $h>0$, let $q \in \mathcal{C}^{2}[-2h,2h]$. Then, the following identity
+	Given $h>0$, let $q \in \mathcal{C}^{4}[-2h,2h]$. Then, the following identity
 	holds:
 	\begin{equation}
 		\label{prop:bound1-eq1}
@@ -522,17 +522,17 @@ $q_{i+\frac{1}{2}} = \frac{d}{dx}Q_{i4}(x_{i+k+\frac{1}{2}})$.
 	Using these identities, Equation \eqref{prop:bound1-eq1} may be rewritten as:
 	\begin{equation}
 		\label{prop:bound1-eq2}
-		q(0) = \frac{2}{3} \bigg(\frac{F(h) - F(-h)}{h}\bigg)
-		       - \frac{1}{12} \bigg(\frac{F(2h) - F(-2h)}{h}\bigg)
-+ Ch^2,
+		q(0) = \frac{4}{3} \bigg(\frac{F(h) - F(-h)}{2h}\bigg)
+		       - \frac{1}{3} \bigg(\frac{F(2h) - F(-2h)}{4h}\bigg)
++ Ch^4,
 	\end{equation}
 	which consists of finite-difference approximations. 
 	Thus, Equation \eqref{prop:bound1-eq1} follows from Lemma \ref{lemma:fd-est1}
 	with:
 	\begin{equation}
 		\label{prop:bound1-eq3}
-		C = -\frac{2}{9}\bigg( q^{(2)}(\theta_{h}) + q^{(2)}(\theta_{-h})\bigg)
-		+ \frac{2}{9}\bigg( q^{(2)}(\theta_{2h}) + q^{(2)}(\theta_{-2h})\bigg), 
+		C = \frac{1}{240}\bigg( q^{(4)}(\theta_{h}) + q^{(4)}(\theta_{-h})\bigg)
+		- \frac{1}{45}\bigg( q^{(4)}(\theta_{2h}) + q^{(4)}(\theta_{-2h})\bigg), 
 	\end{equation}
 	where $\theta_{h} \in [0,h], \theta_{-h}\in [-h,0]$, 
 	$\theta_{2h} \in [0,2h], \theta_{-2h}\in [-2h,0]$,
@@ -540,25 +540,4 @@ $q_{i+\frac{1}{2}} = \frac{d}{dx}Q_{i4}(x_{i+k+\frac{1}{2}})$.
 
 		% "QED" que o ambiente proof acrescenta automaticamente.
   \renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
-\end{proof}
-
-\begin{prop}
-	\label{prop:bound2}
-	Assume the hypothesis of Proposition \ref{prop:bound1}. If we also assume that
-	$q \in \mathcal{C}^{3}[-2h,2h]$, then the following inequality holds:
-	\begin{equation}
-                \label{prop:bound2-eq1}
-		\bigg|q(0) - \bigg[\frac{7}{12}\bigg( \frac{1}{h} \int_{0}^{h} q(x) \,dx
-                       + \frac{1}{h} \int_{-h}^{0} q(x) \,dx  \bigg)
-                       - \frac{1}{12}\bigg( \frac{1}{h} \int_{h}^{2h} q(x) \,dx
-		       + \frac{1}{h} \int_{-2h}^{-h} q(x) \,dx  \bigg) \bigg] \bigg|  \leq Mh^3,
-        \end{equation}
-        where $M$ is a constant that depends only on $q$.
-\end{prop}
-
-\begin{proof}
-	Just define $F$ as in Proposition \ref{prop:bound1} and apply the Lemma \ref{lemma:fd-bound1} for this $F$.
-	Then, Inequality \eqref{prop:bound2-eq1} follows with
-	$M = \frac{16}{9}\max_{z \in [-2h,2h]}{|q^{(3)}(z)|}$.
-	\renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
 \end{proof}
