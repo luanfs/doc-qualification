@@ -4,23 +4,23 @@
 
 \chapter{One-dimensional finite-volume methods}
 \label{chp1-1d-fv}
-\section{One-dimensional conservation laws in integral form}
+\section{One-dimensional system of conservation laws in integral form}
 \label{chp1-sec1}
-In this section, we are going to present the derivation of one-dimensional conservation
-laws in the integral form. 
+In this section, we are going to present the derivation of one-dimensional 
+system of conservation laws in the integral form. 
 The derivation presented here follows \citet{leveque:1990} and \citet{leveque:2002} closely and will
 be useful to fix some notation. \index{Conservation law}
 Let us assume that $x$ and $t$ represent the spatial and time coordinate, respectively.
 Given $[x_1, x_2] \subset \mathbb{R}$, $x_1 \leq x_2$, and a time 
 interval $[t_1, t_2] \subset ]0, +\infty[$, $t_1 \leq t_2$, 
-our aim is to describe how $m$ state variables given by functions 
+our aim is to describe how $m$ state variable densities given by functions 
 $q_1, \cdots, q_m: \mathbb{R}\times[0, +\infty[ \to \mathbb{R}$ 
 evolve within time in the considered time interval, assuming that we have neither sinks nor sources 
 for the mass of each state variable and also assuming that the mass
 flow rate is known for all the state variables.
 
 To set the problem in more mathematical terms, let us denote by 
-$\mathbf{q}: \mathbb{R}\times [0, \infty[\to \mathbb{R}^m$, 
+$\mathbf{q}: \mathbb{R}\times [0, +\infty[\to \mathbb{R}^m$, 
 $\mathbf{q} = \mathbf{q}(x,t)$, the vector of state variables,
 \textit{i.e.}, $\mathbf{q}_k = q_k$ for $k=1, \cdots, m$.
 The mass of $\mathbf{q}$ in $[x_1, x_2]$ at time $t$ is defined by:
@@ -124,8 +124,8 @@ Therefore, Equations \eqref{chp1-sec1-eq3} and \eqref{chp1-sec1-eq7} are
 equivalent when $\mathbf{q}$ is $\mathcal{C}^1$.
 However, the problem \eqref{chp1-sec1-eq3} can be formulated
 to functions that are not $\mathcal{C}^1$ and have discontinuities.
-More generally speaking, we say that $\mathbf{q} \in L^{\infty}(\Omega, \mathbb{R}^m)$ 
-\footnote{$L^{\infty}(\Omega, \mathbb{R}^m) = \{q: \Omega \to \mathbb{R}^m$
+More generally speaking, we say that $\mathbf{q} \in L^{\infty}(D, \mathbb{R}^m)$ 
+\footnote{$L^{\infty}(D, \mathbb{R}^m) = \{q: D \to \mathbb{R}^m$
 such that $q$ is bounded.$\}$}
 if it satisfies the Equation 
 \eqref{chp1-sec1-eq3} for all $x_1, x_2, t_1$ and $t_2$ such that
@@ -146,7 +146,7 @@ in $\mathbb{R}\times[0, +\infty[$. This formulation of weak solution
 is more common employed on the construction of Discontinuous Galerkin
 methods \citep{nair:2011}.
 
-In order to develop finite-volume methods for conservation laws, it is useful to define the vector of
+In order to develop finite-volume methods for system of conservation laws, it is useful to define the vector of
 average values of the state variable vector $\mathbf{q}$ in the interval $[x_1, x_2]$ at a time $t$ by:
 \begin{equation}
 	\label{chp1-sec1-eq9}
@@ -171,7 +171,7 @@ and so is Equation \eqref{chp1-sec1-eq3}:
 
 To move towards finite volume schemes, we will restrict our attention
 to a conservation law in a bounded domain of the form 
-$\Omega = [a,b]\times[0,T]$, $a<b$, $T>0$. However, we must 
+$D = [a,b]\times[0,T]$, $a<b$, $T>0$. However, we must 
 impose some boundary condition. One possible way and that we will adopted 
 in text are the periodic boundary conditions:
 \begin{equation}
@@ -183,8 +183,8 @@ Also, we assume that an initial condition $q_0(x) = q(x,0)$, $q_0 \in L^{\infty}
 Thus, we have specified a Cauchy problem.
 We notice that Equations \eqref{chp1-sec1-eq10} and \eqref{chp1-sec1-eq11}
 hold for all $x_1, x_2, t_1$ and $t_2$ such that
-$[x_1, x_2] \times [t_1, t_2] \subset \Omega$.
-So, let us discretize the domain $\Omega$ and write 
+$[x_1, x_2] \times [t_1, t_2] \subset D$.
+So, let us discretize the domain $D$ and write 
 Equations \eqref{chp1-sec1-eq10} and \eqref{chp1-sec1-eq11} in terms of this discretization.
 Given a positive integer $N_T$, we define the time step 
 $\Delta t = \frac{T}{N_T}$, $t_n = n \Delta t$, for $n = 0, 1 ,\cdots, N_T$.
@@ -260,7 +260,7 @@ then Equation \eqref{chp1-sec1-eq17} is just Equation
 \eqref{chp1-sec1-eq2} evaluated in the control volumes and written
 in terms of the average values $\mathbf{Q}$. 
 Similarly, if $\mathbf{q}$ satisfies Equation
-$\eqref{chp1-sec1-eq3}$, $\forall [x_1, x_2] \times [t_1, t_2] \subset \Omega$,
+$\eqref{chp1-sec1-eq3}$, $\forall [x_1, x_2] \times [t_1, t_2] \subset D$,
 then Equation \eqref{chp1-sec1-eq18} is just Equation
 \eqref{chp1-sec1-eq3} evaluated in the control volumes,
 at the time instants $t_n$, and written
@@ -281,37 +281,26 @@ In this work we shall restrict our attention to methods based on Equation \eqref
 
 \section{The finite-volume approach}
 \label{chp1-sec2}
-We summarize the problem of the conservation law in the integral form 
+We summarize the problem of the system of conservation laws in the integral form 
 discussed in Section \ref{chp1-sec1} in Problem \ref{chp1-sec2-prob1}.
 
-\newtheoremstyle{problem} % nome do estilo
-{3pt} % espaço antes
-{3pt} % espaço depois
-{\itshape} % fonte do corpo
-{} % Indentação
-{\bfseries} % fonte do título
-{:} % pontuação após o título
-{.5em} % espaço após o título
-{\thmname{#1} \thmnumber{ #2}\thmnote{ (#3)}} % formato do título
-% vazio significa {\thmname{#1}\thmnumber{ #2}\thmnote{ (#3)}}
-
-\theoremstyle{problem} % As próximas definições usam este estilo
-\newtheorem{prob}{Problem}
+\theoremstyle{plain} % As próximas definições usam este estilo
+\newtheorem{prob}{Problem}[chapter]
 
 \begin{prob}
 	\label{chp1-sec2-prob1}
-	Given $ \Omega = [a,b] \times [0,T]$, a $\mathcal{C}^1$ 
+	Given $ D = [a,b] \times [0,T]$, a $\mathcal{C}^1$ 
 	flux function $\mathbf{f}: \mathbb{R}^m \to \mathbb{R}^m $,
 	$m \geq 1$, we would like to find the weak solution
-	$ \mathbf{q} \in L^{\infty}(\Omega, \mathbb{R}^m)$ 
-	of the conservation law in the integral form:
+	$ \mathbf{q} \in L^{\infty}(D, \mathbb{R}^m)$ 
+	of the system of conservation laws in the integral form:
 	\begin{equation*}
 	        \int_{x_1}^{x_2} \mathbf{q}(x, t_2) \,dx = 
        		\int_{x_1}^{x_2} \mathbf{q}(x, t_1) \,dx + 
         	\int_{t_1}^{t_2} \mathbf{f}(\mathbf{q}(x_1, t)) \,dt -
 		\int_{t_1}^{t_2}\mathbf{f}(\mathbf{q}(x_2, t)) \,dt ,
 	\end{equation*}
-	$\forall [x_1, x_2]\times[t_1, t_2] \subset \Omega$, 
+	$\forall [x_1, x_2]\times[t_1, t_2] \subset D$, 
 	given the initial condition 
 	$\mathbf{q}(x,0) = \mathbf{q}_0(x)$, $\forall x \in [a,b]$, 
 	and assuming periodic boundary conditions, 
@@ -325,10 +314,10 @@ the total mass in $[a,b]$ satisfies:
 \end{equation}
 This is the conservation of total mass propriety and is highly desirable
 for any numerical scheme that intends to give a robust approximation of the 
-conservation law solution.
+system of conservation laws solution.
 
 In Section \ref{chp1-sec1} we introduced a version of Problem \ref{chp1-sec2-prob1}
-considering a discretization of the domain $\Omega$. 
+considering a discretization of the domain $D$. 
 This idea is summarized in Problem \ref{chp1-sec2-prob2}.
 \begin{prob}
         \label{chp1-sec2-prob2}
@@ -360,7 +349,10 @@ This idea is summarized in Problem \ref{chp1-sec2-prob2}.
 
 Finally, we define the one-dimensional (1D) finite-volume (FV)
 scheme problem as follows in Problem \ref{chp1-sec2-prob3}.
-\begin{prob}[1D FV scheme]
+We use the notation $\mathbf{q}^n_{i} = \mathbf{q}(x_i, t_n)$
+to represent the values of $\mathbf{q}$ in the discrete domain $D$.
+
+\begin{prob}[1D-FV scheme]
 	\label{chp1-sec2-prob3}
 	Assume the framework defined in Problem \ref{chp1-sec2-prob2}.
 	The finite-volume approach of Problem \ref{chp1-sec2-prob2}
@@ -372,7 +364,8 @@ scheme problem as follows in Problem \ref{chp1-sec2-prob3}.
                 \quad \forall n = 1, \cdots, N_T,
         \end{equation*}
 	where $\mathbf{Q}_{i}^{n} \in \mathbb{R}^m$ is intended to be an approximation
-	of $\mathbf{Q}_i(t_{n})$ in some sense.
+	of $\mathbf{Q}_i(t_{n})$ in some sense. We define by $\mathbf{Q}_{i}^{0} = \mathbf{Q}_i(0)$ or
+	$\mathbf{Q}_{i}^{0} = \mathbf{q}^{0}_{i}$.
 	The term $\mathbf{F}_{i+\frac{1}{2}}^{n}$ approximates
 	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \mathbf{f}(\mathbf{q}(x_{i+\frac{1}{2}}, t)) \,dt $
 	and the term
@@ -387,12 +380,9 @@ scheme problem as follows in Problem \ref{chp1-sec2-prob3}.
 \citep{lin:1994}
 \citep{lin:1996}
 
-\section{The piecewise-parabolic method}
-\label{chp1-sec3}
-
-\subsection{Reconstruction}
-\label{chp1-sec3-1}
-Let us consider a function ${q} \in L^{\infty}([a, b])$, a discretization of
+\section{Reconstruction}
+\label{chp1-sec-recon}
+Let us consider a function ${q} \in L^{\infty}([a, b],\mathbb{R})$, a discretization of
 $[a,b]$ as in Problem \ref{chp1-sec2-prob2}
 and assume that we are given the average values ${Q}_i = \frac{1}{\Delta x} 
 \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x) \,dx$
@@ -424,8 +414,12 @@ is such that:
 	${Q}_{i-1} \leq q_i(x) \leq {Q}_{i+1}$, $\forall x \in X_i$.
 \end{enumerate}
 
+\subsection{The piecewise-parabolic method}
+\label{chp1-sec-recon-ppm}
+
 We shall assume that each $q_i$ may be expressed as:
 \begin{equation}
+	\label{chp1-sec-recon-ppm-eq1}
 	q_i(x) = q_{L, i} + z_i(x)(\Delta q_i + q_{6, i}(1-z_i(x))), 
 	\quad \text{where }
 	z_i(x) = \frac{x-x_{i-\frac{1}{2}}}{\Delta x},
@@ -438,20 +432,20 @@ $\lim_{x \to x_{i-\frac{1}{2}}^+} {q_i(x)} = q_{L, i}$.
 If we define $q_{R, i} = \lim_{x \to x_{i+\frac{1}{2}}^-} {q_i(x)}$,
 then we have:
 \begin{equation}
-	\label{chp1-sec3-1-eq3}
+	\label{chp1-sec-recon-ppm-eq2}
 	\Delta q_i = q_{R, i} - q_{L, i}.
 \end{equation}
 
 The average value of $q_i$ is given by:
 \begin{equation}
-	\label{chp1-sec3-1-eq4}
+	\label{chp1-sec-recon-ppm-eq3}
 	\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}_i(x) \,dx
 	= \frac{(q_{L,i} + q_{R,i})}{2} + \frac{q_{6,i}}{6}
 \end{equation}
 
 Under the hypothesis of mass conservation, we have:
 \begin{equation}
-        \label{chp1-sec3-1-eq5}
+	\label{chp1-sec-recon-ppm-eq4}
 	q_{6,i} = 6\bigg(Q_i - \frac{(q_{L,i} + q_{R,i})}{2}\bigg).
 \end{equation}
 
@@ -468,18 +462,37 @@ So, let us describe a way to approximate $q(x_{i+\frac{1}{2}})$, and denote its 
 $q_{i+\frac{1}{2}}$ $\forall i = 0, 1, \cdots, N$.
 We introduce the following function:
 \begin{equation}
-        \label{chp1-sec3-1-eq6}
+	\label{chp1-sec-recon-ppm-eq5}
 	Q(x) = \int_{a}^{x} q(\xi) \,d\xi,
 \end{equation}
 and we notice that:
 \begin{equation}
+	\label{chp1-sec-recon-ppm-eq6}
 	Q(x_{i+1}) = \Delta x \sum_{k=1}^{i} Q_k \text{ and } Q'(x) = q(x).
 \end{equation}
 Therefore $Q'(x_{i+\frac{1}{2}}) = (x_{i+\frac{1}{2}}) $, $\forall i = 0, 1, \cdots, N$.
 We introduce a quartic polynomial $Q_{i4} \in \mathcal{P}_4$ that interpolates the data
 $\big(x_{i+k+\frac{1}{2}}, Q(x_{i+k+\frac{1}{2}})\big)_{k=-2,-1,0,1,2}$. Then, we define
 $q_{i+\frac{1}{2}} = \frac{d}{dx}Q_{i4}(x_{i+k+\frac{1}{2}})$.
-
+An explicit expression for $q_{i+\frac{1}{2}}$ is given by \citep{colella:1984}:
+\begin{equation}
+	\label{chp1-sec-recon-ppm-eq7}
+	q_{i+\frac{1}{2}} = \frac{1}{2} \bigg( Q_{i+1} + Q_{i} \bigg) - \frac{1}{6} \bigg( \delta Q_{i+1} - \delta Q_{i}\bigg),
+\end{equation}
+where $\delta Q_{i}$ is the average slope in the $i$-th control-volume:
+\begin{equation}
+	\label{chp1-sec-recon-ppm-eq8}
+	\delta Q_{i} = \frac{1}{2} \bigg( Q_{i+1} - Q_{i-1} \bigg).
+\end{equation}
+We notice that Formula \eqref{chp1-sec-recon-ppm-eq8} may be rewritten more explicitly as:
+\begin{equation}
+	\label{chp1-sec-recon-ppm-eq9}
+	q_{i+\frac{1}{2}} = \frac{7}{12} \bigg( Q_{i+1} + Q_{i} \bigg) - \frac{1}{12} \bigg(  Q_{i+2} +Q_{i-1}\bigg).
+\end{equation}
+The Formula \eqref{chp1-sec-recon-ppm-eq9} is fourth-order accurate if
+$q$ is at least $\mathcal{C}^4$ \citep{colella:1984}. Indeed, we
+prove this in Proposition \ref{prop:ppm-bound1} by noticing
+that this Formula may be thought as a finite-difference scheme.
 
 \theoremstyle{plain} % As próximas definições usam este estilo
 \newtheorem{lema}{Lemma}[chapter]
@@ -489,15 +502,15 @@ $q_{i+\frac{1}{2}} = \frac{d}{dx}Q_{i4}(x_{i+k+\frac{1}{2}})$.
 \newtheorem{prop}{Proposition}[chapter]
 
 \begin{prop}
-	\label{prop:bound1}
-	Given $h>0$, let $q \in \mathcal{C}^{4}[-2h,2h]$. Then, the following identity
+	\label{prop:ppm-bound1}
+	Given $h>0$, let $q \in \mathcal{C}^{4}([-2h,2h])$. Then, the following identity
 	holds:
 	\begin{equation}
-		\label{prop:bound1-eq1}
+		\label{prop:ppm-bound1-eq1}
 		q(0) = \frac{7}{12}\bigg( \frac{1}{h} \int_{0}^{h} q(x) \,dx 
 		       + \frac{1}{h} \int_{-h}^{0} q(x) \,dx  \bigg)
 		       - \frac{1}{12}\bigg( \frac{1}{h} \int_{h}^{2h} q(x) \,dx 
-		       + \frac{1}{h} \int_{-2h}^{-h} q(x) \,dx  \bigg) + Ch^2,
+		       + \frac{1}{h} \int_{-2h}^{-h} q(x) \,dx  \bigg) + Ch^4,
 	\end{equation}
 	where $C$ is a constant that depends only on $q$ and $h$.
 \end{prop}
@@ -519,18 +532,18 @@ $q_{i+\frac{1}{2}} = \frac{d}{dx}Q_{i4}(x_{i+k+\frac{1}{2}})$.
 		F(2h) - F(-2h) - (F(h) - F(-h)). \\
 	\end{align*}
 	
-	Using these identities, Equation \eqref{prop:bound1-eq1} may be rewritten as:
+	Using these identities, Equation \eqref{prop:ppm-bound1-eq1} may be rewritten as:
 	\begin{equation}
-		\label{prop:bound1-eq2}
+		\label{prop:ppm-bound1-eq2}
 		q(0) = \frac{4}{3} \bigg(\frac{F(h) - F(-h)}{2h}\bigg)
 		       - \frac{1}{3} \bigg(\frac{F(2h) - F(-2h)}{4h}\bigg)
 + Ch^4,
 	\end{equation}
 	which consists of finite-difference approximations. 
-	Thus, Equation \eqref{prop:bound1-eq1} follows from Lemma \ref{lemma:fd-est1}
+	Thus, Equation \eqref{prop:ppm-bound1-eq1} follows from Lemma \ref{lemma:fd-ppm-est1}
 	with:
 	\begin{equation}
-		\label{prop:bound1-eq3}
+		\label{prop:ppm-bound1-eq3}
 		C = \frac{1}{240}\bigg( q^{(4)}(\theta_{h}) + q^{(4)}(\theta_{-h})\bigg)
 		- \frac{1}{45}\bigg( q^{(4)}(\theta_{2h}) + q^{(4)}(\theta_{-2h})\bigg), 
 	\end{equation}

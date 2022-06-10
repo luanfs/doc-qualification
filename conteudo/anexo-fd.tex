@@ -5,16 +5,16 @@
 %\newtheorem{lema-fd}{Lemma}
 
 \begin{lema}
-	\label{lemma:fd-est1}
+	\label{lemma:fd-ppm-est1}
 	Given $h>0$, $x_0 \in \mathbb{R}$, let $F \in \mathcal{C}^{5}([x_0-2h,x_0+2h])$.
 	Then, the following identity holds:
 	\begin{equation}	
-		\label{lemma:fd-est1-eq0}
+		\label{lemma:fd-ppm-est1-eq0}
 		F'(x_0) =  \frac{4}{3} \bigg(\frac{F(x_0+h) - F(x_0-h)}{2h}\bigg)
                       - \frac{1}{3} \bigg(\frac{F(x_0+2h) - F(x_0-2h)}{4h}\bigg)
 		      + Ch^4,
 	\end{equation}
-	where $C$ is a constant that depends only on $F$.
+	where $C$ is a constant that depends only on $F$ and $h$.
 \end{lema}
 
 \begin{proof}
@@ -35,47 +35,48 @@
 	
 	Thus:
 	\begin{equation}
-		\label{lemma:fd-est1-eq1}
+		\label{lemma:fd-ppm-est1-eq1}
 		\frac{F(x_0 + \delta ) - F(x_0 - \delta )}{2\delta } = F'(x_0) + 
 		F^{(3)}(x_0)\frac{\delta^2}{3!} +
 		\bigg( F^{(5)}(\theta_{\delta}) + 
 		F^{5}(\theta_{-\delta}) \bigg) \frac{\delta ^4}{2\cdot5!} ,		
 	\end{equation}
 	
-	Applying Equation \eqref{lemma:fd-est1-eq1} for $\delta  = h$ and 
+	Applying Equation \eqref{lemma:fd-ppm-est1-eq1} for $\delta  = h$ and 
 	$\delta  = 2h$, we get, respectively:
 	\begin{equation}
-		\label{lemma:fd-est1-eq2}
+		\label{lemma:fd-ppm-est1-eq2}
 		\frac{F(x_0 + h) - F(x_0-h)}{2h} = F'(x_0) +
 		F^{(3)}(x_0)\frac{h^2}{3!} +
 		\bigg(F^{(5)}(\theta_{h}) + F^{5)}(\theta_{-h})\bigg)\frac{h^4}{2\cdot5!}, 
 		\quad \theta_{h} \in [x_0,x_0+h], \quad \theta_{-h}\in [x_0-h,x_0],
 	\end{equation}
 	and
-	\begin{equation}
-	    \label{lemma:fd-est1-eq3}
+	\begin{align}
+	    \label{lemma:fd-ppm-est1-eq3}
 		\frac{F(x_0+2h) - F(x_0-2h)}{4h} = F'(x_0) +
 		F^{(3)}(x_0)\frac{4h^2}{3!} + 
-		\bigg( F^{(5)}(\theta_{2h}) + F^{(5)}(\theta_{-2h})\bigg) \frac{16h^4}{2\cdot5!}, \\
+		\bigg( F^{(5)}(\theta_{2h}) + F^{(5)}(\theta_{-2h})\bigg) \frac{16h^4}{2\cdot5!},
+		\\ \nonumber
 		\quad \theta_{2h} \in [x_0,x_0+2h], \quad \theta_{-2h}\in [x_0-2h,x_0].
-	\end{equation}
+	\end{align}
 
-	Using Equations \eqref{lemma:fd-est1-eq2} and \eqref{lemma:fd-est1-eq3}, we obtain:
+	Using Equations \eqref{lemma:fd-ppm-est1-eq2} and \eqref{lemma:fd-ppm-est1-eq3}, we obtain:
 	\begin{align}
-		\label{lemma:fd-est1-eq4}
+		\label{lemma:fd-ppm-est1-eq4}
 		\frac{4}{3} \bigg(\frac{F(h) - F(-h)}{2h}\bigg) &= \frac{4}{3} F'(x_0) +
 				F^{(3)}(x_0)\frac{4h^2}{3\cdot3!} +
                 \bigg( F^{(5)}(\theta_{h}) + F^{(5)}(\theta_{-h})\bigg)\frac{h^4}{2\cdot5!},\\
-        \label{lemma:fd-est1-eq5}
+        \label{lemma:fd-ppm-est1-eq5}
 	        	\frac{1}{3} \bigg(\frac{F(2h) - F(-2h)}{4h}\bigg) &= \frac{1}{3} F'(x_0)+
 		       	F^{(3)}(x_0)\frac{4h^2}{3\cdot3!} +
 		        \bigg( F^{(5)}(\theta_{2h}) + F^{(5)}(\theta_{-2h})\bigg) \frac{16h^4}{3\cdot2\cdot5!} 
 	\end{align}
 
-	Subtracting Equation \eqref{lemma:fd-est1-eq5} from Equation \eqref{lemma:fd-est1-eq4} we get 
-	the desired Equation \eqref{lemma:fd-est1-eq0} with
+	Subtracting Equation \eqref{lemma:fd-ppm-est1-eq5} from Equation \eqref{lemma:fd-ppm-est1-eq4} we get 
+	the desired Equation \eqref{lemma:fd-ppm-est1-eq0} with
 	\begin{equation}
-		\label{lemma:fd-est1-eq6}
+		\label{lemma:fd-ppm-est1-eq6}
 		C = \frac{1}{240}\bigg( F^{(5)}(\theta_{h}) + F^{(5)}(\theta_{-h})\bigg)
 		- \frac{1}{45}\bigg( F^{(5)}(\theta_{2h}) + F^{(5)}(\theta_{-2h})\bigg), 
 	\end{equation}
