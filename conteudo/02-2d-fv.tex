@@ -8,27 +8,27 @@
 \section{Two-dimensional system of conservation laws in integral form}
 \label{sec-conslaw2d}
 Let us consider $\mathcal{C}^1$ flux functions
-$\mathbf{f}: \mathbb{R}^m \to \mathbb{R}^m$ and
-$\mathbf{g}: \mathbb{R}^m \to \mathbb{R}^m$  in $x$ and $y$ direction,
+${f}: \mathbb{R}^m \to \mathbb{R}^m$ and
+${g}: \mathbb{R}^m \to \mathbb{R}^m$  in $x$ and $y$ direction,
 respectively. 
 A two-dimensional system of conservation laws in the differential form in 
 a domain $\Omega=[a,b]\times[c,d] \subset \mathbb{R}^2$
-associated to the fluxes $\mathbf{f}$ and $\mathbf{g}$ is given by:
+associated to the fluxes ${f}$ and ${g}$ is given by:
 \begin{equation}
 \label{sec-conslaw2d:eq1}
-\frac{\partial}{\partial t}\mathbf{q}(x, y, t) +
-\frac{\partial}{\partial x} \mathbf{f}(\mathbf{q}(x, y, t)) +
-\frac{\partial}{\partial y} \mathbf{g}(\mathbf{q}(x, y, t))
+\frac{\partial}{\partial t}{q}(x, y, t) +
+\frac{\partial}{\partial x} {f}({q}(x, y, t)) +
+\frac{\partial}{\partial y} {g}({q}(x, y, t))
 = 0, \quad \forall (x, y, t) \in \Omega^{\mathrm{o}}
  \times ]0, +\infty[. 
 \footnote{$\Omega^{\mathrm{o}}$ denotes the interior of $\Omega$. 
 	Namely, $\Omega^{\mathrm{o}} = ]a,b[ \times ]c,d[$.}
 \end{equation}
 
-The solution $\mathbf{q}$ is interpreted as the vector of state variable
+The solution ${q}$ is interpreted as the vector of state variable
 densities.
 A classical or strong solution to this system of conservation laws is a 
-$\mathcal{C}^1$ function $\mathbf{q}$ satisfying Equation 
+$\mathcal{C}^1$ function ${q}$ satisfying Equation 
 \eqref{sec-conslaw2d:eq1}.
 As we did in Section \ref{chp1-sec1}, our goal is to deduce an
 integral form of Equation \eqref{sec-conslaw2d:eq1}.
@@ -39,11 +39,11 @@ $[x_1,x_2] \times [y_1, y_2]$ yields:
 \begin{align}
 	\label{sec-conslaw2d:eq2}
 	\frac{d}{d t} \bigg(\int_{x_1}^{x_2} \int_{y_1}^{y_2}
-	\mathbf{q}(x, y, t) \,dx \,dy \bigg)=
-	&-\int_{y_1}^{y_2} \bigg(\mathbf{f}(\mathbf{q}(x_2, y, t))
-	-\mathbf{f}(\mathbf{q}(x_1, y, t)) \bigg) \,dy \\ \nonumber
-	&-\int_{x_1}^{x_2} \bigg(\mathbf{g}(\mathbf{q}(x, y_2, t))
-	-\mathbf{g}(\mathbf{q}(x, y_1, t)) \bigg) \,dx.
+	{q}(x, y, t) \,dx \,dy \bigg)=
+	&-\int_{y_1}^{y_2} \bigg({f}({q}(x_2, y, t))
+	-{f}({q}(x_1, y, t)) \bigg) \,dy \\ \nonumber
+	&-\int_{x_1}^{x_2} \bigg({g}({q}(x, y_2, t))
+	-{g}({q}(x, y_1, t)) \bigg) \,dx.
 \end{align}
 
 Integrating Equation \eqref{sec-conslaw2d:eq2} over the time interval $[t_1,t_2]$, 
@@ -52,28 +52,28 @@ we have:
 \begin{align}
 	\label{sec-conslaw2d:eq3}
 	\int_{x_1}^{x_2} \int_{y_1}^{y_2}
-	\mathbf{q}(x, y, t_{n+1}) \,dx \,dy = &\int_{x_1}^{x_2} \int_{y_1}^{y_2}
-	\mathbf{q}(x, y, t_n) \,dx \,dy \\ \nonumber
-	&-\int_{t_1}^{t_2} \int_{y_1}^{y_2} \bigg(\mathbf{f}(\mathbf{q}(x_2, y, t))
-	-\mathbf{f}(\mathbf{q}(x_1, y, t)) \bigg) \,dy \,dt\\ \nonumber
-	&-\int_{t_1}^{t_2} \int_{x_1}^{x_2} \bigg(\mathbf{g}(\mathbf{q}(x, y_2, t))
-	-\mathbf{g}(\mathbf{q}(x, y_1, t)) \bigg) \,dx \,dt.
+	{q}(x, y, t_{n+1}) \,dx \,dy = &\int_{x_1}^{x_2} \int_{y_1}^{y_2}
+	{q}(x, y, t_n) \,dx \,dy \\ \nonumber
+	&-\int_{t_1}^{t_2} \int_{y_1}^{y_2} \bigg({f}({q}(x_2, y, t))
+	-{f}({q}(x_1, y, t)) \bigg) \,dy \,dt\\ \nonumber
+	&-\int_{t_1}^{t_2} \int_{x_1}^{x_2} \bigg({g}({q}(x, y_2, t))
+	-{g}({q}(x, y_1, t)) \bigg) \,dx \,dt.
 \end{align}
 
 Equation \eqref{sec-conslaw2d:eq3} is the integral form of Equation 
-\eqref{sec-conslaw2d:eq1}. We say that $\mathbf{q} \in 
+\eqref{sec-conslaw2d:eq1}. We say that ${q} \in 
 L^{\infty}{(\Omega \times [0, +\infty[}, \mathbb{R}^m)$ is a weak
-solution to the system of conservation laws  \eqref{sec-conslaw2d:eq1} if $\mathbf{q}$
+solution to the system of conservation laws  \eqref{sec-conslaw2d:eq1} if ${q}$
 satisfies the integral form \eqref{sec-conslaw2d:eq3}, 
 $\forall [x_1,x_2]\times[y_1,y_2] \subset \Omega^{\mathrm{o}}$ and 
 $\forall [t_1,t_2] \subset [0,+\infty[$.
 Similarly to Section \ref{chp1-sec1}, these problems are equivalent
-when  $\mathbf{q}$ is a $\mathcal{C}^1$ function.
+when  ${q}$ is a $\mathcal{C}^1$ function.
 
-We consider an initial condition $\mathbf{q_0} \in L^{\infty}{(\Omega)}$,
-$\mathbf{q}(x,y,0) =  \mathbf{q_0}(x,y)$, $\forall (x,y) \in \Omega$.
+We consider an initial condition ${q_0} \in L^{\infty}{(\Omega)}$,
+${q}(x,y,0) =  {q_0}(x,y)$, $\forall (x,y) \in \Omega$.
 Boundary conditions will be assumed bi-periodic.
-At last, the matrix $\alpha D\mathbf{f}(q) + \beta D\mathbf{g}(q)$ is assumed to have
+At last, the matrix $\alpha D{f}(q) + \beta D{g}(q)$ is assumed to have
 real eigenvalues and be diagonalizable
 $\forall q \in \mathbb{R}^m , \forall \alpha, \beta \in \mathbb{R}$
 \citep{leveque:1990}, so that we have a hyperbolic conservation law.
@@ -103,13 +103,13 @@ and $x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}})$
 $y_j = \frac{1}{2}(y_{j+\frac{1}{2}} + y_{j-\frac{1}{2}})$, $\forall i = 1, \cdots, N$, 
 $\forall j = 1, \cdots, M$,
 to define the control volume lengths and midpoints, respectively.
-Finally, we denote by $\mathbf{Q}_{ij}(t) \in \mathbb{R}^m$ as the vector of 
+Finally, we denote by ${Q}_{ij}(t) \in \mathbb{R}^m$ as the vector of 
 average values of state variable vector at time $t$
 in the control volume $\Omega_{ij}$, that is:
 \begin{equation}
 	\label{sec-conslaw2d:eq4}
-	\mathbf{Q}_{ij}(t) = \frac{1}{\Delta x \Delta y}
-	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{j-\frac{1}{2}}}^{y_{j-\frac{1}{2}}} \mathbf{q}(x,t) \,dx
+	{Q}_{ij}(t) = \frac{1}{\Delta x \Delta y}
+	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{j-\frac{1}{2}}}^{y_{j-\frac{1}{2}}} {q}(x,t) \,dx
 	\in \mathbb{R}^m.
 \end{equation}
 
@@ -118,29 +118,29 @@ $t_{n}, t_{n+1}, x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}, y_{j-\frac{1}{2}}, y_{j+\
 respectively, in Equation \eqref{sec-conslaw2d:eq3}, we obtain:
 \begin{align}
 	\label{sec-conslaw2d:eq5}
-	\mathbf{Q}_{ij}(t_{n+1})  = \mathbf{Q}_{ij}(t_{n})
+	{Q}_{ij}(t_{n+1})  = {Q}_{ij}(t_{n})
 	&- \frac{\Delta t}{\Delta x \Delta y}
 	\delta _x \bigg( \frac{1}{\Delta t}
 	\int_{t_1}^{t_2} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
-	\mathbf{f}(\mathbf{q}(x_{i}, y, t))
+	{f}({q}(x_{i}, y, t))
 	\,dy \,dt \bigg) \\ \nonumber
 	&- \frac{\Delta t}{\Delta x \Delta y}
 	\delta _y \bigg( \frac{1}{\Delta t}
 	\int_{t_1}^{t_2} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
-	\mathbf{g}(\mathbf{q}(x, y_{j}, t))
+	{g}({q}(x, y_{j}, t))
 	\,dx \,dt \bigg),
 \end{align}
 where we are using the centered finite-difference notation:
 \begin{align}
 	\label{sec-conslaw2d:eq6}
-	\delta_x \mathbf{h}(x_i,y, t) = 
-	\mathbf{h}(x_{i+\frac{1}{2}}, y, t) - 
-	\mathbf{h}(x_{i-\frac{1}{2}}, y, t), \\
-	\delta_y \mathbf{h}(x, y_j,t) = 
-    \mathbf{h}(x, y_{j+\frac{1}{2}},t) - 
-    \mathbf{h}(x, y_{j-\frac{1}{2}},t),
+	\delta_x {h}(x_i,y, t) = 
+	{h}(x_{i+\frac{1}{2}}, y, t) - 
+	{h}(x_{i-\frac{1}{2}}, y, t), \\
+	\delta_y {h}(x, y_j,t) = 
+    {h}(x, y_{j+\frac{1}{2}},t) - 
+    {h}(x, y_{j-\frac{1}{2}},t),
 \end{align}
-for any function $\mathbf{h}$. The Equation \eqref{sec-conslaw2d:eq5} is useful to
+for any function ${h}$. The Equation \eqref{sec-conslaw2d:eq5} is useful to
 motivate two-dimensional finite-volume schemes, as we shall see in the next section.
 
 \section{The finite-volume approach}
@@ -153,35 +153,35 @@ presented Section \ref{sec-conslaw2d} is written in a concise way in Problem \re
 \begin{prob}
 	\label{sec:fv-2d-prob1}
 	Given $\Omega = [a,b]\times [c,d]$, $D = \Omega \times [0,T]$, 
-	$\mathcal{C}^1$ flux functions $\mathbf{f},
-	\mathbf{g}: \mathbb{R}^m \to \mathbb{R}^m$,
+	$\mathcal{C}^1$ flux functions ${f},
+	{g}: \mathbb{R}^m \to \mathbb{R}^m$,
 	$m \geq 1$, we would like to find the weak solution
-	$ \mathbf{q} \in L^{\infty}(D, \mathbb{R}^m)$ 
+	$ {q} \in L^{\infty}(D, \mathbb{R}^m)$ 
 	of the two-dimensional system of conservation laws in the integral form:
 	\begin{align*}
 		\int_{x_1}^{x_2} \int_{y_1}^{y_2}
-		\mathbf{q}(x, y, t) \,dx \,dy = &\int_{x_1}^{x_2} \int_{y_1}^{y_2}
-		\mathbf{q}(x, y, t) \,dx \,dy \\ \nonumber
-		&-\int_{t_1}^{t_2} \int_{y_1}^{y_2} \bigg(\mathbf{f}(\mathbf{q}(x_2, y, t))
-		-\mathbf{f}(\mathbf{q}(x_1, y, t)) \bigg) \,dy \,dt\\ \nonumber
-		&-\int_{t_1}^{t_2} \int_{x_1}^{x_2} \bigg(\mathbf{g}(\mathbf{q}(x, y_2, t))
-		-\mathbf{g}(\mathbf{q}(x, y_1, t)) \bigg) \,dx \,dt.
+		{q}(x, y, t) \,dx \,dy = &\int_{x_1}^{x_2} \int_{y_1}^{y_2}
+		{q}(x, y, t) \,dx \,dy \\ \nonumber
+		&-\int_{t_1}^{t_2} \int_{y_1}^{y_2} \bigg({f}({q}(x_2, y, t))
+		-{f}({q}(x_1, y, t)) \bigg) \,dy \,dt\\ \nonumber
+		&-\int_{t_1}^{t_2} \int_{x_1}^{x_2} \bigg({g}({q}(x, y_2, t))
+		-{g}({q}(x, y_1, t)) \bigg) \,dx \,dt.
 	\end{align*}
 	$\forall [x_1, x_2]\times [y_1, y_2] \times[t_1, t_2] \subset D$, 
 	given the initial condition 
-	$\mathbf{q}(x, y, 0) = \mathbf{q}_0(x, y)$, $\forall (x, y) \in \Omega$, 
+	${q}(x, y, 0) = {q}_0(x, y)$, $\forall (x, y) \in \Omega$, 
 	and assuming bi-periodic boundary conditions, \textit{i.e.}, 
-	$\mathbf{q}(a,y,t) = \mathbf{q}(b,y,t)$, $\forall t \in [0,T]$, $\forall y \in [c,d]$, and
-	$\mathbf{q}(x,c,t) = \mathbf{q}(x,d,t)$, $\forall t \in [0,T]$, $\forall x \in [a,b]$.
+	${q}(a,y,t) = {q}(b,y,t)$, $\forall t \in [0,T]$, $\forall y \in [c,d]$, and
+	${q}(x,c,t) = {q}(x,d,t)$, $\forall t \in [0,T]$, $\forall x \in [a,b]$.
 \end{prob}
 
 For Problem \ref{sec:fv-2d-prob1}, the total mass in $\Omega$ is defined by: 
 \begin{equation}
-	\mathbf{M}_{\Omega}(t) = \int_{\Omega} \mathbf{q}(x,y,t) \,dx \,dy  \in \mathbb{R}^m, \quad \forall t \in [0,T],
+	{M}_{\Omega}(t) = \int_{\Omega} {q}(x,y,t) \,dx \,dy  \in \mathbb{R}^m, \quad \forall t \in [0,T],
 \end{equation}
 and is conserved within time: 
 \begin{equation}
-	\mathbf{M}_{\Omega}(t) = \mathbf{M}_{\Omega}(0), \quad \forall t \in [0,T].
+	{M}_{\Omega}(t) = {M}_{\Omega}(0), \quad \forall t \in [0,T].
 \end{equation}
 
 Section \ref{sec-conslaw2d} introduced a version of Problem \ref{sec:fv-2d-prob1}
@@ -203,57 +203,57 @@ This version is also summarized in Problem \ref{sec:fv-2d-prob2}.
 	$t_n = n\Delta t$, $\Delta t = \frac{T}{N_T}$, $\forall n = 1, \cdots, N_T$.
 	Since we are in the framework of Problem \ref{sec:fv-2d-prob2}, it follows that:
 	\begin{align*}
-		\mathbf{Q}_{ij}(t_{n+1})  = \mathbf{Q}_{ij}(t_{n})
+		{Q}_{ij}(t_{n+1})  = {Q}_{ij}(t_{n})
 		&- \frac{\Delta t}{\Delta x \Delta y}
 		\delta _x \bigg( \frac{1}{\Delta t}
 		\int_{t_1}^{t_2} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
-		\mathbf{f}(\mathbf{q}(x_{i}, y, t))
+		{f}({q}(x_{i}, y, t))
 		\,dy \,dt \bigg) \\ \nonumber
 		&- \frac{\Delta t}{\Delta x \Delta y}
 		\delta _y \bigg( \frac{1}{\Delta t}
 		\int_{t_1}^{t_2} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
-		\mathbf{g}(\mathbf{q}(x, y_{j}, t))
+		{g}({q}(x, y_{j}, t))
 		\,dx \,dt \bigg),
 	\end{align*}
-	where $\mathbf{Q}_{ij}(t) = \frac{1}{\Delta x \Delta y}
+	where ${Q}_{ij}(t) = \frac{1}{\Delta x \Delta y}
 	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
-	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} \mathbf{q}(x,y,t) \,dx \,dy$.
+	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} {q}(x,y,t) \,dx \,dy$.
 	
-	Our problem now consists of finding the values $\mathbf{Q}_{ij}(t_{n})$, 
-	$\forall i = 1, \cdots, N$, $\forall i = 1, \cdots, M$, $\forall n = 1, \cdots, N_T$,
-	given the initial values $\mathbf{Q}_i(0)$, $\forall i = 1, \cdots N$.
-	In other words, we would like to find the average values of $\mathbf{q}$
+	Our problem now consists of finding the values ${Q}_{ij}(t_{n})$, 
+	$\forall i = 1, \cdots, N$, $\forall j = 1, \cdots, M$, $\forall n = 1, \cdots, N_T$,
+    given the initial values ${Q}_{ij}(0)$, $\forall i = 1, \cdots N$, $\forall j = 1, \cdots, M$.
+	In other words, we would like to find the average values of ${q}$
 	in each control volume $\Omega_{ij}$ at the considered time instants.
 \end{prob}
 
 Finally, we define the one-dimensional (2D) finite-volume (FV)
 scheme problem as follows in Problem \ref{sec:fv-2d-prob3}.
-We use the notation $\mathbf{q}^n_{ij} = \mathbf{q}(x_i, y_j, t_n)$
-to represent the values of $\mathbf{q}$ in the discrete domain $D$.
+We use the notation ${q}^n_{ij} = {q}(x_i, y_j, t_n)$
+to represent the values of ${q}$ in the discrete domain $D$.
 \begin{prob}[2D-FV scheme]
 	\label{sec:fv-2d-prob3}
 	Assume the framework defined in Problem \ref{sec:fv-2d-prob2}.
 	The finite-volume approach of Problem \ref{sec:fv-2d-prob1}
 	consists of a finding a scheme of the form:
 	\begin{align*}
-		\mathbf{Q}_{ij}^{n+1} =  \mathbf{Q}_{ij}^{n} -
-		\frac{\Delta t}{\Delta x \Delta y} (\mathbf{F}_{i+\frac{1}{2},j}^{n} - \mathbf{F}_{i-\frac{1}{2},j}^{n}) -
-		\frac{\Delta t}{\Delta x \Delta y} (\mathbf{G}_{i,j+\frac{1}{2}}^{n} - \mathbf{G}_{i,j-\frac{1}{2}}^{n}),
+		{Q}_{ij}^{n+1} =  {Q}_{ij}^{n} -
+		\frac{\Delta t}{\Delta x \Delta y} ({F}_{i+\frac{1}{2},j}^{n} - {F}_{i-\frac{1}{2},j}^{n}) -
+		\frac{\Delta t}{\Delta x \Delta y} ({G}_{i,j+\frac{1}{2}}^{n} - {G}_{i,j-\frac{1}{2}}^{n}),
 		\\ \nonumber \quad \forall i = 1, \cdots, N, \quad \forall j = 1, \cdots, M,
 		\quad \forall n = 1, \cdots, N_T,
 	\end{align*}
-	where $\mathbf{Q}_{ij}^{n} \in \mathbb{R}^m$ is intended to be an approximation
-	of $\mathbf{Q}_{ij}(t_{n})$ in some sense. We define by $\mathbf{Q}_{ij}^{0} = \mathbf{Q}_{ij}(0)$ or
-	$\mathbf{Q}_{ij}^{0} = \mathbf{q}^0_{i,j}$.
+	where ${Q}_{ij}^{n} \in \mathbb{R}^m$ is intended to be an approximation
+	of ${Q}_{ij}(t_{n})$ in some sense. We define by ${Q}_{ij}^{0} = {Q}_{ij}(0)$ or
+	${Q}_{ij}^{0} = {q}^0_{i,j}$.
 	
-	The term $\mathbf{F}_{i+\frac{1}{2}, j}^{n}$ approximates
-	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} \mathbf{f}(\mathbf{q}(x_{i+\frac{1}{2}}, y, t)) \,dy \,dt $,
-	$\mathbf{F}_{i-\frac{1}{2},j}^{n}$ approximates
-	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} \mathbf{f}(\mathbf{q}(x_{i-\frac{1}{2}}, y, t)) \,dy \,dt $,
-	$\mathbf{G}_{i, j+\frac{1}{2}}^{n}$ approximates
-	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \mathbf{g}(\mathbf{q}(x, y_{j+\frac{1}{2}}, t)) \,dx \,dt $,
-	$\mathbf{G}_{i, j-\frac{1}{2}}^{n}$ approximates
-	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \mathbf{g}(\mathbf{q}(x, y_{j-\frac{1}{2}}, t)) \,dx \,dt $,
+	The term ${F}_{i+\frac{1}{2}, j}^{n}$ approximates
+	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} {f}({q}(x_{i+\frac{1}{2}}, y, t)) \,dy \,dt $,
+	${F}_{i-\frac{1}{2},j}^{n}$ approximates
+	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} {f}({q}(x_{i-\frac{1}{2}}, y, t)) \,dy \,dt $,
+	${G}_{i, j+\frac{1}{2}}^{n}$ approximates
+	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {g}({q}(x, y_{j+\frac{1}{2}}, t)) \,dx \,dt $,
+	${G}_{i, j-\frac{1}{2}}^{n}$ approximates
+	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {g}({q}(x, y_{j-\frac{1}{2}}, t)) \,dx \,dt $,
 	or, in other words, they estimate the time-averaged fluxes at the control volume $\Omega_{ij}$ boundaries.
 \end{prob}
 
