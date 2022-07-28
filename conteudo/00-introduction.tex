@@ -47,7 +47,9 @@ The SI-SL approach combined with finite differences is still used nowadays, for 
 the UKMetOffice global model ENDGame \citep{wood:2014, benacchio:2016}.
 The expensive part of the  SI-SL approach is to solve an elliptic equation at each time step,
 that comes from the semi-implicit discretization, which requires global data communication,
-being inefficient to run in massive parallel supercomputers.
+being inefficient to run in massive parallel supercomputers. Besides that, 
+Semi-Lagragian schemes are inherently non-conservatives for mass,
+which is critical for climate forecasts \citep{will:2007}.
 
 \begin{figure}
   \centering
@@ -66,19 +68,19 @@ being inefficient to run in massive parallel supercomputers.
   \begin{subfigure}{.3\linewidth}
     \centering
     \includegraphics[width = \linewidth]{icos_pol_nopt_3_edsphere}
-    \caption{Icosahedral grid}
+	  \caption{Icosahedral grid}\label{icos-grid}
   \end{subfigure}
   \begin{subfigure}{.3\linewidth}
     \centering
     \includegraphics[width = \linewidth]{icos_pol_nopt_3_edhxsphere}
-    \caption{Pentagonal/Hexagonal grid}
+	  \caption{Pentagonal/Hexagonal grid}\label{voronoi-grid}
   \end{subfigure}
   \begin{subfigure}{.3\linewidth}
     \centering
     \includegraphics[width = \linewidth]{octg_pol_nopt_4_edsphere}
-      \caption{Octahedral grid}
+	  \caption{Octahedral grid}\label{octg-grid}
   \end{subfigure}
-  \caption{Examples of spherical grids: }
+  \caption{Examples of spherical grids: latitude-longitude grid (a) and grids based on Platonic solids (b)-(d).}
 \end{figure}
 
 The emergence of the Fast Fourier Transform (FFT) in the 1960s with the work from 
@@ -114,7 +116,7 @@ Indeed, the spectral method is still used in many current operational Weather Fo
 the Integrated Forecast System (IFS) from  European Centre for Medium-Range Weather Forecasts (ECMWF),
 Global Forecast System (GFS) from National Centers for Environmental Prediction (NCEP) and the
 Brazilian Global Atmospheric Model (BAM) \citep{figueroa:16} from  Center for Weather Forecasting 
-and Climate Research [Centro de Previsão de Tempo e Estudos Climáticos (CPTEC)]. 
+and Climate Research [Centro de Previsão de Tempo e Estudos Climáticos (CPTEC)].
 
 With the beginning of the multicore era in the 1990s, the global atmospheric models
 started to move towards parallel efficiency aiming to run at very high resolutions. 
@@ -127,8 +129,15 @@ the Message Passing Interface (MPI) \citep{zheng:2018}.
 Indeed, the spectral transform becomes the most expensive component of global spectral models
 when the resolution is increased due to the amount of MPI communications \citep{mueller:2019}.
 
-Semi-Lagragian conservation...
+Aiming for better performance in massively parallel computers and conservation properties, 
+new dynamical cores have been developed since the beginning of the 2000s.
+Novel spherical grids have been proposed, in order to avoid the pole problem.
+A popular choice are grids based on Platonic solids \citep{stan:2012}.
+The construction of these grids relies on a Platonic circumscribed on the sphere and 
+the projection of its faces onto the sphere.
+Some examples of spherical grids based on Platonic solids employed in the new generation
+of dynamical cores are the cubed-sphere (Figure \ref{cs-grid}), icosahedral grid (Figure \ref{icos-grid}), 
+the pentagonal/hexagonal grid (Figure \ref{voronoi-grid}) and octahedral grid (Figure \ref{octg-grid}),
+which are based on the cube, icosahedron, dodecahedron and octahedron, respectively \citep{ullrich:2017}.
 
-New dynamical cores...
-\citep{stan:2012} \citep{ullrich:2017}
-
+MPAS example \citep{skamarock:12}. accuraccy \citep{weller:12, peixoto:13, peixoto:16} 
