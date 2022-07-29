@@ -146,9 +146,19 @@ the projection of its faces onto the sphere, which leads to quasi-uniform and mo
 spherical grids.
 Some examples of spherical grids based on Platonic solids employed in the new generation
 of dynamical cores are the cubed-sphere (Figure \ref{cs-grid}), icosahedral grid (Figure \ref{icos-grid}), 
-the pentagonal/hexagonal grid (Figure \ref{voronoi-grid}) and octahedral grid (Figure \ref{octg-grid}),
+the pentagonal/hexagonal or Voronoi grid (Figure \ref{voronoi-grid}) and octahedral grid (Figure \ref{octg-grid}),
 which are based on the cube, icosahedron, dodecahedron and octahedron, respectively \citep{ullrich:2017}.
 
-TRSK \citet{thuburn:2009}, \citet{ringler:2010} 
-MPAS example \citep{skamarock:12}. accuraccy \citep{weller:12, peixoto:13, peixoto:16}
-\citep{santos:2021}.
+Building a highly parallelizable numerical scheme with mimetic properties in a quasi-uniform 
+grid is far from being a trivial task.
+A popular mimetic method, known as TRiSK, was proposed in the literature by
+\citet{thuburn:2009} and \citet{ringler:2010} using finite difference and finite volume schemes.
+This scheme is designed for general orthogonal grids, such as the Voronoi and icosahedral grids,
+and ensures mass and total energy conservation.
+This method has been employed in the dynamical core of the Model for Prediction Across Scales (MPAS)
+from National Center for Atmospheric Research (NCAR) \citep{skamarock:12}, which intended to work on general Voronoi grids, including locally refined Voronoi grids.
+However, the TRiSK scheme is a low-order scheme and suffers from grid imprinting, \textit{i.e.},
+geometric properties of the grid, such as cell alignment, interfere with the method accuracy
+\citep{weller:12, peixoto:13, peixoto:16}. Furthermore, in locally refined Voronoi grids,
+the scheme may become unstable due to ill-aligned cells and numerical dissipation is needed \citep{santos:2021},
+breaking the total energy conservation of the method.
