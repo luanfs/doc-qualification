@@ -44,7 +44,7 @@ restriction is the Semi-Implicit Semi-Lagrangian (SI-SL) scheme \citep{randall:2
 emerged in the 1980s and consists of the Lagrangian advection scheme applied at each time-step 
 and the solution of fast gravity waves implicitly, allowing very large time steps despite the pole problem.
 The SI-SL approach combined with finite differences is still used nowadays, for instance in 
-the UKMetOffice global model ENDGame \citep{wood:2014, benacchio:2016}.
+the UK Met Office global model ENDGame \citep{wood:2014, benacchio:2016}.
 The expensive part of the  SI-SL approach is to solve an elliptic equation at each time step,
 that comes from the semi-implicit discretization, which requires global data communication,
 being inefficient to run in massive parallel supercomputers. Besides that, 
@@ -149,6 +149,7 @@ of dynamical cores are the cubed-sphere (Figure \ref{cs-grid}), icosahedral grid
 the pentagonal/hexagonal or Voronoi grid (Figure \ref{voronoi-grid}) and octahedral grid (Figure \ref{octg-grid}),
 which are based on the cube, icosahedron, dodecahedron and octahedron, respectively \citep{ullrich:2017}.
 
+\section{Motivations}
 Building a highly parallelizable numerical scheme with mimetic properties in a quasi-uniform 
 grid is far from being a trivial task.
 A popular mimetic method, known as TRiSK, was proposed in the literature by
@@ -162,3 +163,35 @@ geometric properties of the grid, such as cell alignment, interfere with the met
 \citep{weller:12, peixoto:13, peixoto:16}. Furthermore, in locally refined Voronoi grids,
 the scheme may become unstable due to ill-aligned cells and numerical dissipation is needed \citep{santos:2021},
 breaking the total energy conservation of the method.
+
+The cubed-sphere became a popular quasi-uniform grid for the new generation of dynamical cores.
+It was originally proposed by \citet{sadourny:1972} and it was reviseted by \citet{ronchi:1996}.
+For instance, the cubed-sphere is used in the 
+Community Atmosphere Model (CAM-SE) from the NCAR using spectral elements \citep{dennis:2012} and in the
+Nonhydrostatic Unified Model of the Atmosphere (NUMA) from the US Navy using Discontinuous Galerkin 
+methods \citep{giraldo:2013}. The cubed-sphere was also chosen to be used in the next UK Met Office
+global model using mixed finite elements.
+At last, the Finite­ Volume Cubed-Sphere dynamical core (FV3) from the Geophysical Fluid Dynamics Laboratory (GFDL) and the 
+National Oceanic and Atmospheric Administration (NOAA) \citep{putman:2007} is another example
+of new generation dynamical core based on the cubed-sphere.
+
+The FV3 model is an extension of the Finite-Volume dynamical core (FVcore)
+from latitude-longitude grids to the cubed-sphere.
+The numerical methods from FVcore started to be developed with the transport scheme from the work \citet{lin:1994},
+which is based on the piecewise linear scheme from \citet{vanleer:1977}. 
+This scheme was later improved, using the Piecewise Parabolic Method (PPM) \citep{colella:1984, carpenter:1990}
+using dimension splitting techniques that guarantee monotonicity and mass conservation,
+for the transport equation \citep{lin:1996} and the shallow-water equations \citep{lin:1997}. 
+An important feature is that the FVcore combines the  Arakawa C- and D-grids \citep{arakawa:1997},
+where the C-grid values are computed in and intermediate time step. 
+The full global model was then presented by \citet{lin:2004}.
+
+The FVcore was adapted to the cubed-sphere grid \citep{putmanthesis:2007, putman:2007}, 
+to reach better performance in parallel computers, leading to the FV3 model.
+Later, the FV3 also was improved to allow locally refinement grids 
+through grid-nesting or grid-stretching \citep{harris:2013}.
+Currently, the FV3 model is capable of perfoming hydrostatic and non-hydrostatic atmospheric simulations 
+and it was chosen as the new US global weather prediction model, indeed, it replaced the spectral transform
+Global Forecast System (GFS) in June, 2019 \citep{samenow:2019}.
+
+Lack of numerical study...
