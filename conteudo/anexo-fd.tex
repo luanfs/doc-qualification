@@ -135,3 +135,53 @@ From the Taylor's expansion, we have:
 		% "QED" que o ambiente proof acrescenta automaticamente.
   \renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
 \end{proof}
+
+
+\begin{lema}
+	\label{lemma:fd-ppm-est3}
+	Given $h>0$, $x_0 \in \mathbb{R}$, let $F \in \mathcal{C}^{4}([x_0-2h,x_0+3h])$.
+	Then, the following identity holds:
+	\begin{equation}	
+		\label{lemma:fd-ppm-est3-eq0}
+		F^{(3)}(x_0) =  \frac{F(x_0-2h) - 7F(x_0-h) +16F(x_0) - 16F(x_0+h) +7F(x_0+2h) - F(x_0+3h)}{2h^3}
+		      + Ch,
+	\end{equation}
+	where $C$ is a constant that depends only on $F$ and $h$.
+\end{lema}
+
+\begin{proof}
+From the Taylor's expansion, we have:
+	\begin{align*}
+		F(x_0-2h) &= F(x_0) - 2F'(x_0)h +           2F^{(2)}(x_0)h^2  - \frac{8}{6}F^{(3)}(x_0)h^3 + \frac{16}{24}F^{(4)}(\theta_{-2h})h^4,\\
+		F(x_0-h)  &= F(x_0) -  F'(x_0)h +  \frac{1}{2}F^{(2)}(x_0)h^2 - \frac{1}{6}F^{(3)}(x_0)h^3 + \frac{1}{24}F^{(4)}(\theta_{-h})h^4, \\
+		F(x_0+h)  &= F(x_0) +  F'(x_0)h +  \frac{1}{2}F^{(2)}(x_0)h^2 + \frac{1}{6}F^{(3)}(x_0)h^3 + \frac{1}{24}F^{(4)}(\theta_{h})h^4, \\
+		F(x_0+2h) &= F(x_0) + 2F'(x_0)h +           2F^{(2)}(x_0)h^2  + \frac{8}{6}F^{(3)}(x_0)h^3 + \frac{16}{24}F^{(4)}(\theta_{2h})h^4,\\
+		F(x_0+3h) &= F(x_0) + 3F'(x_0)h + \frac{9}{2}F^{(2)}(x_0)h^2  + \frac{27}{6}F^{(3)}(x_0)h^3+ \frac{81}{24}F^{(4)}(\theta_{3h})h^4,\\
+	\end{align*}
+	where $ \theta_{-2h}\in [x_0-2h,x_0-h], \theta_{-h}\in [x_0-h,x_0], \theta_{h} \in [x_0,x_0+h], 
+	\theta_{2h} \in [x_0+h,x_0+2h], \theta_{3h}\in [x_0+2h,x_0+3h]$. 
+	Multiplying these equations by their respective coefficients given in 
+	Equation \eqref{lemma:fd-ppm-est3-eq0}, one get:
+	
+	\begin{align*}
+		  F(x_0-2h) &=    F(x_0)  - 2F'(x_0)h  + \frac{4}{2}F^{(2)}(x_0)h^2  - \frac{8}{6}F^{(3)}(x_0)h^3 + \frac{16}{24}F^{(4)}(\theta_{-2h})h^4,\\
+		 -7F(x_0-h)  &=  -7F(x_0) + 7F'(x_0)h  - \frac{7}{2}F^{(2)}(x_0)h^2 + \frac{7}{6}F^{(3)}(x_0)h^3 - \frac{7}{24}F^{(4)}(\theta_{-h})h^4,\\
+		 16F(x_0)    &=  16F(x_0),\\
+		-16F(x_0+h)  &= -16F(x_0) -16F'(x_0)h  - \frac{16}{2}F^{(2)}(x_0)h^2  - \frac{16}{6}F^{(3)}(x_0)h^3 - \frac{16}{24}F^{(4)}(\theta_{h})h^4,\\
+		  7F(x_0+2h) &=   7F(x_0)  +14F'(x_0)h + \frac{28}{2}F^{(2)}(x_0)h^2  + \frac{56}{6}F^{(3)}(x_0)h^3 + \frac{112}{24}F^{(4)}(\theta_{2h})h^4,\\
+		  -F(x_0+3h) &=   -F(x_0) - 3F'(x_0)h - \frac{9}{2}F^{(2)}(x_0)h^2  - \frac{27}{6}F^{(3)}(x_0)h^3 - \frac{81}{24}F^{(4)}(\theta_{3h})h^4.\\
+	\end{align*}
+	
+	Summing all these equations, we have:
+	\begin{align*}
+	F(x_0-2h) - 7F(x_0-h) +16F(x_0) - 16F(x_0+h) +7F(x_0+2h) - F(x_0+3h) = 2F^{(3)}(x_0)h^3 - 2Ch^4,
+	\end{align*}
+	we get the derised Formula \eqref{lemma:fd-ppm-est3-eq0} with $C$ given by:
+	\begin{equation}
+		\label{lemma:fd-ppm-est2-eq1}
+		C = \frac{1}{48}\bigg(-16F^{(4)}(\theta_{-2h}) + 7F^{(4)}(\theta_{-h}) +16F^{(4)}(\theta_{h}) - 112F^{(4)}(\theta_{2h}) + 81F^{(4)}(\theta_{3h})\bigg), 
+	\end{equation}
+	which concludes the proof.
+		% "QED" que o ambiente proof acrescenta automaticamente.
+  \renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
+\end{proof}
