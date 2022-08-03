@@ -34,7 +34,7 @@ The development of numerical methods for dynamical cores has been an active rese
 Global models use the sphere as the computational domain and therefore they require a discretization
 of the sphere. 
 The first global models used the latitude-longitude grid (Figure \ref{latlon-grid}), which is
-very suitable for finite-differences schemes. The major drawback of the latitude-longitude grid
+very suitable for finite-differences schemes due to its orthogonality. The major drawback of the latitude-longitude grid
 is the clustering of points at the poles, known as the ``pole problem'', which leads to extremely
 small time steps for explicit-in-time schemes due to the Courant-Friedrichs-Lewy (CFL) condition, 
 making these schemes computationally very expensive.
@@ -194,4 +194,4 @@ Currently, the FV3 model is capable of perfoming hydrostatic and non-hydrostatic
 and it was chosen as the new US global weather prediction model, indeed, it replaced the spectral transform
 Global Forecast System (GFS) in June, 2019 \citep{samenow:2019}.
 
-Lack of numerical study...
+Lack of numerical study... edges? non orthogonal... wave number 4.
