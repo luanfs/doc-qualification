@@ -1,6 +1,9 @@
 \chapter{Finite-difference estimatives}
 \label{anexo-fd}
-
+This appendix aims to prove all finite-difference error estimations 
+ used throughout this text.
+All the proves are very simple and consist of applying Taylor's expansions,
+as it is usual when showing the order of accuracy of many numerical schemes.
 %\theoremstyle{plain} % As próximas definições usam este estilo
 %\newtheorem{lema-fd}{Lemma}
 
@@ -21,12 +24,12 @@
 	Given $\delta \in ]0,2h]$, then $x_0 + \delta \in ]x_0,x_0+2h]$ and $x_0 - \delta \in ]x_0-2h,x_0]$.
 	Then, we get using the Taylor expansion of $F$:
 	\begin{align*}
-		F(x_0 + \delta) = F(x_0) +  &F'(x_0)\delta + F^{(2)}(0)\frac{\delta ^2}{2} 
+		F(x_0 + \delta) = F(x_0) +  &F'(x_0)\delta + F^{(2)}(x_0)\frac{\delta ^2}{2} 
 		+ F^{(3)}(x_0)\frac{\delta ^3}{3!}
 		+ F^{(4)}(x_0)\frac{\delta ^3}{4!}
 		+ F^{(5)}(\theta_{\delta} )\frac{\delta ^5}{5!}
 		\quad \theta_{\delta} \in [x_0,x_0+\delta ],\\
-		F(x_0 - \delta) = F(x_0) -&F'(x_0)\delta  + F^{(2)}(0)\frac{\delta ^2}{2}
+		F(x_0 - \delta) = F(x_0) -&F'(x_0)\delta  + F^{(2)}(x_0)\frac{\delta ^2}{2}
 		- F^{(3)}(x_0)\frac{\delta ^3}{3!}
 		+ F^{(4)}(x_0)\frac{\delta ^4}{4!}
 		- F^{(5)}(\theta_{-\delta})\frac{\delta ^5}{5!},		
@@ -64,11 +67,11 @@
 	Using Equations \eqref{lemma:fd-ppm-est1-eq2} and \eqref{lemma:fd-ppm-est1-eq3}, we obtain:
 	\begin{align}
 		\label{lemma:fd-ppm-est1-eq4}
-		\frac{4}{3} \bigg(\frac{F(h) - F(-h)}{2h}\bigg) &= \frac{4}{3} F'(x_0) +
+		\frac{4}{3} \bigg(\frac{F(x_0+h) - F(x_0-h)}{2h}\bigg) &= \frac{4}{3} F'(x_0) +
 				F^{(3)}(x_0)\frac{4h^2}{3\cdot3!} +
                 \bigg( F^{(5)}(\theta_{h}) + F^{(5)}(\theta_{-h})\bigg)\frac{h^4}{2\cdot5!},\\
         \label{lemma:fd-ppm-est1-eq5}
-	        	\frac{1}{3} \bigg(\frac{F(2h) - F(-2h)}{4h}\bigg) &= \frac{1}{3} F'(x_0)+
+	        	\frac{1}{3} \bigg(\frac{F(x_0+2h) - F(x_0-2h)}{4h}\bigg) &= \frac{1}{3} F'(x_0)+
 		       	F^{(3)}(x_0)\frac{4h^2}{3\cdot3!} +
 		        \bigg( F^{(5)}(\theta_{2h}) + F^{(5)}(\theta_{-2h})\bigg) \frac{16h^4}{3\cdot2\cdot5!} 
 	\end{align}
@@ -82,6 +85,52 @@
 	\end{equation}
 	where $\theta_{h} \in [x_0,x_0+h], \theta_{-h}\in [x_0-h,x_0]$, 
 	$\theta_{2h} \in [x_0,x_0+2h], \theta_{-2h}\in [x_0-2h,x_0]$,
+	which concludes the proof.
+		% "QED" que o ambiente proof acrescenta automaticamente.
+  \renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
+\end{proof}
+
+
+\begin{lema}
+	\label{lemma:fd-ppm-est2}
+	Given $h>0$, $x_0 \in \mathbb{R}$, let $F \in \mathcal{C}^{4}([x_0-2h,x_0+3h])$.
+	Then, the following identity holds:
+	\begin{equation}	
+		\label{lemma:fd-ppm-est2-eq0}
+		F''(x_0) =  \frac{-2F(x_0-2h) + 15F(x_0-h) -28F(x_0) + 20F(x_0+h) -6F(x_0+2h) + F(x_0+3h)}{6h^2}
+		      + Ch^2,
+	\end{equation}
+	where $C$ is a constant that depends only on $F$ and $h$.
+\end{lema}
+
+\begin{proof}
+From the Taylor's expansion, we have:
+	\begin{align*}
+		F(x_0-2h) &= F(x_0) - 2F'(x_0)h +           2F^{(2)}(x_0)h^2  - \frac{8}{6}F^{(3)}(x_0)h^3 + \frac{16}{24}F^{(4)}(\theta_{-2h})h^4,\\
+		F(x_0-h)  &= F(x_0) -  F'(x_0)h +  \frac{1}{2}F^{(2)}(x_0)h^2 - \frac{1}{6}F^{(3)}(x_0)h^3 + \frac{1}{24}F^{(4)}(\theta_{-h})h^4, \\
+		F(x_0+h)  &= F(x_0) +  F'(x_0)h +  \frac{1}{2}F^{(2)}(x_0)h^2 + \frac{1}{6}F^{(3)}(x_0)h^3 + \frac{1}{24}F^{(4)}(\theta_{h})h^4, \\
+		F(x_0+2h) &= F(x_0) + 2F'(x_0)h +           2F^{(2)}(x_0)h^2  + \frac{8}{6}F^{(3)}(x_0)h^3 + \frac{16}{24}F^{(4)}(\theta_{2h})h^4,\\
+		F(x_0+3h) &= F(x_0) + 3F'(x_0)h + \frac{9}{2}F^{(2)}(x_0)h^2  + \frac{27}{6}F^{(3)}(x_0)h^3+ \frac{81}{24}F^{(4)}(\theta_{3h})h^4,\\
+	\end{align*}
+	where $ \theta_{-2h}\in [x_0-2h,x_0-h], \theta_{-h}\in [x_0-h,x_0], \theta_{h} \in [x_0,x_0+h], 
+	\theta_{2h} \in [x_0+h,x_0+2h], \theta_{3h}\in [x_0+2h,x_0+3h]$. 
+	Multiplying these equations by their respective coefficients given in 
+	Equation \eqref{lemma:fd-ppm-est2-eq0}, one get:
+	
+	\begin{align*}
+		 -2F(x_0-2h) &=  -2F(x_0) + 4F'(x_0)h -          4F^{(2)}(x_0)h^2   + \frac{16}{6}F^{(3)}(x_0)h^3 - \frac{32}{24}F^{(4)}(\theta_{-2h})h^4,\\
+		 15F(x_0-h)  &=  15F(x_0) -15F'(x_0)h + \frac{15}{2}F^{(2)}(x_0)h^2 - \frac{15}{6}F^{(3)}(x_0)h^3 + \frac{15}{24}F^{(4)}(\theta_{-h})h^4,\\
+		-28F(x_0)    &= -28F(x_0),\\
+		 20F(x_0+h)  &=  20F(x_0) +20F'(x_0)h +          10F^{(2)}(x_0)h^2  + \frac{20}{6}F^{(3)}(x_0)h^3 + \frac{20}{24}F^{(4)}(\theta_{h})h^4,\\
+		 -6F(x_0+2h) &=  -6F(x_0) -12F'(x_0)h -          12F^{(2)}(x_0)h^2  -            8F^{(3)}(x_0)h^3 - \frac{96}{24}F^{(4)}(\theta_{2h})h^4,\\
+		   F(x_0+3h) &=    F(x_0) + 3F'(x_0)h + \frac{9}{2}F^{(2)}(x_0)h^2  + \frac{27}{6}F^{(3)}(x_0)h^3 + \frac{81}{24}F^{(4)}(\theta_{3h})h^4.\\
+	\end{align*}
+	
+	Summing all these equations, we get the derised Formula \eqref{lemma:fd-ppm-est2-eq0} with $C$ given by:
+	\begin{equation}
+		\label{lemma:fd-ppm-est2-eq1}
+		C = \frac{1}{24}\bigg(32F^{(4)}(\theta_{-2h}) - 15F^{(4)}(\theta_{-h}) -20F^{(4)}(\theta_{h}) +96 F^{(4)}(\theta_{2h}) - 81F^{(4)}(\theta_{3h})\bigg), 
+	\end{equation}
 	which concludes the proof.
 		% "QED" que o ambiente proof acrescenta automaticamente.
   \renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
