@@ -4,6 +4,16 @@
 
 \chapter{One-dimensional finite-volume methods}
 \label{chp1-1d-fv}
+This main aim of this chapter is to give a detailed desctription of
+the Piecewise Parabolic Method (PPM).
+We start with a basic review on one-dimensional conservation laws in
+the integral form in Section \ref{chp1-sec1}, 
+and in Section \ref{chp1-sec2} we set the framework of
+general one-dimensional finite-volumes schemes.
+Section \ref{chp1-sec-ppm} presents and analyses the PPM in Subsection \ref{chp1-sec-recon}.
+Subsection \ref{chp1-sec-mono} is dedicated to PPM monotonization
+and Subsection \ref{chp1-sec-flux} is dedicated to the PPM flux.
+
 \section{One-dimensional system of conservation laws in integral form}
 \label{chp1-sec1}
 In this section, we are going to present the derivation of one-dimensional 
@@ -208,8 +218,8 @@ respectively, in Equation \eqref{chp1-sec1-eq10}, we get:
 \begin{equation}
         \label{chp1-sec1-eq14}
 	\frac{d}{dt} {Q}_i(t) = \frac{1}{\Delta x}
-	({f}({q}(x_{\frac{i-1}{2}},t)) -
-	{f}({q}(x_{\frac{i+1}{2}},t))) ,
+	({f}({q}(x_{i-\frac{1}{2}},t)) -
+	{f}({q}(x_{i+\frac{1}{2}},t))) ,
 	\quad \forall i = 1, \cdots, N.
 \end{equation}
 
@@ -350,7 +360,7 @@ This idea is summarized in Problem \ref{chp1-sec2-prob2}.
 Finally, we define the one-dimensional (1D) finite-volume (FV)
 scheme problem as follows in Problem \ref{chp1-sec2-prob3}.
 We use the notation ${q}^n_{i} = {q}(x_i, t_n)$
-to represent the values of ${q}$ in the discrete domain $D$.
+to represent the values of ${q}$ on the discretization of domain $D$.
 
 \begin{prob}[1D-FV scheme]
 	\label{chp1-sec2-prob3}
@@ -366,30 +376,39 @@ to represent the values of ${q}$ in the discrete domain $D$.
 	where ${Q}_{i}^{n} \in \mathbb{R}^m$ is intended to be an approximation
 	of ${Q}_i(t_{n})$ in some sense. We define by ${Q}_{i}^{0} = {Q}_i(0)$ or
 	${Q}_{i}^{0} = {q}^{0}_{i}$.
-	The term ${F}_{i+\frac{1}{2}}^{n}$ approximates
-	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} {f}({q}(x_{i+\frac{1}{2}}, t)) \,dt $
-	and the term
-        ${F}_{i-\frac{1}{2}}^{n}$ approximates
-	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} {f}({q}(x_{i-\frac{1}{2}}, t)) \,dt $,
-	or, in other words, they estimate the time-averaged fluxes at the control volume $X_i$ boundaries.
+	The term ${F}_{i+\frac{1}{2}}^{n} = {F}_{i+\frac{1}{2}}^{n}
+	(Q_{i-l}^{n}, \cdots, Q_i^n, \cdots, Q_{i+r}^{n})$
+	is known as numerical flux and it approximates
+	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} {f}({q}(x_{i+\frac{1}{2}}, t)) \,dt $,
+	$\forall i = 0, 1, \cdots, N$,
+	or, in other words, it estimates the time-averaged fluxes at the control volume $X_i$ boundaries.
 \end{prob}
 
-\citep{colella:1984}
-\citep{carpenter:1990} 
-\citep{vanleer:1977}
-\citep{lin:1994}
-\citep{lin:1996}
+To be written: definitions of convergence, consistency and stability.
 
-\section{The piecewise-parabolic method}
+\section{The Piecewise-Parabolic Method}
 \label{chp1-sec-ppm}
+In this Section, we are going to review and analyse the Piecewise-Parabolic method (PPM).
+This method was proposed by \citet{colella:1984} for gas dynamic simulations and
+its viability for atmospheric simulations has been shown by \citet{carpenter:1990}.
+This method is based in using parabolas to reconstruct the function from its 
+average values, ensuring mass conservation and monotonicity.
+PPM is an extension of the Piecesiwe-Linear method from \citet{vanleer:1977}
+and it is employed in the FV3 model using the dimension splitting method from \citet{lin:1996}.
+This section is organized as follows: in Subsection \ref{chp1-sec-recon} 
+we present and analyse the PPM reconstrucion method and the monotonization and 
+flux computation are presented and analysed in Subsections 
+\ref{chp1-sec-mono} and \ref{chp1-sec-flux}, respectively.
 
+
+\subsection{Reconstruction}
+\label{chp1-sec-recon}
 Let us consider a function ${q} \in L^{\infty}([a, b],\mathbb{R})$, a discretization of
 $[a,b]$ as in Problem \ref{chp1-sec2-prob2}
 and assume that we are given the average values ${Q}_i = \frac{1}{\Delta x} 
 \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x) \,dx$
 on each control volume $X_i$, $\forall i = 1, \cdots, N $.
-Throughout this subsection, it will be useful to make use of the indicator function of
-each control volume $X_i$ defined by:
+We make use of the indicator function of each control volume $X_i$ defined by:
 \begin{equation}
 	\label{chp1-sec3-1-eq1}
 	\chi_{i}(x)=
@@ -411,12 +430,9 @@ is such that:
 \begin{enumerate}
 	\item $\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}_i(x) \,dx = {Q}_i$,
 	that is, $q_i$ preserves the mass on each control volume $X_i$;
-	\item No new extreme is generated, that is, 
-	${Q}_{i-1} \leq q_i(x) \leq {Q}_{i+1}$, $\forall x \in X_i$.
+	\item No new extreme is generated%, that is, 
+	%${Q}_{i-1} \leq q_i(x) \leq {Q}_{i+1}$, $\forall x \in X_i$.
 \end{enumerate}
-
-\subsection{Reconstruction}
-\label{chp1-sec-recon}
 
 We shall assume that each $q_i$ may be expressed as:
 \begin{equation}
@@ -492,52 +508,63 @@ We notice that Formula \eqref{chp1-sec-recon-ppm-eq8} may be rewritten more expl
 \end{equation}
 The Formula \eqref{chp1-sec-recon-ppm-eq9} is fourth-order accurate if
 $q$ is at least $\mathcal{C}^4$ \citep{colella:1984}. Indeed, we
-prove this in Proposition \ref{prop:ppm-bound1} by noticing
-that this Formula may be thought as a finite-difference scheme.
+prove this later in Proposition \ref{prop:ppm-bound1} by noticing
+that this Formula may be thought as a finite-difference scheme. 
+An explicit expression for the values of $q_{R,i}$ and $q_{L,i}$ are given by:
+\begin{align}
+	\label{chp1-sec-recon-ppm-eq10}
+	q_{R,i} = q_{i+\frac{1}{2}} = \frac{7}{12} \bigg( Q_{i+1} + Q_{i} \bigg) - \frac{1}{12} \bigg(  Q_{i+2} +Q_{i-1}\bigg), \\
+	\label{chp1-sec-recon-ppm-eq11}
+	q_{L,i} = q_{i-\frac{1}{2}} = \frac{7}{12} \bigg( Q_{i} + Q_{i-1} \bigg) - \frac{1}{12} \bigg(  Q_{i+1} +Q_{i-2}\bigg).
+\end{align}
 
-\theoremstyle{plain} % As próximas definições usam este estilo
+\theoremstyle{plain}
 \newtheorem{lema}{Lemma}[chapter]
 
-
-\theoremstyle{plain} % As próximas definições usam este estilo
+\theoremstyle{plain}
 \newtheorem{prop}{Proposition}[chapter]
 
+\theoremstyle{plain}
+\newtheorem{remark}{Remark}[chapter]
+
+\theoremstyle{plain}
+\newtheorem{corollary}{Corollary}[chapter]
+
+\subsubsection{PPM reconstruction numerical analysis}
+\label{chp1-sec-numerical-analysis}
+As we pointed out before, the approximation of $q$ at the control volumes edges
+given by Equation \eqref{chp1-sec-recon-ppm-eq9} is fourth-order accurate when $q \in \mathcal{C}^4([a,b])$. 
+This is proved as corollary of the following Proposition \ref{prop:ppm-bound1}.
 \begin{prop}
 	\label{prop:ppm-bound1}
-	Given $h>0$, let $q \in \mathcal{C}^{4}([-2h,2h])$. Then, the following identity
-	holds:
+	Let $q \in \mathcal{C}^{4}([a,b])$, $\overline{x} \in ]a,b[ $ and $h>0$ such that 
+	$[\overline{x}-2h,\overline{x}+2h] \subset [a,b]$.
+	Then, the following identity holds:
 	\begin{equation}
 		\label{prop:ppm-bound1-eq1}
-		q(0) = \frac{7}{12}\bigg( \frac{1}{h} \int_{0}^{h} q(x) \,dx 
-		       + \frac{1}{h} \int_{-h}^{0} q(x) \,dx  \bigg)
-		       - \frac{1}{12}\bigg( \frac{1}{h} \int_{h}^{2h} q(x) \,dx 
-		       + \frac{1}{h} \int_{-2h}^{-h} q(x) \,dx  \bigg) + Ch^4,
+		q(\overline{x} ) = \frac{7}{12}\bigg( \frac{1}{h} \int_{\overline{x} }^{\overline{x}+h} q(x) \,dx 
+		       + \frac{1}{h} \int_{\overline{x} -h}^{\overline{x} } q(x) \,dx  \bigg)
+		       - \frac{1}{12}\bigg( \frac{1}{h} \int_{\overline{x} +h}^{\overline{x}+2h} q(x) \,dx 
+		       + \frac{1}{h} \int_{\overline{x} -2h}^{\overline{x} -h} q(x) \,dx  \bigg) + Ch^4,
 	\end{equation}
-	where $C$ is a constant that depends only on $q$ and $h$.
+	where $C$ is a constant that depends on $q$ and $h$.
 \end{prop}
 
 \begin{proof}
-	We define $F(z) = \int_{0}^{z} q(x) \,dx $ for $z \in [-2h, 2h]$. 
-	It follows that:
+	We define $Q(x) = \int_{a}^{x} q(\xi) \,d\xi$ for $x \in [a,b]$ as in 
+	Equation \eqref{chp1-sec-recon-ppm-eq5}. It follows that:
 	\begin{align*}
-		\int_{ 0}^{h}   q(x) \,dx &= F(h),\\
-		\int_{-h}^{0}   q(x) \,dx = -\int_{ 0}^{-h} q(x)  \,dx  &= F(-h),\\ 
-		\int_{ h}^{2h}  q(x) \,dx =  \int_{ 0}^{2h} q(x)  \,dx - \int_{ 0}^{h} q(x) \,dx  &= F(2h) - F(h),\\ 
-		\int_{-h}^{-2h} q(x) \,dx =  \int_{-2h }^{0} q(x) \,dx - \int_{-h}^{0} q(x) \,d x&= -F(-2h) + F(-h),\\ 
-	\end{align*}
-	which yields:
-	\begin{align*}
-		\int_{0}^{h} q(x) \,dx + \int_{-h}^{0} q(x) \,dx &=
-		F(h) - F(-h), \\
-		\int_{h}^{2h} q(x) \,dx + \int_{-2h}^{-h} q(x) \,dx &=
-		F(2h) - F(-2h) - (F(h) - F(-h)). \\
+		\int_{\overline{x}}^{\overline{x}+h} q(\xi) \,d\xi + \int_{\overline{x}-h}^{\overline{x}} q(\xi) \,d\xi &=
+		Q(\overline{x}+h) - Q(\overline{x}-h), \\
+		\int_{\overline{x}+h}^{\overline{x}+2h} q(\xi) \,d\xi + \int_{\overline{x}-2h}^{\overline{x}-h} q(\xi) \,d\xi &=
+		Q(\overline{x}+2h) - Q(\overline{x}-2h) - (Q(\overline{x}+h) - Q(\overline{x}-h)). \\
 	\end{align*}
 	
 	Using these identities, Equation \eqref{prop:ppm-bound1-eq1} may be rewritten as:
 	\begin{equation}
 		\label{prop:ppm-bound1-eq2}
-		q(0) = \frac{4}{3} \bigg(\frac{F(h) - F(-h)}{2h}\bigg)
-		       - \frac{1}{3} \bigg(\frac{F(2h) - F(-2h)}{4h}\bigg)
+		q(\overline{x}) = \frac{4}{3} \bigg(\frac{Q(\overline{x}+h) - Q(\overline{x}-h)}{2h}\bigg)
+		       - \frac{1}{3} \bigg(\frac{Q(\overline{x}+2h) - Q(\overline{x}-2h)}{4h}\bigg)
 + Ch^4,
 	\end{equation}
 	which consists of finite-difference approximations. 
@@ -548,15 +575,449 @@ that this Formula may be thought as a finite-difference scheme.
 		C = \frac{1}{240}\bigg( q^{(4)}(\theta_{h}) + q^{(4)}(\theta_{-h})\bigg)
 		- \frac{1}{45}\bigg( q^{(4)}(\theta_{2h}) + q^{(4)}(\theta_{-2h})\bigg), 
 	\end{equation}
-	where $\theta_{h} \in [0,h], \theta_{-h}\in [-h,0]$, 
-	$\theta_{2h} \in [0,2h], \theta_{-2h}\in [-2h,0]$,
+	where $\theta_{h} \in [\overline{x},\overline{x}+h], \theta_{-h}\in [\overline{x}-h,\overline{x}]$, 
+	$\theta_{2h} \in [\overline{x},\overline{x}+2h], \theta_{-2h}\in [\overline{x}-2h,\overline{x}]$,
 	which concludes the proof.
 
 		% "QED" que o ambiente proof acrescenta automaticamente.
   \renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
 \end{proof}
 
+\begin{corollary}
+	\label{prop:ppm-bound1-corollary}
+	It follows from Proposition \ref{prop:ppm-bound1} with
+	$\overline{x} = x_{i+\frac{1}{2}}$ and $h = \Delta x$
+	that $q_{i+\frac{1}{2}}$ given by Equation \eqref{chp1-sec-recon-ppm-eq9} satisfies:
+	\begin{equation}
+		\label{ppm-edges-bound1}
+		q{(x_{i+\frac{1}{2}})} - q_{i+\frac{1}{2}} = C\Delta x^4,
+	\end{equation}
+	with $C$ given by right-hand side of Equation \eqref{prop:ppm-bound1-eq3}.
+	Besides that, we also have the following bound:
+	\begin{equation}
+		\label{ppm-edges-bound2}
+		\big|q{(x_{i+\frac{1}{2}})} - q_{i+\frac{1}{2}}\big| \leq C_1\Delta x^4,
+	\end{equation}
+	where:
+	\begin{equation}
+		\label{ppm-cte-bound1}
+		C_1 = \frac{19}{360}\sup_{x \in [a,b]}{|q^{(4)}(x)|},
+	\end{equation}
+	is a constant that depends only on $q$.
+\end{corollary}
+
+The parabolic function from \eqref{prop:ppm-bound1-eq1} given with 
+coefficients specified before approximates $q$ with order 3 when 
+$q \in \mathcal{C}^4([a,b])$.
+In order to check this, for $x \in X_i$ we rewrite Equation 
+\eqref{chp1-sec-recon-ppm-eq1} as: 
+\begin{equation}
+	\label{chp1-ppm-newton}
+	q_i(x) = q_{L,i} + \frac{(\Delta q_i + q_{6, i})}{\Delta x}(x-x_{i-\frac{1}{2}})
+	-\frac{q_{6, i}}{(\Delta x)^2}(x-x_{i-\frac{1}{2}})^2
+\end{equation}
+and we write $q$ using its Taylor expansion assuming $q \in \mathcal{C}^4([a,b])$:
+\begin{equation}
+	\label{chp1-ppm-taylor}
+	q(x) = q(x_{i-\frac{1}{2}}) + q'(x_{i-\frac{1}{2}})(x-x_{i-\frac{1}{2}})
+	+ \frac{q''(x_{i-\frac{1}{2}})}{2}(x-x_{i-\frac{1}{2}})^2
+	+ \frac{q^{(3)}(\theta_i)}{6}(x-x_{i-\frac{1}{2}})^3,
+\end{equation}
+where $\theta_i \in X_i$.
+Comparing Equation \eqref{chp1-ppm-newton} with Equation \eqref{chp1-ppm-taylor},
+it is reasonable to seek to some bound to the expressions:
+\begin{equation}
+	\label{chp1-ppm-bound2eq}
+	q'(x_{i-\frac{1}{2}})-\frac{(\Delta q_i + q_{6, i})}{\Delta x},
+\end{equation}
+and:
+\begin{equation} 
+	\label{chp1-ppm-bound3eq}
+	\frac{q''(x_{i-\frac{1}{2}})}{2} -\bigg(-\frac{q_{6, i}}{(\Delta x)^2}\bigg).
+\end{equation}
+We have seen that term $q_{L,i}$ gives a fourth-order approximation to $q(x_{i-\frac{1}{2}})$.
+The Corollary \ref{prop:ppm-bound2-corollary} shall prove that 
+the term \eqref{chp1-ppm-bound2eq} has a bound proportional to $(\Delta x)^2$, and
+the Corollary \ref{prop:ppm-bound3-corollary} shall prove that the
+term \eqref{chp1-ppm-bound3eq} is bounded by a constant times $\Delta x$.
+
+Before proving finding the desired bounds, it is useful to rewrite some terms
+explicitly as functions of the values $Q_i$'s.
+Combining Equation \eqref{chp1-sec-recon-ppm-eq4} with Equations
+\eqref{chp1-sec-recon-ppm-eq10} and \eqref{chp1-sec-recon-ppm-eq11}, 
+we may write $q_{6,i}$ as:
+\begin{equation}
+	\label{def:q6i-2}
+	q_{6,i} = \frac{1}{4} \bigg( Q_{i-2} - 6Q_{i-1} + 10Q_{i} -6Q_{i+1}  + Q_{i+2} \bigg).
+\end{equation}
+
+Recalling the definition of $\Delta q_i$ from Equation \eqref{chp1-sec-recon-ppm-eq2},
+and applying Equations \eqref{chp1-sec-recon-ppm-eq10} and \eqref{chp1-sec-recon-ppm-eq11}, 
+we may express $\Delta q_i$ as:
+\begin{equation}
+	\label{def:dqi-2}
+	\Delta q_i = \frac{1}{12} \bigg(Q_{i-2} -8Q_{i-1} + 8Q_{i+1} -Q_{i+2} \bigg).
+\end{equation}
+
+Finally, we combine Equations \eqref{def:q6i-2} and \eqref{def:dqi-2} and write their sum as:
+\begin{equation} 
+	\label{def:dqi_d6i}
+	\frac{(\Delta q_i + q_{6, i})}{\Delta x} = 
+	\frac{2Q_{i-2}-13Q_{i-1} +15Q_i -5Q_{i+1} + Q_{i+2}}{6\Delta x}.
+\end{equation}
+
+The next Proposition \ref{prop:ppm-bound2} proves that Equation \eqref{def:dqi_d6i}
+approximates $q'(x_{i-\frac{1}{2}})$ with order 2.
+\begin{prop}
+	\label{prop:ppm-bound2}
+	Let $q \in \mathcal{C}^{3}([a,b])$, $\overline{x}\in ]a,b[$,
+	and $h>0$ such that $[\overline{x}-2h,\overline{x}+3h] \subset [a,b]$
+	Then, the following identity holds:
+	\begin{equation}
+		\begin{split}
+		\label{prop:ppm-bound2-eq1}
+		q'(\overline{x} ) = \frac{1}{6h}
+		\bigg( \frac{2}{h} \int_{\overline{x}-2h}^{\overline{x}-h} q(x) \,dx 
+		      -\frac{13}{h}\int_{\overline{x}-h}^{\overline{x}} q(x) \,dx   
+		      +\frac{15}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx  \\ 
+		      -\frac{5}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
+		      +\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
+		\bigg) + Ch^2,
+		\end{split}
+	\end{equation}
+	where $C$ is a constant that depends on $q$ and $h$.
+\end{prop}
+
+\begin{proof}
+	We consider again $Q(x) = \int_{a}^{x} q(\xi) \,d\xi$ for $x \in [a,b]$ as in 
+	Equation \eqref{chp1-sec-recon-ppm-eq5}. 
+	Like in Proposition \ref{prop:ppm-bound2}, we have:
+	\begin{align*}
+	\frac{1}{6h}
+	\bigg( \frac{2}{h} \int_{\overline{x}-2h}^{\overline{x}-h} q(x) \,dx 
+		      -\frac{13}{h}\int_{\overline{x}-h}^{\overline{x}} q(x) \,dx   
+		      +\frac{15}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx 
+		      -\frac{5}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
+		      +\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
+		\bigg)\\
+		= \frac{1}{6h} \bigg(
+		\frac{2}{h}   \big( Q(\overline{x}-h)- Q(\overline{x}-2h)\big) 
+		-\frac{13}{h} \big( Q(\overline{x}) - Q(\overline{x}-h) \big) 
+		+\frac{15}{h} \big( Q(\overline{x}+h) - Q(\overline{x})  \big) \\
+		-\frac{5}{h}  \big( Q(\overline{x}+2h) - Q(\overline{x}+h)  \big) 
+		+\frac{1}{h}  \big( Q(\overline{x}+3h) - Q(\overline{x}+2h)  \big) 
+		\bigg)\\
+		= \frac{1}{6h^2}\bigg(-2Q(\overline{x}-2h) + 15Q(\overline{x}-h) - 28Q(\overline{x}) 
+		+20Q(\overline{x}+h) -6Q(\overline{x}+2h) + Q(\overline{x}+3h)  \bigg),
+	\end{align*}
+	which consists of the finite-difference scheme from Lemma \ref{lemma:fd-ppm-est2}. 
+	Therefore, Equation \eqref{prop:ppm-bound2-eq1} follows from 
+	Lemma \ref{lemma:fd-ppm-est2} with:
+	\begin{equation}
+		\label{prop:ppm-bound2-eq2}
+		C = \frac{1}{24}\bigg(32q^{(3)}(\theta_{-2h}) - 15q^{(3)}(\theta_{-h}) -20q^{(3)}(\theta_{h}) +96 q^{(3)}(\theta_{2h}) - 81q^{(3)}(\theta_{3h})\bigg), 
+	\end{equation}
+	where $\theta_{h} \in [\overline{x},\overline{x}+h], \theta_{-h}\in [\overline{x}-h,\overline{x}]$, 
+	$\theta_{2h} \in [\overline{x},\overline{x}+2h], \theta_{-2h}\in [\overline{x}-2h,\overline{x}]$,
+	$\theta_{3h} \in [\overline{x},\overline{x}+3h]$,
+	which concludes the proof.
+
+\renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
+\end{proof}
+
+\begin{corollary}
+	\label{prop:ppm-bound2-corollary}
+	It follows from Proposition \ref{prop:ppm-bound2} with $\overline{x} = x_{i-\frac{1}{2}}$
+	and $h = \Delta x$
+	that $\Delta q_i$ given by Equation \eqref{def:dqi-2} 
+	and $q_{6,i}$ given by Equation \eqref{def:q6i-2}
+ satisfy:
+	\begin{equation}
+	q'(x_{i-\frac{1}{2}})-\frac{(\Delta q_i + q_{6, i})}{\Delta x}  = C\Delta x^2,
+	\end{equation}
+	with $C$ given by right-hand side of Equation \eqref{prop:ppm-bound2-eq2}.
+	Besides that, we also have the following bound:
+	\begin{equation}
+		\label{ppm-edge-bound2}
+		\bigg|q'(x_{i-\frac{1}{2}})-\frac{(\Delta q_i + q_{6, i})}{\Delta x} \bigg| \leq C_2\Delta x^2,
+	\end{equation}
+	where:
+	\begin{equation}
+		\label{ppm-cte-bound2}
+		C_2 = \frac{244}{24}\sup_{x \in [a,b]}{|q^{(3)}(x)|}
+	\end{equation}
+	is a constant that depends only on $q$.
+\end{corollary}
+
+Now, we analyse the following expression:
+\begin{equation}
+	\label{def:q6i-3}
+	-\frac{2q_{6,i}}{\Delta x^2} = 
+	-\frac{1}{2\Delta x^2} \bigg( Q_{i-2} - 6Q_{i-1} + 10Q_{i} -6Q_{i+1}  + Q_{i+2} \bigg).
+\end{equation}
+deduced from Equation \eqref{def:q6i-2}
+and we prove in Proposition \ref{prop:ppm-bound3} that Equation \eqref{def:q6i-3}
+approximates $q''(x_{i-\frac{1}{2}})$ with order 1.
+\begin{prop}
+	\label{prop:ppm-bound3}
+	Let $q \in \mathcal{C}^{3}([a,b])$, $\overline{x} \in ]a,b[$
+	and $h>0$ such that $ [\overline{x}-2h,\overline{x}+3h] \subset [a,b]$.
+	Then, the following identity holds:
+	\begin{equation}
+		\begin{split}
+		\label{prop:ppm-bound3-eq1}
+		q''(\overline{x} ) = \frac{1}{2h^2}
+		\bigg(-\frac{1}{h} \int_{\overline{x}-2h}^{\overline{x}-h} q(x) \,dx 
+		      +\frac{6}{h}\int_{\overline{x}-h}^{\overline{x}} q(x) \,dx   
+		      -\frac{10}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx  \\ 
+		      +\frac{6}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
+		      -\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
+		\bigg) + Ch,
+		\end{split}
+	\end{equation}
+	where $C$ is a constant that depends on $q$ and $h$.
+\end{prop}
+
+\begin{proof}
+	Similarly to Proposition \ref{prop:ppm-bound2} using the same function $Q$, we have:
+	\begin{align*}
+	\frac{1}{2h^2}
+		\bigg(-\frac{1}{h} \int_{\overline{x}-2h}^{\overline{x}-h} q(x) \,dx 
+		      +\frac{6}{h}\int_{\overline{x}-h}^{\overline{x}} q(x) \,dx   
+		      -\frac{10}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx  
+		      +\frac{6}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
+		      -\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
+		\bigg)\\ 
+		= \frac{1}{2h^2} \bigg(
+		-\frac{1}{h}   \big( Q(\overline{x}-h)- Q(\overline{x}-2h)\big) 
+		+\frac{6}{h} \big( Q(\overline{x}) - Q(\overline{x}-h) \big) 
+		-\frac{10}{h} \big( Q(\overline{x}+h) - Q(\overline{x})  \big) \\
+		+\frac{6}{h}  \big( Q(\overline{x}+2h) - Q(\overline{x}+h)  \big) 
+		-\frac{1}{h}  \big( Q(\overline{x}+3h) - Q(\overline{x}+2h)  \big) 
+		\bigg)\\
+		= \frac{1}{2h^3}\bigg(Q(\overline{x}-2h) - 7Q(\overline{x}-h) + 16Q(\overline{x}) 
+		-16Q(\overline{x}+h) +7Q(\overline{x}+2h) - Q(\overline{x}+3h)  \bigg),
+	\end{align*}
+	which consists of the finite-difference scheme from Lemma \ref{lemma:fd-ppm-est3}. 
+	Therefore, Equation \eqref{prop:ppm-bound3-eq1} follows from 
+	Lemma \ref{lemma:fd-ppm-est3} with:
+	\begin{equation}
+		\label{prop:ppm-bound3-eq2}
+		C = \frac{1}{48}\bigg(-16q^{(3)}(\theta_{-2h}) + 7q^{(3)}(\theta_{-h}) +16q^{(3)}(\theta_{h}) - 112q^{(3)}(\theta_{2h}) + 81q^{(3)}(\theta_{3h})\bigg), 
+	\end{equation}
+	where $\theta_{h} \in [\overline{x},\overline{x}+h], \theta_{-h}\in [\overline{x}-h,\overline{x}]$, 
+	$\theta_{2h} \in [\overline{x},\overline{x}+2h], \theta_{-2h}\in [\overline{x}-2h,\overline{x}]$,
+	$\theta_{3h} \in [\overline{x},\overline{x}+3h]$,
+	which concludes the proof.
+
+\renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
+\end{proof}
+
+\begin{corollary}
+	\label{prop:ppm-bound3-corollary}
+	It follows from Proposition \ref{prop:ppm-bound3} with 
+	$\overline{x} = x_{i-\frac{1}{2}}$ and $h = \Delta x$
+	that $q_{6,i}$ given by Equation \eqref{chp1-sec-recon-ppm-eq9} satisfies:
+	\begin{equation}
+	q''(x_{i-\frac{1}{2}}) -\bigg(-\frac{2q_{6, i}}{(\Delta x)^2}\bigg) = C\Delta x,
+	\end{equation}
+	with $C$ given by right-hand side of Equation \eqref{prop:ppm-bound3-eq2}.
+	Besides that, we also have the following bound:
+	\begin{equation}
+		\label{ppm-edges-bound3}
+		\bigg|\frac{q''(x_{i-\frac{1}{2}})}{2} -\bigg(-\frac{q_{6, i}}{(\Delta x)^2}\bigg) \bigg|
+		\leq C_3\Delta x,
+	\end{equation}
+	where:
+	\begin{equation}
+		\label{ppm-cte-bound3}
+		C_3 = \frac{232}{96}\sup_{x \in [a,b]}{|q^{(3)}(x)|} 
+	\end{equation}
+	is a constant that depends only on $q$.
+\end{corollary}
+
+With the aid of Corollaries \ref{prop:ppm-bound1-corollary}, \ref{prop:ppm-bound2-corollary},
+and  \ref{prop:ppm-bound3-corollary}, we are able to prove
+that the PPM reconstruction approximates $q$ with order 3.
+Indeed, we prove this on the follow up Proposition \ref{prop:ppm-bound4}.
+
+\begin{prop}
+	\label{prop:ppm-bound4}
+	Let $q \in \mathcal{C}^{4}([a,b])$.
+	Then, the piecewise parabolic function given by
+	Equation \eqref{chp1-sec-recon-ppm-eq1} with 
+	the parameters $q_{R,i}$ and $q_{L,i}$ obeying Equations
+	\eqref{chp1-sec-recon-ppm-eq10} and \eqref{chp1-sec-recon-ppm-eq11}
+	gives a third-order aproximation to $q$ on the control volume $X_i$.
+\end{prop}
+\begin{proof}
+For $x \in X_i$, from Equations \eqref{chp1-ppm-taylor} and \eqref{chp1-ppm-newton}, we have:
+\begin{equation*}
+	\begin{split}
+	q(x)-q_i(x) = (q'(x_{i-\frac{i}{2}})-q_{L,i})	
+	+ \bigg(q'(x_{i-\frac{1}{2}})-  \frac{(\Delta q_i + q_{6, i})}{\Delta x}\bigg)(x-x_{i-\frac{1}{2}})
+	\\+ \bigg(\frac{q''(x_{i-\frac{1}{2}})}{2} + \frac{q_{6, i}}{(\Delta x)^2}\bigg)(x-x_{i-\frac{1}{2}})^2
+	+ \frac{q^{(3)}(\theta_i)}{6}(x-x_{i-\frac{1}{2}})^3.
+	\end{split}
+\end{equation*}
+For $x\in X_i$, we have $|x -x_{i-\frac{i}{2}}| \leq \Delta x$. 
+Using this fact with Corollaries \ref{prop:ppm-bound1-corollary}, \ref{prop:ppm-bound2-corollary},
+and  \ref{prop:ppm-bound3-corollary}, we have:
+\begin{equation*}
+	\begin{split}
+	|q(x)-q_i(x)| \leq |q'(x_{i-\frac{i}{2}})-q_{L,i}|
+	+ \bigg|q'(x_{i-\frac{1}{2}})-  \frac{(\Delta q_i + q_{6, i})}{\Delta x}\bigg||x-x_{i-\frac{1}{2}}|
+	\\+ \bigg|\frac{q''(x_{i-\frac{1}{2}})}{2} + \frac{q_{6, i}}{(\Delta x)^2}\bigg||x-x_{i-\frac{1}{2}}|^2
+	+ \frac{|q^{(3)}(\theta_i)|}{6}|x-x_{i-\frac{1}{2}}|^3 \\
+	\leq C_1(\Delta x)^4 + \bigg(C_2+C_3+\frac{1}{6}
+	\sup_{\xi \in [a,b]}{|q^{(3)}(\xi)|} \bigg)(\Delta x)^3,
+	\end{split}
+\end{equation*}
+where $C_1, C_2$ and $C_3$ are given by Equations \eqref{ppm-cte-bound1},
+\eqref{ppm-cte-bound2} and \eqref{ppm-cte-bound3}, respectively, which
+concludes the proof.
+\renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
+\end{proof}
+%
+
+\subsection{Monotonization - to be written}
+\label{chp1-sec-mono}
+
+
 \subsection{Flux}
 \label{chp1-sec-flux}
 
+Let us assume the framework from Problem \ref{chp1-sec2-prob3} for the linear advection
+equation for a single conservated variable, \textit{i.e.}, 
+$m=1$ and the flux function $f(q(x,t)) = u(x,t)q(x,t)$,
+where the velocity function $u$ is given.
+Supposing that the average grid values $Q^{n} = (Q^{n}_1, \cdots, Q^{n}_N)$ are known,
+we would like to compute the values $Q^{n+1}$.
+This is achieved using a scheme of the type given in Problem \ref{chp1-sec2-prob3}.
+Therefore, we need to estimate the time-average flux.
+For each control volume edge $i=0, \cdots, N$ and $y>0$ 
+we define the following average of the piecewise-parabolic approximation
+defined in Equation \eqref{chp1-sec3-1-eq2} for the data $Q^{n}$ \citep{colella:1984}:
+\begin{equation}
+	\label{chp-sec-flux:fL_1}
+	F_{L,i+\frac{1}{2}}(y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}-y}^{x_{i+\frac{1}{2}}}
+	q_{PP}(\xi)\,d\xi,
+\end{equation}
+and
+\begin{equation}
+	\label{chp-sec-flux:fR_1}
+	F_{R,i+\frac{1}{2}}(y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}}^{x_{i+\frac{1}{2}+y}}
+	q_{PP}(\xi)\,d\xi,
+\end{equation}
+If $y \leq \Delta x$, then both of the above integral domains
+are constrained to  a single control volume. Thus,
+it follows from a straightforward computation using 
+Equation \eqref{chp1-sec-recon-ppm-eq1} that:
+\begin{equation}
+	\label{chp-sec-flux:fL_2}
+	F_{L,i+\frac{1}{2}}(y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}-y}^{x_{i+\frac{1}{2}}}
+	q_{i}(\xi)\,d\xi = 
+	q_{R,i} +\frac{(q_{6,i} - \Delta q_i)}{2\Delta x}y
+	- \frac{q_{6,i}}{3(\Delta x)^2}y^2,
+\end{equation}
+and
+\begin{equation}
+	\label{chp-sec-flux:fR_2}
+	F_{R,i+\frac{1}{2}}(y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}}^{x_{i+\frac{1}{2}}+y}
+	q_{i+1}(\xi)\,d\xi = 
+	q_{L,i+1} +\frac{(q_{6,i+1} + \Delta q_{i+1})}{2\Delta x}y
+	- \frac{q_{6,i+1}}{3(\Delta x)^2}y^2.
+\end{equation}
 
+The numerical flux is then defined by:
+\begin{equation}
+	\label{chp-sec-flux:numerical-flux}
+	F_{i+\frac{1}{2}}(Q^n) =  
+    	\begin{cases}
+		u_{i+\frac{1}{2}}^nF_{L,i+\frac{1}{2}}( u_{i+\frac{1}{2}}^n\Delta t) & \text{if } u_{i+\frac{1}{2}}^n \geq 0,\\
+		u_{i+\frac{1}{2}}^nF_{R,i+\frac{1}{2}}(-u_{i+\frac{1}{2}}^n\Delta t) & \text{if } u_{i+\frac{1}{2}}^n<0,
+    	\end{cases}
+\end{equation}
+Notice that if we define:
+\begin{equation}
+	\label{chp-sec-flux:cedges}
+	c_{i+\frac{1}{2}}^n = u_{i+\frac{1}{2}}^n\frac{\Delta t}{\Delta x},
+\end{equation}
+the requirement $y\leq \Delta x$ for 
+Equation \eqref{chp-sec-flux:numerical-flux} is equivalent
+to require that $|c^{n}_{i+\frac{1}{2}}| \leq 1$ for all $i$,  which is the CFL condition.
+In the absence of monotonization, it follows from Equations
+\eqref{chp1-sec-recon-ppm-eq10}, \eqref{chp1-sec-recon-ppm-eq11},
+\eqref{def:q6i-2} and \eqref{def:dqi-2}
+that the numerical flux may be expressed as the following stencil:
+\begin{equation}
+	\label{chp-sec-flux:numerical-flux-stencil}
+	F_{i+\frac{1}{2}}(Q^n) = \frac{u_{i+\frac{1}{2}}^n}{12} \bigg( 
+	\alpha_iQ_{i-2}^n + \beta_i Q_{i-1}^n + 
+	\gamma_i Q_{i}^n + \delta_i Q_{i+1}^n + \epsilon_i Q_{i+2}^n
+	+\zeta_i Q_{i+3}^n \bigg),
+\end{equation}
+where the coefficients are given by:
+\begin{equation}
+	\label{chp-sec-flux:numerical-flux-stencil-alpha}
+	\alpha_i =  
+    	\begin{cases}
+		c_{i+\frac{1}{2}}-c_{i+\frac{1}{2}}^2 &
+		\text{if } u_{i+\frac{1}{2}}^n \geq 0,\\
+		0 & \text{if } u_{i+\frac{1}{2}}^n<0,
+    	\end{cases}
+\end{equation}
+
+\begin{equation}
+	\label{chp-sec-flux:numerical-flux-stencil-beta}
+	\beta_i =  
+    	\begin{cases}
+		-1 - 5c_{i+\frac{1}{2}}  + 6c_{i+\frac{1}{2}}^2 
+		& \text{if } u_{i+\frac{1}{2}}^n \geq 0,\\
+		-1 +  2c_{i+\frac{1}{2}}   -   c_{i+\frac{1}{2}}^2 & \text{if } u_{i+\frac{1}{2}}^n<0,
+    	\end{cases}
+\end{equation}
+
+\begin{equation}
+	\label{chp-sec-flux:numerical-flux-stencil-gamma}
+	\gamma_i =  
+    	\begin{cases}
+		7 + 15c_{i+\frac{1}{2}} - 10c_{i+\frac{1}{2}}^2 
+		& \text{if } u_{i+\frac{1}{2}}^n \geq 0,\\
+		7 - 13c_{i+\frac{1}{2}}  +  6c_{i+\frac{1}{2}}^2 & \text{if } u_{i+\frac{1}{2}}^n<0,
+    	\end{cases}
+\end{equation}
+
+\begin{equation}
+	\label{chp-sec-flux:numerical-flux-stencil-delta}
+	\delta_i =  
+    	\begin{cases}
+		7 - 13c_{i+\frac{1}{2}} +  6c_{i+\frac{1}{2}}^2 & \text{if } u_{i+\frac{1}{2}}^n \geq 0,\\
+		7 + 15c_{i+\frac{1}{2}} - 10c_{i+\frac{1}{2}}^2 & \text{if } u_{i+\frac{1}{2}}^n<0,
+    	\end{cases}
+\end{equation}
+
+\begin{equation}
+	\label{chp-sec-flux:numerical-flux-stencil-epsilon}
+	\epsilon_i =  
+    	\begin{cases}
+		-1 +  2c_{i+\frac{1}{2}} -   c_{i+\frac{1}{2}}^2 
+		& \text{if } u_{i+\frac{1}{2}}^n \geq 0,\\
+		-1 - 5c_{i+\frac{1}{2}} +  6c_{i+\frac{1}{2}}^2 & \text{if } u_{i+\frac{1}{2}}^n<0,
+    	\end{cases}
+\end{equation}
+
+\begin{equation}
+	\label{chp-sec-flux:numerical-flux-stencil-zeta}
+	\zeta_i =  
+    	\begin{cases}
+		0 & \text{if } u_{i+\frac{1}{2}}^n \geq 0,\\
+		c_{i+\frac{1}{2}}-   c_{i+\frac{1}{2}}^2 & \text{if } u_{i+\frac{1}{2}}^n<0,
+    	\end{cases}
+\end{equation}
+
+\subsection{Flux numerical analysis }
+To be written!
+
+\subsection{Numerical experiements}
+%\label{chp1-sec-numerical-exp}
