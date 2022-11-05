@@ -132,6 +132,8 @@ when the resolution is increased due to the amount of MPI communications \citep{
 The adiabatic and frictionless continuous equations that govern the atmospheric flow have 
 conserved quantities. Among them, some of the most important are mass, total energy, 
 angular momentum and potential vorticity \citep{thuburn:2011}.
+Numerical schemes that are known for having discrete analogous of these conservative properties
+are known as mimetic schemes.
 As we pointed out, Semi-Lagrangian schemes lack mass conservation. Nevertheless, 
 these schemes have been employed in dynamical cores for better computational performance.
 However, dynamical cores should have discrete analogous of the 
@@ -150,29 +152,25 @@ the pentagonal/hexagonal or Voronoi grid (Figure \ref{voronoi-grid}) and octahed
 which are based on the cube, icosahedron, dodecahedron and octahedron, respectively \citep{ullrich:2017}.
 
 \section{Motivations}
-Building a highly parallelizable numerical scheme with mimetic properties in a quasi-uniform 
-grid is far from being a trivial task.
-A popular mimetic method, known as TRiSK, was proposed in the literature by
-\citet{thuburn:2009} and \citet{ringler:2010} using finite difference and finite volume schemes.
-This scheme is designed for general orthogonal grids, such as the Voronoi and icosahedral grids,
-and ensures mass and total energy conservation.
-This method has been employed in the dynamical core of the Model for Prediction Across Scales (MPAS)
-from National Center for Atmospheric Research (NCAR) \citep{skamarock:12}, which intended to work on general Voronoi grids, including locally refined Voronoi grids.
-However, the TRiSK scheme is a low-order scheme and suffers from grid imprinting, \textit{i.e.},
-geometric properties of the grid, such as cell alignment, interfere with the method accuracy
-\citep{weller:12, peixoto:13, peixoto:16}. Furthermore, in locally refined Voronoi grids,
-the scheme may become unstable due to ill-aligned cells and numerical dissipation is needed \citep{santos:2021},
-breaking the total energy conservation of the method.
-
 The cubed-sphere became a popular quasi-uniform grid for the new generation of dynamical cores.
 It was originally proposed by \citet{sadourny:1972} and it was reviseted by \citet{ronchi:1996}.
+Some of the cubed-sphere advantages are: uniformity; quadrilateral structure, 
+making the grid indexing trivial; no overlappings; it is cheap to generate.
+However, the major drawbacks of the cubed-sphere are: non-orthogonal coordinate system, which
+leads to metric terms on the differetial operator; discontinuity of the coordinate system
+at the cube edges, which may generate numerical noise and
+demands special treatment of discrete operators at the cube edges.
+
+Despite of its drawbacks, the cubed-sphere has been adpoted in some of the new generation
+dynamical cores.
 For instance, the cubed-sphere is used in the 
 Community Atmosphere Model (CAM-SE) from the NCAR using spectral elements \citep{dennis:2012} and in the
 Nonhydrostatic Unified Model of the Atmosphere (NUMA) from the US Navy using Discontinuous Galerkin 
 methods \citep{giraldo:2013}. The cubed-sphere was also chosen to be used in the next UK Met Office
-global model using mixed finite elements.
-At last, the Finite­ Volume Cubed-Sphere dynamical core (FV3) from the Geophysical Fluid Dynamics Laboratory (GFDL) and the 
-National Oceanic and Atmospheric Administration (NOAA) \citep{putman:2007} is another example
+global model using mixed finite elements \citep{melvin:2022}.
+At last, the Finite­ Volume Cubed-Sphere dynamical core (FV3) from the Geophysical Fluid 
+Dynamics Laboratory (GFDL) and the National Oceanic and Atmospheric Administration (NOAA)
+\citep{putman:2007,harris:2013} is another example
 of new generation dynamical core based on the cubed-sphere.
 
 The FV3 model is an extension of the Finite-Volume dynamical core (FVcore)
@@ -194,4 +192,68 @@ Currently, the FV3 model is capable of perfoming hydrostatic and non-hydrostatic
 and it was chosen as the new US global weather prediction model, indeed, it replaced the spectral transform
 Global Forecast System (GFS) in June, 2019 \citep{samenow:2019}.
 
-Lack of numerical study... edges? non orthogonal... wave number 4.
+However, a well-known problem that occurs on cubed-sphere models that use low-order numerical methods
+is the grid imprinting visible due to the coordinate system discontinuity, 
+especially at larger scales, leading to the emergence of a wavenumber 4 pattern.
+This was reported in the paper of \citet{rancic:2017}, where the authors employ a 
+finite-difference numerical scheme on the Uniform Jacobian cubed-sphere using a Arakawa B-grid.
+The unpublished report from \citet{whitaker:2015} shows grid imprinting in other models, including 
+the FV3.
+Generally speaking, grid imprinting is the presence of artificial behaviors on 
+the numerical solution that is associated with the grid employed.
+It is important to stress out that other quasi-uniform grids may also suffer from grid imprinting.
+For instance, a popular mimetic method, known as TRiSK, was proposed in the literature by
+\citet{thuburn:2009} and \citet{ringler:2010} using finite difference and finite volume schemes.
+This scheme is designed for general orthogonal grids, such as the Voronoi and icosahedral grids,
+and ensures mass and total energy conservation.
+This method has been employed in the dynamical core of the Model for Prediction Across Scales (MPAS)
+from National Center for Atmospheric Research (NCAR) \citep{skamarock:12}, 
+which intended to work on general Voronoi grids, including locally refined Voronoi grids.
+However, the TRiSK scheme is a low-order scheme and also suffers from grid imprinting, \textit{i.e.},
+geometric properties of the grid, such as cell alignment, interfere with the method accuracy
+\citep{weller:12, peixoto:13, peixoto:16}. Furthermore, in locally refined Voronoi grids,
+the scheme may become unstable due to ill-aligned cells and numerical dissipation is needed \citep{santos:2021},
+breaking the total energy conservation of the method.
+
+Despite being chosen as the new US global weather prediction model,
+there is a lack of numerical studies of the FV3 discretizations in the literature,
+especially regarding the grid imprinting problem and its mimetic properties.
+For instance, numerical results for the advection equation on the cubed-sphere using the
+FV3 dynamical core was presented in \citet{putman:2007}.
+Many other papers available in the literature use the complete FV3 model in three-dimensional
+frameworks which make it harder to perform a numerical analysis study due not only to its computational cost,
+but also due to the complexity of three-dimensional atmospheric models.
+There are no works published in intermediate two-dimensional frameworks, using, for 
+instance, the shallow-water equations on the sphere.
+Even though the advection equation on the sphere plays a key role in the dynamical core development,
+since it models the transport of scalar fields on the sphere, important features captured by the shallow-water
+equations on the sphere, such as the Coriolis effect, inertia-gravity waves, geostrophic adjustment, Rossby waves,
+among others, are not captured by a simple advection model.
+Hence, shallow-water equations provide an excellent benchmark to assess dynamical cores in general,
+since it is only two-dimensional but is a complex enough geophysical model for atmosphere dynamics.
+
+\section{Goals}
+The aim of this work is to fill the gap in the literature regarding numerical studies of the FV3 
+discrete operators that we pointed out before.
+More explicitly, the goals of this work are:
+\begin{itemize}
+  \item Investigate the occurrence of grid imprinting on the cubed-sphere using the advection equations and
+    the shallow-water equations on the sphere;
+  \item Propose improvements on the FV3 discrete operators and modifications on the cubed-sphere that alleviate
+    grid imprinting;
+  \item Investigate how we can add more mimetic properties to the FV3 discretizations.
+\end{itemize}
+
+\section{Outline}
+This report is outlined as follows.
+Chapter \ref{chp1-1d-fv} is dedicated to review the Piecewise Parabolic Method (PPM)
+for the one-dimensional advection equation. 
+Chapter \ref{chp-2d-fv} reviews the dimension splitting method, which allow us to use 
+one-dimensional methods, such as the PPM, to solve the two-dimensional advection equation.
+Chapter \ref{chp-cs-grids} introduces the cubed-sphere grid and shows some of its geometric 
+properties.
+Chapter \ref{chp-cs-fv} extends the ideas of Chapter \ref{chp-2d-fv} to the cubed-sphere grid.
+The dimension-splitting method on each cubed-sphere panel works as in the plane, with the addtion
+of metric terms, due to non-orthogonality of the grid, and interpolation between panels
+to obtain ghost cells values needed for stencil computations. 
+We give some future work perspectives in Chapter \ref{chp-conclusions}.
