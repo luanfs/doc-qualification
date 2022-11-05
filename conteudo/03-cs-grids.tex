@@ -1,7 +1,3 @@
-%!TeX root=../tese.tex
-%("dica" para o editor de texto: este arquivo é parte de um documento maior)
-% para saber mais: https://tex.stackexchange.com/q/78101
-
 \chapter{Cubed-sphere grids}
 \label{chp-cs-grids}
 \citep{sadourny:1972}
@@ -12,5 +8,228 @@
 \citep{lauritzen:2011}
 
 To be written!
-\section{To be written}
+\section{Equidistant cubed-sphere}
+\label{equidistant-cs}
+We consider a radius $R>0$ and
+$a = \frac{R}{\sqrt{3}}$ representing the half-length of 
+the cube, and the family of maps
+$\Psi_{p}: [-a,a] \times [-a,a] \to \mathbb{S}^2_R$, $p=1, \cdots, 6$,
+where:
+\begin{equation}
+	\label{chp3-eqdistant-psi1}
+	\Psi_{1}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(a, x, y), 
+\end{equation}
+
+\begin{equation}
+	\label{chp3-eqdistant-psi2}
+	\Psi_{2}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(-x, a, y), 
+\end{equation}
+
+\begin{equation}
+	\label{chp3-eqdistant-psi3}
+	\Psi_{3}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(-a, -x, y), 
+\end{equation}
+
+\begin{equation}
+	\label{chp3-eqdistant-psi4}
+	\Psi_{4}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(x, -a, y), 
+\end{equation}
+
+\begin{equation}
+	\label{chp3-eqdistant-psi5}
+	\Psi_{5}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(-y, x, a), 
+\end{equation}
+
+\begin{equation}
+	\label{chp3-eqdistant-psi6}
+	\Psi_{6}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(y, x, -a), 
+\end{equation}
+
+\begin{equation}
+	\label{chp3-eqdistant-dpsi1}
+	D\Psi_{1}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}
+	\begin{bmatrix}
+		-ax & -ay \\
+	 	 a^2+y^2  & -xy \\
+		 -xy  & a^2+x^2
+	\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+	\label{chp3-eqdistant-dpsi2}
+	D\Psi_{2}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}
+	\begin{bmatrix}
+		-(a^2+y^2) & xy \\
+		 -ax &  -ay \\
+		 -xy &  a^2+x^2
+	\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+	\label{chp3-eqdistant-dpsi3}
+	D\Psi_{3}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}
+	\begin{bmatrix}
+		 ax &  ay \\
+		-(a^2+y^2) & xy \\
+		 -xy &  a^2+x^2
+	\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+	\label{chp3-eqdistant-dpsi4}
+	D\Psi_{4}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}	
+	\begin{bmatrix}
+		 a^2+y^2 &  -xy \\
+		 ax & ay \\
+		 -xy &  a^2+x^2
+	\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+	\label{chp3-eqdistant-dpsi5}
+	D\Psi_{5}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}	
+	\begin{bmatrix}
+		 xy  & -(a^2+x^2) \\
+	 	 a^2+y^2  &  -xy \\
+		-ax & -ay
+	\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+	\label{chp3-eqdistant-dpsi6}
+	D\Psi_{6}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}
+	\begin{bmatrix}
+		 -xy  &  a^2+x^2 \\
+		 a^2+y^2  &  -xy \\
+		 ax &  ay
+	\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+	\boldsymbol{g}_{1}(x,y;p) = D\Psi_{p}(x,y)
+	\begin{bmatrix}
+		 1 \\
+		 0
+	\end{bmatrix},
+	\boldsymbol{g}_{2}(x,y;p) = D\Psi_{p}(x,y)
+	\begin{bmatrix}
+		 0 \\
+		 1
+	\end{bmatrix},
+\end{equation}
+
+$\{\boldsymbol{g}_{1}(x,y;p),\boldsymbol{g}_{2}(x,y;p)\} \subset T_{\Psi_p(x,y)}
+\mathbb{S}_{R}^2$, $\forall (x,y) \in [-a,a]\times[-a,a]$
+\begin{equation}
+	\label{chp3-eqdistant-psitensor}
+	[D\Psi_{p}(x,y)]^TD\Psi_{p}(x,y)
+	= \frac{R^2}{(a^2 + x^2 + y^2)^2}
+	\begin{bmatrix}
+		 a^2 + x^2 &  -xy \\
+		 -xy & a^2 + y^2
+	\end{bmatrix}
+\end{equation}
+
+Hence, it makes sense to define the matrix 
+$G_{\Psi}(x,y) = [D\Psi_{p}(x,y)]^TD\Psi_{p}(x,y)$ 
+which is known as metric tensor.
+It is easy to see that:
+\begin{equation}
+	\label{chp3-eqdistant-psi-metric-tensor}
+	G_{\Psi}(x,y) = 
+	\begin{bmatrix}
+		\langle \boldsymbol{g}_{1}(x,y;p), \boldsymbol{g}_{1}(x,y;p) \rangle & 
+		\langle \boldsymbol{g}_{1}(x,y;p), \boldsymbol{g}_{2}(x,y;p) \rangle \\
+		\langle \boldsymbol{g}_{1}(x,y;p), \boldsymbol{g}_{2}(x,y;p) \rangle  &
+		\langle \boldsymbol{g}_{2}(x,y;p), \boldsymbol{g}_{2}(x,y;p) \rangle 
+	\end{bmatrix}
+\end{equation}
+and that $G_{\Psi}(x,y)$ is positive-definite, 
+$\forall (x,y) \in [-a,a]\times[-a,a]$.
+The Jacobian of the metric tensor $G_{\Psi}(x,y)$ is then given by:
+\begin{equation}
+	\sqrt{|\det{G_{\Psi}(x,y)}|} = \frac{R^2}{(a^2+x^2+y^2)^{3/2}}a 
+\end{equation}
+
+\section{Equiangular cubed-sphere}
+\label{equiangular-cs}
+We consider again $a=\frac{R}{\sqrt{3}}$
+and we define the family of maps
+$\Phi_{p}: [-\frac{\pi}{4},\frac{\pi}{4}] 
+\times [-\frac{\pi}{4},\frac{\pi}{4}] 
+\to \mathbb{S}^2_R$, $p=1, \cdots, 6$,
+given by $\Phi_{p}(x,y) = \Psi_{p}(a\tan{x}, a\tan{y})$.
+By the chain rule:
+\begin{equation}
+	D\Phi_{p}(x,y) = a
+	\begin{bmatrix}
+		\frac{1}{\cos^2 x} & 0 \\ 
+		0 & \frac{1}{\cos^2 y} 
+	\end{bmatrix}
+	D\Psi_{p}(a\tan{x}, a\tan{y})
+\end{equation}
+
+\begin{align}
+	\boldsymbol{r}_{1}(x,y;p) = D\Phi_{p}(x,y)
+	\begin{bmatrix}
+		 1 \\
+		 0
+	\end{bmatrix}
+	= \frac{a}{\cos^2 x}
+	\boldsymbol{g}_{1}(\tan{x}, \tan{y}; p)
+	,\\
+	\boldsymbol{r}_{2}(x, y ;p) = D\Phi_{p}(x,y)
+	\begin{bmatrix}
+		 0 \\
+		 1
+	\end{bmatrix}
+	= \frac{a}{\cos^2 y}
+	\boldsymbol{g}_{2}(\tan{x}, \tan{y}; p)
+\end{align}
+
+Hence, it makes sense to define the matrix 
+\begin{align}
+	G_{\Phi}(x,y) &= [D\Phi_{p}(x,y)]^TD\Phi_{p}(x,y) \\
+	&= a^2
+	[D\Psi_{p}(a\tan{x},a\tan{y})]^T
+	\begin{bmatrix}
+		\frac{1}{\cos^4 x} & 0 \\ 
+		0 & \frac{1}{\cos^4 y} 
+	\end{bmatrix}
+	D\Psi_{p}(a\tan{x}, a\tan{y})
+\end{align}
+which is known as metric tensor.
+
+$\{\boldsymbol{r}_{1}(x,y;p),\boldsymbol{r}_{2,p}(x,y;p)\} \subset T_{\Phi_p(x,y)}
+\mathbb{S}_{R}^2$, $\forall (x,y) \in 
+[-\frac{\pi}{4},\frac{\pi}{4}] 
+\times [-\frac{\pi}{4},\frac{\pi}{4}]$
+
+It is easy to see that:
+\begin{equation}
+	\label{chp3-eqangle-phi-metric-tensor}
+	G_{\Phi}(x,y) = 
+	\begin{bmatrix}
+		\langle \boldsymbol{r}_{1}(x,y;p), \boldsymbol{r}_{1}(x,y;p) \rangle & 
+		\langle \boldsymbol{r}_{1}(x,y;p), \boldsymbol{r}_{2}(x,y;p) \rangle \\
+		\langle \boldsymbol{r}_{1}(x,y;p), \boldsymbol{r}_{2}(x,y;p) \rangle  &
+		\langle \boldsymbol{r}_{2}(x,y;p), \boldsymbol{r}_{2}(x,y;p) \rangle 
+	\end{bmatrix}
+\end{equation}
+and that $G_{\Phi}(x,y)$ is positive-definite, 
+$\forall (x,y) \in [-\frac{\pi}{4},\frac{\pi}{4}] 
+\times [-\frac{\pi}{4},\frac{\pi}{4}]$.
+The Jacobian of the metric tensor $G_{\Phi}(x,y)$ is then given by:
+\begin{align}
+	\sqrt{|\det{G_{\Phi}(x,y)}|} &= \frac{a}{\cos^2 x \cos^2 y}
+	\frac{R^2}{(a^2 + a^2\tan^2x + a^2\tan^2y)^{3/2}}a\\
+	&= \frac{R^2}{\cos^2 x \cos^2 y}
+	\frac{1}{(1 + \tan^2x + \tan^2y)^{3/2}}
+\end{align}
+
+
+
+
+
+
 

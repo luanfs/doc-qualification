@@ -229,7 +229,13 @@ This version is also summarized in Problem \ref{sec:fv-2d-prob2}.
 Finally, we define the one-dimensional (2D) finite-volume (FV)
 scheme problem as follows in Problem \ref{sec:fv-2d-prob3}.
 We use the notation ${q}^n_{ij} = {q}(x_i, y_j, t_n)$
-to represent the values of ${q}$ in the discrete domain $D$.
+to represent the values of ${q}$ in the discrete domain $D$
+and $u_{i+\frac{1}{2},j}^n = u(x_{i+\frac{1}{2}}, y_j, t_n)$
+to represent the velocity in $x$ direction at control volume
+edges midpoints in the $x$ direction, 
+and $v_{i,j+\frac{1}{2}}^n = v(x_i,y_{j+\frac{1}{2}},t_n)$
+to represent the velocity in $y$ direction at control volume
+edges midpoints in the $y$ direction, 
 \begin{prob}[2D-FV scheme]
 	\label{sec:fv-2d-prob3}
 	Assume the framework defined in Problem \ref{sec:fv-2d-prob2}.
@@ -237,27 +243,46 @@ to represent the values of ${q}$ in the discrete domain $D$.
 	consists of a finding a scheme of the form:
 	\begin{align*}
 		{Q}_{ij}^{n+1} =  {Q}_{ij}^{n} -
-		\frac{\Delta t}{\Delta x \Delta y} ({F}_{i+\frac{1}{2},j}^{n} - {F}_{i-\frac{1}{2},j}^{n}) -
-		\frac{\Delta t}{\Delta x \Delta y} ({G}_{i,j+\frac{1}{2}}^{n} - {G}_{i,j-\frac{1}{2}}^{n}),
+		\frac{\Delta t}{\Delta x \Delta y} 
+        \delta_i {F}_{i,j}^{n} - 
+		\frac{\Delta t}{\Delta x \Delta y}
+        \delta_j {G}_{i,j}^{n},
 		\\ \nonumber \quad \forall i = 1, \cdots, N, \quad \forall j = 1, \cdots, M,
-		\quad \forall n = 1, \cdots, N_T,
+		\quad \forall n = 1, \cdots, N_T-1,
 	\end{align*}
-	where ${Q}_{ij}^{n} \in \mathbb{R}^m$ is intended to be an approximation
+	where $ \delta_i F_{ij}^n =
+    {F}_{i+\frac{1}{2},j}^{n} 
+    - {F}_{i-\frac{1}{2},j}^{n}$,
+    $ \delta_j G_{ij}^n =
+    {G}_{i,j+\frac{1}{2}}^{n} 
+    - {G}_{i,j-\frac{1}{2}}^{n}$ 
+    and ${Q}_{ij}^{n} \in \mathbb{R}^m$ is intended to be an approximation
 	of ${Q}_{ij}(t_{n})$ in some sense. We define by ${Q}_{ij}^{0} = {Q}_{ij}(0)$ or
 	${Q}_{ij}^{0} = {q}^0_{i,j}$.
-	
-	The term ${F}_{i+\frac{1}{2}, j}^{n}$ approximates
-	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} {f}({q}(x_{i+\frac{1}{2}}, y, t)) \,dy \,dt $,
-	${F}_{i-\frac{1}{2},j}^{n}$ approximates
-	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} {f}({q}(x_{i-\frac{1}{2}}, y, t)) \,dy \,dt $,
-	${G}_{i, j+\frac{1}{2}}^{n}$ approximates
-	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {g}({q}(x, y_{j+\frac{1}{2}}, t)) \,dx \,dt $,
-	${G}_{i, j-\frac{1}{2}}^{n}$ approximates
-	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {g}({q}(x, y_{j-\frac{1}{2}}, t)) \,dx \,dt $,
-	or, in other words, they estimate the time-averaged fluxes at the control volume $\Omega_{ij}$ boundaries.
+    
+    The term ${F}_{i+\frac{1}{2}, j}^{n} = {\mathcal{F}}
+    (Q^n; u^n; i,j)
+    $ is known as numerical flux in the 
+    $x$ direction, where $\mathcal{F}$ is the numerical flux function, 
+    and it approximates
+	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} 
+    \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
+    {f}({q}(x_{i+\frac{1}{2}}, y, t)) \,dy \,dt $,
+    $\forall i = 0, 1, \cdots, N$,
+    and 
+	${G}_{i, j+\frac{1}{2}}^{n} = 
+    {\mathcal{G}} (Q^n, v^n; i, j)$ 
+    is known as numerical flux in the 
+    $y$ direction, where $\mathcal{G}$ 
+    is the numerical flux function, and it approximates
+	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}}  
+    \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
+    {g}({q}(x, y_{j+\frac{1}{2}}, t)) \,dx \,dt $,
+    $\forall j = 0, 1, \cdots, M$,
+	or, in other words, they estimate the time-averaged
+    fluxes at the control volume $\Omega_{ij}$ boundaries.
 \end{prob}
-
-
+$Q^n = (Q_{ij}^n)_{i=1,\cdots, N, j = 1, \cdots, M}$
 
 \section{Dimension splitting}
 \label{sec-dimsplit}
