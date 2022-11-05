@@ -1,0 +1,255 @@
+\chapter{Spherical coordinates and geometry}
+\label{anexo-sph}
+%\theoremstyle{plain} % As próximas definições usam este estilo
+%\newtheorem{lema-fd}{Lemma}
+
+Given $R>0$, we denote the sphere of radius $R$ 
+centered at the origin of  $\mathbb{R}^3$:
+\begin{equation*}
+	\mathbb{S}^2_R = \{(X,Y,Z) \in \mathbb{R}^3: X^2 + Y^2 + Z^2 = R^2\}.
+\end{equation*}
+The tangent space at $P \in \mathbb{S}^2_R$ by $T_P \mathbb{S}^2$.
+It is easy to see that:
+\begin{equation*}
+	T_P\mathbb{S}^2_R = \{Q \in \mathbb{R}^3: \langle P,Q\rangle = 0\},
+\end{equation*}
+where $\langle \cdot, \cdot \rangle$ denotes 
+the standard inner product of $\mathbb{R}^3$.
+The tangent bundle is denoted by:
+\begin{equation*}
+T\mathbb{S}_R^2 = \bigcup_{P\in \mathbb{S}^R_2} T_P \mathbb{S}_R^2.
+\end{equation*}
+We are going to consider three ways to represent an element of $\mathbb{S}_R^2$:
+using $(X,Y,Z)$ coordinates, or using $(\lambda, \phi)$
+latitude-longitude coordinates, or, at last, using the cubed-sphere
+coordinates $(x,y,p)$, where $(x,y)$ are the cube face coordinates and 
+$p \in \{1,2,\cdots, 6\}$ stands for a cube panel, as presented in 
+Chapter \ref{chp-cs-grids}.
+
+\section{Tangent vectors}
+\label{anexo-tangent}
+Let us consider $P \in \mathbb{S}_R^2$, we consider the projection
+on the tangent space $T_P\mathbb{S}^2_R$ which is given by:
+\begin{equation*}
+	\Pi_P(Q) = \frac{\langle P, Q \rangle}{R}P - Q
+\end{equation*}
+
+We introduce the tangent vectors at $\Psi_p(x,y)$
+given by:
+$\boldsymbol{g}_x(x,y;p) = \Pi_P(\Psi_p(x+ \Delta x,y))$, 
+$\boldsymbol{g}_y(x,y;p) = \Pi_P(\Psi_p(x,y + \Delta y))$,
+where $P = \Psi_p(x,y + \Delta y)$.
+We then introduce the normalized vectors:
+\begin{equation*}
+\boldsymbol{e}_x(x,y;p) = 
+\frac{\boldsymbol{g}_x(x,y;p)}{\|\boldsymbol{g}_x(x,y;p)\|}, \quad
+\boldsymbol{e}_y(x,y;p) = 
+\frac{\boldsymbol{g}_y(x,y;p)}{\|\boldsymbol{g}_y(x,y;p)\|},
+\end{equation*}
+where $\|\cdot\|$ is the Euclidean norm. It can be shown
+that the tangent vector of the geodesic from $\Psi_p(x,y)$
+from $\Psi_p(x+\Delta x, y)$ is a multiple of $\boldsymbol{e}_x$
+and  the tangent vector of the geodesic from $\Psi_p(x,y)$
+from $\Psi_p(x, y+\Delta y)$ is a multiple of $\boldsymbol{e}_y$.
+Thus, this process using the projection operator on the tangent space
+allow us to compute the unit tangent vectors for any cubed-sphere mapping
+gridlines at a given point.
+
+\section{Conversions between latitude-longitude  
+and contravariant coordinates}
+\label{anexo-sph-ll}
+We consider the latitude-longitude mapping 
+$\Psi_{ll}: [0,2\pi] \times [-\frac{\pi}{2},\frac{\pi}{2}] \to \mathbb{S}^2_R$, given by:
+\begin{align}
+	\label{ll2sph}
+	X(\lambda,\phi) &= R\cos \phi \cos \lambda,\\
+	Y(\lambda,\phi) &= R\cos \phi \sin \lambda,\\
+	Z(\lambda,\phi) &= R\sin \phi,
+\end{align}
+The derivative or Jacobian matrix of the mapping $\Psi_{ll}$ is given by:
+\begin{equation}
+	\label{dpsi}
+	D\Psi_{ll} (\lambda,\phi) = 
+	R \begin{bmatrix}
+		  -\cos \phi \sin \lambda &  -\sin \phi \cos \lambda \\
+		   \cos \phi \cos \lambda & \sin \phi \sin \lambda \\
+		  0  &  \cos \phi
+	\end{bmatrix}
+\end{equation}
+Using this matrix columns, we can define the tangent vectors:
+\begin{equation}
+	\boldsymbol{g}_{\lambda}(\lambda,\phi) = D\Psi_{ll}(\lambda,\phi)
+	\begin{bmatrix}
+		 1 \\
+		 0
+	\end{bmatrix}, \quad
+	\boldsymbol{g}_{\phi}(\lambda,\phi) = D\Psi_{ll}(\lambda,\phi)
+	\begin{bmatrix}
+		 0 \\
+		 1
+	\end{bmatrix},
+\end{equation}
+We normalize the vectors $\boldsymbol{g}_\lambda$ and $\boldsymbol{g}_\phi$
+and we obtain unit tangent vectors on the sphere at $\Phi_{ll}(\lambda, \phi)$:
+\begin{equation}
+	\label{latlon_tg_vectors}
+	\boldsymbol{e}_{\lambda}(\lambda,\phi) = 
+	\begin{bmatrix}
+		 -\sin \lambda \\
+		  \cos \lambda \\
+		  0
+	\end{bmatrix}, \quad
+	\boldsymbol{e}_{\phi}(\lambda,\phi) =
+	\begin{bmatrix}
+		 -\sin \phi \cos \lambda \\
+		 -\sin \phi \sin \lambda \\
+			  \cos \phi
+	\end{bmatrix},
+\end{equation}
+
+Let us consider a tangent vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
+T\mathbb{S}_R^2$ on the sphere, \textit{i.e.}, 
+$\boldsymbol{u}(P) \in T_P\mathbb{S}^2_R$, $\forall P \in \mathbb{S}^2_R$.
+We may express this vector fields in latitude-longitude coordinates as:
+\begin{equation}
+	\label{latlon-wind}
+	\boldsymbol{u}(\lambda, \phi) = 
+        u_{\lambda} (\lambda, \phi) \boldsymbol{e}_{\lambda} (\lambda, \phi) + 
+	v_{\phi} (\lambda, \phi) \boldsymbol{e}_{\phi} (\lambda, \phi). 
+\end{equation}
+Or, we may also represent this vector field using the basis 
+obtained by cubed-sphere coordinates:
+\begin{equation}
+	\label{contravariant-wind}
+	\boldsymbol{u}(x, y; p) = 
+	\tilde{u}(x, y; p) \boldsymbol{e}_{x}(x, y; p) + 
+	\tilde{v}(x, y; p) \boldsymbol{e}_{y}(x, y; p).
+\end{equation}
+This representation is known as contravariant representation.
+In order to relate the latitude-longitude representation
+with the contravariant representation, we notice that:
+\begin{align}
+	\label{basis-convertion1}
+	\boldsymbol{e_{x}}(x, y; p) &= 
+	\langle \boldsymbol{e}_{x} , \boldsymbol{e}_{\lambda}\rangle
+	\boldsymbol{e}_{\lambda} (\lambda, \phi)  
+	+ \langle \boldsymbol{e}_{x} , \boldsymbol{e}_{\phi}\rangle
+	\boldsymbol{e}_{\phi} (\lambda, \phi), \\
+	\label{basis-convertion2}
+	\boldsymbol{e_{y}}(x, y; p) &=  
+	\langle \boldsymbol{e}_{y} , \boldsymbol{e}_{\lambda}\rangle
+	  \boldsymbol{e}_{\lambda} (\lambda, \phi) 
+	+ \langle \boldsymbol{e}_{y} , \boldsymbol{e}_{\phi}\rangle
+	\boldsymbol{e}_{\phi} (\lambda, \phi), 
+\end{align}
+which holds since the vectors $\boldsymbol{e}_{\lambda}(\lambda, \phi)$ and
+$\boldsymbol{e}_{\phi}(\lambda, \phi)$ are orthogonal.
+Replacing Equations \eqref{basis-convertion1} and \eqref{basis-convertion2}
+in Equation \eqref{contravariant-wind}, we obtain the values $(u_\lambda, v_\phi)$
+in terms of the contravariant components $(\tilde{u}, \tilde{v})$ 
+as the following matrix equation:
+\begin{equation}
+	\label{ll-to-contravariant}
+	\begin{bmatrix}
+		 u_\lambda (\lambda, \phi) \\
+		 v_\phi (\lambda, \phi) 
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		\langle \boldsymbol{e}_x, \boldsymbol{e}_\lambda \rangle 
+		& \langle \boldsymbol{e}_y, \boldsymbol{e}_\lambda \rangle \\
+		\langle \boldsymbol{e}_x, \boldsymbol{e}_\phi \rangle 
+		& \langle \boldsymbol{e}_y, \boldsymbol{e}_\phi \rangle \\
+	\end{bmatrix}
+	\begin{bmatrix}
+		\tilde{u}(x,y;p) \\
+		\tilde{v}(x,y;p)
+	\end{bmatrix}.
+\end{equation}
+Conversely, we may express the contravariant components in terms of
+latitude-longitude components by inverting Equation \eqref{ll-to-contravariant}:
+\begin{equation}
+	\label{contravariant-to-ll}
+	\begin{bmatrix}
+		\tilde{u}(x,y;p) \\
+		\tilde{v}(x,y;p)
+	\end{bmatrix}
+	=
+	\frac{1}{\langle \boldsymbol{e}_x, \boldsymbol{e}_\lambda\rangle
+	\langle \boldsymbol{e}_y, \boldsymbol{e}_\phi \rangle
+	-\langle \boldsymbol{e}_y, \boldsymbol{e}_\lambda \rangle
+	\langle \boldsymbol{e}_x, \boldsymbol{e}_\phi \rangle}
+	\begin{bmatrix}
+		  \langle \boldsymbol{e}_y, \boldsymbol{e}_\phi \rangle 
+		&-\langle \boldsymbol{e}_y, \boldsymbol{e}_\lambda \rangle \\
+		 -\langle \boldsymbol{e}_x, \boldsymbol{e}_\phi \rangle 
+		& \langle \boldsymbol{e}_x, \boldsymbol{e}_\lambda \rangle \\
+	\end{bmatrix}
+	\begin{bmatrix}
+		 u_\lambda (\lambda, \phi) \\
+		 v_\phi (\lambda, \phi) 
+	\end{bmatrix}.
+\end{equation}
+
+\section{Covariant/contravariant conversion}
+\label{anexo-cov-con}
+Given Equation
+Let us consider again a tangent vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
+T\mathbb{S}_R^2$ on the sphere, the contravariant representation of 
+$\boldsymbol{u}$ is given by Equation \eqref{contravariant-wind}.
+The covariant components $(u,v)$ are given by:
+\begin{align}
+	\label{covariant-u}
+	u(x,y;p) = \langle \boldsymbol{u}(x,y;p) , e_x(x,y;p)  \rangle, \\
+	\label{covariant-v}
+	v(x,y;p) = \langle \boldsymbol{u}(x,y;p) , e_y(x,y;p)  \rangle.
+\end{align}
+Replacing Equation \eqref{contravariant-wind} in 
+Equations \eqref{covariant-u} and \eqref{covariant-v} we obtain
+the relation covariant components in terms of the
+contravariant terms:
+\begin{equation}
+	\label{contravariant-to-covariant}
+	\begin{bmatrix}
+		{u}(x,y;p) \\
+		{v}(x,y;p)
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		1  
+		& \langle \boldsymbol{e}_x, \boldsymbol{e}_y \rangle \\
+		  \langle \boldsymbol{e}_x, \boldsymbol{e}_y \rangle 
+		& 1 \\
+	\end{bmatrix}
+	\begin{bmatrix}
+		\tilde{u} (x,y;p) \\
+		\tilde{v} (x,y;p) 
+	\end{bmatrix}.
+\end{equation}
+Denoting the angle between $\boldsymbol{e}_x$ and  $\boldsymbol{e}_y$ by $\alpha$,
+we have $\langle \boldsymbol{e}_x, \boldsymbol{e}_y \rangle = \cos \alpha$.
+Thus, we may express the contravariant components in terms of 
+the covariant terms inverting Equation \eqref{contravariant-to-covariant}:
+\begin{equation}
+	\label{convariant-to-contravariant}
+	\begin{bmatrix}
+		\tilde{u}(x,y;p) \\
+		\tilde{v}(x,y;p)
+	\end{bmatrix}
+	= \frac{1}{\sin^2 \alpha}
+	\begin{bmatrix}
+		1  
+		& -\cos \alpha \\
+		  -\cos \alpha
+		& 1\\
+	\end{bmatrix}
+	\begin{bmatrix}
+		{u} (x,y;p) \\
+		{v} (x,y;p) 
+	\end{bmatrix}.
+\end{equation}
+Notice that combining Equations \eqref{contravariant-to-covariant}
+and \eqref{convariant-to-contravariant} with Equations 
+\eqref{ll-to-contravariant} and \eqref{contravariant-to-ll}
+one may get relations between the latitude-longitude 
+components and the covariant components.
