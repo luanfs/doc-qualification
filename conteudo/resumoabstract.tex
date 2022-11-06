@@ -1,24 +1,16 @@
-%!TeX root=../tese.tex
-%("dica" para o editor de texto: este arquivo é parte de um documento maior)
-% para saber mais: https://tex.stackexchange.com/q/78101
+\palavrachave{Núcleo dinâmico da atmosfera, esfera cubada, volumes finitos}
 
-% As palavras-chave são obrigatórias, em português e em inglês, e devem ser
-% definidas antes do resumo/abstract. Acrescente quantas forem necessárias.
-\palavrachave{Palavra-chave1}
-\palavrachave{Palavra-chave2}
-\palavrachave{Palavra-chave3}
-
-\keyword{Keyword1}
-\keyword{Keyword2}
-\keyword{Keyword3}
+\keyword{Dynamical core, cubed-sphere, finite-volume}
 
 % O resumo é obrigatório, em português e inglês. Estes comandos também
 % geram automaticamente a referência para o próprio documento, conforme
 % as normas sugeridas da USP.
-%\resumo{
-%To be written!
-%}
+\resumo{
+O modelo atmosférico global FV3 do GFDL-NOAA-USA, inicialmente desenvolvido para malhas do tipo latitude-longitude, foi adaptado para a esfera cubada visando atingir melhor escalabilidade em supercomputadores massivamente paralelos. Entretanto, neste tipo de malhas estamos mais sujeitos à problemas como o grid imprinting. Além disso, o modelo carece de algumas propriedades miméticas, que são altamente desejáveis. Este projeto de doutorado propõe-se a analisar as propriedades das discretizações de volumes finitos utilizadas no modelo FV3 na esfera cubada. Iremos investigar como propriedades das células da esfera cubada interferem na precisão dos esquemas numéricos. O estudo irá começar com a implementação de um código para gerar a esfera cubada e calcular os operados discretos do FV3. Então, iremos analisar como a malha interfere nos modelos de adveão e de águas rasas na esfera. 
+%Estudaremos as propriedades de dispersão e conservação do esquema visando propor modificações nos esquemas numéricos para o desenvolvimento de uma versão mimética do método. Em seguida, vamos desenvolver um refinamento local na esfera cubada e iremos ver o seu impacto na solução numérica. Por fim, como passo final no desenvolvimento 3D, iremos analisar e incluir a discretização lagrangiana vertical do modelo FV3 e verificar como os resultados obtidos na discretização horizontal podem impactar na solução do modelo tridimensional.
+}
 
 \abstract{
-To be written!
+The global atmospheric model FV3 from GFDL-NOAA-USA, which was originally designed for latitude-longitude grids, was adapted to the cubed sphere aiming to improve its scalability in massively parallel supercomputers. However, in this kind of grid, we are more likely to have grid imprinting problems. Besides that, the FV3 model lacks some highly desirable mimetic properties. This work aims to analyze the properties of the finite volume discretizations employed in the global atmospheric model FV3 on the cubed-sphere. We will investigate how the properties of the cells may impact on the accuracy of the numerical schemes. This study will firstly implement a cubed-sphere grid generator and the FV3 discrete operators on this grid. Then, we will and analyze how the cubed-sphere grid properties influence in the numerical schemes by assessing it using the advection and shallow-water equations on the sphere. We will study the numerical dispersion and conservations properties of the scheme aiming to propose modifications in the numerical schemes to develop a mimetic finite volume version of the model. 
+%Then, we shall develop a local refinement on the cubed-sphere and investigate how it impacts the numerical solution. As a final stage of the 3D development, we will analyze and include the Lagrangian vertical discretization of the FV3 model and investigate how the horizontal discretization aspects can impact on the full three-dimensional model.
 }
