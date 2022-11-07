@@ -218,12 +218,19 @@ breaking the total energy conservation of the method.
 Despite being chosen as the new US global weather prediction model,
 there is a lack of numerical studies of the FV3 discretizations in the literature,
 especially regarding the grid imprinting problem and its mimetic properties.
-For instance, numerical results for the advection equation on the cubed-sphere using the
-FV3 dynamical core was presented in \citet{putman:2007}.
+Numerical results for the advection equation on the cubed-sphere using the
+FV3 dynamical core was presented in \citet{putman:2007} and some shallow-water 
+simulations were presented in \citet{harris:2013}, considering cubed-spheres
+with local refinement through grid nesting.
+From the work \citet{harris:2013} we can notice that the FV3 dynamical
+lack convergence on the maximum norm for the shallow-water model considering
+the classical balanced geostrophic flow test case from \cite{will:1992}.
+The authors attribute these errors to the abrupt change in the grid resolution
+near the nested grid, but no quantitative results are shown considering the quasi-uniform grid.
 Many other papers available in the literature use the complete FV3 model in three-dimensional
-frameworks which make it harder to perform a numerical analysis study due not only to its computational cost,
+frameworks which make it harder to perform a numerical analysis study due not only to its computational cost
 but also due to the complexity of three-dimensional atmospheric models.
-There are no works published in intermediate two-dimensional frameworks, using, for 
+There are no detailed works published in intermediate two-dimensional frameworks, using, for 
 instance, the shallow-water equations on the sphere.
 Even though the advection equation on the sphere plays a key role in the dynamical core development,
 since it models the transport of scalar fields on the sphere, important features captured by the shallow-water
@@ -231,7 +238,6 @@ equations on the sphere, such as the Coriolis effect, inertia-gravity waves, geo
 among others, are not captured by a simple advection model.
 Hence, shallow-water equations provide an excellent benchmark to assess dynamical cores in general,
 since it is only two-dimensional but is a complex enough geophysical model for atmosphere dynamics.
-
 \section{Goals}
 The aim of this work is to fill the gap in the literature regarding numerical studies of the FV3 
 discrete operators that we pointed out before.
