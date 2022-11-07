@@ -9,6 +9,7 @@ general one-dimensional finite-volumes schemes.
 Section \ref{chp1-sec-ppm} presents and analyses the PPM in Subsection \ref{chp1-sec-recon}.
 Subsection \ref{chp1-sec-mono} is dedicated to PPM monotonization
 and Subsection \ref{chp1-sec-flux} is dedicated to the PPM flux.
+At last, Section \ref{chp1-sec-numerical-exp} shows some numerical results using the PPM scheme.
 
 \section{One-dimensional system of conservation laws in integral form}
 \label{chp1-sec1}
@@ -389,7 +390,7 @@ we are using the notations
 $Q^n = (Q_1^n, \cdots, Q_N^n)$,
 $u^n = (u_{\frac{1}{2}}^n, \cdots, u_{N+\frac{1}{2}}^n)$
 
-To be written: definitions of convergence, consistency and stability.
+%To be written: definitions of convergence, consistency, stability, periodic grid function
 
 \section{The Piecewise-Parabolic Method}
 \label{chp1-sec-ppm}
@@ -885,7 +886,8 @@ concludes the proof.
 \end{proof}
 %
 
-\subsection{Monotonization - to be written}
+\subsection{Monotonization}
+To be written
 \label{chp1-sec-mono}
 
 
@@ -1024,5 +1026,58 @@ where the coefficients are given by:
 \subsubsection{Flux numerical analysis }
 To be written!
 
-\subsection{Numerical experiements - to be written}
-%\label{chp1-sec-numerical-exp}
+\section{Numerical experiements - to be finished}
+\label{chp1-sec-numerical-exp}
+To finish this chapter, we shall present some numerical results for the linear advection equation 
+using the PPM scheme as presented here and the PPM version with the monotonization constraints 
+from \citet{colella:1984}.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.45\linewidth]{1d_adv_tc1_ic2_t800_N50_PPM_mononone}
+	\includegraphics[width=0.45\linewidth]{1d_adv_tc1_ic2_t800_N50_PPM_monoWC84}
+	\caption{Gaussian profile after being advected for 1 period without monotonization (left) and
+		with monotonization constraint (right).}
+	\label{ppm-exp-gaussian}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.45\linewidth]{1d_adv_tc2_PPM_mononone_ic2_parabola_errors}
+	\includegraphics[width=0.45\linewidth]{1d_adv_tc2_PPM_monoWC84_ic2_parabola_errors}
+	\caption{Gaussian profile error after being advected for 1 period without monotonization (left) and
+	with monotonization constraint (right).}
+	\label{ppm-exp-gaussian-errors}
+\end{figure}
+
+The first test case consider as initial condition and a constant velocity.
+We show the Gaussian profile after one period revolution in Figure \ref{ppm-exp-gaussian}
+and in Figure \ref{ppm-exp-gaussian-errors} we depict the error convergence.
+We can notice that, PPM reaches the expected third-order and, when we add the monotonization constraint,
+the order approaches to one, which is in agreement with the well-known Godunov's theorem \citet{leveque:2002}.
+Furthermore, the monotonization constraint removes the dispersion of the method
+but adds more numerical diffusion.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.4 \linewidth]{1d_adv_tc1_ic3_t800_N50_PPM_mononone}
+	\includegraphics[width=0.4 \linewidth]{1d_adv_tc1_ic3_t800_N50_PPM_monoWC84}
+	\caption{Triangular wave after being advected for 1 period without monotonization (left) and
+	with monotonization constraint (right).}
+	\label{ppm-exp-triangular}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.4 \linewidth]{1d_adv_tc2_ic4_t100_N80_PPM_mononone}
+	\includegraphics[width=0.4 \linewidth]{1d_adv_tc2_ic4_t100_N80_PPM_monoWC84}
+	\caption{Rectangular wave after being advected for 1 period without monotonization (left) and
+	with monotonization constraint (right).}
+	\label{ppm-exp-rectangular}
+\end{figure}
+
+Finally, we show in Figures \ref{ppm-exp-triangular} and \ref{ppm-exp-rectangular}
+the results after applying the PPM for the linear advection equation with
+constant velocity considering a triangular and a rectangular wave, respectively.
+Again, we can notice that the monotonicity constraint reduces greatly the 
+dispersion but more diffusion is added, especially in the triangular wave.
+
