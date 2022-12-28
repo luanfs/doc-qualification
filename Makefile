@@ -34,6 +34,8 @@ ALL_TARGETS := $(basename $(wildcard *.tex))
 
 # Por default, compila o primeiro arquivo .tex encontrado
 #DEFAULT_TARGET: $(word 1, $(ALL_TARGETS)).pdf
+
+
 DEFAULT_TARGET: qualification_luan.pdf
 
 #SHOW_PDF_AFTER_COMPILATION := true
@@ -502,3 +504,10 @@ ifeq ($(filter npq%,$(firstword $(MAKEFLAGS))),)
 # Nao apaga arquivos intermediarios gerados durante a compilacao
 .SECONDARY:
 endif
+
+
+# Create tarball and backup
+archive: 
+        #Backup all important files
+	chmod +x sh/backup.sh
+	./sh/backup.sh
