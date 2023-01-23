@@ -17,7 +17,7 @@ scripts="sh/*.sh "
 others="Makefile \
 README.* \
 latexmrc \
-qualification.tex"
+qualification_luan.tex"
 
 files="$texfiles $extrafiles $figures $scripts $others"
 

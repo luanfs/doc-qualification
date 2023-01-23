@@ -4,6 +4,15 @@
 
 \chapter{Two-dimensional finite-volume methods}
 \label{chp-2d-fv}
+The main aim of this chapter is to give a detailed description of the dimensional
+splitting method proposed by \citet{lin:1996}.
+Similarly to Chapter \ref{chp-1d-fv}, we start this chapter 
+start with a review of two-dimensional conservation laws in
+the integral form in Section \ref{sec-conslaw2d}, 
+and in Section \ref{sec:fv-2d} we set the framework of
+general two-dimensional finite-volumes schemes.
+Section \ref{sec-dimsplit} presents the dimension splitting method and 
+numerical simulation are shown in Section \ref{sec-ds-exp}.
 
 \section{Two-dimensional system of conservation laws in integral form}
 \label{sec-conslaw2d}
@@ -30,7 +39,7 @@ densities.
 A classical or strong solution to this system of conservation laws is a 
 $\mathcal{C}^1$ function ${q}$ satisfying Equation 
 \eqref{sec-conslaw2d:eq1}.
-As we did in Section \ref{chp1-sec1}, our goal is to deduce an
+As we did in Section \ref{chp2-sec1}, our goal is to deduce an
 integral form of Equation \eqref{sec-conslaw2d:eq1}.
 To do so, let us consider  $[x_1,x_2] \times [y_1, y_2]
 \subset \Omega^{\mathrm{o}}$ and $[t_1,t_2] \subset [0, +\infty[$.
@@ -67,7 +76,7 @@ solution to the system of conservation laws  \eqref{sec-conslaw2d:eq1} if ${q}$
 satisfies the integral form \eqref{sec-conslaw2d:eq3}, 
 $\forall [x_1,x_2]\times[y_1,y_2] \subset \Omega^{\mathrm{o}}$ and 
 $\forall [t_1,t_2] \subset [0,+\infty[$.
-Similarly to Section \ref{chp1-sec1}, these problems are equivalent
+Similarly to Section \ref{chp2-sec1}, these problems are equivalent
 when  ${q}$ is a $\mathcal{C}^1$ function.
 
 We consider an initial condition ${q_0} \in L^{\infty}{(\Omega)}$,
@@ -81,7 +90,7 @@ Therefore, we are again dealing with a Cauchy problem.
 
 To move in the direction of a discrete version of Equation \eqref{sec-conslaw2d:eq3},
 let us discretize the domain $D = \Omega \times [0,T]$ following 
-the notations of Section \ref{chp1-sec1}.
+the notations of Section \ref{chp2-sec1}.
 Given a positive integer $N_T$, we define the time step 
 $\Delta t = \frac{T}{N_T}$, $t_n = n \Delta t$, for $n = 0, 1 ,\cdots, N_T$.
 The spatial discretization is constructed through an uniformly spaced partition of $\Omega$ given by:
@@ -91,12 +100,12 @@ The spatial discretization is constructed through an uniformly spaced partition 
 	a = x_{\frac{1}{2}} < x_{\frac{3}{2}} < \cdots < x_{N-\frac{1}{2}} < x_{N+\frac{1}{2}} = b, \\
 	[c,d] &= \bigcup_{j=1}^M Y_j, 
 \text{ where } Y_j= [y_{j-\frac{1}{2}}, y_{j+\frac{1}{2}}] \text{ and } 
-c = y_{\frac{1}{2}} < y_{\frac{3}{2}} < \cdots < y_{M-\frac{1}{2}} < y_{M+\frac{1}{2}} = d, \\
+	c = y_{\frac{1}{2}} < y_{\frac{3}{2}} < \cdots < y_{M-\frac{1}{2}} < y_{M+\frac{1}{2}} = d, \\
     \Omega &=  \bigcup_{i=1}^N \bigcup_{j=1}^M \Omega_{ij}, \text{ where } \Omega_{ij} = X_i \times Y_j.
 \end{align}
 
 The regions $\Omega_{ij}$ are known as control volumes. \index{Control volume}
-Similarly to  Chapter \ref{chp1-1d-fv} we employ the notations
+Similarly to  Chapter \ref{chp-1d-fv} we employ the notations
 $\Delta x = x_{i+\frac{1}{2}} - x_{i-\frac{1}{2}}$,
 $\Delta y = y_{j+\frac{1}{2}} - y_{j-\frac{1}{2}}$ 
 and $x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}})$
@@ -146,7 +155,7 @@ motivate two-dimensional finite-volume schemes, as we shall see in the next sect
 \section{The finite-volume approach}
 \label{sec:fv-2d}
 This Section is basically an extension to two dimensions 
-of the concepts presented in Section \ref{chp1-sec2}.
+of the concepts presented in Section \ref{chp2-sec2}.
 The problem of two-dimensional system of conservation laws in the integral form 
 presented Section \ref{sec-conslaw2d} is written in a concise way in Problem \ref{sec:fv-2d-prob1}.
 
@@ -236,6 +245,7 @@ edges midpoints in the $x$ direction,
 and $v_{i,j+\frac{1}{2}}^n = v(x_i,y_{j+\frac{1}{2}},t_n)$
 to represent the velocity in $y$ direction at control volume
 edges midpoints in the $y$ direction, 
+
 \begin{prob}[2D-FV scheme]
 	\label{sec:fv-2d-prob3}
 	Assume the framework defined in Problem \ref{sec:fv-2d-prob2}.
@@ -261,7 +271,7 @@ edges midpoints in the $y$ direction,
 	${Q}_{ij}^{0} = {q}^0_{i,j}$.
     
     The term ${F}_{i+\frac{1}{2}, j}^{n} = {\mathcal{F}}
-    (Q^n; u^n; i,j)
+    (Q^n; u^n; v^n, i,j)
     $ is known as numerical flux in the 
     $x$ direction, where $\mathcal{F}$ is the numerical flux function, 
     and it approximates
@@ -271,7 +281,7 @@ edges midpoints in the $y$ direction,
     $\forall i = 0, 1, \cdots, N$,
     and 
 	${G}_{i, j+\frac{1}{2}}^{n} = 
-    {\mathcal{G}} (Q^n, v^n; i, j)$ 
+    {\mathcal{G}} (Q^n, u^n, v^n; i, j)$ 
     is known as numerical flux in the 
     $y$ direction, where $\mathcal{G}$ 
     is the numerical flux function, and it approximates
@@ -282,13 +292,57 @@ edges midpoints in the $y$ direction,
 	or, in other words, they estimate the time-averaged
     fluxes at the control volume $\Omega_{ij}$ boundaries.
 \end{prob}
-$Q^n = (Q_{ij}^n)_{i=1,\cdots, N, j = 1, \cdots, M}$
+Notice that we are using the notations $Q^n = (Q_{ij}^n)_{i=1,\cdots, N, j = 1, \cdots, M}$,
+$u^n = (u_{i+\frac{1}{2},j}^n)_{i=0,\cdots, N, j = 1, \cdots, M}$
+and $v^n = (v_{i,j+\frac{1}{2}}^n)_{i=1,\cdots, N, j = 0, \cdots, M}$.
 
 \section{Dimension splitting}
 \label{sec-dimsplit}
+In this section we shall describe how we can combine one-dimensional
+to solve the bidimensional advection equation on the plane.
+As we shall later, the solution of the advection
+equation on the cubed-sphere consists of applying the scheme described here in each
+panel combined with interpolation on ghost cells.
+The dimension splitting method presented here was developed by \citet{lin:1996}
+and is currently employed in the FV3 dynamical core.
 
+As we mentioned, we consired the two-dimensional advection linear equation on the plane
+with biperiodic boundary conditions. The flux functions are then given by
+$f(q) = u(x,y,t)q(x,y,t)$ and  $g(q) = v(x,y,t)q(x,y,t)$.
 
-\citep{lin:1997}
-\citep{lin:2004}
-\citep{putmanthesis:2007}
-\citep{putman:2007}
+The idea of the dimension splitting consists of solving the advection equation firstly in the $x$
+direction using ${F}_{i+\frac{1}{2},j}^{n}$ as the PPM flux:
+\begin{align}
+	{Q}_{ij}^{x,n+1} =  {Q}_{ij}^{n} -
+	\frac{\Delta t}{\Delta x} ({F}_{i+\frac{1}{2},j}({Q}^{n}) - {F}_{i-\frac{1}{2},j}({Q}^{n}))
+\end{align}
+
+Then, we solve the advection equation in the $y$ direction using ${G}_{i,j+\frac{1}{2}}^{n}$ 
+as the PPM flux in the $y$ direction:
+\begin{align*}
+	{Q}_{ij}^{xy,n+1} =  {Q}_{ij}^{x,n+1} -
+	\frac{\Delta t}{\Delta y} ({G}_{i,j+\frac{1}{2}}({Q}^{x,n+1}) - {G}_{i,j-\frac{1}{2}}({Q}^{x,n+1}))
+\end{align*}
+
+Notice that we can repeat this process in a reverse order.
+Indeed, we can solve the advection equation in $y$ direction using ${G}_{i,j+\frac{1}{2}}^{n}$ 
+as the PPM flux in the $y$ direction:
+\begin{align*}
+	{Q}_{ij}^{y,n+1} =  {Q}_{ij}^{n} -
+	\frac{\Delta t}{\Delta y} ({G}_{i,j+\frac{1}{2}}({Q}^{n}) - {G}_{i,j-\frac{1}{2}}({Q}^{n}))
+\end{align*}
+
+Then, we can solve the advection equation in the $x$ direction using
+${F}_{i+\frac{1}{2},j}^{n}$ as the PPM flux in the $x$ direction:
+\begin{align*}
+	{Q}_{ij}^{yx,n+1} =  {Q}_{ij}^{x,n+1} -
+	\frac{\Delta t}{\Delta x} ({F}_{i+\frac{1}{2},j}({Q}^{y,n+1}) - {F}_{i-\frac{1}{2},j}({Q}^{y,n+1}))
+\end{align*}
+
+Finally, we can eliminate the direction bias by computing the updated solution
+using an averaged solution:
+$ Q^{n+1} = \frac{(Q^{xy,n+1} + Q^{yx,n+1})}{2}$
+
+\section{Numerical experiments}
+\label{sec-ds-exp}
+

@@ -71,6 +71,22 @@ doi= {10.1007/978-3-0348-5116-9}
 
 @book{leveque:2002, place={Cambridge}, series={Cambridge Texts in Applied Mathematics}, title={Finite Volume Methods for Hyperbolic Problems}, DOI={10.1017/CBO9780511791253}, publisher={Cambridge University Press}, author={LeVeque, Randall J.}, year={2002}, collection={Cambridge Texts in Applied Mathematics}}
 
+@article{nair:2010,
+title = {A class of deformational flow test cases for linear transport problems on the sphere},
+journal = {Journal of Computational Physics},
+volume = {229},
+number = {23},
+pages = {8868-8887},
+year = {2010},
+issn = {0021-9991},
+doi = {https://doi.org/10.1016/j.jcp.2010.08.014},
+url = {https://www.sciencedirect.com/science/article/pii/S0021999110004511},
+author = {Ramachandran D. Nair and Peter H. Lauritzen},
+keywords = {Transport scheme, Spherical geometry, Cubed-sphere, Divergent flow, Deformational flow, Discontinuous Galerkin, Semi-Lagrangian},
+abstract = {A class of new benchmark deformational flow test cases for the two-dimensional horizontal linear transport problems on the sphere is proposed. The scalar field follows complex trajectories and undergoes severe deformation during the simulation; however, the flow reverses its course at half-time and the scalar field returns to its initial position and shape. This process makes the exact solution available at the end of the simulation, and facilitates assessment of the accuracy of the underlying transport scheme. A procedure to eliminate possible cancellations of errors when the flow reverses is proposed. The test suite consists of four cases. Three are based on non-divergent flow fields and one on a divergent flow. The initial conditions are prescribed in terms of regular latitude–longitude spherical coordinates and are easy to implement. The divergent flow is specifically aimed for conservative global transport schemes to test for conservation, consistency and monotonicity (or positivity) of limiters/filters in a challenging flow environment. In the context of semi-Lagrangian schemes, the time-varying flow fields can be used to test trajectory algorithms where the exact trajectories do not follow great-circle arcs. The characteristics of the test cases are demonstrated with two different transport schemes.}
+}
+
+
 @Inbook{nair:2011,
 author="Nair, Ramachandran D.
 and Levy, Michael N.
@@ -99,6 +115,72 @@ doi = {https://doi.org/10.1016/0021-9991(84)90143-8},
 author = {Phillip Colella and Paul R Woodward},
 }
 
+@Inbook{woodward:1986,
+author="Woodward, Paul R.",
+editor="Winkler, Karl-Heiz A.
+and Norman, Michael L.",
+title="Piecewise-Parabolic Methods for Astrophysical Fluid Dynamics",
+bookTitle="Astrophysical Radiation Hydrodynamics",
+year="1986",
+publisher="Springer Netherlands",
+address="Dordrecht",
+pages="245--326",
+isbn="978-94-009-4754-2",
+doi="10.1007/978-94-009-4754-2_8",
+url="https://doi.org/10.1007/978-94-009-4754-2_8"
+}
+
+@article{white:2008,
+title = {A high-order finite volume remapping scheme for nonuniform grids: The piecewise quartic method (PQM)},
+journal = {Journal of Computational Physics},
+volume = {227},
+number = {15},
+pages = {7394-7422},
+year = {2008},
+issn = {0021-9991},
+doi = {https://doi.org/10.1016/j.jcp.2008.04.026},
+url = {https://www.sciencedirect.com/science/article/pii/S0021999108002593},
+author = {Laurent White and Alistair Adcroft},
+}
+
+@misc{engwirda:2016,
+  doi = {10.48550/ARXIV.1606.08188},
+  
+  url = {https://arxiv.org/abs/1606.08188},
+  
+  author = {Engwirda, Darren and Kelley, Maxwell},
+  
+  keywords = {Computational Physics (physics.comp-ph), Numerical Analysis (math.NA), Atmospheric and Oceanic Physics (physics.ao-ph), Fluid Dynamics (physics.flu-dyn), FOS: Physical sciences, FOS: Physical sciences, FOS: Mathematics, FOS: Mathematics},
+  
+  title = {A WENO-type slope-limiter for a family of piecewise polynomial methods},
+  
+  publisher = {arXiv},
+  
+  year = {2016},
+  
+  copyright = {arXiv.org perpetual, non-exclusive license}
+}
+
+@Inbook{lauritzen:2011,
+author="Lauritzen, Peter H.
+and Ullrich, Paul A.
+and Nair, Ramachandran D.",
+editor="Lauritzen, Peter
+and Jablonowski, Christiane
+and Taylor, Mark
+and Nair, Ramachandran",
+title="Atmospheric Transport Schemes: Desirable Properties and a Semi-Lagrangian View on Finite-Volume Discretizations",
+bookTitle="Numerical Techniques for Global Atmospheric Models",
+year="2011",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="185--250",
+isbn="978-3-642-11640-7",
+doi="10.1007/978-3-642-11640-7_8",
+url="https://doi.org/10.1007/978-3-642-11640-7_8"
+}
+
+
 @article {carpenter:1990,
       author = "Richard L.  Carpenter  and Kelvin K.  Droegemeier and Paul R.  Woodward and Carl E.  Hane",
       title = "Application of the Piecewise Parabolic Method (PPM) to Meteorological Modeling",
@@ -108,6 +190,16 @@ author = {Phillip Colella and Paul R Woodward},
       number = "3",
       doi = "10.1175/1520-0493(1990)118<0586:AOTPPM>2.0.CO;2",
       pages=      "586 - 612",
+}
+
+@article{godunov:1959,
+author = {Godunov, S},
+year = {1959},
+month = {01},
+pages = {271-306},
+title = {A difference method for numerical calculation of discontinuous solutions of the equations of hydrodynamics},
+volume = {47(89):3},
+journal = {Mat. Sb.}
 }
 
 @article{vanleer:1977,
@@ -176,6 +268,19 @@ year = {2007},
 doi = {https://doi.org/10.1016/j.jcp.2007.07.022},
 author = {William M. Putman and Shian-Jiann Lin},
 }
+
+
+@article{harris:2021,
+doi = {https://doi.org/10.1016/j.jcp.2007.07.022},
+author = {William M. Putman and Shian-Jiann Lin},
+title = {A Scientific Description of the GFDL Finite-Volume Cubed-Sphere Dynamical Core},
+journal = {Series : NOAA technical memorandum OAR GFDL ; 2021-001},
+year = {2021},
+doi = {https://doi.org/10.25923/6nhs-5897},
+author = {Harris, Lucas and Chen, Xi and Putman, William and Zhou, Linjiong and Chen, Jan-Huey},
+}
+
+
 
 @PhdThesis{putmanthesis:2007,
  author   = {William M. Putman},
@@ -269,18 +374,6 @@ and Loft, Richard D.",
       pages=      "814 - 828",
 }
 
-@Inbook{lauritzen:2011,
-author="Lauritzen, Peter H.
-and Ullrich, Paul A.
-and Nair, Ramachandran D.",
-bookTitle="An Introduction to Global Spectral Modeling",
-year="2011",
-publisher="Springer New York, NY",
-address="Berlin, Heidelberg",
-pages="185--250",
-doi="https://doi.org/10.1007/0-387-32962-5",
-}
-
 @book{krishnamurti:2006,
 author = {Krishnamurti, T. and Hardiker, V. and Bedi, H. and Ramaswamy, L.},
 year = {2006},
@@ -301,6 +394,44 @@ issn = {0167-8191},
 doi = {https://doi.org/10.1016/0167-8191(96)80002-0},
 author = {S.R.M. Barros and D. Dent and L. Isaksen and G. Robinson and G. Mozdzynski and F. Wollenweber}
 }
+
+@article{suresh:1997,
+title = {Accurate Monotonicity-Preserving Schemes with Runge–Kutta Time Stepping},
+journal = {Journal of Computational Physics},
+volume = {136},
+number = {1},
+pages = {83-99},
+year = {1997},
+issn = {0021-9991},
+doi = {https://doi.org/10.1006/jcph.1997.5745},
+url = {https://www.sciencedirect.com/science/article/pii/S0021999197957454},
+author = {A. Suresh and H.T. Huynh},
+}
+
+@book{strikwerda:2004,
+author = {Strikwerda, John C.},
+title = {Finite Difference Schemes and Partial Differential Equations, Second Edition},
+publisher = {Society for Industrial and Applied Mathematics},
+year = {2004},
+doi = {10.1137/1.9780898717938},
+address = {},
+edition   = {},
+URL = {https://epubs.siam.org/doi/abs/10.1137/1.9780898717938},
+eprint = {https://epubs.siam.org/doi/pdf/10.1137/1.9780898717938}
+}
+
+@book{trefethen:2000,
+author = {Trefethen, Lloyd N.},
+title = {Spectral Methods in MATLAB},
+publisher = {Society for Industrial and Applied Mathematics},
+year = {2000},
+doi = {10.1137/1.9780898719598},
+address = {},
+edition   = {},
+URL = {https://epubs.siam.org/doi/abs/10.1137/1.9780898719598},
+eprint = {https://epubs.siam.org/doi/pdf/10.1137/1.9780898719598}
+}
+
 
 @article{cooley:1965,
  ISSN = {00255718, 10886842},

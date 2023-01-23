@@ -224,7 +224,7 @@ simulations were presented in \citet{harris:2013}, considering cubed-spheres
 with local refinement through grid nesting.
 From the work \citet{harris:2013} we can notice that the FV3 dynamical
 lack convergence on the maximum norm for the shallow-water model considering
-the classical balanced geostrophic flow test case from \cite{will:1992}.
+the classical balanced geostrophic flow test case from \citet{will:1992}.
 The authors attribute these errors to the abrupt change in the grid resolution
 near the nested grid, but no quantitative results are shown considering the quasi-uniform grid.
 Many other papers available in the literature use the complete FV3 model in three-dimensional
@@ -252,7 +252,7 @@ More explicitly, the goals of this work are:
 
 \section{Outline}
 This report is outlined as follows.
-Chapter \ref{chp1-1d-fv} is dedicated to review the Piecewise Parabolic Method (PPM)
+Chapter \ref{chp-1d-fv} is dedicated to review the Piecewise Parabolic Method (PPM)
 for the one-dimensional advection equation. 
 Chapter \ref{chp-2d-fv} reviews the dimension splitting method, which allow us to use 
 one-dimensional methods, such as the PPM, to solve the two-dimensional advection equation.
@@ -262,4 +262,4 @@ Chapter \ref{chp-cs-fv} extends the ideas of Chapter \ref{chp-2d-fv} to the cube
 The dimension-splitting method on each cubed-sphere panel works as in the plane, with the addtion
 of metric terms, due to non-orthogonality of the grid, and interpolation between panels
 to obtain ghost cells values needed for stencil computations. 
-We give some future work perspectives in Chapter \ref{chp-conclusions}.
+%We give some future work perspectives in Chapter \ref{chp-conclusions}.
