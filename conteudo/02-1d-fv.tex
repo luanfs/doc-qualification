@@ -135,13 +135,13 @@ Assuming that ${q}$ is a $\mathcal{C}^1$ function, we may write:
 \begin{equation}
 	\label{chp2-sec1-eq4}
 	\int_{t_1}^{t_2} 
-	\frac{\partial}{\partial t} {q}(x,t) \,dt
+	\frac{\partial q}{\partial t}(x,t) \,dt
 	= {q}(x, t_2) - {q}(x, t_1) ,
 \end{equation}
 and
 \begin{equation}
 	\label{chp2-sec1-eq5}
-	\int_{x_1}^{x_2} \frac{\partial}{\partial x}{f}({q}(x,t)) \,dx 
+	\int_{x_1}^{x_2} \frac{\partial f}{\partial x}({q}(x,t)) \,dx 
 	= {f}({q}(x_2, t)) -
 	{f}( {q}(x_1, t)) .
 \end{equation}
@@ -152,8 +152,8 @@ in \eqref{chp2-sec1-eq3} we get the differential form of the conservation law:
 \begin{equation}
 	\label{chp2-sec1-eq6}
 	\int_{t_1}^{t_2} \int_{x_1}^{x_2} 
-	\bigg( \frac{\partial}{\partial t}{q}(x, t) 
-	+ \frac{\partial}{\partial x} {f}({q}(x, t)) \bigg) 
+	\bigg( \frac{\partial q}{\partial t}(x, t) 
+	+ \frac{\partial f}{\partial x}({q}(x, t)) \bigg) 
 	\,dx \,dt  = 0.
 \end{equation}
 
@@ -161,8 +161,8 @@ Since Equation \eqref{chp2-sec1-eq6} must hold for all $x_1, x_2, t_1$ and $t_2$
 $[x_1, x_2] \times [t_1, t_2] \subset \mathbb{R}\times ]0, +\infty[$, we obtain the differential form of the conservation law:
 \begin{equation}
 	\label{chp2-sec1-eq7}
-	\frac{\partial}{\partial t}{q}(x, t) +
-	\frac{\partial}{\partial x} {f}({q}(x, t))
+	\frac{\partial q}{\partial t}(x, t) +
+	\frac{\partial f}{\partial x} ({q}(x, t))
 	= 0, \quad \forall (x,t) \in \mathbb{R}\times ]0, +\infty[. 
 \end{equation}
 
@@ -206,8 +206,8 @@ It can be shown that this notion of weak solution is equivalent to requiring tha
 \begin{equation}
 	\label{chp2-sec1-eq8}
 	\int_{-\infty}^{+\infty} \int_{0}^{+\infty} \bigg(
-	\frac{\partial}{\partial t} \phi(x, t){q}(x, t) +
-	\frac{\partial}{\partial x} \phi(x ,t){f}({q}(x, t)) 
+	\frac{\partial \phi}{\partial t} (x, t){q}(x, t) +
+	\frac{\partial \phi}{\partial x} (x ,t){f}({q}(x, t)) 
 	\bigg)\,dt \,dx = 
 	\int_{-\infty}^{+\infty} \phi(x, 0){q}(x, 0) \,dx  , \quad
 \end{equation}
@@ -229,7 +229,7 @@ average values of the state variable vector ${q}$ in the interval $[x_1, x_2]$ a
 where $\Delta x = x_2 - x_1$. The Equation \eqref{chp2-sec1-eq2} may be  rewritten in terms of ${Q}$ as:
 \begin{equation}
         \label{chp2-sec1-eq10}
-	\frac{d}{dt} {Q}(t) = \frac{1}{\Delta x} 
+	\frac{dQ}{dt} (t) = \frac{1}{\Delta x} 
 	({f}({q}(x_1,t)) - {f}({q}(x_2,t))) ,
 \end{equation}
 and so is Equation \eqref{chp2-sec1-eq3}:
@@ -279,7 +279,7 @@ $x_2$ by $t^{n}, t^{n+1}, x_{i-\frac{1}{2}}$ and $x_{i+\frac{1}{2}}$,
 respectively, in Equation \eqref{chp2-sec1-eq10}, we get:
 \begin{equation}
 	\label{chp2-sec1-eq14}
-	\frac{d}{dt} {Q}_i(t) = \frac{1}{\Delta x}
+	\frac{dQ_i}{dt} (t) = \frac{1}{\Delta x}
 	({f}({q}(x_{i-\frac{1}{2}},t)) -
 	{f}({q}(x_{i+\frac{1}{2}},t))) ,
 	\quad \forall i = 1, \cdots, N.
@@ -311,7 +311,7 @@ Using this notation, Equations \eqref{chp2-sec1-eq14}
 and \eqref{chp2-sec1-eq15} lead to:
 \begin{equation}
         \label{chp2-sec1-eq17}
-        \frac{d}{dt} {Q}_i(t) = -\frac{1}{\Delta x}
+        \frac{dQ_i}{dt}(t) = -\frac{1}{\Delta x}
 	\delta_x {f}({q}(x_{i},t))
         \quad \forall i = 1, \cdots, N,
 \end{equation}
@@ -403,11 +403,14 @@ This idea is summarized in Problem \ref{chp2-sec2-prob2}.
 		$\Delta x = x_{i+\frac{1}{2}}-x_{i-\frac{1}{2}}$,
 		a time discretization
     $t^{n} = n\Delta t$, $\Delta t = \frac{T}{N_T}$, $\forall n = 0, \cdots, N_T$.
+     	Let us also assume that the values of $N$ and $N_T$ are always chosen in such a way
+    	that $N_t = c \cdot N $, for some $c$ fixed and therefore $\frac{\Delta t}{\Delta x} = \sigma$
+    	for an also fixed $\sigma \in \mathbb{R}$.
 		Since we are in the framework of Problem \ref{chp2-sec2-prob1}, it follows that:
 		\begin{equation}
 			\label{1d-fvexact-scheme}
 						{Q}_i(t^{n+1}) =  {Q}_i(t^{n}) -
-						\frac{\Delta t}{\Delta x} \delta _x\bigg( \frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}}
+						\sigma \delta _x\bigg( \frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}}
 						{f}({q}(x_{i}, t)) \,dt \bigg),
 						\quad \forall i = 1, \cdots, N,
 						\quad \forall n = 1, \cdots, N_T-1,
@@ -436,7 +439,7 @@ to represent the velocity at the control volume edges.
         \begin{equation}
 					\label{1d-fv-scheme}
 		{Q}_{i}^{n+1} =  {Q}_{i}^{n} -
-            \frac{\Delta t}{\Delta x} \delta_i {F}_{i}^{n},
+            \sigma \delta_i {F}_{i}^{n},
                 \quad \forall i = 1, \cdots, N,
                 \quad \forall n = 0, \cdots, N_T-1,
         \end{equation}
@@ -479,9 +482,9 @@ Therefore, the discrete total mass is constant for a 1D-FV scheme,
 which follows from a straightforward computation:
 \begin{align*}
 	M^{n+1} &=  \Delta x \sum_{i=1}^N Q_i^{n+1} \\ 
-					&= M_i^{n} - \Delta t  \sum_{i=1}^N (F^n_{i+\frac{1}{2}}- F^n_{i-\frac{1}{2}})\\
-					&= M_i^{n} - \Delta t (F^n_{N+\frac{1}{2}}- F^n_{\frac{1}{2}})\\
-					&= M_i^{n},
+					&= M^{n} - \Delta t  \sum_{i=1}^N (F^n_{i+\frac{1}{2}}- F^n_{i-\frac{1}{2}})\\
+					&= M^{n} - \Delta t (F^n_{N+\frac{1}{2}}- F^n_{\frac{1}{2}})\\
+					&= M^{n},
 \end{align*}
 where we are using that $F^n_{N+\frac{1}{2}} = F^n_{\frac{1}{2}}$, since we are assuming periodic boundary
 conditions.
@@ -501,25 +504,35 @@ continuously differentiable.
 
 \begin{prop}
 	\label{prop-bound-centroid}
-	If $q \in \mathcal{C}^2$, then $|Q_i(t^n)-q_i^n|\leq C_1 \Delta x^2$, where $C_1$ is a constant that depends only on $q$. 
+	If $q \in \mathcal{C}^2$, then $Q_i(t^n)-q_i^n = C_1 \Delta x^2$, where $C_1$ is a constant that depends only on $q$. 
 \end{prop}
 \begin{proof}
 	From Taylor's expansion, it follows that, for $x \in X_i$, we have:
 	\begin{equation}
 		q(x,t^n) = q(x_i,t^n) +  
-		\frac{\partial}{\partial x} q(x_i, t^n)(x-x_i) + 
-		\frac{\partial^2}{\partial x^2} q(\xi, t^n)\frac{(x-x_i)^2}{2},
+		\frac{\partial q}{\partial x} (x_i, t^n)(x-x_i) + 
+		\frac{\partial^2 q}{\partial x^2} (\xi, t^n)\frac{(x-x_i)^2}{2},
 	\end{equation}
 	for some $\xi$ between $x$ and $x_i$. Therefore:
 	\begin{align*}
-		|Q_{i}(t^n)-q_i^n| &= \bigg| \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} q(x,t^n)\,dx -q(x_i,t^n)  \bigg| \\ 
-		&= \bigg| \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \big(q(x,t^n) -q(x_i,t^n)\big) \,dx \bigg| \\ 
-		&= \bigg| \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
-		\bigg( \frac{\partial}{\partial x} q(x_i, t^n)(x-x_i) + 
-		\frac{\partial^2}{\partial x^2} q(\xi, t^n)\frac{(x-x_i)^2}{2} \bigg) \,dx \bigg|\\ 
-		&\leq \max_{x \in [a,b]}\bigg|\frac{\partial^2}{\partial x^2} q(x, t^n)\bigg| \frac{\Delta x^2}{24}, 
+		Q_{i}(t^n)-q_i^n &=  \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} q(x,t^n)\,dx -q(x_i,t^n)  \\ 
+		&= \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\bigg( \frac{\partial q}{\partial x} (x_i, t^n)(x-x_i) + 
+		\frac{\partial^2 q}{\partial x^2} (\xi, t^n)\frac{(x-x_i)^2}{2} \bigg) \,dx \\ 
+		&=  \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\frac{\partial^2 q}{\partial x^2} (\xi, t^n)\frac{(x-x_i)^2}{2}  \,dx
 	\end{align*}
-	from which the proposition follows.
+    Using the mean value theorem for integrals, we have:
+	\begin{align*}
+	Q_{i}(t^n)-q_i^n &=  
+	\frac{\partial^2 q}{\partial x^2} (\eta, t^n)
+ \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+\frac{(x-x_i)^2}{2}  \,dx = \frac{\partial^2 q}{\partial x^2} (\eta, t^n)\frac{\Delta x^2}{24}
+\end{align*}	
+for some $\eta \in X_i$, from which the proposition follows with.
+\begin{equation}
+	C_1 = \frac{1}{24}\frac{\partial^2 q}{\partial x^2} (\eta, t^n).
+\end{equation}
 \end{proof}
 
 To move towards the convergence of 1D-FV schemes, we introduce the local truncation error (LTE hereafter)
@@ -616,14 +629,14 @@ the following equation for the error:
 \subsection{Stability}
 In order to define the concept of stability, it is useful to introduce an operator
 representation of 1D-FV schemes.
-Let us assume the framework of Problem \ref{chp2-sec2-prob3},
-adding the hypothesis that the values of $N$ and $N_T$ are always chosen in such a way
-that $N_t = c \cdot N $, for some $c$ fixed. This implies that $\frac{\Delta t}{\Delta x} = \lambda$
-for an also fixed $\lambda \in \mathbb{R}$.
+Recall that the framework of Problem \ref{chp2-sec2-prob3},
+has the hypothesis that the values of $N$ and $N_T$ are always chosen in such a way
+that $N_t = c \cdot N $, for some $c$ fixed and therefore $\frac{\Delta t}{\Delta x} = \sigma$
+for an also fixed $\sigma \in \mathbb{R}$.
 In this context, we define the operators
 $A_{N,n}: \mathbb{R}^N \to \mathbb{R}^N$ whose $i$-th entry is given by:
 \begin{equation}
-	[A_{N,n}(Q)]_i = Q_i -\lambda \bigg( \mathcal{F}(Q;u^n,i) - \mathcal{F}(Q;u^n,i-1) \bigg),
+	[A_{N,n}(Q)]_i = Q_i -\sigma \bigg( \mathcal{F}(Q;u^n,i) - \mathcal{F}(Q;u^n,i-1) \bigg),
 \end{equation}
 for $i=1, \cdots, N$, $n=0, \cdots, N_T-1$.
 Notice that the dependence on $n$ is due to the velocity that may be allowed
@@ -638,7 +651,7 @@ and Equation \eqref{consistency-1d-eq1} in a vector form reads
 \begin{equation*}
 	Q(t^{n+1}) = A_{N,n}(Q(t^n)) + \Delta t \tau^n,
 \end{equation*}
-and the error equation (Eq. \eqref{erroreq-1d-eq2}) is given by
+and the error equation \eqref{erroreq-1d-eq2} is given by
 \begin{equation}
 	\label{erroreq-1d-eq3}
 	E^{n+1} = A_{N,n}(Q(t^n)) - A_{N,n}(Q^n) +  \Delta t \tau^n.
@@ -752,10 +765,10 @@ We can then express $\rho$ in terms of $\alpha_{l,i}$.
 Indeed, when we apply the operator $A_{N,n}$ in a Fourier mode, we get:
 \begin{align*}
 	\begin{split}
-		[A_{N,n}(e^{\imath k\theta})]_i &= e^{\imath k\theta_i} - \lambda 
+		[A_{N,n}(e^{\imath k\theta})]_i &= e^{\imath k\theta_i} - \sigma 
 																\bigg(\sum_{l=-q}^p \alpha_{l,i}   e^{\imath k\theta_{i+l}} - 
 																			\sum_{l=-q}^p \alpha_{l,i-1} e^{\imath k\theta_{i-1+l}} \bigg)\\
-		&= e^{\imath k \theta_i}\bigg(1 - \lambda 
+		&= e^{\imath k \theta_i}\bigg(1 - \sigma 
 																			\bigg(\sum_{l=-q}^p \alpha_{l,i}   e^{\imath k\theta_{l}} - 
 																			\sum_{l=-q}^p \alpha_{l,i-1} e^{\imath k\theta_{l-1}} \bigg) \bigg)\\
 	\end{split}
@@ -763,7 +776,7 @@ Indeed, when we apply the operator $A_{N,n}$ in a Fourier mode, we get:
 Hence, the amplification factor has the form
 \begin{equation}
 \label{chp2-amplification}
-\rho(k) = 1 - \lambda
+\rho(k) = 1 - \sigma
 					\bigg(\sum_{l=-q}^p \alpha_{l,i}   e^{\imath k\theta_{l}} - 
 					\sum_{l=-q}^p \alpha_{l,i-1} e^{\imath k\theta_{l-1}} \bigg)
 \end{equation}
@@ -802,8 +815,7 @@ We make use of the indicator function of each control volume $X_i$ defined by:
 	\end{cases}
 \end{equation*}
 
-Our task is to find a piecewise-parabolic (PP) 
-function:
+Our task is to find a Piecewise-Parabolic (PP) function:
 \begin{equation}
 	\label{chp2-sec3-1-eq2}
 	q_{PP}(x) = \sum_{i=1}^{N} \chi_i(x) q_i(x),
@@ -933,9 +945,9 @@ This is proved as a Corollary of the following Proposition \ref{prop:ppm-bound1}
 		q(\overline{x} ) = \frac{7}{12}\bigg( \frac{1}{h} \int_{\overline{x} }^{\overline{x}+h} q(x) \,dx 
 		       + \frac{1}{h} \int_{\overline{x} -h}^{\overline{x} } q(x) \,dx  \bigg)
 		       - \frac{1}{12}\bigg( \frac{1}{h} \int_{\overline{x} +h}^{\overline{x}+2h} q(x) \,dx 
-		       + \frac{1}{h} \int_{\overline{x} -2h}^{\overline{x} -h} q(x) \,dx  \bigg) + Ch^4,
+		       + \frac{1}{h} \int_{\overline{x} -2h}^{\overline{x} -h} q(x) \,dx  \bigg) + C_1h^4,
 	\end{equation}
-	where $C$ is a constant that depends on $q$ and $h$.
+	where $C_1$ is a constant that depends on $q$ and $h$.
 \end{prop}
 
 \begin{proof}
@@ -952,19 +964,16 @@ This is proved as a Corollary of the following Proposition \ref{prop:ppm-bound1}
 	\begin{equation}
 		\label{prop:ppm-bound1-eq2}
 		q(\overline{x}) = \frac{4}{3} \bigg(\frac{Q(\overline{x}+h) - Q(\overline{x}-h)}{2h}\bigg)
-		       - \frac{1}{3} \bigg(\frac{Q(\overline{x}+2h) - Q(\overline{x}-2h)}{4h}\bigg)
-+ Ch^4,
+		       - \frac{1}{3} \bigg(\frac{Q(\overline{x}+2h) - Q(\overline{x}-2h)}{4h}\bigg) + C_1h^4,
 	\end{equation}
 	which consists of finite-difference approximations. 
 	Thus, Equation \eqref{prop:ppm-bound1-eq1} follows from Lemma \ref{lemma:fd-ppm-est1}
 	with:
 	\begin{equation}
 		\label{prop:ppm-bound1-eq3}
-		C = \frac{1}{240}\bigg( q^{(4)}(\theta_{h}) + q^{(4)}(\theta_{-h})\bigg)
-		- \frac{1}{45}\bigg( q^{(4)}(\theta_{2h}) + q^{(4)}(\theta_{-2h})\bigg), 
+		C_1 = C_1(\mu_1,\mu_2) = \frac{1}{720}\bigg(6q^{(4)}(\mu{1}) -32q^{(4)}(\mu_{2})\bigg), 
 	\end{equation}
-	where $\theta_{h} \in [\overline{x},\overline{x}+h], \theta_{-h}\in [\overline{x}-h,\overline{x}]$, 
-	$\theta_{2h} \in [\overline{x},\overline{x}+2h], \theta_{-2h}\in [\overline{x}-2h,\overline{x}]$,
+	where $\mu_{1}, \mu_{2} \in [\overline{x}-2h,\overline{x}+2h]$,
 	which concludes the proof.
 \end{proof}
 
@@ -975,20 +984,9 @@ This is proved as a Corollary of the following Proposition \ref{prop:ppm-bound1}
 	that $q_{i+\frac{1}{2}}$ given by Equation \eqref{chp2-sec-recon-ppm-eq9} satisfies:
 	\begin{equation}
 		\label{ppm-edges-bound1}
-		q{(x_{i+\frac{1}{2}})} - q_{i+\frac{1}{2}} = C\Delta x^4,
+		q{(x_{i+\frac{1}{2}})} - q_{i+\frac{1}{2}} = C_1\Delta x^4,
 	\end{equation}
-	with $C$ given by right-hand side of Equation \eqref{prop:ppm-bound1-eq3}.
-	Besides that, we also have the following bound:
-	\begin{equation}
-		\label{ppm-edges-bound2}
-		\big|q{(x_{i+\frac{1}{2}})} - q_{i+\frac{1}{2}}\big| \leq C_1\Delta x^4,
-	\end{equation}
-	where:
-	\begin{equation}
-		\label{ppm-cte-bound1}
-		C_1 = \frac{19}{360}\sup_{x \in [a,b]}{|q^{(4)}(x)|},
-	\end{equation}
-	is a constant that depends only on $q$.
+	with $C_1$ given by Equation \eqref{prop:ppm-bound1-eq3}.
 \end{corollary}
 
 \begin{remark}
@@ -1005,7 +1003,7 @@ In order to check this, for $x \in X_i$ we rewrite Equation
 \begin{equation}
 	\label{chp2-ppm-newton}
 	q_i(x) = q_{L,i} + \frac{(\Delta q_i + q_{6, i})}{\Delta x}(x-x_{i-\frac{1}{2}})
-	-\frac{q_{6, i}}{(\Delta x)^2}(x-x_{i-\frac{1}{2}})^2
+	-\frac{q_{6, i}}{\Delta x^2}(x-x_{i-\frac{1}{2}})^2
 \end{equation}
 and we write $q$ using its Taylor expansion assuming $q \in \mathcal{C}^4([a,b])$:
 \begin{equation}
@@ -1024,11 +1022,11 @@ it is reasonable to seek to some bound to the expressions:
 and:
 \begin{equation} 
 	\label{chp2-ppm-bound3eq}
-	\frac{q''(x_{i-\frac{1}{2}})}{2} -\bigg(-\frac{q_{6, i}}{(\Delta x)^2}\bigg).
+	\frac{q''(x_{i-\frac{1}{2}})}{2} -\bigg(-\frac{q_{6, i}}{\Delta x^2}\bigg).
 \end{equation}
 We have seen that term $q_{L,i}$ gives a fourth-order approximation to $q(x_{i-\frac{1}{2}})$.
 The Corollary \ref{prop:ppm-bound2-corollary} shall prove that 
-the term \eqref{chp2-ppm-bound2eq} has a bound proportional to $(\Delta x)^2$, and
+the term \eqref{chp2-ppm-bound2eq} has a bound proportional to $\Delta x^2$, and
 the Corollary \ref{prop:ppm-bound3-corollary} shall prove that the
 term \eqref{chp2-ppm-bound3eq} is bounded by a constant times $\Delta x$.
 
@@ -1073,10 +1071,10 @@ approximates $q'(x_{i-\frac{1}{2}})$ with order 2.
 		      +\frac{15}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx  \\ 
 		      -\frac{5}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
 		      +\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
-		\bigg) + Ch^2,
+		\bigg) + C_2h^2,
 		\end{split}
 	\end{equation}
-	where $C$ is a constant that depends on $q$ and $h$.
+	where $C_2$ is a constant that depends on $q$ and $h$.
 \end{prop}
 
 \begin{proof}
@@ -1106,12 +1104,9 @@ approximates $q'(x_{i-\frac{1}{2}})$ with order 2.
 	Lemma \ref{lemma:fd-ppm-est2} with:
 	\begin{equation}
 		\label{prop:ppm-bound2-eq2}
-		C = \frac{1}{24}\bigg(32q^{(3)}(\theta_{-2h}) - 15q^{(3)}(\theta_{-h}) -20q^{(3)}(\theta_{h}) +96 q^{(3)}(\theta_{2h}) - 81q^{(3)}(\theta_{3h})\bigg), 
+		C_2 = C_2(\mu_1,\mu_2) = \frac{1}{24}\bigg(128q^{(3)}(\mu_{1}) - 116q^{(3)}(\mu_{2})\bigg), 
 	\end{equation}
-	where $\theta_{h} \in [\overline{x},\overline{x}+h], \theta_{-h}\in [\overline{x}-h,\overline{x}]$, 
-	$\theta_{2h} \in [\overline{x},\overline{x}+2h], \theta_{-2h}\in [\overline{x}-2h,\overline{x}]$,
-	$\theta_{3h} \in [\overline{x},\overline{x}+3h]$,
-	which concludes the proof.
+	where $\mu_{1}, \mu_{2} \in [x_0-2h,x_0+3h]$, which concludes the proof.
 
 \end{proof}
 
@@ -1123,20 +1118,9 @@ approximates $q'(x_{i-\frac{1}{2}})$ with order 2.
 	and $q_{6,i}$ given by Equation \eqref{def:q6i-2}
  satisfy:
 	\begin{equation}
-	q'(x_{i-\frac{1}{2}})-\frac{(\Delta q_i + q_{6, i})}{\Delta x}  = C\Delta x^2,
+	q'(x_{i-\frac{1}{2}})-\frac{(\Delta q_i + q_{6, i})}{\Delta x}  = C_2\Delta x^2,
 	\end{equation}
-	with $C$ given by right-hand side of Equation \eqref{prop:ppm-bound2-eq2}.
-	Besides that, we also have the following bound:
-	\begin{equation}
-		\label{ppm-edge-bound2}
-		\bigg|q'(x_{i-\frac{1}{2}})-\frac{(\Delta q_i + q_{6, i})}{\Delta x} \bigg| \leq C_2\Delta x^2,
-	\end{equation}
-	where:
-	\begin{equation}
-		\label{ppm-cte-bound2}
-		C_2 = \frac{244}{24}\sup_{x \in [a,b]}{|q^{(3)}(x)|}
-	\end{equation}
-	is a constant that depends only on $q$.
+	with $C_2$ given by Equation \eqref{prop:ppm-bound2-eq2}.
 \end{corollary}
 
 Now, we analyse the following expression:
@@ -1162,10 +1146,10 @@ approximates $q''(x_{i-\frac{1}{2}})$ with order 1.
 		      -\frac{10}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx  \\ 
 		      +\frac{6}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
 		      -\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
-		\bigg) + Ch,
+		\bigg) + C_3h,
 		\end{split}
 	\end{equation}
-	where $C$ is a constant that depends on $q$ and $h$.
+	where $C_3$ is a constant that depends on $q$ and $h$.
 \end{prop}
 
 \begin{proof}
@@ -1193,12 +1177,9 @@ approximates $q''(x_{i-\frac{1}{2}})$ with order 1.
 	Lemma \ref{lemma:fd-ppm-est3} with:
 	\begin{equation}
 		\label{prop:ppm-bound3-eq2}
-		C = \frac{1}{48}\bigg(-16q^{(3)}(\theta_{-2h}) + 7q^{(3)}(\theta_{-h}) +16q^{(3)}(\theta_{h}) - 112q^{(3)}(\theta_{2h}) + 81q^{(3)}(\theta_{3h})\bigg), 
+		C_3 = C_3(\mu_1,\mu_{2}) = \frac{1}{48}\bigg(104q^{(3)}(\mu_{1}) - 128q^{(3)}(\mu_{2}) \bigg), 
 	\end{equation}
-	where $\theta_{h} \in [\overline{x},\overline{x}+h], \theta_{-h}\in [\overline{x}-h,\overline{x}]$, 
-	$\theta_{2h} \in [\overline{x},\overline{x}+2h], \theta_{-2h}\in [\overline{x}-2h,\overline{x}]$,
-	$\theta_{3h} \in [\overline{x},\overline{x}+3h]$,
-	which concludes the proof.
+	where $\mu_{1}, \mu_{2} \in [x_0-2h,x_0+3h]$, which concludes the proof.
 \end{proof}
 
 \begin{corollary}
@@ -1207,21 +1188,10 @@ approximates $q''(x_{i-\frac{1}{2}})$ with order 1.
 	$\overline{x} = x_{i-\frac{1}{2}}$ and $h = \Delta x$
 	that $q_{6,i}$ given by Equation \eqref{chp2-sec-recon-ppm-eq9} satisfies:
 	\begin{equation}
-	q''(x_{i-\frac{1}{2}}) -\bigg(-\frac{2q_{6, i}}{\Delta x^2}\bigg) = C\Delta x,
-	\end{equation}
-	with $C$ given by right-hand side of Equation \eqref{prop:ppm-bound3-eq2}.
-	Besides that, we also have the following bound:
-	\begin{equation}
 		\label{ppm-edges-bound3}
-		\bigg|\frac{q''(x_{i-\frac{1}{2}})}{2} -\bigg(-\frac{q_{6, i}}{\Delta x^2}\bigg) \bigg|
-		\leq C_3\Delta x,
+	q''(x_{i-\frac{1}{2}}) -\bigg(-\frac{2q_{6, i}}{\Delta x^2}\bigg) = C_3\Delta x,
 	\end{equation}
-	where:
-	\begin{equation}
-		\label{ppm-cte-bound3}
-		C_3 = \frac{232}{96}\sup_{x \in [a,b]}{|q^{(3)}(x)|} 
-	\end{equation}
-	is a constant that depends only on $q$.
+	with $C_3$ given by Equation \eqref{prop:ppm-bound3-eq2}.
 \end{corollary}
 
 With the aid of Corollaries \ref{prop:ppm-bound1-corollary}, \ref{prop:ppm-bound2-corollary},
@@ -1237,6 +1207,12 @@ Indeed, we prove this on the follow up Proposition \ref{prop:ppm-bound4}.
 	the parameters $q_{R,i}$ and $q_{L,i}$ obeying Equations
 	\eqref{chp2-sec-recon-ppm-eq10} and \eqref{chp2-sec-recon-ppm-eq11}
 	gives a third-order approximation to $q$ on the control volume $X_i$.
+	Namely, there exist constants $M_1$ and $M_2$ such that
+	\begin{equation*}
+		\begin{split}
+			|q(x)-q_i(x)| \leq  M_1 \Delta x ^4 + M_2 \Delta x ^3, \quad \forall x \in X_i.
+		\end{split}
+	\end{equation*}
 \end{prop}
 \begin{proof}
 For $x \in X_i$, from Equations \eqref{chp2-ppm-taylor} and \eqref{chp2-ppm-newton}, we have:
@@ -1244,26 +1220,40 @@ For $x \in X_i$, from Equations \eqref{chp2-ppm-taylor} and \eqref{chp2-ppm-newt
 	\begin{split}
 	q(x)-q_i(x) = (q'(x_{i-\frac{i}{2}})-q_{L,i})	
 	+ \bigg(q'(x_{i-\frac{1}{2}})-  \frac{(\Delta q_i + q_{6, i})}{\Delta x}\bigg)(x-x_{i-\frac{1}{2}})
-	\\+ \bigg(\frac{q''(x_{i-\frac{1}{2}})}{2} + \frac{q_{6, i}}{(\Delta x)^2}\bigg)(x-x_{i-\frac{1}{2}})^2
+	\\+ \bigg(\frac{q''(x_{i-\frac{1}{2}})}{2} + \frac{q_{6, i}}{\Delta x^2}\bigg)(x-x_{i-\frac{1}{2}})^2
 	+ \frac{q^{(3)}(\theta_i)}{6}(x-x_{i-\frac{1}{2}})^3.
 	\end{split}
 \end{equation*}
-For $x\in X_i$, we have $|x -x_{i-\frac{i}{2}}| \leq \Delta x$. 
 Using this fact with Corollaries \ref{prop:ppm-bound1-corollary}, \ref{prop:ppm-bound2-corollary},
 and  \ref{prop:ppm-bound3-corollary}, we have:
 \begin{equation*}
 	\begin{split}
-	|q(x)-q_i(x)| \leq |q'(x_{i-\frac{i}{2}})-q_{L,i}|
-	+ \bigg|q'(x_{i-\frac{1}{2}})-  \frac{(\Delta q_i + q_{6, i})}{\Delta x}\bigg||x-x_{i-\frac{1}{2}}|
-	\\+ \bigg|\frac{q''(x_{i-\frac{1}{2}})}{2} + \frac{q_{6, i}}{(\Delta x)^2}\bigg||x-x_{i-\frac{1}{2}}|^2
-	+ \frac{|q^{(3)}(\theta_i)|}{6}|x-x_{i-\frac{1}{2}}|^3 \\
-	\leq C_1(\Delta x)^4 + \bigg(C_2+C_3+\frac{1}{6}
-	\sup_{\xi \in [a,b]}{|q^{(3)}(\xi)|} \bigg)(\Delta x)^3,
+	q(x)-q_i(x) =  C_1 \Delta x ^4 + C_2 \Delta x ^2(x-x_{i-\frac{1}{2}})
+	+ \frac{C_3}{2} \Delta x (x-x_{i-\frac{1}{2}})^2
+	+ C_4(x-x_{i-\frac{1}{2}})^3 
 	\end{split}
 \end{equation*}
-where $C_1, C_2$ and $C_3$ are given by Equations \eqref{ppm-cte-bound1},
-\eqref{ppm-cte-bound2} and \eqref{ppm-cte-bound3}, respectively, which
-concludes the proof.
+where $C_1, C_2$ and $C_3$ are given by Equations \eqref{prop:ppm-bound1-eq3},
+\eqref{prop:ppm-bound2-eq2} and \eqref{prop:ppm-bound3-eq2}, respectively, and
+\begin{equation}
+	\label{prop:ppm-bound4-eq3}
+	C_4 = C_4(\theta_i) = \frac{q^{(3)}(\theta_i)}{6}.
+\end{equation}
+For $x\in X_i$, we have $|x -x_{i-\frac{i}{2}}| \leq \Delta x$, thus:
+\begin{equation*}
+	\begin{split}
+		|q(x)-q_i(x)| \leq  M_1 \Delta x ^4 + M_2 \Delta x ^3,
+	\end{split}
+\end{equation*}
+where 
+\begin{equation*}
+M_1 = \frac{38}{720}\sup_{\xi \in [a,b]} |q^{(4)}(\xi)|, 
+\end{equation*}
+\begin{equation*}
+M_2 = \bigg(\frac{244}{24} + \frac{232}{96} + \frac{1}{6} \bigg)
+\sup_{\xi \in [a,b]} |q^{(3)}(\xi)| = \frac{143}{12} \sup_{\xi \in [a,b]} |q^{(3)}(\xi)|,
+\end{equation*}
+which concludes the proof.
 \end{proof}
 
 \begin{remark}
@@ -1376,7 +1366,7 @@ Equation \eqref{chp2-sec-recon-ppm-eq1} that:
 	F_{L,i+\frac{1}{2}}(y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}-y}^{x_{i+\frac{1}{2}}}
 	q_{i}(\xi)\,d\xi = 
 	q_{R,i} +\frac{(q_{6,i} - \Delta q_i)}{2\Delta x}y
-	- \frac{q_{6,i}}{3(\Delta x)^2}y^2,
+	- \frac{q_{6,i}}{3\Delta x^2}y^2,
 \end{equation}
 and
 \begin{equation}
@@ -1384,7 +1374,7 @@ and
 	F_{R,i+\frac{1}{2}}(y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}}^{x_{i+\frac{1}{2}}+y}
 	q_{i+1}(\xi)\,d\xi = 
 	q_{L,i+1} +\frac{(q_{6,i+1} + \Delta q_{i+1})}{2\Delta x}y
-	- \frac{q_{6,i+1}}{3(\Delta x)^2}y^2.
+	- \frac{q_{6,i+1}}{3\Delta x^2}y^2.
 \end{equation}
 
 The numerical flux function is then defined by:
@@ -1400,8 +1390,8 @@ The numerical flux function may be also expressed as:
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux2}
 	\mathcal{F}(Q;u^n,i) =  \frac{1}{\Delta t} 
-	\int_{x_{i+\frac{1}{2}}-u^n_{i+\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-	q_i(x) \,dx.
+	\int_{x_{i+\frac{1}{2}}-u^n_{i+\frac{1}{2}}\delta t}^{x_{i+\frac{1}{2}}}
+	q_{PP}(x) \,dx.
 \end{equation}
 Notice that if we define:
 \begin{equation*}
@@ -1532,13 +1522,6 @@ the flux stencil coefficients may be written as:
 With the stencil coefficients, we can compute the amplification factor 
 (Equation \eqref{chp2-amplification}) for the PPM and the hybrid PPM schemes, both without monotonization.
 We assume a constant velocity equal to one and $N=100$ (number of control volumes).
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.49\linewidth]{stability_PPM}
-	\includegraphics[width=0.49\linewidth]{stability_PPM_hybrid}
-	\caption{Amplification factor for the PPM (left) and hybrid PPM (right) schemes for different CFL numbers.}
-	\label{chp2-fig-amplification}
-\end{figure}
 In Figure \ref{chp2-fig-amplification} we show the amplification factor for both PPM and hybrid PPM schemes
 considering different CFL numbers.
 We can observe that both schemes damp most of the Fourier modes for larger $k$, regardless of the CFL number.
@@ -1546,6 +1529,13 @@ Besides that, the hybrid scheme is more effective when reducing the Fourier mode
 We point out that both schemes are exact when the CFL number is equal to 1.
 From this analysis, we can conclude that the PPM and hybrid PPM schemes satisfy the
 Von Neumann stability criteria when the CFL restriction is respected.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.49\linewidth]{stability_PPM}
+	\includegraphics[width=0.49\linewidth]{stability_PPM_hybrid}
+	\caption{Amplification factor for the PPM (left) and hybrid PPM (right) schemes for different CFL numbers.}
+	\label{chp2-fig-amplification}
+\end{figure}
 
 In order to investigate the consistency of the PPM scheme, we notice that when we are deducing the time average flux, 
 we are making some approximations of the form:
@@ -1559,15 +1549,13 @@ as we can see from Equations \eqref{chp-sec-flux:fL_1} and \eqref{chp-sec-flux:f
 which basically replace $q$ by $q_{PP}$ on the right-hand side of Equation
 \eqref{chp2-sec-flux:analysis-eq1}.
 As we shall see, the approximation \eqref{chp2-sec-flux:analysis-eq1}
-is in fact exact if we replace $q_{PP}$ by $q$ and assume $u$ does not depend on $x$.
-Therefore, in this case, the only error is due to the approximation made by $q_{PP}$. 
-In the case when the velocity depends on $x$, these approximations will have two sources
-of error: one first-order error in time-related to a computation of a departure point and
-another related to the approximation of a time integral by a spatial integral, 
-as in \eqref{chp2-sec-flux:analysis-eq1}, which shall be second-order accurate.
+is in fact exact if we assume that $u$ is constant.
+Therefore, in this case, the only error in the flux computation is due to the approximation made by $q_{PP}$. 
+In the case where the velocity is not constant, this approximation will have an unique source of 
+error related to a computation of a departure point which shall be second-order accurate.
 
-For each $s \in [t^n,t^{n+1}]$, let us consider the following Cauchy problem
-backward in time:
+To introduce the definition of departure point, for each $s \in [t^n,t^{n+1}]$,
+we consider the following Cauchy problem backward in time:
 \begin{equation}
 	\label{chp-sec-flux:analysis-eq3}
     	\begin{cases}
@@ -1583,6 +1571,32 @@ $[t,s]$, we get:
 	\label{chp-sec-flux:analysis-eq4}
 	X(t,s;x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \int_{t}^{s}u(X(\theta,s;x_{i+\frac{1}{2}}),\theta) \,d\theta.
 \end{equation}
+Equation \eqref{chp-sec-flux:analysis-eq4} is useful to show that the trajectory $X(t,s;x_{i+\frac{1}{2}})$ remains on a singe control volume,
+under some basic assumptions, as we show on the next proposition.
+\begin{prop}
+	\label{chp2-sec-flux:departurebound}
+	If $u \in \mathcal{C}^1$, the CFL condition is satisfied and if $\Delta t$ and $\Delta x$ are small enough, then
+	for any $s \in [t^n, t^{n+1}]$, $t \in [t^n, s]$, we have that $X(t,s;x_{i+\frac{1}{2}}) \in X_i$ if $u_{i+\frac{1}{2}}^n>0$ 
+	and	$X(t,s;x_{i+\frac{1}{2}}) \in X_{i+1}$ if $u_{i+\frac{1}{2}}^n<0$.
+\end{prop}
+
+\begin{proof}
+	Let us assume $u_{i+\frac{1}{2}}^n>0$. Since $u$ is continuous and the CFL condition is satisfied,
+	there exist $\Delta t$ and $\Delta x$ such that $|u(X(t,s;x_{i+\frac{1}{2}}),t)| \frac{\Delta t}{\Delta x}\leq1$ and $u(X(t,s;x_{i+\frac{1}{2}}),t)>0$, 
+	$\forall s \in [t^n, t^{n+1}]$, $t \in [t^n, s]$.
+	Hence, it follows from Equation \eqref{chp-sec-flux:analysis-eq4} and the mean value theorem for integrals that:
+	\begin{equation*}
+		X(t,s;x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - (t-s)u(X(\theta_1,s;x_{i+\frac{1}{2}}),\theta_1),
+	\end{equation*}
+	for some $\theta_1 \in [t,s]$. Therefore:
+	\begin{equation*}
+	X(t,s;x_{i+\frac{1}{2}}) \geq x_{i+\frac{1}{2}} - \Delta t u(X(\theta_1,s;x_{i+\frac{1}{2}}),\theta_1)
+	\geq x_{i+\frac{1}{2}} - \Delta x = x_{i-\frac{1}{2}},
+	\end{equation*}
+	from which the claim follows.
+	The case $u_{i+\frac{1}{2}}^n<0$  is very similar to the case  $u_{i+\frac{1}{2}}^n>0$.
+\end{proof}
+Equation \eqref{chp-sec-flux:analysis-eq4} allow us to compute or estimate the departure point.
 For instance, if $u$ is constant, then the departure point at time $t^n$ of the point 
 $x_{i+\frac{1}{2}}$ at time $t^{n+1}$ is given by:
 \begin{equation}
@@ -1598,60 +1612,62 @@ that  we can write a second-order approximation to the departure point:
 This approximation is exactly what is used in the PPM flux and we give a bound 
 to this expression on the next proposition.
 \begin{prop}
-	Assuming that $u \in C^1$ and $X$ satisfies Equation \eqref{chp-sec-flux:analysis-eq4}, then:
+	Assuming that $u \in \mathcal{C}^1$ and $X$ satisfies Equation \eqref{chp-sec-flux:analysis-eq4}, then:
 \begin{equation}
 	\label{chp-sec-flux:departurepoint3}
-	|X(t^n,t^{n+1};x_{i+\frac{1}{2}}) - (x_{i+\frac{1}{2}} - u^{n}_{i+\frac{1}{2}}\Delta t)| \leq M_1 \Delta t^2,
+	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) - (x_{i+\frac{1}{2}} - u^{n}_{i+\frac{1}{2}}\Delta t) = M_1 \Delta t^2,
 \end{equation}
 where $M_1$ is a constant that depends only on $u$. 
 \end{prop}
 \begin{proof}
 	We basically need to estimate the integral of the right-hand side of \eqref{chp-sec-flux:analysis-eq4}.
-	Defining $f(t) = u(X(t,t^{n+1};x_{i+\frac{1}{2}}),t)$, it is easy to show that:
+	Defining $f(t) = u(X(t,t^{n+1};x_{i+\frac{1}{2}}),t)$, similarly to Proposition \ref{prop-bound-centroid}
+	it is easy to show that:
 	\begin{equation*}
-		\bigg|\int_{t^n}^{t^{n+1}}f(t) \,dt - \Delta t f(t^n)\bigg| \leq \frac{\Delta t^2}{2}\sup\{|f'(t)|:t \in [t^n,t^{n+1}]\}
+		\int_{t^n}^{t^{n+1}}f(t) \,dt - \Delta t f(t^n) = \frac{\Delta t^2}{2} f'(\theta)
 	\end{equation*}
+  where $\theta \in [t^n, t^{n+1}]$.
   Writing this expression in terms of $u$, we have:
 	\begin{align*}
-		\bigg|\int_{t^n}^{t^{n+1}} u(X(t,t^{n+1};x_{i+\frac{1}{2}}),t) \,dt - u^{n}_{i+\frac{1}{2}}\Delta t \bigg|
-		&\leq \frac{\Delta t^2}{2}
-		\sup_{t \in [t^n,t^{n+1}]} 
-		\bigg|\frac{\partial u}{\partial x} 
-		(X(t,t^{n+1};x_{i+\frac{1}{2}}),t)
+		\int_{t^n}^{t^{n+1}} u(X(t,t^{n+1};x_{i+\frac{1}{2}}),t) \,dt - u^{n}_{i+\frac{1}{2}}\Delta t 
+		&= \frac{\Delta t^2}{2}\bigg(
+		\frac{\partial u}{\partial t} 
+		(X(\theta,t^{n+1};x_{i+\frac{1}{2}}),\theta)+
 		\frac{\partial X}{\partial t}
-		(t,t^{n+1})   
-	  +\frac{\partial u}{\partial t} 
-		(X(t,t^{n+1};x_{i+\frac{1}{2}}),t)
-		\bigg| \\
-		& =   
-		\frac{\Delta t^2}{2}
-		\sup_{t \in [t^n,t^{n+1}]} 
-		\bigg|\bigg(\frac{\partial u}{\partial x}u+
-		\frac{\partial u}{\partial t}\bigg) 
-		(X(t,t^{n+1};x_{i+\frac{1}{2}}),t)
-		\bigg| \\ 
-		& \leq   
-		\frac{\Delta t^2}{2}
-		\sup_{t \in [0,T], x \in [a,b]}
-		\bigg|\bigg(\frac{\partial u}{\partial x}u+
-		\frac{\partial u}{\partial t}\bigg) 
-		(x,t)
-		\bigg|,
+		(\theta,t^{n+1};x_{i+\frac{1}{2}}) 
+		\frac{\partial u}{\partial x} 
+		(X(\theta,t^{n+1};x_{i+\frac{1}{2}}),\theta)  \bigg)\\
+		& = \frac{\Delta t^2}{2}
+		\bigg(\frac{\partial u}{\partial t} +
+		u\frac{\partial u}{\partial x}\bigg)
+		(X(\theta,t^{n+1};x_{i+\frac{1}{2}}),\theta)
 	\end{align*}
 	from which the proposition follows with
 \begin{equation}
 	\label{chp2-sec-flux:M1}
-	M_1 =		\frac{1}{2}
-		\sup_{t \in [0,T], x \in [a,b]}
-		\bigg|\bigg(\frac{\partial u}{\partial x}u+
-		\frac{\partial u}{\partial t}\bigg) 
-		(x,t)
-		\bigg|. 
+	M_1 = M_1(\mu_1, \mu_2)=  \frac{1}{2}
+		   \bigg(\frac{\partial u}{\partial t}+
+		   u\frac{\partial u}{\partial x} \bigg)(\mu_1,\mu_2),
 \end{equation}
+for some $\mu_2 \in [t^n, t^{n+1}]$ and $\mu_1 \in X_i \cup X_{i+1}$, assuming that $\Delta t$ and $\Delta x$ are small enough 
+as in Proposition \ref{chp2-sec-flux:departurebound}.
 \end{proof}
 We point out that higher-order departure points estimates may be obtained integrating
 the ordinary differential equation \eqref{chp-sec-flux:analysis-eq3} using higher-order time integration schemes.
+On the next Proposition \ref{chp2-sec-flux:prop1}, we prove that approximation \eqref{chp2-sec-flux:analysis-eq1}
+is exact if we use the exact departure point.
+\begin{prop}
+	\label{chp2-sec-flux:prop1}
+Assume the framework of Problem \ref{chp2-sec2-prob2}.
+If $q$ and $u$ are $\mathcal{C}^1$ functions, then:
+\begin{align}
+			\label{chp2-sec-flux:approx1}
+			\int^{x_{i+\frac{1}{2}}}_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})} q(x,t^n)\,dx= 
+			\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds
+\end{align}
+\end{prop}
 
+\begin{proof}
 From Equation \eqref{chp-sec-flux:analysis-eq4}, using the Leibniz rule for integration it follows that:
 \begin{align}
 	\begin{split}
@@ -1663,7 +1679,26 @@ From Equation \eqref{chp-sec-flux:analysis-eq4}, using the Leibniz rule for inte
 		\frac{\partial X}{\partial s} (\theta, s; x_{i+\frac{1}{2}})\,d\theta.
 	\end{split}
 \end{align}
-Then, computing $q$ on the trajectory give by $X(t,s;x_{i+\frac{1}{2}})$ and taking
+Taking the derivative with respect to $t$ of Equation \eqref{chp-sec-flux:dxds}, we have:
+\begin{align}
+	\begin{split}
+		\label{chp-sec-flux:dxds_2}
+		\frac{\partial }{\partial t} \bigg(\frac{\partial X}{\partial s} \bigg)
+		(t,s;x_{i+\frac{1}{2}}) = \frac{\partial u}{\partial x}(X(t, s; x_{i+\frac{1}{2}}), t) 
+		\frac{\partial X}{\partial s} (t, s; x_{i+\frac{1}{2}}).
+	\end{split}
+\end{align}
+Using standard ODE techniques, we get that $X$ that solves Equation \eqref{chp-sec-flux:dxds_2}
+is given by:
+\begin{align}
+	\begin{split}
+		\label{chp-sec-flux:xs_int}
+		\frac{\partial X}{\partial s}(t,s;x_{i+\frac{1}{2}}) = 
+		-\exp{\bigg( \int_{s}^{t} \frac{\partial u}{\partial x}(X(\theta,s;x_{i+\frac{1}{2}}),\theta)  \,d\theta \bigg)}
+	  u(x_{i+\frac{1}{2}},s).
+	\end{split}
+\end{align}
+Computing $q$ on the trajectory give by $X(t,s;x_{i+\frac{1}{2}})$ and taking
 its time derivative, we obtain:
 \begin{align}
 	\label{chp-sec-flux:dqdt}
@@ -1676,12 +1711,14 @@ its time derivative, we obtain:
 \end{align}
 where we used that $q$ satisfies the linear advection equation and that $X(t,s;x_{i+\frac{1}{2}})$
 solves Equation \eqref{chp-sec-flux:analysis-eq3}.
-Integrating Equation \eqref{chp-sec-flux:dqdt} over $[t,s]$, we have:
+Using again standard ODE techniques, we get that $q$ that solves Equation \eqref{chp-sec-flux:dqdt}
+is given by:
 \begin{align}
 	\begin{split}
 		\label{chp-sec-flux:q_int}
-		q(X(t,s;x_{i+\frac{1}{2}}),t) &= q(x_{i+\frac{1}{2}},s)
-		+ \int_{t}^{s} \frac{\partial u}{\partial x}(X(\theta,s;x_{i+\frac{1}{2}}),\theta) q(X(\theta,s;x_{i+\frac{1}{2}}),\theta) \,d\theta. \\
+		q(X(t,s;x_{i+\frac{1}{2}}),t) &= 
+		\exp{\bigg(- \int_{s}^{t} \frac{\partial u}{\partial x}(X(\theta,s;x_{i+\frac{1}{2}}),\theta)  \,d\theta \bigg)}
+		q(x_{i+\frac{1}{2}},s).\\
 	\end{split}
 \end{align}
 Notice that if $u$ does not depend on $x$, then $q$ is constant along the trajectory $X(t,s;x_{i+\frac{1}{2}})$.
@@ -1690,168 +1727,195 @@ Let us consider the mapping $s\in[t^n,t^{n+1}] \to X(t^n,s,x_{i+\frac{1}{2}})$.
 Integrating $q$ over all departure points at time $t^n$ from $x_{i+\frac{1}{2}}$ at time $s$, we have
 \begin{equation}
 	\label{chp-sec-flux:depint_1}
-	-\int^{X(t^n,t^{n};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}}}_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})} q(x,t^n)\,dx 
-		= \int_{t^n}^{t^{n+1}} q(X(t^n,s;x_{i+\frac{1}{2}}),t^n) \frac{\partial X}{\partial s} (t^n,s;x_{i+\frac{1}{2}})\,ds,
+		\int^{X(t^n,t^{n};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}}}_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})} q(x,t^n)\,dx 
+		=- \int_{t^n}^{t^{n+1}} q(X(t^n,s;x_{i+\frac{1}{2}}),t^n) \frac{\partial X}{\partial s} (t^n,s;x_{i+\frac{1}{2}})\,ds,
 \end{equation}
 where we are just using the variable change integration formula.
-Then, it follows from Equation \eqref{chp-sec-flux:q_int} with $t=t^n$ that:
-\begin{align}
+Then, it follows from Equations  \eqref{chp-sec-flux:xs_int}
+and \eqref{chp-sec-flux:q_int} with $t=t^n$ that:
+	\begin{align}
 	\label{chp-sec-flux:depint_2}
 	\begin{split}
-		&-\int_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})}^{x_{i+\frac{1}{2}}} q(x,t^n)\,dx 
-		= \int_{t^n}^{t^{n+1}} q(x_{i+\frac{1}{2}},s) \frac{\partial X}{\partial s} (t^n,s;x_{i+\frac{1}{2}}) \,ds \\ 
-		+&\int_{t^n}^{t^{n+1}} \int_{t^n}^{s}
-		\frac{\partial u}{\partial x}(X(\theta,s;x_{i+\frac{1}{2}}),\theta) q(X(\theta,s;x_{i+\frac{1}{2}}),\theta) 
-		\frac{\partial X}{\partial s} (t^n,s;x_{i+\frac{1}{2}}) \,d\theta \,ds.
+		&\int_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})}^{x_{i+\frac{1}{2}}} q(x,t^n)\,dx 
+		= \int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds \\ 
 	\end{split}
 \end{align}
-Substituting Equation \eqref{chp-sec-flux:dxds} with $t=t^n$ in the first term of the right-hand side
-of Equation \eqref{chp-sec-flux:depint_2}, we obtain:
-\begin{align}
-	\label{chp-sec-flux:depint_3}
-	\begin{split}
-		&-\int^{x_{i+\frac{1}{2}}}_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})} q(x,t^n)\,dx 
-		= -\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds \\
-		&-\int_{t^n}^{t^{n+1}} \int_{t^n}^{s} \frac{\partial u}{\partial x}(X(\theta,s;x_{i+\frac{1}{2}}),\theta)
-		q(x_{i+\frac{1}{2}},s)
-		\frac{\partial X}{\partial s} (\theta,s;x_{i+\frac{1}{2}})\,d\theta \,ds\\
-		&+ \int_{t^n}^{t^{n+1}} \int_{t^n}^{s}
-		\frac{\partial u}{\partial x}(X(\theta,s;x_{i+\frac{1}{2}}),\theta) q(X(\theta,s;x_{i+\frac{1}{2}}),\theta) 
-		\frac{\partial X}{\partial s} (t^n,s;x_{i+\frac{1}{2}}) \,d\theta \,ds,\\
-	\end{split}
-\end{align}
-From this we conclude that, if $u$ is constant, then we obtain that the approximation
-from Equation and \eqref{chp2-sec-flux:analysis-eq1} is exact.
-\begin{prop}
-	\label{chp2-sec-flux:prop1}
-Assume the framework of Problem \ref{chp2-sec2-prob2}.
-If $q$ and $u$ are $\mathcal{C}^1$ functions, then:
-\begin{align}
-			\label{chp2-sec-flux:approx1}
-			\bigg|
-			\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds -
-			\int^{x_{i+\frac{1}{2}}}_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})} q(x,t^n)\,dx 
-			\bigg| \leq M_2 \Delta t ^2,
-\end{align}
-where $M_2$ depends on $q$ and $u$.
-\end{prop}
-
-\begin{proof}
-Rearranging the terms of \eqref{chp-sec-flux:depint_3}, we obtain:
-\begin{align*}
-	\label{chp-sec-flux:depint_4}
-	\begin{split}
-			& \bigg|
-			\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds -
-			\int^{x_{i+\frac{1}{2}}}_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})} q(x,t^n)\,dx 
-			\bigg| \leq \\
-			& \int_{t^n}^{t^{n+1}} \int_{t^n}^{s} \bigg| 
-			\frac{\partial u}{\partial x}(X(\theta,s;x_{i+\frac{1}{2}}),t) \bigg(q(x_{i+\frac{1}{2}},s)
-			\frac{\partial X}{\partial s} (\theta,s;x_{i+\frac{1}{2}})- 
-			q(X(\theta,s;x_{i+\frac{1}{2}}),\theta) 
-			\frac{\partial X}{\partial s} (t^n,s;x_{i+\frac{1}{2}})\bigg)\bigg| \,d\theta \,ds \leq\\
-			& 2M_2 \int_{t^n}^{t^{n+1}} \int_{t^n}^{s}  \,d\theta \,ds \leq M_2 \Delta t ^2,
-	\end{split}
-\end{align*}
-where
-\begin{equation}
-	\label{chp2-sec-flux:M2}
-	M_2 = \frac{1}{2} 
-			\sup_{t\in[0,T], x\in[a,b]}\bigg| 
-			\frac{\partial u}{\partial x}(x,t) 
-			q(x,t) \bigg(
-			\frac{\partial X}{\partial s} (\theta,s;x_{i+\frac{1}{2}})+
-			\frac{\partial X}{\partial s} (t^n,s;x_{i+\frac{1}{2}})\bigg)\bigg|.
-\end{equation}
 \end{proof}
-\begin{remark}
-	If $u$ does not depend on $x$, then $M_2=0$ and the formula given in Equation 
-	\eqref{chp2-sec-flux:M1} is exact.
-\end{remark}
-The next proposition gives an estimate to the approximation \eqref{chp2-sec-flux:analysis-eq1},
-where we are going to use an estimate to compute the departure point in Equation \eqref{chp2-sec-flux:approx1}.
+The next Proposition \eqref{chp2-sec-flux:prop2} gives an estimate to the approximation \eqref{chp2-sec-flux:analysis-eq1},
+but now we are going to use the estimate from Equation \eqref{chp-sec-flux:departurepoint2} to compute
+the departure point in Equation \eqref{chp2-sec-flux:approx1}.
 \begin{prop}
-	Under the same assumptions of Proposition \eqref{chp2-sec-flux:prop1}, we have:
-	\begin{equation}
-	\bigg|
-			  \int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-			 -\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_i^n \Delta t} q(x,t^n)\,dx
-	\bigg| \leq M_3 \Delta t^2, 
-	\end{equation}
-	where $M_3$ depends on $q$ and $u$.
+	\label{chp2-sec-flux:prop2}
+	Assume the framework of Problem \ref{chp2-sec2-prob2} and also assume the CFL condition and 
+	that $\Delta x$ and $ \Delta t $ are small enough as in Proposition \ref{chp2-sec-flux:departurebound}.
+	If $q \in \mathcal{C}^1$  and $u \in \mathcal{C}^2$, then:
+\begin{align*}
+	&\bigg|\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
+	-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx
+	-\bigg( \int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
+	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx  \bigg) \bigg| \\
+	& \leq K_1 \Delta t^3,
+\end{align*}
+	where $K_1$ depends on $q$ and $u$.
 \end{prop}
 \begin{proof}
-	Using Equations \eqref{chp-sec-flux:departurepoint3} and \eqref{chp2-sec-flux:approx1}, we get: 
+	Using Equations \eqref{chp-sec-flux:departurepoint3}, the mean value theorem for integrals and Equation \eqref{chp2-sec-flux:approx1}, we get: 
 	\begin{align*}
 	\label{chp-sec-flux:depint_5}
-			 &\bigg|
-			  \int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-			 -\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx
-			 \bigg|=
-			 \\
-			 &\bigg|
-			  \int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds  
-			 -\int^{x_{i+\frac{1}{2}}}_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})} q(x,t^n)\,dx \bigg|
-			 +\bigg|\int^{x_{i+\frac{1}{2}}}_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})} q(x,t^n)\,dx
-			 -\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-			 \bigg| \leq
-			 \\
-			 &M_2 \Delta t^2+ 
-			 \bigg|\int_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})}^{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-			 \bigg| \leq M \Delta t^2 + 
-			 \big|X(t^n,t^{n+1};x_{i+\frac{1}{2}}) - x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t \big|
-			 \sup_{x\in[a,b], t\in[0,T]} {|q(x,t)|} \\
-			  &\leq  M_1 \Delta t^2 \sup_{x\in[a,b], t\in[0,T]}{|q(x,t)|} + M_2 \Delta t^2 \leq M_3 \Delta t ^2,
+			  &\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
+			 -\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx =
+			 \int^{x_{i+\frac{1}{2}}}_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})} q(x,t^n)\,dx
+			 -\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx \\ 
+			 &= \int_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})}^{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx  
+			 = \big(X(t^n,t^{n+1};x_{i+\frac{1}{2}}) - x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t \big)
+			 q(\mu_3,t^n) =  M_1(\mu_1,\mu_2) \Delta t^2 q(\mu_3,t^n),
+	\end{align*}
+	for some $\mu_1, \mu_2 \in X_i\cup X_{i+1}$, $\mu_3 \in [t^n, t^{n+1}]$,
+	where $M_1(\mu_1, \mu_2)$ is given by \eqref{chp2-sec-flux:M1}. Similarly, we have:
+	\begin{align*}
+	&\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
+	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx =
+	M_1(\lambda_1, \lambda_2) \Delta t^2 q(\lambda_3,t^n),
 \end{align*}
-	with
-	\begin{equation}
-		\label{chp2-sec-flux-M3}
-		M_3 = M_1 \sup_{x\in[a,b], t\in[0,T]}{|q(x,t)|} + M_2, 
-	\end{equation}
-	where $M_1$ is given by \eqref{chp2-sec-flux:M1}
-	and $M_2$ is given by \eqref{chp2-sec-flux:M2}.
+and again, $\lambda_1, \lambda_3 \in X_{i-1}\cup X_{i}$, $\lambda_2 \in [t^n, t^{n+1}]$, $M_1(\lambda_1,\lambda_2)$ is given by \eqref{chp2-sec-flux:M1}.
+We introduce the following auxiliary $\mathcal{C}^1$ function:
+\begin{equation*}
+	F(\nu) = M_1(\nu_1,\nu_2)q(\nu_3,t^n).
+\end{equation*}
+where $\nu =(\nu_1,\nu_2, \nu_3)$, $\nu_1, \nu_3 \in [a,b]$, $\nu_2 \in [0, T]$.
+Using the mean value theorem, we have:
+\begin{equation*}
+	|F(\lambda)-F(\mu)|  \leq \bigg(\sup_{\nu \in [a,b]\times[0,T]\times[a,b]}{\|\nabla F(\nu) \|_2} \bigg)\|\lambda-\mu\|_2 
+ \leq \bigg(\sqrt{1+\frac{18}{\sigma^2}}\sup_{\nu \in [a,b]\times[0,T]\times[a,b]}{\|\nabla F(\nu) \|_2} \bigg) \Delta t,
+\end{equation*}
+where $\|\cdot\|_2$ is the 2-norm in $\mathbb{R}^3$, and we used that $|\lambda_1-\mu_1| \leq 3\Delta x$, 
+$|\lambda_3-\mu_3| \leq 3\Delta x$ and $|\lambda_2-\mu_2|\leq \Delta t$.
+Finally, we have the desired bound:
+\begin{align*}
+	&\bigg|\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
+	-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx
+	-\bigg( \int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
+	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx  \bigg) \bigg| \\
+	&=|(F(\mu)-F(\lambda))|\Delta t^2 \leq  K_1 \Delta t^3,
+\end{align*}
+where $K_1 = \sqrt{1+\frac{18}{\sigma^2}}\sup_{\nu \in [a,b]\times[0,T]\times[a,b]}{\|\nabla F(\nu) \|_2}$.
 \end{proof}
-Thus, in the PPM flux estimation, we have a first-order error related to the departure point
-computation and a second-order error related to the approximation of a temporal integral using
-a spatial integral. We point out that, if the velocity is constant, then no error is obtained
-using the PPM flux, except for the approximation $q_{PP}$ to $q$.
+The next proposition gives a measure of the impact of the piecewise parabolic approximation
+on the time average flux, considering this last computed using an estimated departure point.
 \begin{prop}
-	Assuming the CFL condition, and denote by $q_{PP}$ the Piecewise-Parabolic approximation of $q(x,t^n)$.
-	Under the same assumptions of Proposition \eqref{chp2-sec-flux:prop1}, we have:
-	\begin{equation}
-		\bigg| \frac{1}{\Delta t}\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds - 
-		\mathcal{F}(Q(t_n);u^n;i)  \bigg| \leq \Delta t + M_4\Delta x^3,
-	\end{equation}
-	where $M_4$ are constants depending only on $q$ and $u$.
-\end{prop}
-\begin{proof}
-	By Proposition \ref{prop:ppm-bound4} we have $|q(x,t^n)-q_{i}(x)| \leq M_4 \Delta x^4$,
-	$\forall x \in X_i$, where $M_4$ depends only on $q$. Besides that,
+	\label{chp2-sec-flux:prop3}
+	Assume the framework of Problem \ref{chp2-sec2-prob2}.
+	%and also assume that $\Delta x$ and $ \Delta t $
+	%are small enough as in Proposition \ref{chp2-sec-flux:departurebound}.
+	If $q \in \mathcal{C}^5$ and $u \in \mathcal{C}^1$, then:
 	\begin{align*}
 	 &\bigg|
+	\frac{1}{\Delta t}\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
+	\mathcal{F}(Q(t_n);u^n,i) 
+	-\bigg(\frac{1}{\Delta t}\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
+	\mathcal{F}(Q(t_n);u^n,i-1)\bigg) 
+	\bigg| \leq K_2\Delta x^4,
+	\end{align*}
+	where $K_2$ depends on $q$ and $u$.
+\end{prop}
+\begin{proof}
+	We denote by $q_{PP}$ the piecewise-parabolic approximation of $Q(t^n)$. Then:
+	\begin{equation*}
+	\frac{1}{\Delta t}\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
+	\mathcal{F}(Q(t_n);u^n,i) = 	
+	\frac{1}{\Delta t}\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
+	\frac{1}{\Delta t}\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx
+	\end{equation*}
+	and
+	\begin{equation*}
+	\frac{1}{\Delta t}\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
+	\mathcal{F}(Q(t_n);u^n,i-1) = 	
+	\frac{1}{\Delta t}\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
+	\frac{1}{\Delta t}\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx.
+\end{equation*}
+	Similarly to Proposition \ref{prop:ppm-bound4}, we can write:
+	\begin{align*}
+		q(x,t^n)-q_{PP}(x) = &C_1(\mu_1, \mu_2) \Delta x ^4 + C_2(\mu_3, \mu_4) \Delta x ^2(x-x_L)
+		+ \frac{C_3}{2}(\mu_5, \mu_6)\Delta x (x-x_L)^2  \\&+C_4(\mu_7)(x-x_L)^3,
+	\end{align*}
+	where $C_1, C_2$, $C_3$ and $C_4$ are given by Equations \eqref{prop:ppm-bound1-eq3},
+	\eqref{prop:ppm-bound2-eq2}, \eqref{prop:ppm-bound3-eq2} and \eqref{prop:ppm-bound4-eq3} respectively,
+	$x_L$ is the left boundary of the control volume that contains $x$ ($X_i$ or $X_{i+1}$) and 
+	$\mu_k \in [x_{i+\frac{1}{2}} - 3\Delta x,x_{i+\frac{1}{2}} + 3\Delta x]$, $\forall k =1, \cdots, 7$.
+	Similarly to Proposition \ref{chp2-sec-flux:prop2}, using the mean value theorem for integrals, one can write:
+	\begin{equation}
+	\label{chp2-sec-flux:prop3-eq1}
+	\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} (q(x,t^n)-q_{PP}(x))\,dx
+	= F(\lambda)\Delta x ^4,
+	\end{equation}
+	and
+	\begin{equation}
+	\label{chp2-sec-flux:prop3-eq2}
+	\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} (q(x,t^n)-q_{PP}(x))\,dx
+	= F(\mu)\Delta x ^4,
+	\end{equation}
+	for an auxiliary function $F:[a,b]^8 \to \mathbb{R}$, $F\in\mathcal{C}^1$, where $F$ depends on $q$, $u$,
+	and $C_1, C_2, C_3$ and $C_4$. Subtracting Equation \eqref{chp2-sec-flux:prop3-eq2} from Equation \eqref{chp2-sec-flux:prop3-eq1}
+	and using the mean value theorem, we get the desired inequality.
+	\end{proof}
+Now we are able to tackle the consistency problem on the next proposition.
+\begin{prop}
+	Assume the framework of Problem \ref{chp2-sec2-prob2} and also assume the CFL condition and 
+	that $\Delta x$ and $ \Delta t $ are small enough as in Proposition \ref{chp2-sec-flux:departurebound}.
+	Denote by $q_{PP}$ the Piecewise-Parabolic approximation of $q(x,t^n)$. Then, the LTE given by Equation
+	\eqref{consistency-1d-eq2} satisfies:
+	\begin{equation}
+		|\tau_i^n|\leq M_1 \Delta t + M_2\Delta x^3,
+	\end{equation}
+	where $M_1$ and $M_2$ are constants depending only on $q$ and $u$.
+\end{prop}
+\begin{proof}
+	We have:
+	\begin{align*}
+	 &\Delta x  \tau_i^n = \bigg|
 	 \frac{1}{\Delta t}\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds - 
-	\mathcal{F}(Q(t_n);u^n;i)  \bigg| =
-	 \bigg|
-	 \frac{1}{\Delta t}\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds - 
-	 \frac{1}{\Delta t}\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx  \bigg| =
-	 \\
-	 &\frac{1}{\Delta t}\bigg|
+	 \mathcal{F}(Q(t_n);u^n,i)
+	 -\bigg( \frac{1}{\Delta t}\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds - 
+	 \mathcal{F}(Q(t_n);u^n,i-1) \bigg) \bigg| = \\
+	 & \frac{1}{\Delta t} \bigg|
+	 \int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds - 
+	 \int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx
+	 -\bigg(\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds - 
+	 \int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx  
+	  \bigg)\bigg| =\\
+	 &\frac{1}{\Delta t} \bigg|
 	 \int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-	 -\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q_{i}(x)\,dx \bigg| \leq
-	 \\
-	 &\frac{1}{\Delta t}\bigg|
-			\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-			-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx\bigg| 
-			+\frac{1}{\Delta t}\bigg|\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-			-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q_{i}(x)\,dx 
-		  \bigg| \leq \\
-			& M_3\Delta t + 
-			\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} |q(x,t^n)-q_{i}(x)|\,dx
-			\leq M_3 \Delta t +  M_4 \Delta x^3
-\end{align*}
+	-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
+	+\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
+	-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx \\
+	 &-\bigg(\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
+	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
+	+\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
+	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx 
+	 \bigg) \bigg| \leq \\
+	 &\frac{1}{\Delta t} \bigg|
+	\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
+	-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
+	-\bigg(\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
+	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx \bigg)\bigg|+\\
+     &\frac{1}{\Delta t}\bigg| 
+	 \int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
+	-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2}}^n \Delta t} q_{PP}(x) \,dx 
+	-\bigg(\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
+	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-u_{i-\frac{1}{2}}^n \Delta t} q_{PP}(x) \,dx 
+	\bigg) \bigg| 
+	\end{align*}
+	Therefore, it follows from Propositions \ref{chp2-sec-flux:prop1} and \ref{chp2-sec-flux:prop2} and than
+	\begin{align*}
+		|\tau_i^n| \leq \frac{1}{\Delta x \Delta t} K_1 \Delta t^3 + \frac{1}{\Delta x} K_2 \Delta x^4 = 
+		K_1 \sigma \Delta t + K_2 \Delta x^3
+	\end{align*}
+	from which the proposition follows.
 \end{proof}
-where $M_3$ is given by Equation \eqref{chp2-sec-flux-M3}.
 
+Thus, in the PPM flux estimation, we have a first-order error related to the departure point
+computation. We point out that, if the velocity is constant, then no error is obtained
+using the PPM flux, except for the approximation $q_{PP}$ to $q$.
 \newpage
 \section{Numerical experiements}
 \label{chp2-sec-numerical-exp}

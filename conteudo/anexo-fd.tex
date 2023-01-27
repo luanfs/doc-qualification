@@ -16,9 +16,9 @@ as it is usual when showing the order of accuracy of many numerical schemes.
 		\label{lemma:fd-ppm-est1-eq0}
 		F'(x_0) =  \frac{4}{3} \bigg(\frac{F(x_0+h) - F(x_0-h)}{2h}\bigg)
                       - \frac{1}{3} \bigg(\frac{F(x_0+2h) - F(x_0-2h)}{4h}\bigg)
-		      + Ch^4,
+		      + C_1h^4,
 	\end{equation}
-	where $C$ is a constant that depends only on $F$ and $h$.
+	where $C_1$ is a constant that depends only on $F$ and $h$.
 \end{lema}
 
 \begin{proof}
@@ -80,15 +80,19 @@ as it is usual when showing the order of accuracy of many numerical schemes.
 	Subtracting Equation \eqref{lemma:fd-ppm-est1-eq5} from Equation \eqref{lemma:fd-ppm-est1-eq4} we get 
 	the desired Equation \eqref{lemma:fd-ppm-est1-eq0} with
 	\begin{equation}
-		\label{lemma:fd-ppm-est1-eq6}
-		C = \frac{1}{240}\bigg( F^{(5)}(\theta_{h}) + F^{(5)}(\theta_{-h})\bigg)
-		- \frac{1}{45}\bigg( F^{(5)}(\theta_{2h}) + F^{(5)}(\theta_{-2h})\bigg), 
+		C_1 = \frac{1}{720}\bigg( 3F^{(5)}(\theta_{h}) + 3F^{(5)}(\theta_{-h})
+            -16F^{(5)}(\theta_{2h}) - 16F^{(5)}(\theta_{-2h})\bigg), 
+		%C = \frac{1}{240}\bigg( F^{(5)}(\theta_{h}) + F^{(5)}(\theta_{-h})\bigg)
+		%- \frac{1}{45}\bigg( F^{(5)}(\theta_{2h}) + F^{(5)}(\theta_{-2h})\bigg), 
 	\end{equation}
 	where $\theta_{h} \in [x_0,x_0+h], \theta_{-h}\in [x_0-h,x_0]$, 
-	$\theta_{2h} \in [x_0,x_0+2h], \theta_{-2h}\in [x_0-2h,x_0]$,
-	which concludes the proof.
-		% "QED" que o ambiente proof acrescenta automaticamente.
-  \renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
+	$\theta_{2h} \in [x_0,x_0+2h], \theta_{-2h}\in [x_0-2h,x_0]$.
+	Using the intermediate value theorem, we can express $C_1$ in a more compact way as
+	\begin{equation}
+	\label{lemma:fd-ppm-est1-eq6}
+	C_1 = \frac{1}{720}\bigg( 6F^{(5)}(\eta_{1}) -32F^{(5)}(\eta_{2})\bigg), 
+\end{equation}
+where $\eta_{1}, \eta_{2} \in [x_0-2h,x_0+2h]$, which concludes the proof.
 \end{proof}
 
 
@@ -100,9 +104,9 @@ as it is usual when showing the order of accuracy of many numerical schemes.
 	\begin{equation}	
 		\label{lemma:fd-ppm-est2-eq0}
 		F''(x_0) =  \frac{-2F(x_0-2h) + 15F(x_0-h) -28F(x_0) + 20F(x_0+h) -6F(x_0+2h) + F(x_0+3h)}{6h^2}
-		      + Ch^2,
+		      + C_2h^2,
 	\end{equation}
-	where $C$ is a constant that depends only on $F$ and $h$.
+	where $C_2$ is a constant that depends only on $F$ and $h$.
 \end{lema}
 
 \begin{proof}
@@ -128,14 +132,16 @@ From the Taylor's expansion, we have:
 		   F(x_0+3h) &=    F(x_0) + 3F'(x_0)h + \frac{9}{2}F^{(2)}(x_0)h^2  + \frac{27}{6}F^{(3)}(x_0)h^3 + \frac{81}{24}F^{(4)}(\theta_{3h})h^4.\\
 	\end{align*}
 	
-	Summing all these equations, we get the derised Formula \eqref{lemma:fd-ppm-est2-eq0} with $C$ given by:
+	Summing all these equations, we get the desired Formula \eqref{lemma:fd-ppm-est2-eq0} with $C$ given by:
 	\begin{equation}
-		\label{lemma:fd-ppm-est2-eq1}
-		C = \frac{1}{24}\bigg(32F^{(4)}(\theta_{-2h}) - 15F^{(4)}(\theta_{-h}) -20F^{(4)}(\theta_{h}) +96 F^{(4)}(\theta_{2h}) - 81F^{(4)}(\theta_{3h})\bigg), 
+		C_2 = \frac{1}{24}\bigg(32F^{(4)}(\theta_{-2h}) - 15F^{(4)}(\theta_{-h}) -20F^{(4)}(\theta_{h}) +96 F^{(4)}(\theta_{2h}) - 81F^{(4)}(\theta_{3h})\bigg).
 	\end{equation}
-	which concludes the proof.
-		% "QED" que o ambiente proof acrescenta automaticamente.
-  \renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
+Using the intermediate value theorem, we can express $C_2$ in a more compact way as
+\begin{equation}
+		\label{lemma:fd-ppm-est2-eq1}
+	C_2 = \frac{1}{24}\bigg( 128F^{(5)}(\eta_{1}) -116F^{(5)}(\eta_{2})\bigg), 
+\end{equation}
+where $\eta_{1}, \eta_{2} \in [x_0-2h,x_0+3h]$, which concludes the proof.
 \end{proof}
 
 
@@ -147,9 +153,9 @@ From the Taylor's expansion, we have:
 	\begin{equation}	
 		\label{lemma:fd-ppm-est3-eq0}
 		F^{(3)}(x_0) =  \frac{F(x_0-2h) - 7F(x_0-h) +16F(x_0) - 16F(x_0+h) +7F(x_0+2h) - F(x_0+3h)}{2h^3}
-		      + Ch,
+		      + C_3h,
 	\end{equation}
-	where $C$ is a constant that depends only on $F$ and $h$.
+	where $C_3$ is a constant that depends only on $F$ and $h$.
 \end{lema}
 
 \begin{proof}
@@ -181,10 +187,12 @@ From the Taylor's expansion, we have:
 	\end{align*}
 	we get the derised Formula \eqref{lemma:fd-ppm-est3-eq0} with $C$ given by:
 	\begin{equation}
-		\label{lemma:fd-ppm-est2-eq2}
-		C = \frac{1}{48}\bigg(-16F^{(4)}(\theta_{-2h}) + 7F^{(4)}(\theta_{-h}) +16F^{(4)}(\theta_{h}) - 112F^{(4)}(\theta_{2h}) + 81F^{(4)}(\theta_{3h})\bigg), 
+		C_3 = \frac{1}{48}\bigg(-16F^{(4)}(\theta_{-2h}) + 7F^{(4)}(\theta_{-h}) +16F^{(4)}(\theta_{h}) - 112F^{(4)}(\theta_{2h}) + 81F^{(4)}(\theta_{3h})\bigg). 
 	\end{equation}
-	which concludes the proof.
-		% "QED" que o ambiente proof acrescenta automaticamente.
-  \renewcommand\qedsymbol{} % tem efeito apenas nesta prova!
+Using the intermediate value theorem, we can express $C_3$ in a more compact way as
+\begin{equation}
+		\label{lemma:fd-ppm-est2-eq2}
+	C_3 = \frac{1}{48}\bigg( 104F^{(5)}(\eta_{1}) -128F^{(5)}(\eta_{2})\bigg), 
+\end{equation}
+where $\eta_{1}, \eta_{2} \in [x_0-2h,x_0+3h]$, which concludes the proof.
 \end{proof}
