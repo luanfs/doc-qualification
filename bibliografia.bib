@@ -87,14 +87,27 @@ abstract = {A class of new benchmark deformational flow test cases for the two-d
 }
 
 
+@Inbook{stoer:2002,
+author="Stoer, J. and Bulirsch, R.",
+bookTitle="Introduction to Numerical Analysis",
+year="2002",
+publisher="Springer New York, NY",
+doi="https://doi.org/10.1007/978-0-387-21738-3",
+}
+
+@Inbook{courant:1999,
+author="Courant, R. and John, F.",
+bookTitle="Introduction to Calculus and Analysis I",
+year="1999",
+publisher="Springer Berlin, Heidelberg",
+doi="https://doi.org/10.1007/978-3-642-58604-0",
+}
+
+
 @Inbook{nair:2011,
 author="Nair, Ramachandran D.
 and Levy, Michael N.
 and Lauritzen, Peter H.",
-%editor="Lauritzen, Peter
-%and Jablonowski, Christiane
-%and Taylor, Mark
-%and Nair, Ramachandran",
 title="Emerging Numerical Methods for Atmospheric Modeling",
 bookTitle="Numerical Techniques for Global Atmospheric Models",
 year="2011",
@@ -103,6 +116,7 @@ address="Berlin, Heidelberg",
 pages="251--311",
 doi="10.1007/978-3-642-11640-7_9",
 }
+
 
 @article{colella:1984,
 title = {The Piecewise Parabolic Method (PPM) for gas-dynamical simulations},
@@ -291,6 +305,13 @@ author = {Harris, Lucas and Chen, Xi and Putman, William and Zhou, Linjiong and 
  url = {http://purl.flvc.org/fsu/fd/FSU_migr_etd-0511}
 }
 
+@PhdThesis{tumolo:2011,
+ author   = {Giovanni Tumolo},
+ title    = {A semi-implicit, semi-lagrangian, p-adaptative discontinuous Galerkin method for the rotating shallow-water equations: analysis and numerical experiments},
+ school   = {University of Trieste},
+ url = {https://core.ac.uk/download/pdf/41173373.pdf},
+ year     = {2011},
+}
 @article{will:1992,
 author = {Williamson, David and Drake, John and Hack, James and Jakob, R and Swarztrauber, Paul},
 year = {1992},
@@ -673,6 +694,118 @@ abstract = {Abstract The rapidly increasing computing powers allow global atmosp
 year = {2021}
 }
 
+
+@Article{lu:2022,
+AUTHOR = {Lu, Fuqiang and Zhang, Fengyuan and Wang, Tian and Tian, Guozhong and Wu, Feng},
+TITLE = {High-Order Semi-Lagrangian Schemes for the Transport Equation on Icosahedron Spherical Grids},
+JOURNAL = {Atmosphere},
+VOLUME = {13},
+YEAR = {2022},
+NUMBER = {11},
+ARTICLE-NUMBER = {1807},
+URL = {https://www.mdpi.com/2073-4433/13/11/1807},
+ISSN = {2073-4433},
+ABSTRACT = {The transport process is an important part of the research of fluid dynamics, especially when it comes to tracer advection in the atmosphere or ocean dynamics. In this paper, a series of high-order semi-Lagrangian methods for the transport process on the sphere are considered. The methods are formulated entirely in three-dimensional Cartesian coordinates, thus avoiding any apparent artificial singularities associated with surface-based coordinate systems. The underlying idea of the semi-Lagrangian method is to find the value of the field/tracer at the departure point through interpolating the values of its surrounding grid points to the departure point. The implementation of the semi-Lagrangian method is divided into the following two main procedures: finding the departure point by integrating the characteristic equation backward and then interpolate on the departure point. In the first procedure, three methods are utilized to solve the characteristic equation for the locations of departure points, including the commonly used midpoint-rule method and two explicit high-order Runge&ndash;Kutta (RK) methods. In the second one, for interpolation, four new methods are presented, including (1) linear interpolation; (2) polynomial fitting based on the least square method; (3) global radial basis function stencils (RBFs), and (4) local RBFs. For the latter two interpolation methods, we find that it is crucial to select an optimal value for the shape parameter of the basis function. A Gauss hill advection case is used to compare and contrast the methods in terms of their accuracy, and conservation properties. In addition, the proposed method is applied to standard test cases, which include solid body rotation, shear deformation of twin slotted cylinders, and the evolution of a moving vortex. It demonstrates that the proposed method could simulate all test cases with reasonable accuracy and efficiency.},
+DOI = {10.3390/atmos13111807}
+}
+
+
+@inbook{durran:2011,
+author = {Durran, Dale},
+year = {2011},
+month = {02},
+pages = {75-104},
+title = {Time Discretization: Some Basic Approaches},
+journal = {Lecture Notes in Computational Science and Engineering},
+doi = {10.1007/978-3-642-11640-7_5}
+}
+
+@article{strang:1968,
+author = {Strang, Gilbert},
+title = {On the Construction and Comparison of Difference Schemes},
+journal = {SIAM Journal on Numerical Analysis},
+volume = {5},
+number = {3},
+pages = {506-517},
+year = {1968},
+doi = {10.1137/0705041},
+URL = {https://doi.org/10.1137/0705041},
+eprint = {https://doi.org/10.1137/0705041}
+}
+
+@article{csomos:2005,
+title = {Weighted sequential splittings and their analysis},
+journal = {Computers and Mathematics with Applications},
+volume = {50},
+number = {7},
+pages = {1017-1031},
+year = {2005},
+note = {Numerical Methods and Computational Mechanics},
+issn = {0898-1221},
+doi = {https://doi.org/10.1016/j.camwa.2005.08.004},
+url = {https://www.sciencedirect.com/science/article/pii/S0898122105003317},
+author = {P. Csomós and I. Faragó and Á. Havasi},
+keywords = {Operator splitting, Local splitting error, Weighted sequential splitting},
+abstract = {Operator splitting is a widely used procedure in the numerical solution of parabolicproblems. Several splitting methods have been constructed and used in the fields of applied mathematics. In this paper the weighted sequential splittings are introduced and their local splitting error is analyzed. New results are presented for the case where the subproblems of the weighted splitting schemes are solved numerically. The results are illustrated with test examples for ordinary differential systems.}
+}
+
+@article {rancic:1992,
+      author = "Miodrag  Rancic",
+      title = "Semi-Lagrangian Piecewise Biparabolic Scheme for Two-Dimensional Horizontal Advection of a Passive Scalar",
+      journal = "Monthly Weather Review",
+      year = "1992",
+      publisher = "American Meteorological Society",
+      address = "Boston MA, USA",
+      volume = "120",
+      number = "7",
+      doi = "10.1175/1520-0493(1992)120<1394:SLPBSF>2.0.CO;2",
+      pages=      "1394 - 1406",
+      url = "https://journals.ametsoc.org/view/journals/mwre/120/7/1520-0493_1992_120_1394_slpbsf_2_0_co_2.xml"
+}
+
+@article{jia:2011,
+title = {A third accurate operator splitting method},
+journal = {Mathematical and Computer Modelling},
+volume = {53},
+number = {1},
+pages = {387-396},
+year = {2011},
+issn = {0895-7177},
+doi = {https://doi.org/10.1016/j.mcm.2010.09.005},
+url = {https://www.sciencedirect.com/science/article/pii/S089571771000436X},
+author = {Hongen Jia and Kaitai Li},
+keywords = {Operator splitting, The splitting error, Stability, Consistency},
+abstract = {Operator splitting is a widely used procedure in the numerical solution of initial and boundary value problems of partial differential equations. From the theoretical point of view, the success of splitting is primarily determined by the splitting error. In this paper, a third-order accurate operator splitting scheme is introduced. Stability condition and its local splitting error are given. Finally, consistency analysis is presented.}
+}
+
+@article{richtmyer:1968,
+author = {Richtmyer, R. D. and Morton, K. W.},
+title = {Difference Methods for Initial-Value Problems},
+journal = {SIAM Review},
+volume = {10},
+number = {3},
+pages = {381-383},
+year = {1968},
+doi = {10.1137/1010073},
+URL = {https://doi.org/10.1137/1010073},
+eprint = {https://doi.org/10.1137/1010073}
+}
+
+@article{chen:2017,
+author = {Chen, Yumeng and Weller, Hilary and Pring, Stephen and Shaw, James},
+title = {Comparison of dimensionally split and multi-dimensional atmospheric transport schemes for long time steps},
+journal = {Quarterly Journal of the Royal Meteorological Society},
+volume = {143},
+number = {708},
+pages = {2764-2779},
+keywords = {multi-dimensional, advection, stability, accuracy, long time steps},
+doi = {https://doi.org/10.1002/qj.3125},
+url = {https://rmets.onlinelibrary.wiley.com/doi/abs/10.1002/qj.3125},
+eprint = {https://rmets.onlinelibrary.wiley.com/doi/pdf/10.1002/qj.3125},
+abstract = {Dimensionally split advection schemes are attractive for atmospheric modelling due to their efficiency and accuracy in each spatial dimension. Accurate long time steps can be achieved without significant cost using the flux-form semi-Lagrangian technique. The dimensionally split scheme used in this paper is constructed from the one-dimensional Piecewise Parabolic Method and extended to two dimensions using COSMIC splitting. The dimensionally split scheme is compared with a genuinely multi-dimensional, method-of-lines scheme which, with implicit time-stepping, is stable for Courant numbers significantly larger than 1. Two-dimensional advection test cases on Cartesian planes are proposed which avoid the complexities of a spherical domain or multi-panel meshes. These are solid-body rotation, horizontal advection over orography and deformational flow. The test cases use distorted non-orthogonal meshes either to represent sloping terrain or to mimic the distortions near cubed-sphere edges. Mesh distortions are expected to accentuate the errors associated with dimension splitting, however the accuracy of the dimensionally split scheme decreases only a little in the presence of mesh distortions. The dimensionally split scheme also loses some accuracy when long time steps are used. The multi-dimensional scheme is almost entirely insensitive to mesh distortions and asymptotes to second-order accuracy at high resolution. As is expected for implicit time-stepping, phase errors occur when using long time steps but the spatially well-resolved features are advected at the correct speed and the multi-dimensional scheme is always stable. A naive estimate of computational cost (number of multiplies) reveals that the implicit scheme is the most expensive, particularly for large Courant numbers. If the multi-dimensional scheme is used instead with explicit time-stepping, the Courant number is restricted to less than 1, the accuracy is maintained, and the cost becomes similar to the dimensionally split scheme.},
+year = {2017}
+}
+
 @Article{santos:2021,
 AUTHOR = {Santos, L. F. and Peixoto, P. S.},
 TITLE = {Topography-based local spherical Voronoi grid refinement on classical and moist shallow-water finite-volume models},
@@ -721,7 +854,7 @@ doi = {10.1177/1094342011428142}
       url = "https://journals.ametsoc.org/view/journals/mwre/141/1/mwr-d-11-00201.1.xml"
 }
 
-@incollection{arakawa:1997,
+@incollection{arakawa:1977,
 title = {Computational Design of the Basic Dynamical Processes of the UCLA General Circulation Model},
 series = {Methods in Computational Physics: Advances in Research and Applications},
 publisher = {Elsevier},
