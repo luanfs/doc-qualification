@@ -1,79 +1,97 @@
-%!TeX root=../tese.tex
-%("dica" para o editor de texto: este arquivo é parte de um documento maior)
-% para saber mais: https://tex.stackexchange.com/q/78101
-
 \chapter{Two-dimensional finite-volume methods}
 \label{chp-2d-fv}
-The main aim of this chapter is to give a detailed description of the dimensional
-splitting method proposed by \citet{lin:1996}.
-Similarly to Chapter \ref{chp-1d-fv}, we start this chapter 
-start with a review of two-dimensional conservation laws in
-the integral form in Section \ref{sec-conslaw2d}, 
+In Chapter \ref{chp-1d-fv}, we tackled the problem of solving the one-dimensional linear
+advection equation using the finite-volume method based on PPM.
+In this Chapter, we are interested in solving the two-dimensional linear
+advection equation using the finite-volume method. This step plays a key role in this work,
+since as we shall see in Chapter  \ref{chp-cs-fv}, the solution of the linear
+advection equation on the cubed-sphere boils down to solving one two-dimensional linear
+advection equations at each cube face with interpolation between the adjacent panels.
+
+A natural way to derive a finite-volume method for the two-dimensional linear
+advection equation would be to extend the PPM for two dimensions. Indeed, a piecewise bi-parabolic extension of PPM
+was proposed by \citet{rancic:1992} using a semi-lagrangian temporal discretization. 
+However, the major problem of this method is its quite expensive computational cost.
+A popular alternative, and usually computationally cheaper, is to use dimension-splitting methods.
+These schemes replace two-dimensional problem with a sequence of one-dimensional problems.
+For instance, we can solve the two-dimensional linear advection equation by solving a sequence
+one-dimensional linear advection equations using the PPM  from Chapter \ref{chp-1d-fv}.
+Further, we could, in principle, use any numerical method that solves the one-dimensional linear advection. 
+A comparison between two-dimension and dimension splitting semi-lagrangian schemes on the plane has been investigated by \citet{chen:2017}
+using the PPM as the one-dimensional solver and distorted two-dimensional grids.
+Their major conclusion is that the dimension splitting schemes are more sensitive to grid distortions
+but it is computationally cheaper and more accurate than their two-dimensional methods, 
+specially considering large CFL numbers.
+
+The main aim of this chapter is to give a detailed description of the dimension
+splitting method proposed by \citet{lin:1996}, which is currently employed in the FV3 dynamical core,
+applied to the two-dimensional linear advection equation using the one-dimensional
+finite-volume schemes from Chapter \ref{chp-1d-fv}.
+Similarly to Chapter \ref{chp-1d-fv}, we start this Chapter 
+start with a review of the two-dimensional advection equation in
+the integral form in Section \ref{sec-adv2d}, 
 and in Section \ref{sec:fv-2d} we set the framework of
 general two-dimensional finite-volumes schemes.
-Section \ref{sec-dimsplit} presents the dimension splitting method and 
-numerical simulation are shown in Section \ref{sec-ds-exp}.
+Section \ref{sec-dsplit} presents the dimension splitting method and 
+numerical experiments are shown in Section \ref{sec-ds-exp}.
 
-\section{Two-dimensional system of conservation laws in integral form}
-\label{sec-conslaw2d}
-Let us consider $\mathcal{C}^1$ flux functions
-${f}: \mathbb{R}^m \to \mathbb{R}^m$ and
-${g}: \mathbb{R}^m \to \mathbb{R}^m$  in $x$ and $y$ direction,
-respectively. 
-A two-dimensional system of conservation laws in the differential form in 
+\section{Two-dimensional advection equation in integral form}
+\label{sec-adv2d}
+Let us consider a $\mathcal{C}^1$ velocity field given by
+$\boldsymbol{u}: \mathbb{R}^2 \to \mathbb{R}^2$,  $\boldsymbol{u}=(u,v)$, where
+$u$ is the velocity in $x$-direction and $v$ is the velocity in $x$ and $y$ direction. 
+The two-dimensional advection equation in the differential form in 
 a domain $\Omega=[a,b]\times[c,d] \subset \mathbb{R}^2$
-associated to the fluxes ${f}$ and ${g}$ is given by:
+associated to the velocity field $\boldsymbol{u}$ is given by:
 \begin{equation}
-\label{sec-conslaw2d:eq1}
-\frac{\partial}{\partial t}{q}(x, y, t) +
-\frac{\partial}{\partial x} {f}({q}(x, y, t)) +
-\frac{\partial}{\partial y} {g}({q}(x, y, t))
+\label{sec-adv2d:eq1}
+\frac{\partial q}{\partial t}(x, y, t) +
+\nabla \cdot (q\boldsymbol{u})(x, y, t)
 = 0, \quad \forall (x, y, t) \in \Omega^{\mathrm{o}}
- \times ]0, +\infty[. 
+ \times ]0, +\infty[,
 \footnote{$\Omega^{\mathrm{o}}$ denotes the interior of $\Omega$. 
 	Namely, $\Omega^{\mathrm{o}} = ]a,b[ \times ]c,d[$.}
 \end{equation}
-
-The solution ${q}$ is interpreted as the vector of state variable
-densities.
-A classical or strong solution to this system of conservation laws is a 
-$\mathcal{C}^1$ function ${q}$ satisfying Equation 
-\eqref{sec-conslaw2d:eq1}.
+where $\nabla \cdot (q\boldsymbol{u})$ is the spatial divergence
+\begin{equation}
+	\label{sec-adv2d:eqdiv}
+	\nabla \cdot (q\boldsymbol{u})(x, y, t) =  
+	\frac{\partial (uq)}{\partial x}(x, y, t) + \frac{\partial (vq)}{\partial y}(x, y, t).
+\end{equation}
+A classical or strong solution to the two-dimensional advection equation is a 
+$\mathcal{C}^1$ function ${q}$ satisfying Equation \eqref{sec-adv2d:eq1}.
 As we did in Section \ref{chp2-sec1}, our goal is to deduce an
-integral form of Equation \eqref{sec-conslaw2d:eq1}.
-To do so, let us consider  $[x_1,x_2] \times [y_1, y_2]
+integral form of Equation \eqref{sec-adv2d:eq1}.
+Thus, let us consider  $[x_1,x_2] \times [y_1, y_2]
 \subset \Omega^{\mathrm{o}}$ and $[t_1,t_2] \subset [0, +\infty[$.
-Integrating Equation $\eqref{sec-conslaw2d:eq1}$ over 
+Integrating Equation $\eqref{sec-adv2d:eq1}$ over 
 $[x_1,x_2] \times [y_1, y_2]$ yields:
 \begin{align}
-	\label{sec-conslaw2d:eq2}
+	\label{sec-adv2d:eq2}
 	\frac{d}{d t} \bigg(\int_{x_1}^{x_2} \int_{y_1}^{y_2}
 	{q}(x, y, t) \,dx \,dy \bigg)=
-	&-\int_{y_1}^{y_2} \bigg({f}({q}(x_2, y, t))
-	-{f}({q}(x_1, y, t)) \bigg) \,dy \\ \nonumber
-	&-\int_{x_1}^{x_2} \bigg({g}({q}(x, y_2, t))
-	-{g}({q}(x, y_1, t)) \bigg) \,dx.
+	&-\int_{y_1}^{y_2} \bigg({(uq)}(x_2, y, t)
+	-{(uq)}(x_1, y, t) \bigg) \,dy \\ \nonumber
+	&-\int_{x_1}^{x_2} \bigg({(vq)}(x, y_2, t)
+	-{(vq)}(x, y_1, t) \bigg) \,dx.
 \end{align}
-
-Integrating Equation \eqref{sec-conslaw2d:eq2} over the time interval $[t_1,t_2]$, 
+Integrating Equation \eqref{sec-adv2d:eq2} over the time interval $[t_1,t_2]$, 
 we have:
-
 \begin{align}
-	\label{sec-conslaw2d:eq3}
+	\label{sec-adv2d:eq3}
 	\int_{x_1}^{x_2} \int_{y_1}^{y_2}
 	{q}(x, y, t_{n+1}) \,dx \,dy = &\int_{x_1}^{x_2} \int_{y_1}^{y_2}
 	{q}(x, y, t_n) \,dx \,dy \\ \nonumber
-	&-\int_{t_1}^{t_2} \int_{y_1}^{y_2} \bigg({f}({q}(x_2, y, t))
-	-{f}({q}(x_1, y, t)) \bigg) \,dy \,dt\\ \nonumber
-	&-\int_{t_1}^{t_2} \int_{x_1}^{x_2} \bigg({g}({q}(x, y_2, t))
-	-{g}({q}(x, y_1, t)) \bigg) \,dx \,dt.
+	&-\int_{t_1}^{t_2} \int_{y_1}^{y_2} \bigg({(uq)}(x_2, y, t)
+	-{(uq)}(x_1, y, t) \bigg) \,dy \,dt\\ \nonumber
+	&-\int_{t_1}^{t_2} \int_{x_1}^{x_2} \bigg({(vq)}(x, y_2, t)
+	-{(vq)}(x, y_1, t) \bigg) \,dx \,dt.
 \end{align}
-
-Equation \eqref{sec-conslaw2d:eq3} is the integral form of Equation 
-\eqref{sec-conslaw2d:eq1}. We say that ${q} \in 
-L^{\infty}{(\Omega \times [0, +\infty[}, \mathbb{R}^m)$ is a weak
-solution to the system of conservation laws  \eqref{sec-conslaw2d:eq1} if ${q}$
-satisfies the integral form \eqref{sec-conslaw2d:eq3}, 
+Equation \eqref{sec-adv2d:eq3} is the integral form of Equation 
+\eqref{sec-adv2d:eq1}. We say that ${q} \in 
+L^{\infty}{(\Omega \times [0, +\infty[ )}$ is a weak
+solution to the advection equation \eqref{sec-adv2d:eq1} if ${q}$
+satisfies the integral form \eqref{sec-adv2d:eq3}, 
 $\forall [x_1,x_2]\times[y_1,y_2] \subset \Omega^{\mathrm{o}}$ and 
 $\forall [t_1,t_2] \subset [0,+\infty[$.
 Similarly to Section \ref{chp2-sec1}, these problems are equivalent
@@ -82,13 +100,14 @@ when  ${q}$ is a $\mathcal{C}^1$ function.
 We consider an initial condition ${q_0} \in L^{\infty}{(\Omega)}$,
 ${q}(x,y,0) =  {q_0}(x,y)$, $\forall (x,y) \in \Omega$.
 Boundary conditions will be assumed bi-periodic.
-At last, the matrix $\alpha D{f}(q) + \beta D{g}(q)$ is assumed to have
-real eigenvalues and be diagonalizable
-$\forall q \in \mathbb{R}^m , \forall \alpha, \beta \in \mathbb{R}$
-\citep{leveque:1990}, so that we have a hyperbolic conservation law.
-Therefore, we are again dealing with a Cauchy problem. 
+%At last, the matrix $\alpha D{f}(q) + \beta D{g}(q)$ is assumed to have
+%real eigenvalues and be diagonalizable
+%$\forall q \in \mathbb{R}^m , \forall \alpha, \beta \in \mathbb{R}$
+%\citep{leveque:1990}, so that we have a hyperbolic conservation law.
+Therefore, we are again dealing with a Cauchy problem. Besides that, the 
+two-dimensional advection equation is a hyperbolic PDE.
 
-To move in the direction of a discrete version of Equation \eqref{sec-conslaw2d:eq3},
+To move in the direction of a discrete version of Equation \eqref{sec-adv2d:eq3},
 let us discretize the domain $D = \Omega \times [0,T]$ following 
 the notations of Section \ref{chp2-sec1}.
 Given a positive integer $N_T$, we define the time step 
@@ -103,45 +122,42 @@ The spatial discretization is constructed through an uniformly spaced partition 
 	c = y_{\frac{1}{2}} < y_{\frac{3}{2}} < \cdots < y_{M-\frac{1}{2}} < y_{M+\frac{1}{2}} = d, \\
     \Omega &=  \bigcup_{i=1}^N \bigcup_{j=1}^M \Omega_{ij}, \text{ where } \Omega_{ij} = X_i \times Y_j.
 \end{align}
-
-The regions $\Omega_{ij}$ are known as control volumes. \index{Control volume}
+The regions $\Omega_{ij}$ are known as control volumes or cells. \index{Control volume}
 Similarly to  Chapter \ref{chp-1d-fv} we employ the notations
 $\Delta x = x_{i+\frac{1}{2}} - x_{i-\frac{1}{2}}$,
 $\Delta y = y_{j+\frac{1}{2}} - y_{j-\frac{1}{2}}$ 
 and $x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}})$
 $y_j = \frac{1}{2}(y_{j+\frac{1}{2}} + y_{j-\frac{1}{2}})$, $\forall i = 1, \cdots, N$, 
 $\forall j = 1, \cdots, M$,
-to define the control volume lengths and midpoints, respectively.
-Finally, we denote by ${Q}_{ij}(t) \in \mathbb{R}^m$ as the vector of 
-average values of state variable vector at time $t$
+to define the control volume lengths and centroids, respectively.
+Finally, we denote by ${Q}_{ij}(t)$ as the
+average values of state variable at time $t$
 in the control volume $\Omega_{ij}$, that is:
 \begin{equation}
-	\label{sec-conslaw2d:eq4}
+	\label{sec-adv2d:eq4}
 	{Q}_{ij}(t) = \frac{1}{\Delta x \Delta y}
-	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{j-\frac{1}{2}}}^{y_{j-\frac{1}{2}}} {q}(x,t) \,dx
-	\in \mathbb{R}^m.
+	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{j-\frac{1}{2}}}^{y_{j-\frac{1}{2}}} {q}(x,y,t) \,dx.
 \end{equation}
-
 Substituting $t_1, t_2, x_1, x_2, y_1$ and $y_2$ by 
 $t_{n}, t_{n+1}, x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}, y_{j-\frac{1}{2}}, y_{j+\frac{1}{2}}$,
-respectively, in Equation \eqref{sec-conslaw2d:eq3}, we obtain:
+respectively, in Equation \eqref{sec-adv2d:eq3}, we obtain:
 \begin{align}
-	\label{sec-conslaw2d:eq5}
+	\label{sec-adv2d:eq5}
 	{Q}_{ij}(t_{n+1})  = {Q}_{ij}(t_{n})
 	&- \frac{\Delta t}{\Delta x \Delta y}
 	\delta _x \bigg( \frac{1}{\Delta t}
 	\int_{t_1}^{t_2} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
-	{f}({q}(x_{i}, y, t))
+	{(uq)}(x_{i}, y, t)
 	\,dy \,dt \bigg) \\ \nonumber
 	&- \frac{\Delta t}{\Delta x \Delta y}
 	\delta _y \bigg( \frac{1}{\Delta t}
 	\int_{t_1}^{t_2} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
-	{g}({q}(x, y_{j}, t))
+	{(vq)}(x, y_{j}, t)
 	\,dx \,dt \bigg),
 \end{align}
 where we are using the centered finite-difference notation:
 \begin{align}
-	\label{sec-conslaw2d:eq6}
+	\label{sec-adv2d:eq6}
 	\delta_x {h}(x_i,y, t) = 
 	{h}(x_{i+\frac{1}{2}}, y, t) - 
 	{h}(x_{i-\frac{1}{2}}, y, t), \\
@@ -149,79 +165,110 @@ where we are using the centered finite-difference notation:
     {h}(x, y_{j+\frac{1}{2}},t) - 
     {h}(x, y_{j-\frac{1}{2}},t),
 \end{align}
-for any function ${h}$. The Equation \eqref{sec-conslaw2d:eq5} is useful to
+for any function ${h}$. The Equation \eqref{sec-adv2d:eq5} is useful to
 motivate two-dimensional finite-volume schemes, as we shall see in the next section.
 
 \section{The finite-volume approach}
 \label{sec:fv-2d}
-This Section is basically an extension to two dimensions 
-of the concepts presented in Section \ref{chp2-sec2}.
-The problem of two-dimensional system of conservation laws in the integral form 
-presented Section \ref{sec-conslaw2d} is written in a concise way in Problem \ref{sec:fv-2d-prob1}.
+This Section is basically an extension to two dimensions of the concepts presented in Section \ref{chp2-sec2}.
+We introduce the following spaces of bi-periodic functions:
+\begin{align*}
+	\mathcal{F}(\mathbb{T}^2) &= \{q:\mathbb{R}^2 \to \mathbb{R};
+	\quad q(x+b-a,y) = q(x,y), \quad q(x,y+d-c) = q(x,y),\quad \forall (x,y) \in \mathbb{R}^2\},\\
+	\mathcal{F}(\mathbb{T}^2_{T}) &= \{q:\mathbb{R}^2\times[0,T]\to \mathbb{R};\quad q(\cdot,\cdot,t) \in \mathcal{F}(\mathbb{T}^2), \quad \forall t \in [0,T]\},\\
+	\mathcal{C}^k(\mathbb{T}^2_{T}) &= \{q\in \mathcal{C}^k(\mathbb{R}^2\times[0,T]): q \in \mathcal{F}(\mathbb{T}^2_{T})\}.
+\end{align*}
+where we are using the notation $\mathbb{T}^2_{T} = \mathbb{T}^2\times[0,T]$ and $\mathbb{T}^2 = [a,b] \times [c,d]$ denotes the torus of lengths $b-a$ and $d-c$.
+We are using the notation $\mathbb{T}^2$ since we may think of bi-periodic functions as functions defined on the torus of lengths $b-a$ and $d-c$.
+Whenever we use the notation $\mathbb{T}^2$, $a, b, c$ and $d$ will be implicitly defined.
+We also introduce the following the locally integrable periodic functions:
+\begin{align*}
+	L^p_{\text{loc}}(\Omega) &= \{q:\Omega\to \mathbb{R};\quad \int_{K} |q(x,y)|^p\,dx\,dy  < +\infty, \quad \text{for all compact sets } K \subset \Omega\},\\
+	{L}^{p}_{\text{loc}}(\mathbb{T}^2) &= \{q\in \mathcal{F}(\mathbb{T}^2): \quad  q \in L^p_{\text{loc}}(\mathbb{R}^2)\},\\
+	{L}^{p,x,y}_{\text{loc}}(\mathbb{T}^2_{T}) &= \{q\in \mathcal{F}(\mathbb{T}^2_{T}): \forall t \in [0,T], \quad q(\cdot,\cdot,t) \in L^p_{\text{loc}}(\mathbb{R}^2)\},\\
+	{L}^{p,y,t}_{\text{loc}}(\mathbb{T}^2_{T}) &= \{q\in \mathcal{F}(\mathbb{T}^2_{T}): \forall x \in \mathbb{R},\quad q(x,\cdot,\cdot) \in L^p_{\text{loc}}(\mathbb{R}\times [0,T])\},\\
+	{L}^{p,x,t}_{\text{loc}}(\mathbb{T}^2_{T}) &= \{q\in \mathcal{F}(\mathbb{T}^2_{T}): \forall y \in \mathbb{R},\quad q(\cdot,y,\cdot) \in L^p_{\text{loc}}(\mathbb{R}\times [0,T])\},\\
+\end{align*}
 
+\subsection{Discretization of the problem}
+The problem of two-dimensional advection equation in the integral form 
+presented Section \ref{sec-adv2d} is written in a concise way in Problem \ref{chp3-sec2-prob1}.
 \begin{prob}
-	\label{sec:fv-2d-prob1}
-	Given $\Omega = [a,b]\times [c,d]$, $D = \Omega \times [0,T]$, 
-	$\mathcal{C}^1$ flux functions ${f},
-	{g}: \mathbb{R}^m \to \mathbb{R}^m$,
-	$m \geq 1$, we would like to find the weak solution
-	$ {q} \in L^{\infty}(D, \mathbb{R}^m)$ 
-	of the two-dimensional system of conservation laws in the integral form:
+	\label{chp3-sec2-prob1}
+	Given an initial condition ${q}_0\in {L}^{1}_{\text{loc}}(\mathbb{T}^2) \cap {L}^{2}_{\text{loc}}(\mathbb{T}^2)$ and
+	a velocity function $u \in {L}^{2,y,t}_{\text{loc}}(\mathbb{T}^2_{T})$ in the $x$-direction, 
+	a velocity function $v \in {L}^{2,x,t}_{\text{loc}}(\mathbb{T}^2_{T})$ in the $y$-direction, 
+ 	we would like to find a weak solution 
+ 	${q} \in {L}^{1,x,y}_{\text{loc}}(\mathbb{T}^1_{T}) \cap {L}^{2,x,t}_{\text{loc}}(\mathbb{T}^2_{T}) \cap {L}^{2,y,t}_{\text{loc}}(\mathbb{T}^2_{T})$
+	of the two-dimensional advection equation in the integral form:
 	\begin{align*}
 		\int_{x_1}^{x_2} \int_{y_1}^{y_2}
 		{q}(x, y, t) \,dx \,dy = &\int_{x_1}^{x_2} \int_{y_1}^{y_2}
 		{q}(x, y, t) \,dx \,dy \\ \nonumber
-		&-\int_{t_1}^{t_2} \int_{y_1}^{y_2} \bigg({f}({q}(x_2, y, t))
-		-{f}({q}(x_1, y, t)) \bigg) \,dy \,dt\\ \nonumber
-		&-\int_{t_1}^{t_2} \int_{x_1}^{x_2} \bigg({g}({q}(x, y_2, t))
-		-{g}({q}(x, y_1, t)) \bigg) \,dx \,dt.
+		&-\int_{t_1}^{t_2} \int_{y_1}^{y_2} \bigg({(uq)}(x_2, y, t)
+		-{(uq)}(x_1, y, t) \bigg) \,dy \,dt\\ \nonumber
+		&-\int_{t_1}^{t_2} \int_{x_1}^{x_2} \bigg({(vq)}(x, y_2, t)
+		-{(vq)}(x, y_1, t) \bigg) \,dx \,dt.
 	\end{align*}
-	$\forall [x_1, x_2]\times [y_1, y_2] \times[t_1, t_2] \subset D$, 
-	given the initial condition 
-	${q}(x, y, 0) = {q}_0(x, y)$, $\forall (x, y) \in \Omega$, 
-	and assuming bi-periodic boundary conditions, \textit{i.e.}, 
-	${q}(a,y,t) = {q}(b,y,t)$, $\forall t \in [0,T]$, $\forall y \in [c,d]$, and
-	${q}(x,c,t) = {q}(x,d,t)$, $\forall t \in [0,T]$, $\forall x \in [a,b]$.
+	$\forall [x_1, x_2]\times [y_1, y_2] \times[t_1, t_2] \subset [a,b] \times [c,d] \times[0,T]$, 
+	and ${q}(x, y, 0) = {q}_0(x, y)$, $\forall (x, y) \in [a,b] \times [c,d]$.
 \end{prob}
-
-For Problem \ref{sec:fv-2d-prob1}, the total mass in $\Omega$ is defined by: 
+For Problem \ref{chp3-sec2-prob1}, the total mass in $\Omega$ is defined by: 
 \begin{equation}
-	{M}_{\Omega}(t) = \int_{\Omega} {q}(x,y,t) \,dx \,dy  \in \mathbb{R}^m, \quad \forall t \in [0,T],
+	{M}_{\Omega}(t) = \int_{\Omega} {q}(x,y,t) \,dx \,dy , \quad \forall t \in [0,T],
 \end{equation}
 and is conserved within time: 
 \begin{equation}
 	{M}_{\Omega}(t) = {M}_{\Omega}(0), \quad \forall t \in [0,T].
 \end{equation}
-
-Section \ref{sec-conslaw2d} introduced a version of Problem \ref{sec:fv-2d-prob1}
-considering a discretization of the domain $D$. 
-This version is also summarized in Problem \ref{sec:fv-2d-prob2}.
-\begin{prob}
-	\label{sec:fv-2d-prob2}
-	Assume the framework of Problem \ref{sec:fv-2d-prob1}.
-	We consider positive integers $N$ and $N_T$, a spatial discretization of [a,b] given by
-	$X_i = [x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}]$,
-	$\forall i = 1, \cdots, N,$ 
+considering a discretization of the domain $[a,b] \times [0,T]$. 
+Similar to Definitions \ref{chp2-def-2dgrid} and \ref{chp2-def-dxtimegrid},
+we introduce the concepts of $(\Delta x,\Delta y)$-uniform grid and $(\Delta x, \Delta y,\Delta t, \lambda_x,\lambda_y)$ discretization.
+\begin{definition}[$(\Delta x,\Delta y)$-uniform grid]
+	\label{chp2-def-2dgrid}
+	Given $[a,b]\times [c,d]$ and positive real numbers $\Delta x$ and $\Delta y$ such that $\Delta x = (b-a)/N$, 
+	$\Delta y = (d-c)/M$, for positive integers $N$ and $M$,
+	we say that a $(N,M)$-tuple $\mathcal{D}=(\Omega_{ij})_{i=1,\cdots,N,j=1,\cdots,M}$ is a $(\Delta x, \Delta y)$-uniform grid for $[a,b]\times [c,d]$ if
+	$\Omega_{ij} = [x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}]\times [y_{j-\frac{1}{2}}, y_{j+\frac{1}{2}}]$, 
 	$a = x_{\frac{1}{2}} < x_{\frac{3}{2}} < \cdots < x_{N-\frac{1}{2}} < x_{N+\frac{1}{2}} = b$,
-	$\Delta x = x_{i+\frac{1}{2}}-x_{i-\frac{1}{2}}$, $Y_j = [y_{j-\frac{1}{2}}, y_{j+\frac{1}{2}}]$,
-	$\forall j = 1, \cdots, M,$ 
 	$c = y_{\frac{1}{2}} < y_{\frac{3}{2}} < \cdots < y_{M-\frac{1}{2}} < y_{M+\frac{1}{2}} = d$,
-	$\Delta y = y_{j+\frac{1}{2}}-y_{j-\frac{1}{2}}$,
-	$\Omega_{ij} = X_i \times Y_j$,
-	a time discretization
-	$t_n = n\Delta t$, $\Delta t = \frac{T}{N_T}$, $\forall n = 1, \cdots, N_T$.
-	Since we are in the framework of Problem \ref{sec:fv-2d-prob2}, it follows that:
+	$\Delta x = x_{i+\frac{1}{2}}-x_{i-\frac{1}{2}}$, 	$\Delta y = y_{j+\frac{1}{2}}-y_{j-\frac{1}{2}}$.
+	Each $\Omega_{ij}$ is called control volume or cell.
+\end{definition}
+\begin{remark}
+	We may define the cells $\Omega_{ij}$ for $i$ outside of the range $1,\cdots, N$ or $j$ outside of the range $1,\cdots, M$  by 
+	$\Omega_{ij} = [a+(i-1)\Delta x,a+i\Delta x]\times [c+(j-1)\Delta x,c+j\Delta x]$.  These cells are called ghost cells.
+\end{remark}
+\begin{definition}[$(\Delta x,\Delta y,\Delta t, \lambda_x, \lambda_y)$-discretization]
+	\label{chp2-def-dxdytimegrid}
+	Given $[a,b]\times[c,d]\times [0,T]$ and positive real numbers $\Delta x$ $\Delta y$ and $\Delta t$, we say that $(\mathcal{D},\mathcal{T})$ is a
+	$(\Delta x,\Delta y,\Delta t, \lambda_x, \lambda_y)-$discretization of $[a,b]\times[c,d]\times [0,T]$ if $\Omega$ is a $(\Delta x,\Delta y)$-uniform 
+	grid for $[a,b]\times[c,d]$ and $\mathcal{T}$ is a $\Delta t$-temporal grid for $[0,T]$, $\frac{\Delta t}{\Delta x} = \lambda_x$
+	and  $\frac{\Delta t}{\Delta y} = \lambda_y$.
+\end{definition}
+\begin{remark}
+	Whenever we mention a $(\Delta x,\Delta y)-$uniform grid, or a $(\Delta x,\Delta y,\Delta t, \lambda_x, \lambda_y)$-discretization,
+	then $\Omega_{ij}$, $N$ and $M$ are implicitly defined.
+\end{remark}
+Section \ref{sec-adv2d} introduced a version of Problem \ref{chp3-sec2-prob1}
+considering a discretization of the domain $[a,b] \times [c,d] \times[0,T]$. 
+This version is also summarized in Problem \ref{chp3-sec2-prob2}.	
+\begin{prob}
+	\label{chp3-sec2-prob2}
+	Assume the framework of Problem \ref{chp3-sec2-prob1}
+	and that $(\mathcal{D},\mathcal{T})$ is a $(\Delta x, \Delta y, \Delta t, \lambda_x,\lambda_y)$-discretization of $[a,b]\times [c,d]\times [0,T]$.
+	Since we are in the framework of Problem \ref{chp3-sec2-prob1}, it follows that:
 	\begin{align*}
 		{Q}_{ij}(t_{n+1})  = {Q}_{ij}(t_{n})
-		&- \frac{\Delta t}{\Delta x \Delta y}
+		&- {\lambda_x}
 		\delta _x \bigg( \frac{1}{\Delta t}
-		\int_{t_1}^{t_2} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
-		{f}({q}(x_{i}, y, t))
+		\int_{t^n}^{t^{n+1}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
+		{(uq)}(x_{i}, y, t)
 		\,dy \,dt \bigg) \\ \nonumber
-		&- \frac{\Delta t}{\Delta x \Delta y}
+		&- {\lambda_y}
 		\delta _y \bigg( \frac{1}{\Delta t}
-		\int_{t_1}^{t_2} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
-		{g}({q}(x, y_{j}, t))
+		\int_{t^n}^{t^{n+1}} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		{(vq)}(x, y_{j}, t)
 		\,dx \,dt \bigg),
 	\end{align*}
 	where ${Q}_{ij}(t) = \frac{1}{\Delta x \Delta y}
@@ -234,115 +281,405 @@ This version is also summarized in Problem \ref{sec:fv-2d-prob2}.
 	In other words, we would like to find the average values of ${q}$
 	in each control volume $\Omega_{ij}$ at the considered time instants.
 \end{prob}
-
-Finally, we define the one-dimensional (2D) finite-volume (FV)
-scheme problem as follows in Problem \ref{sec:fv-2d-prob3}.
-We use the notation ${q}^n_{ij} = {q}(x_i, y_j, t_n)$
-to represent the values of ${q}$ in the discrete domain $D$
-and $u_{i+\frac{1}{2},j}^n = u(x_{i+\frac{1}{2}}, y_j, t_n)$
-to represent the velocity in $x$ direction at control volume
-edges midpoints in the $x$ direction, 
-and $v_{i,j+\frac{1}{2}}^n = v(x_i,y_{j+\frac{1}{2}},t_n)$
-to represent the velocity in $y$ direction at control volume
-edges midpoints in the $y$ direction, 
-
-\begin{prob}[2D-FV scheme]
-	\label{sec:fv-2d-prob3}
-	Assume the framework defined in Problem \ref{sec:fv-2d-prob2}.
-	The finite-volume approach of Problem \ref{sec:fv-2d-prob1}
-	consists of a finding a scheme of the form:
+Next, we introduce the definitions of grid functions at cell centroids and C-grid functions. 
+\begin{definition}[$(\Delta x,\Delta y)$-grid function]
+	\label{chp2-rmk-2d-gridfunction1}
+	For a $(\Delta x,\Delta y)$-uniform grid $\mathcal{D}$, we say that $Q \in \mathbb{R}^{N\times M}$ is a 
+	$(\Delta x,\Delta y)$-grid function, where we assume that $Q$ is ordered by
+	the lines in the $x$ direction of the grid, \textit{i.e.},
+	\begin{equation*}
+		Q = (Q_{11}, Q_{21} \cdots, Q_{M1}, Q_{12}, Q_{22} \cdots, Q_{M2}, \cdots,  Q_{1N}, Q_{2N} \cdots, Q_{NM}).
+	\end{equation*}
+	We denote the space of $(\Delta x,\Delta y)$-grid functions by $\mathbb{R}^{\Delta x \times \Delta y}$.
+\end{definition}
+	
+\begin{definition}[$(\Delta x,\Delta y)$-C grid wind]
+	\label{chp2-rmk-2d-gridfunction2}
+	For a $(\Delta x,\Delta y)$-uniform grid $\mathcal{D}$, we say that $(u,v)$ is a $(\Delta x,\Delta y)$-C grid wind if 
+	$u \in \mathbb{R}^{(N+1) \times M}$, $v \in \mathbb{R}^{N \times (M+1)}$, where we assume that $u$ is ordered by
+	the lines in the $x$ direction of the grid, \textit{i.e.},
 	\begin{align*}
-		{Q}_{ij}^{n+1} =  {Q}_{ij}^{n} -
-		\frac{\Delta t}{\Delta x \Delta y} 
-        \delta_i {F}_{i,j}^{n} - 
-		\frac{\Delta t}{\Delta x \Delta y}
-        \delta_j {G}_{i,j}^{n},
-		\\ \nonumber \quad \forall i = 1, \cdots, N, \quad \forall j = 1, \cdots, M,
-		\quad \forall n = 1, \cdots, N_T-1,
+	u = (u_{\frac{1}{2},1}, u_{\frac{3}{2},1}, \cdots, u_{N+\frac{1}{2},1}, u_{\frac{1}{2},2}, u_{\frac{3}{2},2}, \cdots, u_{N+\frac{1}{2},2}, \cdots ,
+	u_{\frac{1}{2},M}, u_{\frac{3}{2},M}, \cdots, u_{N+\frac{1}{2},M}),
 	\end{align*}
+	$v$ is ordered by the lines in the $y$ direction of the grid, \textit{i.e.},
+	\begin{align*}
+	v = (v_{1,\frac{1}{2}}, v_{1,\frac{3}{2}}, \cdots, v_{1,M+\frac{1}{2}}, v_{2,\frac{1}{2}}, v_{2,\frac{3}{2}}, \cdots, v_{2,M+\frac{1}{2}}, \cdots ,
+	v_{N,\frac{1}{2}}, v_{N,\frac{3}{2}}, \cdots, v_{N,M+\frac{1}{2}}).
+\end{align*}
+\end{definition}
+\begin{remark}
+	When computing stencils, we may need values of $Q_{ij}$ such that the
+	indexes $i$ and $j$ are out of the range $1,\cdots, N$, $1,\cdots, M$.
+	These values are called ghost cell values.
+	Since we are under the assumption of periodic boundary conditions, this problem
+	is overcome by assuming periodicity on the grid function $Q$. 
+	The same applies for $(\Delta x,\Delta y)$-C grid functions.
+\end{remark}
+Finally, we define the two-dimensional (2D) finite-volume (FV)
+scheme problem as follows in Problem \ref{chp3-sec2-prob3}.
+\begin{remark}
+	For Problem \ref{chp2-sec2-prob2}, we define the $(\Delta x,\Delta y)$-grid functions
+	$q^n$ and $Q(t^n)$ , where ${q}^n_{ij} = {q}(x_i, y_j, t^{n})$, $Q(t^n)_{ij} = Q_{ij}(t^n)$, for $n=0, \cdots, N_T$.
+	We also define the $(\Delta x,\Delta y)$-C grid wind $(u^n,v^n)$ where $u_{i+\frac{1}{2},j}^n = u(x_{i+\frac{1}{2}},y_j,t^{n})$ and
+	$v_{i,j+\frac{1}{2}}^n = v(x_i,y_{j+\frac{1}{2}},t^{n})$.
+\end{remark}
+\begin{prob}[2D-FV scheme]
+	\label{chp3-sec2-prob3}
+	Assume the framework defined in Problem \ref{chp3-sec2-prob2}.
+	The finite-volume approach of Problem \ref{chp3-sec2-prob1}
+	consists of a finding a scheme of the form:
+	\begin{align}
+		\label{chp3-2dfv}
+		{Q}_{ij}^{n+1} =  {Q}_{ij}^{n} - {\lambda_x} \delta_i {F}_{i,j}^{n} - {\lambda_y } \delta_j {G}_{i,j}^{n},
+		\\ \nonumber \quad \forall i = 1, \cdots, N, \quad \forall j = 1, \cdots, M,
+		\quad \forall n = 0, \cdots, N_T-1,
+	\end{align}
 	where $ \delta_i F_{ij}^n =
     {F}_{i+\frac{1}{2},j}^{n} 
     - {F}_{i-\frac{1}{2},j}^{n}$,
     $ \delta_j G_{ij}^n =
     {G}_{i,j+\frac{1}{2}}^{n} 
     - {G}_{i,j-\frac{1}{2}}^{n}$ 
-    and ${Q}_{ij}^{n} \in \mathbb{R}^m$ is intended to be an approximation
-	of ${Q}_{ij}(t_{n})$ in some sense. We define by ${Q}_{ij}^{0} = {Q}_{ij}(0)$ or
+    and ${Q}^{n}$ is intended to be an approximation
+	of ${Q}(t_{n})$ in some sense. We define ${Q}_{ij}^{0} = {Q}_{ij}(0)$ or
 	${Q}_{ij}^{0} = {q}^0_{i,j}$.
     
-    The term ${F}_{i+\frac{1}{2}, j}^{n} = {\mathcal{F}}
-    (Q^n; u^n; v^n, i,j)
+    The term ${F}_{i+\frac{1}{2}, j}^{n} = {\mathbb{F}}
+    (Q^n, \tilde{u}^n, \tilde{v}^n; i,j)
     $ is known as numerical flux in the 
-    $x$ direction, where $\mathcal{F}$ is the numerical flux function, 
+    $x$ direction, where $\mathbb{F}$ is the numerical flux function, 
     and it approximates
 	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} 
     \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
-    {f}({q}(x_{i+\frac{1}{2}}, y, t)) \,dy \,dt $,
-    $\forall i = 0, 1, \cdots, N$,
-    and 
+    (uq)(x_{i+\frac{1}{2}}, y, t) \,dy \,dt $,
+    $\forall i = 0, 1, \cdots, N$, and 
 	${G}_{i, j+\frac{1}{2}}^{n} = 
-    {\mathcal{G}} (Q^n, u^n, v^n; i, j)$ 
+    {\mathbb{G}} (Q^n, \tilde{u}^n, \tilde{v}^n; i, j)$ 
     is known as numerical flux in the 
-    $y$ direction, where $\mathcal{G}$ 
+    $y$ direction, where $\mathbb{G}$ 
     is the numerical flux function, and it approximates
 	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}}  
     \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-    {g}({q}(x, y_{j+\frac{1}{2}}, t)) \,dx \,dt $,
+    (vq)(x, y_{j+\frac{1}{2}}, t) \,dx \,dt $,
     $\forall j = 0, 1, \cdots, M$,
 	or, in other words, they estimate the time-averaged
     fluxes at the control volume $\Omega_{ij}$ boundaries.
+  	The values $\tilde{u}_{i+\frac{1}{2},j}^n$ and $\tilde{v}_{i,j+\frac{1}{2}}^n$ are related to the time-averaged velocities
+  	and depend on values of $u_{i+\frac{1}{2},j}^n$ and $v_{i,j+\frac{1}{2}}^n$.
 \end{prob}
-Notice that we are using the notations $Q^n = (Q_{ij}^n)_{i=1,\cdots, N, j = 1, \cdots, M}$,
-$u^n = (u_{i+\frac{1}{2},j}^n)_{i=0,\cdots, N, j = 1, \cdots, M}$
-and $v^n = (v_{i,j+\frac{1}{2}}^n)_{i=1,\cdots, N, j = 0, \cdots, M}$.
+\begin{remark}
+	A scheme of the form from Equation \eqref{chp3-2dfv} is referred to as a 2D-FV scheme and
+	it is also known as a conservative scheme.
+\end{remark}
+\begin{definition}[Discrete divergence]
+	\label{chp3-def-div}
+	For Problem \ref{chp3-sec2-prob3}, we define the discrete divergence as a grid function $\mathbb{D}^n=\mathbb{D}^n(Q,\tilde{u}^n,\tilde{v}^n)$
+	given by
+	\begin{equation}
+		\label{chp3-def-div-eq}
+		\mathbb{D}_{ij}^n=\bigg( \frac{\mathbb{F}(Q,\tilde{u}^n,\tilde{v}^n;i,j) - \mathbb{F}(Q,\tilde{u}^n,\tilde{v}^n;i-1,j)}{\Delta x} \bigg) +
+				 \bigg( \frac{\mathbb{G}(Q,\tilde{u}^n,\tilde{v}^n;i,j) - \mathbb{G}(Q,\tilde{u}^n,\tilde{v}^n;i,j-1)}{\Delta y} \bigg).
+	\end{equation}
+\end{definition}
+For a 2D-FV the discrete total mass at the time-step $n$ is given by
+\begin{equation*}
+	M^n =  \Delta x \Delta y \sum_{i=1}^N \sum_{j=1}^M Q_{ij}^n.
+\end{equation*}
+Therefore, the discrete total mass is constant for a 2D-FV scheme,
+which follows from a straightforward computation:
+\begin{align*}
+	M^{n+1} &=  \Delta x \sum_{i=1}^N  \sum_{j=1}^M Q_{ij}^{n+1} 
+	= M^{n} - \Delta t  \sum_{i=1}^N  \sum_{j=1}^M (F^n_{i+\frac{1}{2},j}- F^n_{i-\frac{1}{2},j})
+	 		 - \Delta t  \sum_{i=1}^N  \sum_{j=1}^M (G^n_{i,j+\frac{1}{2}}- G^n_{i,j-\frac{1}{2}})\\
+	&= M^{n} - \Delta t \sum_{j=1}^M (F^n_{N+\frac{1}{2},j}- F^n_{\frac{1}{2},j})
+			 - \Delta t \sum_{i=1}^N (G^n_{i,M+\frac{1}{2}}- G^n_{i,\frac{1}{2}})
+	= M^{n},
+\end{align*}
+where we are using that $F^n_{N+\frac{1}{2},j} = F^n_{\frac{1}{2},j}$,
+$G^n_{i,M+\frac{1}{2}} = G^n_{i,\frac{1}{2}}$ since we are assuming bi-periodic boundary
+conditions.
 
-\section{Dimension splitting}
-\label{sec-dimsplit}
-In this section we shall describe how we can combine one-dimensional
-to solve the bidimensional advection equation on the plane.
-As we shall later, the solution of the advection
-equation on the cubed-sphere consists of applying the scheme described here in each
-panel combined with interpolation on ghost cells.
-The dimension splitting method presented here was developed by \citet{lin:1996}
-and is currently employed in the FV3 dynamical core.
+\subsection{Convergence, consistency and stability}
+\label{chp3-CCS}
+As we mentioned in Problem \ref{chp3-sec2-prob3}, the initial condition may be assumed as $q_{ij}^0$ or $Q_{ij}(0)$. 
+For two-dimensional simulations, we are going to assume  $q_{ij}^0$ as initial data to avoid the computation of integrals.
+Furthermore, the errors will be calculated using the values $q_{ij}^n$ instead of $Q_{ij}(t_n)$.
+Similarly to Proposition \ref{prop-bound-centroid}, we have that the centroid value approximates the average value
+with second order, as Proposition \ref{prop-bound-centroid-2d} shows.
+\begin{prop}
+	\label{prop-bound-centroid-2d}
+	If $q \in \mathcal{C}^2$, then $|Q_{ij}(t^n)-q_{ij}^n| \leq C_1 \Delta x^2 + C_2 \Delta x \Delta y + C_3 \Delta y^2$, where 
+	$C_1$, $C_2$ and $C_3$ are constants.
+\end{prop}
+\begin{proof}
+	Just apply Theorem \ref{prop-bound-midpoint2d} for the function $q(x,y,t^n)$.	
+\end{proof}
+The notions of convergence, consistency and stability for a 2D-FV schemes
+are straightforward from these notions for 1D-FV schemes
+(see Subsections \ref{chp2-sub-CC} and \ref{chp2-sub-stability}).
+Indeed, in the context of Problem \ref{chp3-sec2-prob3}, we define the operators
+$\mathcal{H}_{\Delta x ,\Delta y,n}: \mathbb{R}^{\Delta x \times \Delta y} \to \mathbb{R}^{\Delta x \times \Delta y}$ whose $(i,j)$ entry is given by:
+\begin{align*}
+	[\mathcal{H}_{\Delta x ,\Delta y,n}(Q)]_{ij} = Q_{ij} &-{\lambda_x} \bigg( \mathbb{F}(Q,\tilde{u}^n,\tilde{v}^n;i,j) - \mathbb{F}(Q,\tilde{u}^n,\tilde{v}^n;i-1,j) \bigg) \\ \nonumber
+								 	   &-{\lambda_y} \bigg( \mathbb{G}(Q,\tilde{u}^n,\tilde{v}^n;i,j) - \mathbb{G}(Q,\tilde{u}^n,\tilde{v}^n;i,j-1) \bigg)
+\end{align*}
+for $i=1, \cdots, N$, $j=1, \cdots, M$, $n=0, \cdots, N_T-1$. The 2D-FV is then expressed as
+\begin{equation*}
+	Q^{n+1} = \mathcal{H}_{\Delta x ,\Delta y,n}(Q^n).
+\end{equation*}
+The local error truncation $\tau^n \in \mathbb{R}^{\Delta x \times \Delta y}$ is given by
+\begin{equation*}
+	Q(t^{n+1}) = \mathcal{H}_{\Delta x ,\Delta y,n}(Q(t^n)) + \Delta t \tau^n.
+\end{equation*}
+The error equation is given by
+\begin{equation}
+	E^{n+1} = \mathcal{H}_{\Delta x ,\Delta y,n}(Q(t^n)) - \mathcal{H}_{\Delta x ,\Delta y,n}(Q^n) +  \Delta t \tau^n.
+\end{equation}
+Given $r = (r_{ij})_{i=1,\cdots,N,j=1,\cdots,M}\in \mathbb{R}^{\Delta x \times \Delta y}$, we define the $p$-norm by
+\begin{equation}
+	\label{chp3-pnorm}
+	\|r\|_{p,\Delta x \times \Delta y}=
+	\begin{cases}
+		\bigg( \sum_{i=1}^{N} \sum_{j=1}^{M}|r_{ij}|^p \bigg)^{\frac{1}{p}} & \text{if } 1\leq p < \infty,\\
+		\max_{i=1, \cdots, N,j=1,\cdots,M}{|r_{ij}|} & \text{otherwise }.
+	\end{cases}
+\end{equation}
+The stability in the $p$-norm is defined as in the 1D case.
+\begin{definition}
+	A 2D-FV scheme is stable in the $p-$norm if 
+	\begin{equation}
+		\|\mathcal{H}_{\Delta x ,\Delta y,n}(Q) - \mathcal{H}_{\Delta x ,\Delta y,n}(P)\|_{p,N\Delta x \times \Delta y} \leq (1+\alpha \Delta t)  \|Q-P\|_{p,\Delta x \times \Delta y},
+	\end{equation}
+	for all $Q, P \in \mathbb{R}^{\Delta x \times \Delta y}$ and $\alpha$ is a constant
+	that does not depend neither on $\Delta x$, $\Delta y$, $\Delta t$ nor on $n$.
+\end{definition}
+If a 2D-FV scheme is stable in the $p-$norm, similarly to Equation \eqref{chp2-sec2-erroreq} we have:
+\begin{align*}
+		\|E^{n+1}\|_{p,\Delta x \times \Delta y} &\leq e^{\alpha T}(\|E^0\|_{p,\Delta x \times \Delta y} + T\max_{n=1, \cdots, N_T}\|\tau^n\|_{p,\Delta x \times \Delta y}).\\
+\end{align*}
+Again, we point out that from Proposition \ref{prop-bound-centroid-2d}, we have that the initial error $E^0$ shall be second-order accurate.
+Consistency is defined as in Definition \ref{chp2-def-cons} and convergence is defined as in Definition \ref{chp2-def-conv}.
 
-As we mentioned, we consired the two-dimensional advection linear equation on the plane
-with biperiodic boundary conditions. The flux functions are then given by
-$f(q) = u(x,y,t)q(x,y,t)$ and  $g(q) = v(x,y,t)q(x,y,t)$.
+The Von Neumann analysis can be applied when $\mathcal{H}_{\Delta x ,\Delta y,n}$ is linear, since we are considering periodic boundary conditions.
+The idea is the same as in the one-dimensional case, we just apply the operator $\mathcal{H}_{\Delta x ,\Delta y,n}$ on the Fourier modes to obtain
+the amplification factor.
+We introduce the nodes $\theta_i = i\frac{2\pi}{N}$, $i=1, \cdots, N$, $\Delta \theta = \frac{2\pi}{N}$,
+$\theta_i = (\theta_1, \theta_2, \cdots, \theta_N)$, $\phi_j = j\frac{2\pi}{M}$, $j=1, \cdots, M$, $\Delta \phi = \frac{2\pi}{M}$,
+$\phi = (\phi_1, \phi_2, \cdots, \phi_M)$.
+For $k_1=1, \cdots, N$, $k_2=1, \cdots, M$, the two-dimensional Fourier mode $\boldsymbol{k} = (k_1,k_2)$ from $\mathbb{C}^{N\times M}$ 
+has its $(i,j)$ entry given by $[e^{\imath \boldsymbol{k} \theta}]_{ij} = e^{\imath k_1 \theta_i}e^{\imath k_2 \phi_j}$. 
 
-The idea of the dimension splitting consists of solving the advection equation firstly in the $x$
-direction using ${F}_{i+\frac{1}{2},j}^{n}$ as the PPM flux:
+Notice that if $q,u, v \in \mathcal{C}^3$, we can rewrite Equation \eqref{consistency-1d-eq2} as:
+\begin{align*}
+	\begin{split}
+		\tau_{ij}^n &= 
+		\bigg[ \frac{1}{\Delta x \Delta y \Delta t}  \int_{t^{n}}^{t^{n+1}}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} {\nabla \cdot (\boldsymbol{u}q)}(x, y, t) \,dy \,dx \,dt 
+		-\bigg( \frac{\mathbb{F}(Q,\tilde{u}^n,\tilde{v}^n;i,j) - \mathbb{F}(Q,\tilde{u}^n,\tilde{v}^n;i-1,j)}{\Delta x} \bigg) \\
+		&-\bigg( \frac{\mathbb{G}(Q,\tilde{u}^n,\tilde{v}^n;i,j) - \mathbb{G}(Q,\tilde{u}^n,\tilde{v}^n;i,j-1)}{\Delta y} \bigg)
+		\bigg].
+	\end{split}
+\end{align*}
+Using the midpoint rule for integration (Theorem \ref{prop-bound-midpoint2d}), the mean value theorem for integrals
+(Theorem \ref{anexo-numint-mv}) and recalling the discrete divergence (Definition \ref{chp3-def-div}), we have:
 \begin{align}
-	{Q}_{ij}^{x,n+1} =  {Q}_{ij}^{n} -
-	\frac{\Delta t}{\Delta x} ({F}_{i+\frac{1}{2},j}({Q}^{n}) - {F}_{i-\frac{1}{2},j}({Q}^{n}))
+	\begin{split}
+		\label{consistency-2d-eq}
+		\tau_{ij}^n 
+		&= \frac{1}{\Delta t}  \int_{t^{n}}^{t^{n+1}}
+		{\nabla \cdot (\boldsymbol{u}q)}(x_i, y_j, t)  \,dt - 
+		\mathbb{D}^n_{ij} + O(\Delta x^2) + O(\Delta y^2).
+	\end{split}
 \end{align}
-
-Then, we solve the advection equation in the $y$ direction using ${G}_{i,j+\frac{1}{2}}^{n}$ 
-as the PPM flux in the $y$ direction:
+Therefore, in order to investigate the consistency, we may compare how well the discrete divergence approximates the divergence.
+\section{Dimension splitting}
+\label{sec-dsplit}
+Before introducing the dimension splitting scheme from \citet{lin:1996}, it is useful to 
+investigate a little bit of general operator splitting schemes, since the dimension splitting technique
+is a particular case of operator splitting methods.
+For a time interval $[0,T]$, we consider a $\Delta t-$temporal grid.
+We consider the abstract Cauchy problems
 \begin{align*}
-	{Q}_{ij}^{xy,n+1} =  {Q}_{ij}^{x,n+1} -
-	\frac{\Delta t}{\Delta y} ({G}_{i,j+\frac{1}{2}}({Q}^{x,n+1}) - {G}_{i,j-\frac{1}{2}}({Q}^{x,n+1}))
+	\begin{cases}
+		\frac{dq}{dt}(t) &= Aq(t), \quad t \in [t^n,t^{n+1}],\\
+		q(t^n) &= q_n,
+	\end{cases}
 \end{align*}
-
-Notice that we can repeat this process in a reverse order.
-Indeed, we can solve the advection equation in $y$ direction using ${G}_{i,j+\frac{1}{2}}^{n}$ 
-as the PPM flux in the $y$ direction:
+for $n=0,\cdots, N_T-1$, where $q(t) \in \mathcal{B}$ for some Banach space $\mathcal{B}$, and $A:\mathcal{B} \to \mathcal{B}$ is a linear operator
+following the framework of \citet[Chapter~3]{richtmyer:1968}.
+We are interested in finding $q(t^{n+1})$ given $q_n$.
+Assuming that $A = A_1 + A_2$ for two linear operators $A_1, A_2:\mathcal{B} \to \mathcal{B}$, we consider the following abstract Cauchy sub-problems:
 \begin{align*}
-	{Q}_{ij}^{y,n+1} =  {Q}_{ij}^{n} -
-	\frac{\Delta t}{\Delta y} ({G}_{i,j+\frac{1}{2}}({Q}^{n}) - {G}_{i,j-\frac{1}{2}}({Q}^{n}))
+	\begin{cases}
+		\frac{dq^1}{dt}(t) &= A_1q(t), \quad t \in [t^{n},t^{n+1}],\\
+		q^{1}(t^n) &= q_n,
+	\end{cases}
 \end{align*}
-
-Then, we can solve the advection equation in the $x$ direction using
-${F}_{i+\frac{1}{2},j}^{n}$ as the PPM flux in the $x$ direction:
+and
 \begin{align*}
-	{Q}_{ij}^{yx,n+1} =  {Q}_{ij}^{x,n+1} -
-	\frac{\Delta t}{\Delta x} ({F}_{i+\frac{1}{2},j}({Q}^{y,n+1}) - {F}_{i-\frac{1}{2},j}({Q}^{y,n+1}))
+	\begin{cases}
+		\frac{dq^{21}}{dt}(t) &= A_2q(t), \quad t \in [t^n,t^{n+1}],\\
+		q^{21}(t^n) &= q^1(t^{n+1}).
+	\end{cases}
 \end{align*}
+Then we can approximate $q(t_0 + \Delta t)$ by $q^{21}(t^n + \Delta t)$ with error $O(\Delta t)$, if $A_1$ and $A_2$
+do not commute; otherwise, this method is exact.
+This approach is known as Lie-Trotter splitting. Observe the  Lie-Trotter splitting may be performed
+in a reverse order solving the sub-problems
+\begin{align*}
+	\begin{cases}
+		\frac{dq^2}{dt}(t) &= A_2q(t), \quad t \in [t^n,t^{n+1}],\\
+		q^{2}(t^n) &= q_n,
+	\end{cases}
+\end{align*}
+and 
+\begin{align*}
+	\begin{cases}
+		\frac{dq^{21}}{dt}(t) &= A_1q(t), \quad t \in [t^n,t^{n+1}],\\
+		q^{12}(t^n) &= q^1(t^{n+1}),
+	\end{cases}
+\end{align*}
+and again we estimate $q(t^{n+1})$ by $q^{12}(t^{n+1})$ with error $O(\Delta t)$.
+As observed by \citet{strang:1968}, we can consider
+\begin{equation}
+	q^*(t^{n+1}) = \frac{q^{21}(t^{n+1}) + q^{12}(t^{n+1})}{2},
+\end{equation}
+which is a second-order ($O(\Delta t^2)$) symmetric scheme to approximate $q(t^{n+1})$. 
+We shall refer to this scheme as average Lie-Trotter splitting.
+This process of averaging two Lie-Trotter splitting is a particular case of methods known in the literature as 
+weighted sequential splitting methods. 
+Furthermore, this process of averaging schemes may be extended to achieve higher-order schemes (c.f., e.g. \citet{jia:2011}).
+For an accuracy analysis of weighted sequential splitting methods we refer to \citet{csomos:2005}.
 
-Finally, we can eliminate the direction bias by computing the updated solution
-using an averaged solution:
-$ Q^{n+1} = \frac{(Q^{xy,n+1} + Q^{yx,n+1})}{2}$
+We point out that one of the most widely used in the literature second-order splitting schemes is the Strang splitting \citep{strang:1968}.
+This scheme requires the solution of 3 sub-problems per time-step, with one of them at time $t_n+\frac{\Delta t}{2}$,
+while the average Lie-Trotter splitting requires the solution of 4 sub-problems per time-step.
+Hence, the Strang splitting is computationally cheaper. 
+However, as we shall see in this Chapter, the average Lie-Trotter splitting applied for the linear advection equation
+allows a modification that eliminates a splitting error that appears when we consider a constant
+scalar field and non-divergent velocity as observed by \citet{lin:1996}.
 
+To move towards to the scheme from  \citet{lin:1996}, let us consider Problem \ref{chp3-sec2-prob1}
+in its differential form:
+\begin{equation*}
+	\label{chp3-adv2deq-xydir}
+	\begin{cases}
+		\frac{\partial q}{\partial t}(x, y, t) +
+		\frac{\partial (uq)}{\partial x}(x, y, t) +
+		\frac{\partial (vq)}{\partial y}(x, y, t) 
+		= 0, \quad \forall (x, y, t) \in \mathbb{T}^2_T\\
+		q(x,y,0) = q_0(x,y),
+	\end{cases}
+\end{equation*}
+where $q,u,v \in \mathcal{C}^1{(\mathbb{T}^2_T)}$.
+We are going to consider the one-dimensional advection equation in the $x$-direction
+\begin{equation*}
+	\label{chp3-adv2deq-xdir1}
+	\frac{\partial q^x}{\partial t}(x, y, t) +
+	\frac{\partial (uq^x)}{\partial x}(x, y, t)
+	= 0,
+\end{equation*}
+for each $y = y_j$, and the one-dimensional advection equation in the $y$-direction
+\begin{equation*}
+	\label{chp3-adv2deq-ydir1}
+	\frac{\partial q^y}{\partial t}(x, y, t) +
+	\frac{\partial (vq^y)}{\partial y}(x, y, t)
+	= 0,   
+\end{equation*}
+for each $x = x_i$. We shall assume that these problems are solved using a 1D-FV scheme as in Problem \ref{chp2-sec2-prob3}
+with numerical flux functions $\mathcal{F}$ and $\mathcal{G}$, respectively. We introduce the auxiliary functions
+\begin{align*}
+	\mathbf{F}({{Q}_{ij}^n}) = -\lambda_x \big(\mathcal{F} (Q^n_{ij}(\mathcal{S}_{i+\frac{1}{2}}); \tilde{u}^n_{i+\frac{1}{2},j})- 
+	\mathcal{F} (Q^n_{ij}(\mathcal{S}_{i-\frac{1}{2}}); \tilde{u}^n_{i-\frac{1}{2},j})\big).
+\end{align*}
+and
+\begin{align*}
+	\mathbf{G}({Q}_{ij}^n) = -\lambda_y \big( \mathcal{G} (Q^n_{ij}(\mathcal{S}_{j+\frac{1}{2}}); \tilde{v}^n_{i,j+\frac{1}{2}})- 
+	\mathcal{G} (Q^n_{ij}(\mathcal{S}_{j-\frac{1}{2}}); \tilde{v}^n_{i,j-\frac{1}{2}}) \big),
+\end{align*}
+which are the numerical flux update of the 1D-FV schemes in the $x$ and $y$ direction, respectively, that is
+\begin{align*}
+	\mathcal{F} (Q^n_{ij}(\mathcal{S}_{i+\frac{1}{2}}); \tilde{u}^n_{i+\frac{1}{2},j}) = \frac{1}{\Delta t} \int_{t_n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},y_j,t) \,dt + O(\Delta t^P)  ,\\
+ 	\mathcal{G} (Q^n_{ij}(\mathcal{S}_{j+\frac{1}{2}}); \tilde{v}^n_{i,j+\frac{1}{2}}) = \frac{1}{\Delta t} \int_{t_n}^{t^{n+1}} (vq)(x_i,y_{j+\frac{1}{2}},t) \,dt + O(\Delta t^P).
+\end{align*}
+where $P$ is the order of accuracy of the flux.
+The Lie-Trotter splitting is obtained by solving the advection in the $x$ direction
+\begin{align*}
+	{Q}_{ij}^{x,n+1} =  {Q}_{ij}^{n} + \mathbf{F}({Q_{ij}^n}),
+\end{align*}
+for $j=1, \cdots, M$, and then we advect in the $y$ direction with initial data ${Q}_{ij}^{x,n+1}$ 
+\begin{align*}
+	{Q}_{ij}^{yx,n+1} = Q_{ij}^{x,n+1} + \mathbf{G}({Q_{ij}^{x,n+1}}),
+\end{align*}
+for $i=1, \cdots, N$.
+To get the average Lie-Trotter splitting we repeat the process in the reverse order by solving the advection equation
+in the $y$ direction
+\begin{align*}
+	{Q}_{ij}^{y,n+1} =  {Q}_{ij}^{n} + \mathbf{G}({Q_{ij}^n}),
+\end{align*}
+for $i=1, \cdots, N$, and then we advect in the $x$-direction with initial data ${Q}_{ij}^{y,n+1}$ 
+\begin{align*}
+	{Q}_{ij}^{xy,n+1} = Q_{ij}^{y,n+1} + \mathbf{F}({Q_{ij}^{y,n+1}}),
+\end{align*}
+for $j=1, \cdots, M$, and thus we have the average Lie-Trotter solution:
+\begin{align*}
+	Q^{n+1}_{ij} = \frac{(Q^{xy,n+1} + Q^{yx,n+1})}{2} = Q_{ij}^n + \frac{1}{2}\mathbf{F}(Q_{ij}^n) + \frac{1}{2}\mathbf{G}(Q_{ij}^n) + \frac{1}{2}\mathbf{F}\bigg(Q_{ij}^n + \frac{1}{2}\mathbf{G}(Q_{ij}^n)\bigg) + \frac{1}{2}\mathbf{G}\bigg(Q_{ij}^n + \frac{1}{2}\mathbf{F}(Q_{ij}^n)\bigg),
+\end{align*}
+assuming that the numerical flux functions are linear in the input $Q$, we may rewrite a computationally cheaper version
+of the average Lie-Trotter splitting as \citep{lin:1996}:
+\begin{align}
+	\label{chp3-avlt}
+	Q^{n+1}_{ij} = \frac{(Q^{xy,n+1} + Q^{yx,n+1})}{2} = Q_{ij}^n +  
+	\mathbf{F}\bigg(Q_{ij}^n + \frac{1}{2}\mathbf{G}(Q_{ij}^n)\bigg) +  
+	\mathbf{G}\bigg(Q_{ij}^n + \frac{1}{2}\mathbf{F}(Q_{ij}^n)\bigg).
+\end{align}
+The numerical flux functions defined in Chapter \ref{chp-1d-fv} are indeed linear the input $Q$ if there are monotonic constrain, 
+as we mention in Chapter \ref{chp-1d-fv}, but we are going to consider this scheme even when there are monotonic constraints since it requires fewer operations.
+For a while let us assume that the numerical flux functions are exactly the time-averaged fluxes, which they must approximate, as pointed out in Problem \ref{chp2-sec2-prob3}. 
+Under this assumption, we have:
+\begin{align*}
+	\mathbf{F}(Q_{ij}^n) = -\lambda_x{\delta_x}\bigg(\frac{1}{\Delta t} \int_{t_n}^{t^{n+1}} (uq)(x_i,y_j,t) \,dt \bigg) ,\\
+	\mathbf{G}(Q_{ij}^n) = -\lambda_y{\delta_y}\bigg(\frac{1}{\Delta t} \int_{t_n}^{t^{n+1}} (vq)(x_i,y_j,t) \,dt \bigg).
+\end{align*}
+Further, if we if assume that $q = \overline{q}$ is constant and $\nabla \cdot \boldsymbol{u} = 0$ then the solution
+remains constant and then, assuming also that $\boldsymbol{u}$ does not depend on $t$, then $\mathbf{F}$ and $\mathbf{G}$ are given by
+\begin{align*}
+	\mathbf{F}(Q_{ij}^n) = -\overline{q} \lambda_x{\delta_x} u(x_i,y_j),\\
+	\mathbf{G}(Q_{ij}^n) = -\overline{q} \lambda_y{\delta_y} v(x_i,y_j).
+\end{align*}
+However, if we compute the updated solution using Equation \eqref{chp3-avlt}, we have that the error is given by
+\begin{align*}
+	Q^{n+1}_{ij} - \overline{q} &= 
+	-\Delta t \bigg(\frac{\delta_x u(x_i,y_j)}{\Delta x} + 	\frac{\delta_y v(x_i,y_j)}{\Delta y} \bigg)
+	-\Delta t^2 \overline{q}\bigg( \frac{\delta_y v \delta_x u(x_i,y_j) + \delta_x u\delta_y v(x_i,y_j)}{2\Delta x \Delta y} \bigg) \\
+	&= \Delta t (O(\Delta x^2) + O(\Delta y^2))
+	   -\Delta t^2 \overline{q}\bigg( \frac{\delta_y v \delta_x u(x_i,y_j) + \delta_x u\delta_y v(x_i,y_j)}{2\Delta x \Delta y} \bigg).
+\end{align*}
+Thus, the terms in the equation above multiplied by $\Delta t^2$ are related to an splitting error, even if we consider the exact fluxes.
+Aiming to eliminate the error from, \citet{lin:1996} proposes to consider a modification of the average Lie-Trotter splitting as
+\begin{align}
+	\label{chp3-avlt2}
+	Q^{n+1}_{ij} = Q_{ij}^n +  
+	\mathbf{F}\bigg(Q_{ij}^n + \frac{1}{2}\mathbf{g}(Q_{ij}^n)\bigg) +  
+	\mathbf{G}\bigg(Q_{ij}^n + \frac{1}{2}\mathbf{f}(Q_{ij}^n)\bigg),
+\end{align}
+where $\mathbf{f}$ and $\mathbf{g}$ are called inner advective operators and approximate
+$-\Delta t u \frac{\partial q}{\partial x}$ and $-\Delta t v \frac{\partial q}{\partial y}$.
+
+In this work, we shall consider the following  inner advective operators proposed by \citet{putman:2007}
+and is currently used in the FV3 dynamical core:
+\begin{align}
+	\mathbf{f}(Q_{ij}) = \frac{1}{2},\\
+	\mathbf{g}(Q_{ij}) = \frac{1}{2}.
+\end{align}
+Recalling the definition of discrete divergence (Definition \ref{chp3-def-div}) we have:
+\begin{equation}
+	\mathbb{D}_{ij}^n = 
+	-\mathbf{F}\bigg(Q_{ij}^n + \frac{1}{2}\mathbf{g}(Q_{ij}^n)\bigg) 
+	-\mathbf{G}\bigg(Q_{ij}^n + \frac{1}{2}\mathbf{f}(Q_{ij}^n)\bigg),
+\end{equation}
+and as pointed out in Section \ref{chp3-CCS}, we may use the discrete divergence to check the scheme consistency. 
 \section{Numerical experiments}
 \label{sec-ds-exp}
 

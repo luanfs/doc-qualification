@@ -1,16 +1,18 @@
-\chapter{Finite-difference estimatives}
+\chapter{Numerical Analysis}
+\label{anexo-na}
+
+\section{Finite-difference estimates}
 \label{anexo-fd}
-This appendix aims to prove all finite-difference error estimations 
- used throughout this text.
+This Section aims to prove all finite-difference error estimations 
+used throughout this text.
 All the proves are very simple and consist of applying Taylor's expansions,
-as it is usual when showing the order of accuracy of many numerical schemes.
+as it is usual when computing the accuracy order of many numerical schemes.
 %\theoremstyle{plain} % As próximas definições usam este estilo
 %\newtheorem{lema-fd}{Lemma}
 
 \begin{lema}
 	\label{lemma:fd-ppm-est1}
-	Let $F \in \mathcal{C}^{5}([a,b])$, $x_0 \in ]a,b[$
-	and $h>0$ such that $[x_0-2h,x_0+2h] \subset [a,b]$.
+	Let $F \in \mathcal{C}^{5}(\mathbb{R})$, $x_0 \in \mathbb{R}$ and $h>0$.
 	Then, the following identity holds:
 	\begin{equation}	
 		\label{lemma:fd-ppm-est1-eq0}
@@ -98,8 +100,7 @@ where $\eta_{1}, \eta_{2} \in [x_0-2h,x_0+2h]$, which concludes the proof.
 
 \begin{lema}
 	\label{lemma:fd-ppm-est2}
-	Let $F \in \mathcal{C}^{4}([a,b])$, $x_0 \in ]a,b[$ 
-	and $h>0$ such that $[x_0-2h,x_0+3h] \subset [a,b]$.
+	Let $F \in \mathcal{C}^{4}(\mathbb{R})$, $x_0 \in \mathbb{R}$ and $h>0$.
 	Then, the following identity holds:
 	\begin{equation}	
 		\label{lemma:fd-ppm-est2-eq0}
@@ -132,7 +133,7 @@ From the Taylor's expansion, we have:
 		   F(x_0+3h) &=    F(x_0) + 3F'(x_0)h + \frac{9}{2}F^{(2)}(x_0)h^2  + \frac{27}{6}F^{(3)}(x_0)h^3 + \frac{81}{24}F^{(4)}(\theta_{3h})h^4.\\
 	\end{align*}
 	
-	Summing all these equations, we get the desired Formula \eqref{lemma:fd-ppm-est2-eq0} with $C$ given by:
+	Summing all these equations, we get the desired Formula \eqref{lemma:fd-ppm-est2-eq0} with $C_2$ given by:
 	\begin{equation}
 		C_2 = \frac{1}{24}\bigg(32F^{(4)}(\theta_{-2h}) - 15F^{(4)}(\theta_{-h}) -20F^{(4)}(\theta_{h}) +96 F^{(4)}(\theta_{2h}) - 81F^{(4)}(\theta_{3h})\bigg).
 	\end{equation}
@@ -147,8 +148,7 @@ where $\eta_{1}, \eta_{2} \in [x_0-2h,x_0+3h]$, which concludes the proof.
 
 \begin{lema}
 	\label{lemma:fd-ppm-est3}
-	Let $F \in \mathcal{C}^{4}([a,b])$, $x_0 \in ]a,b[$ 
-	and $h>0$ such that $[x_0-2h,x_0+3h] \subset [a,b]$.
+	Let $F \in \mathcal{C}^{4}(\mathbb{R})$, $x_0 \in \mathbb{R}$ and $h>0$.
 	Then, the following identity holds:
 	\begin{equation}	
 		\label{lemma:fd-ppm-est3-eq0}
@@ -183,9 +183,9 @@ From the Taylor's expansion, we have:
 	
 	Summing all these equations, we have:
 	\begin{align*}
-	F(x_0-2h) - 7F(x_0-h) +16F(x_0) - 16F(x_0+h) +7F(x_0+2h) - F(x_0+3h) = 2F^{(3)}(x_0)h^3 - 2Ch^4,
+	F(x_0-2h) - 7F(x_0-h) +16F(x_0) - 16F(x_0+h) +7F(x_0+2h) - F(x_0+3h) = 2F^{(3)}(x_0)h^3 - 2C_3h^4,
 	\end{align*}
-	we get the derised Formula \eqref{lemma:fd-ppm-est3-eq0} with $C$ given by:
+	we get the desired Formula \eqref{lemma:fd-ppm-est3-eq0} with $C_3$ given by:
 	\begin{equation}
 		C_3 = \frac{1}{48}\bigg(-16F^{(4)}(\theta_{-2h}) + 7F^{(4)}(\theta_{-h}) +16F^{(4)}(\theta_{h}) - 112F^{(4)}(\theta_{2h}) + 81F^{(4)}(\theta_{3h})\bigg). 
 	\end{equation}
@@ -195,4 +195,259 @@ Using the intermediate value theorem, we can express $C_3$ in a more compact way
 	C_3 = \frac{1}{48}\bigg( 104F^{(5)}(\eta_{1}) -128F^{(5)}(\eta_{2})\bigg), 
 \end{equation}
 where $\eta_{1}, \eta_{2} \in [x_0-2h,x_0+3h]$, which concludes the proof.
+\end{proof}
+
+\section{Lagrange interpolation}
+\label{anexo-interp}
+Given real numbers, called nodes, $x_0< x_1 < \cdots< x_m$, we define the $k$-th Lagrange polynomial by
+\begin{equation*}
+	L_k(x) = \prod_{j=0, j \neq k}^{m}\frac{x-x_j}{x_k-x_j}.
+\end{equation*}
+They satisfy $L_k(x_j) = \delta_{kj}$, where  $\delta_{kj}$ is the Kronecker delta.
+Given a function $f$ defined at the nodes $x_j$, its interpolating polynomial of 
+degree $m$ is given by:
+\begin{equation*}
+	P_m(x) = \sum_{k=0}^{m} f(x_k)L_k(x).
+\end{equation*}
+Indeed, this polynomial interpolates $f$ since $P_m(x_j) = f(x_j)$.
+It is well known that $P_m$ always exists and is unique. Besides that, we have the following error formula
+for Lagrange interpolation.
+\begin{thrm}
+	\label{anexo-interp-error1}
+	Let $f \in \mathcal{C}^{m+1}(\mathbb{R})$.
+	Then, then there is $\xi$ in the smallest interval containing $x_0, \cdots, x_m, x$ such that:
+	\begin{equation}
+		f(x)-P_m(x) = \omega(x)\frac{f^{(m+1)}(\xi)}{(m+1)!},
+	\end{equation}
+	where $\omega(x) = (x-x_0)(x-x_1) \cdots (x-x_m)$.
+\end{thrm}
+\begin{proof}
+	See \citet[Theorem~2.1.4.1. on \pno~49]{stoer:2002}.
+\end{proof}
+
+\section{Numerical integration}
+\label{anexo-numint}
+The following mean value theorem for integrals is a very useful tool 
+when working with numerical integration errors.
+\begin{thrm}[Mean value theorem for integrals]
+	\label{anexo-numint-mv}
+	If $f \in \mathcal{C}([a,b])$, and $g$ is a integrable function in $[a,b]$
+	whose sign does not change in $[a,b]$,
+	then there exists $c \in ]a,b[$ such that
+	\begin{equation*}
+		\int_{a}^{b}f(x)g(x) \,dx = f(c)\int_{a}^{b}g(x) \,dx.
+	\end{equation*}
+\end{thrm}
+\begin{proof}
+	See \citet[\pno~143]{courant:1999}.
+\end{proof}
+
+
+\subsection{Multi-step schemes}
+Let us consider the following problem: given a function $f \in \mathcal{C}^{m+1}([0,T])$,
+a discretization of $[0,T]$ given by $t^n= n\Delta t$, $\Delta t = \frac{T}{N_T}$, for some $N_T \in \mathbb{N}$, we wish
+to estimate $\int_{t^n}^{t^{n+1}} f(t)\,dt$ using the values $f(t_{n-k})$, for $k=0,\cdots, m$.
+This kind of problem arises, for instance, when we are interested in computing departure points as in Equation \ref{chp-sec-flux:analysis-eq4}.
+We can estimate the desired integral by computing the interpolating polynomial of $f(t_{n-k})$, for $k=0,\cdots, m$ and
+then integrating this polynomial.
+This approach is exactly what is used in multi-step Adams-Bashforth methods.
+On the next theorem, we give an expression the error of this approach.
+
+\begin{thrm}
+	\label{anexo-numint-adams}
+	If $f\in \mathcal{C}^{m+1}([0,T])$, $t^n = n\Delta t$, $n=0, \cdots, N_T$, $\Delta t = \frac{T}{N_T}$ for some 
+	$N_T \in \mathbb{N}$, then:
+	\begin{equation}
+		\label{anexo-numint-eq0}
+		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \sum_{k=0}^{m} \bigg(\int_{0}^{1} L_k(s) \,ds \bigg) f(t_{n-k})
+		+ \frac{(\Delta t)^{k+1}}{(m+1)!} f^{(m+1)}(\eta)\int_{0}^{1} \omega(s)\,ds, 
+	\end{equation}
+where $w(s) = s(s+1)\cdots(s+m)$, $\eta \in [t^{n-m}, t^{n}]$.
+\end{thrm}
+	
+\begin{proof}
+We introduce auxiliary functions $\theta(s) = s\Delta t + t_n$, $s \in [-m,1]$ and $g(s) = f(\theta(s))$.
+It is clear that $f(t_{n-k}) = g(-k)$, for $k=-1,0, \cdots, m$.
+Hence, we can write:
+\begin{equation}
+	\label{anexo-numint-eq1}
+	\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \int_{0}^{1} f(\theta(s))\,ds = \Delta t \int_{0}^{1} g(s)\,ds.
+\end{equation}
+
+Defining the nodes $s_k=-k$ for $k=0, \cdots, m$, it follows from Theorem 
+\ref{anexo-interp-error1} that the interpolating polynomial $P_m$ of $g(s_k)$ satisfies:
+\begin{equation}
+	\label{anexo-numint-eq2}
+		g(s)-P_m(s) = \omega(s)\frac{g^{(m+1)}(\xi)}{(m+1)!},
+\end{equation}
+where $\xi \in [-m,1]$.
+Substituting Equation \eqref{anexo-numint-eq2} in Equation \eqref{anexo-numint-eq1}, we obtain
+\begin{equation}
+	\label{anexo-numint-eq3}
+	\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \sum_{k=0}^{m} \bigg(\int_{0}^{1} L_k(s) \,ds \bigg) g(-k)
+	+ \frac{\Delta t}{(m+1)!} \int_{0}^{1} g^{(m+1)}(\xi) \omega(s)\,ds.
+\end{equation}
+Since $w(s)$ does not change its sign in $[0,1]$ it follows from Theorem \ref{anexo-numint-mv} that:
+\begin{equation}
+	\label{anexo-numint-eq4}
+	\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \sum_{k=0}^{m} \bigg(\int_{0}^{1} L_k(s) \,ds \bigg) g(-k)
+	+ \frac{\Delta t}{(m+1)!} g^{(m+1)}(\overline{\xi})\int_{0}^{1} \omega(s)\,ds, 
+\end{equation}
+for some $\overline{\xi} \in [-m,1]$. 
+Notice that by the chain rule we get $g^{(m+1)}(s) = (\Delta t)^k f^{(m+1)}(\theta(s))$, therefore
+Equation \eqref{anexo-numint-eq4} in terms of $f$ reads:
+\begin{equation}
+	\label{anexo-numint-eq5}
+	\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \sum_{k=0}^{m} \bigg(\int_{0}^{1} L_k(s) \,ds \bigg) f(t_{n-k})
+	+ \frac{(\Delta t)^{k+1}}{(m+1)!} f^{(m+1)}({\eta})\int_{0}^{1} \omega(s)\,ds, 
+\end{equation}
+where $\eta \in [t^{n-m},t^n]$, which is the desired identity.
+\end{proof}
+
+In the following corollaries, we give the explicit formulas for Equation \eqref{anexo-numint-eq5}
+for $m=0,m=1,m=2$. This is achieved by computing the terms $\int_{0}^{1} L_k(s) \,ds$ and $\int_{0}^{1} \omega(s)\,ds$,
+which are trivial to be computed.
+\begin{corollary}
+	\label{anexo-numint-col1}
+	If $f\in \mathcal{C}^1([0,T])$, $t^n = n\Delta t$, $n=0, \cdots, N_T$, $\Delta t = \frac{T}{N_T}$ for some 
+	$N_T \in \mathbb{N}$, then:
+	\begin{equation}
+		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t  f(t_{n})
+		+ \frac{\Delta t^{2}}{2} f^{'}(\overline{t}),
+	\end{equation}
+for some $\overline{t} \in [t^n, t^{n+1}]$.
+\end{corollary}
+
+\begin{corollary}
+	\label{anexo-numint-col2}
+	If $f\in \mathcal{C}^2([0,T])$, $t^n = n\Delta t$, $n=0, \cdots, N_T$, $\Delta t = \frac{T}{N_T}$ 
+	for some $N_T \in \mathbb{N}$, then:
+	\begin{equation}
+		\int_{t^n}^{t^{n+1}} f(t)\,dt = \frac{\Delta t}{2} (3f(t_{n}) - f(t_{n-1}) )
+		+ \frac{5\Delta t^{3}}{12} f^{(2)}(\overline{t}),
+	\end{equation}
+	for some $\overline{t} \in [t^{n-1}, t^{n+1}]$.
+\end{corollary}
+
+\begin{corollary}
+	\label{anexo-numint-col3}
+	If $f\in \mathcal{C}^3([0,T])$, $t^n = n\Delta t$, $n=0, \cdots, N_T$, $\Delta t = \frac{T}{N_T}$ 
+	for some $N_T \in \mathbb{N}$, then:
+	\begin{equation}
+		\int_{t^n}^{t^{n+1}} f(t)\,dt = \frac{\Delta t}{12} (23f(t_{n}) - 16f(t_{n-1}) + 5f(t_{n-2}) )
+		+ \frac{3\Delta t^{4}}{8} f^{(3)}(\overline{t}),
+	\end{equation}
+	for some $\overline{t} \in [t^{n-2}, t^{n+1}]$.
+\end{corollary}
+
+When using these schemes for and ODE written in its integral form,
+$m=0$ gives the classical Euler method; for $m=1$ we get the second-order Adams-Bashforth scheme
+and for $m=2$ we have the third-order Adams-Bashforth scheme.
+
+\subsection{Midpoint rule}
+When considering finite-volume schemes, it is useful to compare the average value on a  control volume 
+of a function with its value at the  control volume centroid. 
+In the following theorems, for the one and two dimensional cases, respectively,
+we show that the value of a function at the centroid of a control volume given a second-order approximation to its average value
+on the control volume.
+\begin{thrm}
+	\label{prop-bound-midpoint1d}
+	If $f \in \mathcal{C}^2([x_{i-\frac{1}{2}},x_{i+\frac{1}{2}}])$, then 
+	\begin{equation}
+		\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}{f(x)\,dx}-f(x_i) = C_1 \Delta x^2, 
+	\end{equation}
+	where $C_1$ is a constant that depends only on $f$, and $x_i = \frac{x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}}}{2}$,
+	$\Delta x = x_{i+\frac{1}{2}}-x_{i-\frac{1}{2}}$.
+\end{thrm}
+\begin{proof}
+	From Taylor's expansion, it follows that, for $x \in [x_{i-\frac{1}{2}},x_{i+\frac{1}{2}}]$, we have:
+	\begin{equation}
+		f(x) = f(x_i) +  f(x_i)(x-x_i) + f''(\xi)\frac{(x-x_i)^2}{2},
+	\end{equation}
+	for some $\xi$ between $x$ and $x_i$. Therefore:
+	\begin{align*}
+		\frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {f(x)\,dx} - f(x_i)  
+		&= \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\bigg( f'(x_i)(x-x_i) + f''(\xi)\frac{(x-x_i)^2}{2} \bigg) \,dx \\ 
+		&=  \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		f''(\xi)\frac{(x-x_i)^2}{2}  \,dx.
+	\end{align*}
+	Using the mean value theorem for integrals (see Theorem \ref{anexo-numint-mv}), we have:
+	\begin{align*}
+		\frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {f(x)\,dx} - f(x_i)  = 
+		f''(\eta) \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\frac{(x-x_i)^2}{2}  \,dx = f''(\eta)\frac{\Delta x^2}{24}
+	\end{align*}	
+	for some $\eta \in [x_{i-\frac{1}{2}},x_{i+\frac{1}{2}}]$, from which the proposition follows with
+	\begin{equation}
+		C_1 = \frac{1}{24}f''(\eta).
+	\end{equation}
+\end{proof}
+
+\begin{thrm}
+	\label{prop-bound-midpoint2d}
+	If $f \in \mathcal{C}^2([x_{i-\frac{1}{2}},x_{i+\frac{1}{2}}]\times [y_{j-\frac{1}{2}},y_{j+\frac{1}{2}}])$, then 
+	\begin{equation}
+		\bigg|\frac{1}{\Delta x \Delta y}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
+		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}{f(x,y)\,dx \,dy}-f(x_i,y_j)\bigg| \leq C_1 \Delta x^2 + C_2 \Delta x \Delta y + C_3 \Delta y^2, 
+	\end{equation}
+	where $C_1, C_2$  and $C_3$ are constants that depend only on $f$, and $x_i = \frac{x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}}}{2}$,
+	$y_i = \frac{y_{j+\frac{1}{2}} + y_{j-\frac{1}{2}}}{2}$, $\Delta x = x_{i+\frac{1}{2}}-x_{i-\frac{1}{2}}$,
+	$\Delta y= y_{j+\frac{1}{2}}-y_{j-\frac{1}{2}}$.
+\end{thrm}
+\begin{proof}
+	From Taylor's expansion, it follows that, for $x \in [x_{i-\frac{1}{2}},x_{i+\frac{1}{2}}]$, 
+	$y \in [y_{j-\frac{1}{2}},y_{j+\frac{1}{2}}]$, we have:
+	\begin{align*}
+		f(x,y) &= f(x_i,y_j) +  \frac{\partial f}{\partial x}(x_i,y_j)(x-x_i) +\frac{\partial f}{\partial y}(x_i,y_j)(y-y_j) \\
+		&+\frac{1}{2}\bigg(\frac{\partial^2 f}{\partial x^2}(\xi,\theta)(x-x_i)^2 +
+		2\frac{\partial^2 f}{\partial x \partial y}(\xi,\theta)(x-x_i)(y-y_j)
+		\frac{\partial^2 f}{\partial y^2}(\xi,\theta)(y-y_j)^2 \bigg)
+	\end{align*}
+	for some $\xi$ between $x$ and $x_i$, and $\theta$ between $y$ and $y_j$. Therefore:
+	\begin{align*}
+		\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} {f(x,y)\,dy \,dx} - \Delta x \Delta y f(x_i,y_j)  
+		= 
+		\frac{1}{2} 	
+		\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
+		{\frac{\partial^2 f}{\partial x^2}(\xi,\theta)(x-x_i)^2 \,dy \,dx} + \\
+		\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
+		{\frac{\partial^2 f}{\partial x \partial y}(\xi,\theta)(x-x_i)(y-y_j) \,dy \,dx}+
+		\frac{1}{2} 	
+		\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
+		{\frac{\partial^2 f}{\partial y^2}(\xi,\theta)(y-y_j)^2 \,dy \,dx}
+	\end{align*}
+	Using the mean value theorem for integrals (see Theorem \ref{anexo-numint-mv}), we have:
+	\begin{align*}
+		&\frac{1}{\Delta x \Delta y}
+		\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
+		{f(x,y)\,dx \,dy} - f(x_i, y_j)  = 
+		{\frac{\partial^2f}{\partial x^2}}(\eta_1, \lambda_1)
+		\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}
+		\frac{(x-x_i)^2}{2 \Delta x \Delta y}  \,dx \,dy \\  
+		&+
+		\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}
+		{\frac{\partial^2 f}{\partial x \partial y}}(\xi,\theta)
+		 \frac{(x-x_i)(y-y_j)}{\Delta x \Delta y}  \,dx \,dy +
+		{\frac{\partial^2 f}{\partial x^2}}(\eta_2, \lambda_2)
+		\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}
+		\frac{(y-y_j)^2}{2 \Delta x \Delta y}  \,dx \,dy \\
+		&= {\frac{\partial^2f}{\partial x^2}}(\eta_1, \lambda_1) \frac{\Delta x ^2}{24} +
+	      {\frac{\partial^2f}{\partial y^2}}(\eta_2, \lambda_2) \frac{\Delta y ^2}{24} +
+	   		\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+	   \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}
+	   {\frac{\partial^2 f}{\partial x \partial y}}(\xi,\theta)
+	   \frac{(x-x_i)(y-y_j)}{\Delta x \Delta y}  \,dx \,dy
+	\end{align*}	
+	for $\eta_1, \eta_2 \in [x_{i-\frac{1}{2}},x_{i+\frac{1}{2}}]$, 
+	$\lambda_1, \lambda_2  \in [y_{j-\frac{1}{2}},y_{j+\frac{1}{2}}]$,
+	from which the proposition follows.
 \end{proof}
