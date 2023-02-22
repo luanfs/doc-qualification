@@ -1631,7 +1631,7 @@ atmospheric modeling.
 For a review on departure point calculation methods, we refer to  \citet[Chapter 3]{tumolo:2011} and the references therein. 
 There are different approaches to compute the departure point, such as integrating the ODE from Equation \ref{chp2-sec-flux:prop1}
 using different time integrators \citep{durran:2011} backward in time.
-The Runge-Kutta methods are a possible choice to compute the departure point (cf. e.g. \citet{lu:2022}). In this work,
+The Runge-Kutta methods are a possible choice to compute the departure point (cf. e.g. \citet{guo:2014}, \citet{lu:2022}). In this work,
 we shall consider a third-order Runge-Kutta to compute the departure point, which we express in terms of $\tilde{u}^n_{i+\frac{1}{2}}$ as
 \begin{align}
 	\label{chp-sec-flux:dp_RK3}		
@@ -1857,8 +1857,8 @@ From this analysis, we can conclude that the PPM and hybrid PPM schemes satisfy 
 Von Neumann stability criteria when the CFL restriction is respected.
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.49\linewidth]{stability_PPM}
-	\includegraphics[width=0.49\linewidth]{stability_PPM_hybrid}
+	\includegraphics[width=0.49\linewidth]{stability_PPM-0}
+	\includegraphics[width=0.49\linewidth]{stability_PPM-PL07}
 	\caption{Amplification factor for the PPM (left) and hybrid PPM (right) schemes for different CFL numbers.}
 	\label{chp2-fig-amplification}
 \end{figure}
@@ -2072,9 +2072,10 @@ Now we are able to tackle the consistency problem on the next proposition.
 \label{chp2-sec-numerical-exp}
 This Section is dedicated to presenting the numerical results of the PPM and its variations discussed here.
 For non-monotonic schemes, we are going to consider
-the original PPM from \citet{colella:1984} and the hybrid PPM from \citet{putman:2007}.
+the original PPM from \citet{colella:1984}(hereafter will be referred as \textbf{PPM-0}) and 
+the hybrid PPM from \citet{putman:2007} (hereafter \textbf{PPM-PL07}).
 For monotonic schemes, we are going to consider the monotonization schemes from 
-\citet{colella:1984} and \citet{lin:2004}, which are referred to as CW84 monotonization 
+\citet{colella:1984}  (hereafter \textbf{PPM-CW84}) and \citet{lin:2004} (hereafter \textbf{PPM-L04}), which are referred to as CW84 monotonization 
 and L04 monotonization hereafter.
 In Subsection \ref{chp2-sec-numerical-exp-1} we present results 
 using the linear advection equation with constant velocity
@@ -2131,23 +2132,23 @@ The norm adopted here is the maximum norm.
   \centering
   \begin{subfigure}{0.45\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t49_N40_PPM}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t49_N40_PPM-0_dpRK1}
 			\caption{PPM.\label{chp2-sec-exp-adv1-a}}
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t49_N40_PPM_hybrid}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t49_N40_PPM-PL07_dpRK1}
 			\caption{Hybrid PPM.\label{chp2-sec-exp-adv1-b}}
   \end{subfigure}
 
   \begin{subfigure}{0.45\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t49_N40_PPM_mono_CW84}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t49_N40_PPM-CW84_dpRK1}
     \caption{PPM + CW84 monotonization.\label{chp2-sec-exp-adv1-c}}
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t49_N40_PPM_mono_L04}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t49_N40_PPM-L04_dpRK1}
       \caption{PPM + L04 monotonization.\label{chp2-sec-exp-adv1-d}}
   \end{subfigure} 
 	\caption{Linear advection experiment using a constant velocity equal to $0.1$,
@@ -2161,12 +2162,12 @@ The norm adopted here is the maximum norm.
   \centering
   \begin{subfigure}{0.45\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_parabola_errors}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_normlinf_parabola_errors}
 		\caption{Error.\label{chp2-sec-exp-adv1-error}}
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_convergence_rate}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_normlinf_convergence_rate}
 		\caption{Convergence rate.\label{chp2-sec-exp-adv1-CR}}
   \end{subfigure}
 	\caption{Convergence of the error (a) and convergence rate (b) for the schemes
@@ -2182,23 +2183,23 @@ The norm adopted here is the maximum norm.
   \centering
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t24_N20_PPM}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t24_N20_PPM-0_dpRK1}
 			\caption{PPM.\label{chp2-sec-exp-adv2-a}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t24_N20_PPM_hybrid}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t24_N20_PPM-PL07_dpRK1}
 			\caption{Hybrid PPM.\label{chp2-sec-exp-adv2-b}}
   \end{subfigure}
 
   \begin{subfigure}{0.49\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t24_N20_PPM_mono_CW84}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t24_N20_PPM-CW84_dpRK1}
     \caption{PPM + CW84 monotonization.\label{chp2-sec-exp-adv2-c}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t24_N20_PPM_mono_L04}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t24_N20_PPM-L04_dpRK1}
       \caption{PPM + L04 monotonization.\label{chp2-sec-exp-adv2-d}}
   \end{subfigure} 
 	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=20$
@@ -2209,12 +2210,12 @@ The norm adopted here is the maximum norm.
   \centering
   \begin{subfigure}{0.49\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_convergence_rate}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_normlinf_convergence_rate}
 		\caption{Error.\label{chp2-sec-exp-adv2-error}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_parabola_errors}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_normlinf_parabola_errors}
 		\caption{Convergence rate.\label{chp2-sec-exp-adv2-CR}}
   \end{subfigure}
 	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1-2} but using
@@ -2227,23 +2228,23 @@ The norm adopted here is the maximum norm.
   \centering
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t99_N80_PPM}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t99_N80_PPM-0_dpRK1}
 			\caption{PPM.\label{chp2-sec-exp-adv3-a}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t99_N80_PPM_hybrid}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t99_N80_PPM-PL07_dpRK1}
 			\caption{Hybrid PPM.\label{chp2-sec-exp-adv3-b}}
   \end{subfigure}
 
   \begin{subfigure}{0.49\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t99_N80_PPM_mono_CW84}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t99_N80_PPM-CW84_dpRK1}
     \caption{PPM + CW84 monotonization.\label{chp2-sec-exp-adv3-c}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t99_N80_PPM_mono_L04}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t99_N80_PPM-L04_dpRK1}
       \caption{PPM + L04 monotonization.\label{chp2-sec-exp-adv3-d}}
   \end{subfigure} 
 	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=80$
@@ -2267,7 +2268,7 @@ We adopt the parameters $u_0 = 0.2$ and $T = 5$.
 In this cases, the solution has a period equal to 5, therefore the profile returns to its
 initial shape and position after 5 time units we can compute the error.
 We remark that the velocity from Equation \eqref{chp2-vel2} is based on the deformational flow 
-test case from on\citet{nair:2010}.
+test case from on \citet{nair:2010}.
 
 \newpage
 
@@ -2275,35 +2276,35 @@ test case from on\citet{nair:2010}.
   \centering
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf3_t24_N40_PPM}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t24_N40_PPM-0_dpRK1}
 			\caption{PPM.\label{chp2-sec-exp-adv5-a}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf3_t24_N40_PPM_hybrid}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t24_N40_PPM-PL07_dpRK1}
 			\caption{Hybrid PPM.\label{chp2-sec-exp-adv5-b}}
   \end{subfigure}
 
   \begin{subfigure}{0.49\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf3_t24_N40_PPM_mono_CW84}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t24_N40_PPM-CW84_dpRK1}
     \caption{PPM + CW84 monotonization.\label{chp2-sec-exp-adv5-c}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf3_t24_N40_PPM_mono_L04}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t24_N40_PPM-L04_dpRK1}
       \caption{PPM + L04 monotonization.\label{chp2-sec-exp-adv5-d}}
   \end{subfigure} 
 
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf3_t3199_N5120_PPM}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t799_N1280_PPM-0_dpRK1}
       \caption{Reference solution.\label{chp2-sec-exp-adv5-e}}
   \end{subfigure} 
 	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=40$, 
 	the initial condition given by Equation \eqref{chp2-ic2}, the variable velocity given by Equation
 	\eqref{chp2-vel2} and the final time is 2.5 (half a period). In (e) we show a reference solution, using the PPM scheme with 
-	5120 cells. \label{chp2-sec-exp-adv5}}
+	1280 cells. \label{chp2-sec-exp-adv5}}
 \end{figure}
 
 \newpage
@@ -2313,23 +2314,23 @@ test case from on\citet{nair:2010}.
   \centering
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf3_t49_N40_PPM}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t49_N40_PPM-0_dpRK1}
 			\caption{PPM.\label{chp2-sec-exp-adv6-a}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf3_t49_N40_PPM_hybrid}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t49_N40_PPM-PL07_dpRK1}
 			\caption{Hybrid PPM.\label{chp2-sec-exp-adv6-b}}
   \end{subfigure}
 
   \begin{subfigure}{0.49\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf3_t49_N40_PPM_mono_CW84}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t49_N40_PPM-CW84_dpRK1}
     \caption{PPM + CW84 monotonization.\label{chp2-sec-exp-adv6-c}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf3_t49_N40_PPM_mono_L04}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t49_N40_PPM-L04_dpRK1}
       \caption{PPM + L04 monotonization.\label{chp2-sec-exp-adv6-d}}
   \end{subfigure} 
 	\caption{ Similar to Figure \ref{chp2-sec-exp-adv2} but using $N=40$, 
@@ -2341,12 +2342,12 @@ test case from on\citet{nair:2010}.
   \centering
   \begin{subfigure}{0.49\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf3_parabola_errors}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_normlinf_parabola_errors}
 		\caption{Error.\label{chp2-sec-exp-adv6-error}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf3_convergence_rate}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_normlinf_convergence_rate}
 		\caption{Convergence rate.\label{chp2-sec-exp-adv6-CR}}
   \end{subfigure}
 	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1-2} but using
