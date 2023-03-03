@@ -533,9 +533,10 @@ scheme problem as follows in Problem \ref{chp2-sec2-prob3}.
 	it is also known as a conservative scheme.
 \end{remark}
 For a 1D-FV the discrete total mass at the time-step $n$ is given by
-\begin{equation*}
+\begin{equation}
+	\label{1d-fv-mass}
 	M^n =  \Delta x \sum_{i=1}^N Q_i^n.
-\end{equation*}
+\end{equation}
 Therefore, the discrete total mass is constant for a 1D-FV scheme,
 which follows from a straightforward computation:
 \begin{align*}
@@ -1549,7 +1550,9 @@ may be replaced by the departure point calculation.
 We recall the definition of the Courant-Friedrichs-Lewy (CFL) condition.
 \begin{definition}
 	\label{chp2-sec-flux:CFL}
-	For Problem \ref{chp2-sec2-prob3}, we say that the CFL condition holds if $\frac{\Delta t}{\Delta x} |u^n_{i+\frac{1}{2}}| \leq 1$, $\forall i=0, \cdots, N$, $n=0\cdots,N_T$.
+	For Problem \ref{chp2-sec2-prob3}, we say that the CFL condition holds if $\frac{\Delta t}{\Delta x} |u^n_{i+\frac{1}{2}}| \leq 1$, $\forall i=0, \cdots, N$, $n=0,\cdots,N_T$.
+	The CFL number is defined by $\frac{\Delta t}{\Delta x} 
+	\max \{|u^n_{i+\frac{1}{2}}|: i=0, \cdots, N, n=0, \cdots, N_T\}$.
 \end{definition}
 Before addressing the question of how compute the departure point, we point out that Equation \eqref{chp-sec-flux:analysis-eq4} is useful to 
 show that the trajectory $X(t,s;x_{i+\frac{1}{2}})$ remains on a single control volume,
@@ -1591,6 +1594,7 @@ the original PPM scheme from \citet{colella:1984} using:
 	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2}}\Delta t + C\Delta t^2,
 \end{equation}
 with $\tilde{u}^{n}_{i+\frac{1}{2}} = {u}^{n}_{i+\frac{1}{2}}$.
+This scheme shall be referred to as \textbf{RK1}.
 Our aim now is to exhibit the constant $C$ on the next proposition. It is useful to before introduce the material derivative
 \begin{equation*}
 	\frac{Dh}{Dt}  = \frac{\partial h}{\partial t} + u\frac{\partial h}{\partial x},
@@ -1626,8 +1630,8 @@ we obtain the desired constant $C$ given by:
 	\bigg( \frac{1}{2}\frac{Du}{Dt}(\tilde{x}_1,\tilde{t}_1) - \bigg(u\frac{\partial u}{\partial x}\bigg)(\tilde{x}_2,\tilde{t}_2)\bigg)\Delta t.
 \end{equation}
 \end{proof}
-The problem of estimating the departure point is very common in Semi-Lagrangian scheme, which are quite popular in 
-atmospheric modeling.
+The problem of estimating the departure point is very common in Semi-Lagrangian scheme,
+which are quite popular in atmospheric modeling.
 For a review on departure point calculation methods, we refer to  \citet[Chapter 3]{tumolo:2011} and the references therein. 
 There are different approaches to compute the departure point, such as integrating the ODE from Equation \ref{chp2-sec-flux:prop1}
 using different time integrators \citep{durran:2011} backward in time.
@@ -1645,6 +1649,7 @@ This scheme leads to a 4-th order error in departure point:
 	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2}}\Delta t + C\Delta t^4,
 \end{align}
 where is a constant depending on $u$ and its derivatives.
+This scheme shall be referred to as \textbf{RK3}.
 Notice that the Runge-Kutta scheme requires values of $u$ at points that are not grid points, both in time and space. 
 A possible way to overcome this problem is to use interpolation in space and extrapolation in time using the grid data, 
 as it is usual in Semi-Lagrangian schemes. In this Chapter we are going to simplify and assume that the values of $u$ are known at the
@@ -2009,6 +2014,7 @@ on the time average flux, considering this last computed using an estimated depa
 	\end{proof}
 Now we are able to tackle the consistency problem on the next proposition.
 \begin{prop}
+	\label{chp2-sec-flux:prop4}
 	Assume the same hypothesis of Proposition \ref{chp2-sec-flux:prop2} and Proposition \ref{chp2-sec-flux:prop3}.
 	Denote by $q_{PP}$ the Piecewise-Parabolic approximation of $q(x,t^n)$. Then, the LTE given by Equation
 	\eqref{consistency-1d-eq2} satisfies:
@@ -2083,27 +2089,97 @@ and in Subsection \ref{chp2-sec-numerical-exp-2}
 the results are based on the linear advection equation with variable velocity.
 The code used in this Section may be found in Appendix \ref{anexo-code}.
 
+\subsection{Reconstruction at edges accuracy}
+\label{chp2-num-exp-recon}
+Before moving toward advection simulations, we are going to assess the accuracy the 
+order of the reconstruction schemes PPM-0, PPM-CW84, PPM-PL07 and PPM-L04 at the
+edges of the control volumes.
+To this purpose we consider the function to be reconstructed given by:
+\begin{equation}
+	\label{chp2-ic1}
+	q(x) = \sin (2\pi k x) + 1, \quad x \in [0,1].
+\end{equation}
+Here $k$ denotes the wavenumber and we adopt $k=5$.
+Inspired by \citet{trefethen:2000}, we also consider the following periodic Gaussian profile:
+\begin{equation}
+	\label{chp2-ic2}
+	q(x) = \exp(-10\cos^2 (2\pi x)),\quad x \in [0,1].
+\end{equation}
+Both functions from Equations \eqref{chp2-ic2} and \eqref{chp2-ic2} are smooth.
+To check the convergence of the error at the edges, we consider $\Delta x^{(k)}-$grids with $\Delta x^{(k)} = 1/2^k$ for $k=4, \cdots, 10$ and then we compute the normalized maximum error:
+\begin{equation*}
+	E_k =\frac{\max_{i=1, \cdots 2^k}\{|q_{L,i}-q_0(x_{i-\frac{1}{2}})|,|q_{R,i}-q_0(x_{i+\frac{1}{2}})|\}}
+	{\max_{i=0, \cdots 2^k}\{|q_0(x_{i+\frac{1}{2}})(x)|\}},
+\end{equation*}
+and the values $q_{L,i}$ and $q_{R,i}$ where explained in Subsection \ref{chp2-sec-recon} (Equation \eqref{chp2-sec-recon-ppm-eq1}). The convergence rate is defined by
+\begin{equation*}
+	 CR_k = \frac{\ln{\bigg(\frac{E_{k}}{E_{k-1}}}\bigg)}{\ln 2}, \quad \text{for} \quad k = 5, \cdots 10.
+\end{equation*}
+The major difference between the functions from Equations \eqref{chp2-ic1} and
+\eqref{chp2-ic2} is the fact of the function from \eqref{chp2-ic1} having an explicit formula for its primitive, allowing us to compute its average values exactly, while
+the function from \eqref{chp2-ic1} does not have an explicit formula of its primitive.
+As discussed in Section \ref{chp2-sec-recon} (Proposition \ref{prop:ppm-bound1}), we may approximate the average value using the value at
+the cell centroid with second-order accuracy for functions differentiable enough.
+Therefore, we expect that for the function from Equation \eqref{chp2-ic1}, the error
+should converge with fourth and fifth order for the schemes PPM-0 and PPM-L07, respectively.
+For the function from \eqref{chp2-ic2} we expect at least a second-order error for both
+ schemes due to the approximation of the average value. 
+\begin{figure}[!ht]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{recon_1d_ic1_normlinf_parabola_errors}
+		\caption{Error.\label{chp2-sec-exp-rec1-error}}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{recon_1d_ic1_normlinf_convergence_rate}
+		\caption{Convergence rate.\label{chp2-sec-exp-rec1-CR}}
+	\end{subfigure}
+	\caption{Convergence of the relative error at edges (a) and convergence rate (b) in
+		 the maximum norm for the reconstruction
+		 schemes PPM-0, PPM-CW84, and PPM-PL07 with PPM-L04 applied to the function
+		 given by Equation \eqref{chp2-ic1}.\label{chp2-sec-exp-rec1}}
+\end{figure}
+\begin{figure}[!ht]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{recon_1d_ic2_normlinf_parabola_errors}
+		\caption{Error.\label{chp2-sec-exp-rec2-error}}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{recon_1d_ic2_normlinf_convergence_rate}
+		\caption{Convergence rate.\label{chp2-sec-exp-rec2-CR}}
+	\end{subfigure}
+	\caption{Similar to Figure \ref{chp2-sec-exp-rec1} the using function
+		    given by Equation \eqref{chp2-ic1}}
+\end{figure}
+
+We can observe from Figure \ref{chp2-sec-exp-rec1} that the reconstruction error
+for the function agrees with the theory: PPM-0 has fourth-order accuracy
+while PPM-PL07  has fifth-order accuracy. Besides that, both monotonic schemes PPM-CW84 and
+PPM-L04 converges with second-order having almost the same error.
+However, when we consider the Gaussian wave, due to the average value approximation
+by the centroid value, we observe that all schemes converge with second-order,
+also as expected, but the non-monotonic schemes have an error almost tenfold smaller
+than the monotonic schemes. 
+\newpage
 \subsection{Linear advection equation with constant velocity simulations}
 \label{chp2-sec-numerical-exp-1}
 For the linear advection equation with the constant velocity we shall adopt the $u=0.2$ and 
 a CFL number equal to $0.8$.
-The spatial domain will be given by $[0,1]$ and the time integration interval will be $[0,5]$.
+The spatial domain will be given by $[0,1]$ and the time integration interval will be $[0,5]$. We again use $\Delta x^{(k)}-$grids with $\Delta x^{(k)} = 1/2^k$ for $k=4,
+ \cdots, 10$.
 Since we are going to assume periodic boundary conditions, the period is equal to $5$. 
 Hence, the simulations presented here shall advect an initial profile for one time period. 
+The departure schemes RK1 and RK3 introduced in Section \ref{chp2-sec-flux} compute
+the departure point exactly in this case, therefore we are going only to use the RK1 scheme.
 This shall be the general setup for all simulations presented in this subsection. 
 What will distinguish the simulations is the initial condition.
-The first $q_0$ is given by:
-\begin{equation}
-	\label{chp2-ic1}
-	q_0(x) = \sin (2\pi k x) + 1.
-\end{equation}
-Here $k$ denotes the wavenumber and we adopt $k=5$.
-Inspired by \citet{trefethen:2000}, we adopted the following periodic Gaussian profile.
-\begin{equation}
-	\label{chp2-ic2}
-		q_0(x) = \exp(-10\cos^2 (2\pi x)).
-\end{equation}
-Both functions from Equations \eqref{chp2-ic2} and \eqref{chp2-ic2} are smooth.
+We consider $q_0$ given by Equations \eqref{chp2-ic1} and \eqref{chp2-ic2} as
+in Subsection \ref{chp2-sec-numerical-exp-1}.
 We also consider a discontinuous initial condition given by:
 \begin{equation}
 	\label{chp2-ic3}
@@ -2114,60 +2190,70 @@ We also consider a discontinuous initial condition given by:
   \end{cases}
 \end{equation}
 It is easy to check that the  exact solution of Problem \ref{chp2-sec2-prob1}
-is given by $q_0(x-ut)$ for all $q_0$ presented here.
-
-As pointed in Subsection \ref{chp2-sub-CC}, when $q_0$ is given by Equation \eqref{chp2-ic2},
+is given by $q_0(x-ut)$ for all $q_0$ presented here. We are going to consider the relative
+error in the maximum norm:
+\begin{equation*}
+	E_k = \max_{n=0,\cdots, N_T}
+	\frac{\| Q^n - Q(t^n) \|_{\infty, \Delta x}}{\|Q(t^n)\|_{\infty, \Delta x}}.
+\end{equation*}
+The convergence rate is defined by
+\begin{equation*}
+	CR_k = \frac{\ln{\bigg(\frac{E_{k}}{E_{k-1}}}\bigg)}{\ln 2}, \quad \text{for} \quad k = 5, \cdots 10.
+\end{equation*}
+As pointed in Subsection \ref{chp2-num-exp-recon}, when $q_0$ is given by Equation \eqref{chp2-ic2},
 we are going to compute the initial average values $Q_i(0)$ using
 the initial values of $q^0_i$ at the control volume centroids, which is second-order 
-accurate by Proposition \ref{prop-bound-centroid}.
+accurate by Proposition \ref{prop-bound-centroid}. 
 In the error calculation, only when $q_0$ is given by Equation \eqref{chp2-ic2},
 we replace $Q_{i}(t^n)$ by its centroid value $q_{i}(t^n)$, which again gives
 a second-order approximation by Proposition \ref{prop-bound-centroid}.
-Therefore, since $q_0$ is smooth, we expect that the error convergence shall be at least second-order accurate.
-Finally, the error norm is normalized by dividing the error norm by the exact solution norm. 
-The norm adopted here is the maximum norm.
-
+Therefore, since $q_0$ is smooth, we expect that the error convergence shall be at least second-order accurate. The relative change at time-step $n$ in the mass is computed as 
+\begin{equation*}
+	\frac{|M^n-M^0|}{|M_0|},
+\end{equation*}
+where $M^n$ is given by Equation \eqref{1d-fv-mass}. For all the simulations, the
+mass is preserved with machine precision. 
 \newpage
 \begin{figure}[!htb]
   \centering
   \begin{subfigure}{0.45\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t49_N40_PPM-0_dpRK1}
-			\caption{PPM.\label{chp2-sec-exp-adv1-a}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t39_N32_PPM-0_dpRK1}
+			\caption{PPM-0.\label{chp2-sec-exp-adv1-a}}
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t49_N40_PPM-PL07_dpRK1}
-			\caption{Hybrid PPM.\label{chp2-sec-exp-adv1-b}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t39_N32_PPM-PL07_dpRK1}
+			\caption{PPM-PL07.\label{chp2-sec-exp-adv1-b}}
   \end{subfigure}
 
   \begin{subfigure}{0.45\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t49_N40_PPM-CW84_dpRK1}
-    \caption{PPM + CW84 monotonization.\label{chp2-sec-exp-adv1-c}}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t39_N32_PPM-CW84_dpRK1}
+    \caption{PPM-CW84.\label{chp2-sec-exp-adv1-c}}
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t49_N40_PPM-L04_dpRK1}
-      \caption{PPM + L04 monotonization.\label{chp2-sec-exp-adv1-d}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t39_N32_PPM-L04_dpRK1}
+      \caption{PPM-L04.\label{chp2-sec-exp-adv1-d}}
   \end{subfigure} 
 	\caption{Linear advection experiment using a constant velocity equal to $0.1$,
-  a CFL number equal to $0.8$, $N=40$ cells, and the initial condition is given by Equation \eqref{chp2-ic1}.
+  a CFL number equal to $0.8$, $N=32$ cells, and the initial condition is given by Equation \eqref{chp2-ic1}.
 	These figures show the advected profile after 5 time units (one time period).
-	Schemes employed: PPM (a), hybrid PPM (b), PPM with the CW84 monotonization
-	(c) and PPM with L04 monotonization (d). \label{chp2-sec-exp-adv1}}
+	Reconstruction schemes employed: PPM-0 (a), PPM-PL07 (b), PPM-CW84
+	(c) and PPM-L04 (d). \label{chp2-sec-exp-adv1}}
 \end{figure}
 
 \begin{figure}[!htb]
   \centering
   \begin{subfigure}{0.45\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_normlinf_parabola_errors}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_dpRK1_normlinf_parabola_errors}
 		\caption{Error.\label{chp2-sec-exp-adv1-error}}
   \end{subfigure}
   \begin{subfigure}{0.45\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_normlinf_convergence_rate}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_dpRK1_normlinf_convergence_rate}
 		\caption{Convergence rate.\label{chp2-sec-exp-adv1-CR}}
   \end{subfigure}
 	\caption{Convergence of the error (a) and convergence rate (b) for the schemes
@@ -2183,26 +2269,26 @@ The norm adopted here is the maximum norm.
   \centering
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t24_N20_PPM-0_dpRK1}
-			\caption{PPM.\label{chp2-sec-exp-adv2-a}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t19_N16_PPM-0_dpRK1}
+			\caption{PPM-0.\label{chp2-sec-exp-adv2-a}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t24_N20_PPM-PL07_dpRK1}
-			\caption{Hybrid PPM.\label{chp2-sec-exp-adv2-b}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t19_N16_PPM-PL07_dpRK1}
+			\caption{PPM-PL07.\label{chp2-sec-exp-adv2-b}}
   \end{subfigure}
 
   \begin{subfigure}{0.49\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t24_N20_PPM-CW84_dpRK1}
-    \caption{PPM + CW84 monotonization.\label{chp2-sec-exp-adv2-c}}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t19_N16_PPM-CW84_dpRK1}
+    \caption{PPM-CW84.\label{chp2-sec-exp-adv2-c}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t24_N20_PPM-L04_dpRK1}
-      \caption{PPM + L04 monotonization.\label{chp2-sec-exp-adv2-d}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t19_N16_PPM-L04_dpRK1}
+      \caption{PPM-L04.\label{chp2-sec-exp-adv2-d}}
   \end{subfigure} 
-	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=20$
+	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=16$
 	and the initial condition given by Equation \eqref{chp2-ic2}.\label{chp2-sec-exp-adv2}}
 \end{figure}
 
@@ -2210,12 +2296,12 @@ The norm adopted here is the maximum norm.
   \centering
   \begin{subfigure}{0.49\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_normlinf_convergence_rate}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_dpRK1_normlinf_parabola_errors}
 		\caption{Error.\label{chp2-sec-exp-adv2-error}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_normlinf_parabola_errors}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_dpRK1_normlinf_convergence_rate}
 		\caption{Convergence rate.\label{chp2-sec-exp-adv2-CR}}
   \end{subfigure}
 	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1-2} but using
@@ -2223,138 +2309,213 @@ The norm adopted here is the maximum norm.
 \end{figure}
 
 \newpage
-
+When $q_0$ is given by Equation \eqref{chp2-ic3}, it follows from Figure
+\ref{chp2-sec-exp-adv1} that monotonic scheme PPM-L04 is less dissipative than PPM-CW84,
+and PPM-L07 is less dissipative than PPM-0, which agrees with the amplification factors
+from Figure \ref{chp2-fig-amplification}.
+This may be noticed when we compare the extreme values. 
+Furthermore, both monotonic schemes avoid negative values.
+For the Gaussian wave, we make similar conclusions from Figure \ref{chp2-sec-exp-adv2}.
+The order of convergence of the PPM-0 and PPM-PL07 are equal to three as expected 
+(Figure \ref{chp2-sec-exp-adv1-2}) for $q_0$ from Equation \eqref{chp2-ic3}.
+Notice that, even though the initial average of the  Gaussian profile is computed with a
+second-order approximation, the final error is third-order accurate as shown in Figure
+\ref{chp2-sec-exp-adv2-2}. In all cases, the convergence order of the monotonic schemes
+is approximately 1.5 and this order reduction is expected by Godunov's theorem. 
+The major advantage of the monotonic schemes is observed in Figure \ref{chp2-sec-exp-adv3},
+where we observe that the monotonic schemes prevent all the strong oscillations
+presented in the non-monotonic schemes, and they avoid generation of new extrema as well.
 \begin{figure}[!htb]
   \centering
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t99_N80_PPM-0_dpRK1}
-			\caption{PPM.\label{chp2-sec-exp-adv3-a}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t79_N64_PPM-0_dpRK1}
+			\caption{PPM-0.\label{chp2-sec-exp-adv3-a}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t99_N80_PPM-PL07_dpRK1}
-			\caption{Hybrid PPM.\label{chp2-sec-exp-adv3-b}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t79_N64_PPM-PL07_dpRK1}
+			\caption{PPM-PL07.\label{chp2-sec-exp-adv3-b}}
   \end{subfigure}
 
   \begin{subfigure}{0.49\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t99_N80_PPM-CW84_dpRK1}
-    \caption{PPM + CW84 monotonization.\label{chp2-sec-exp-adv3-c}}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t79_N64_PPM-CW84_dpRK1}
+    \caption{PPM-CW84.\label{chp2-sec-exp-adv3-c}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t99_N80_PPM-L04_dpRK1}
-      \caption{PPM + L04 monotonization.\label{chp2-sec-exp-adv3-d}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t79_N64_PPM-L04_dpRK1}
+      \caption{PPM-L04.\label{chp2-sec-exp-adv3-d}}
   \end{subfigure} 
-	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=80$
+	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=64$
 	and the initial condition given by Equation \eqref{chp2-ic3}.\label{chp2-sec-exp-adv3}}
 \end{figure}
-OKOK
-
-\newpage
 
 \subsection{Linear advection equation with variable velocity simulations}
 \label{chp2-sec-numerical-exp-2}
-In this Subsection, we shall investigate the how the PPM schemes behaves when the velocity is variable.
-The initial condition is given by Equation \eqref{chp2-ic2}.
+In this Subsection, we shall investigate the how the PPM schemes behave when the velocity
+is variable. The initial condition is given by Equation \eqref{chp2-ic2}.
 The relative errors are computed using the centroid values of $q$ as described in
-Subsection \ref{chp2-sec-numerical-exp-2}. We are going to consider the velocity
+Section \ref{chp2-sec-numerical-exp-2}. 
+\begin{figure}[!htb]
+  \centering
+  \begin{subfigure}{0.49\textwidth}
+    \centering
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t9_N16_PPM-0_dpRK1}
+			\caption{PPM-0.\label{chp2-sec-exp-adv5-a}}
+  \end{subfigure}
+  \begin{subfigure}{0.49\textwidth}
+    \centering
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t9_N16_PPM-PL07_dpRK1}
+			\caption{PPM-PL07.\label{chp2-sec-exp-adv5-b}}
+  \end{subfigure}
+
+  \begin{subfigure}{0.49\textwidth}
+    \centering
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t9_N16_PPM-CW84_dpRK1}
+    \caption{PPM-CW84.\label{chp2-sec-exp-adv5-c}}
+  \end{subfigure}
+  \begin{subfigure}{0.49\textwidth}
+    \centering
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t9_N16_PPM-L04_dpRK1}
+      \caption{PPM-L04.\label{chp2-sec-exp-adv5-d}}
+  \end{subfigure} 
+
+  \begin{subfigure}{0.49\textwidth}
+    \centering
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t639_N1024_PPM-0_dpRK1}
+      \caption{Reference solution.\label{chp2-sec-exp-adv5-e}}
+  \end{subfigure} 
+	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=16$, 
+	the initial condition given by Equation \eqref{chp2-ic2}, the variable velocity given by Equation
+	\eqref{chp2-vel2} and the final time is 2.5 (half a period). In (e) we show a reference solution, using the PPM-0 scheme with 
+	1024 cells. \label{chp2-sec-exp-adv5}}
+\end{figure}
+
+\newpage
+We are going to consider the velocity
 \begin{equation}
 	\label{chp2-vel2}
 	u(x,t) = u_0\cos{\bigg(\frac{\pi t}{T}\bigg)}\sin^2(\pi x).
 \end{equation}
 We adopt the parameters $u_0 = 0.2$ and $T = 5$.
-In this cases, the solution has a period equal to 5, therefore the profile returns to its
+In this case, the solution has a period equal to 5, then the profile returns to its
 initial shape and position after 5 time units we can compute the error.
-We remark that the velocity from Equation \eqref{chp2-vel2} is based on the deformational flow 
-test case from on \citet{nair:2010}.
-
-\newpage
-
-\begin{figure}[!htb]
-  \centering
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t24_N40_PPM-0_dpRK1}
-			\caption{PPM.\label{chp2-sec-exp-adv5-a}}
-  \end{subfigure}
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t24_N40_PPM-PL07_dpRK1}
-			\caption{Hybrid PPM.\label{chp2-sec-exp-adv5-b}}
-  \end{subfigure}
-
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t24_N40_PPM-CW84_dpRK1}
-    \caption{PPM + CW84 monotonization.\label{chp2-sec-exp-adv5-c}}
-  \end{subfigure}
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t24_N40_PPM-L04_dpRK1}
-      \caption{PPM + L04 monotonization.\label{chp2-sec-exp-adv5-d}}
-  \end{subfigure} 
-
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t799_N1280_PPM-0_dpRK1}
-      \caption{Reference solution.\label{chp2-sec-exp-adv5-e}}
-  \end{subfigure} 
-	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=40$, 
-	the initial condition given by Equation \eqref{chp2-ic2}, the variable velocity given by Equation
-	\eqref{chp2-vel2} and the final time is 2.5 (half a period). In (e) we show a reference solution, using the PPM scheme with 
-	1280 cells. \label{chp2-sec-exp-adv5}}
-\end{figure}
-
-\newpage
-
+We point out that the velocity from Equation \eqref{chp2-vel2} is based on the deformational
+flow test case from on \citet{nair:2010}. Since the velocity is variable, we are going to
+use the departure point schemes RK1 and RK3 described in Section \ref{chp2-sec-flux}.
 
 \begin{figure}[!htb]
   \centering
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t49_N40_PPM-0_dpRK1}
-			\caption{PPM.\label{chp2-sec-exp-adv6-a}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t19_N16_PPM-0_dpRK1}
+			\caption{PPM-0.\label{chp2-sec-exp-adv6-a}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t49_N40_PPM-PL07_dpRK1}
-			\caption{Hybrid PPM.\label{chp2-sec-exp-adv6-b}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t19_N16_PPM-PL07_dpRK1}
+			\caption{PPM-PL07.\label{chp2-sec-exp-adv6-b}}
   \end{subfigure}
 
   \begin{subfigure}{0.49\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t49_N40_PPM-CW84_dpRK1}
-    \caption{PPM + CW84 monotonization.\label{chp2-sec-exp-adv6-c}}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t19_N16_PPM-CW84_dpRK1}
+    \caption{PPM-CW84.\label{chp2-sec-exp-adv6-c}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t49_N40_PPM-L04_dpRK1}
-      \caption{PPM + L04 monotonization.\label{chp2-sec-exp-adv6-d}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t19_N16_PPM-L04_dpRK1}
+      \caption{PPM-L04.\label{chp2-sec-exp-adv6-d}}
   \end{subfigure} 
-	\caption{ Similar to Figure \ref{chp2-sec-exp-adv2} but using $N=40$, 
+	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=16$, 
 	the initial condition given by Equation \eqref{chp2-ic2} and the variable velocity given by Equation
 	\eqref{chp2-vel2} \label{chp2-sec-exp-adv6}.}
 \end{figure}
+In Figure \ref{chp2-sec-exp-adv5} we show the numerical after half period using the RK1
+scheme and $N=16$. 
+We also depict a reference solution in Figure \ref{chp2-sec-exp-adv5-e} at a high resolution
+($N=1024$).
+In Figure \ref{chp2-sec-exp-adv6} we show the profile obtained for each PPM scheme after
+one period.
+From Figures \ref{chp2-sec-exp-adv5} and \ref{chp2-sec-exp-adv6} we get a similar
+conclusion about the dissipation of each scheme as in Section \ref{chp2-sec-numerical-exp-2}.
+The difference between the schemes RK1 and RK3 is clear when we observe the relative error
+in Figure \ref{chp2-sec-exp-adv6-2} and the convergence rate in
+Figure \ref{chp2-sec-exp-adv6-3}.
+The RK1 scheme leads to a first-order in the departure point that dominates the total error
+for all PPM schemes, in agreement with Proposition \ref{chp2-sec-flux:prop4}.
+When we employ the RK3 scheme, we can achieve third-order for the schemes PPM-0
+and PPM-L07 as expected from Proposition \ref{chp2-sec-flux:prop4}.
+This experiment illustrates the impact of the error in the departure point calculation
+in the total error.
 
 \begin{figure}[!htb]
   \centering
   \begin{subfigure}{0.49\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_normlinf_parabola_errors}
-		\caption{Error.\label{chp2-sec-exp-adv6-error}}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK1_normlinf_parabola_errors}
+		\caption{RK1.\label{chp2-sec-exp-adv6-error-rk1}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_normlinf_convergence_rate}
-		\caption{Convergence rate.\label{chp2-sec-exp-adv6-CR}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK3_normlinf_parabola_errors}
+		\caption{RK3.\label{chp2-sec-exp-adv6-rl3}}
   \end{subfigure}
-	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1-2} but using
-	the initial condition given by Equation	\eqref{chp2-ic2} and the variable 
+	\caption{ Relative error for different PPM schemes using the RK1 (left) and RK3 (right)
+	departure point scheme for the initial condition given by Equation
+	\eqref{chp2-ic2} and the variable 
 	velocity given by Equation \eqref{chp2-vel2}.\label{chp2-sec-exp-adv6-2}}
 \end{figure}
 
-\newpage
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK1_normlinf_convergence_rate}
+		\caption{RK1.\label{chp2-sec-exp-adv6-cr-rk1}}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK3_normlinf_convergence_rate}
+		\caption{RK3.\label{chp2-sec-exp-adv6-cf-rk3}}
+	\end{subfigure}
+	\caption{ Convergence rate for different PPM schemes using the RK1 (left) and RK3 (right)
+	departure point scheme for the initial condition given by Equation
+	\eqref{chp2-ic2} and the variable 
+	velocity given by Equation \eqref{chp2-vel2}.\label{chp2-sec-exp-adv6-3}}
+\end{figure}
+
 \section{Concluding remarks}
 \label{chp2-sec-conclusion}
+In this Chapter, we gave a general overview of 1D finite-volume schemes for the
+advection equation. We saw that 1D-FV schemes require two tasks. 
+The first task is to reconstruct a function from its average values. 
+The second task is to compute the departure point of the control volume edges.
+Each task introduces an error in the consistency error, impacting the final error, 
+as we have shown theoretically.
+The first task was performed using the PPM from \citet{colella:1984} 
+and some of its variants. Without monotonicity constraints, we were able to 
+achieve third in the reconstruction process.
+The second task was performed using the first-order departure point calculation from
+\citet{colella:1984} (RK1). We also explored a third-order approach using a three stages
+Runge-Kutta scheme (RK3) to integrate the departure point ODE.
+
+From the numerical experiments, we observe that the PPM-L07 \citep{putman:2007},
+which uses a fifth-order reconstruction at the edges, leads to a third-order but more
+accurate than the also third-order scheme PPM-0 \citep{colella:1984}, 
+which uses a fourth-order reconstruction at the edges. 
+For the monotonic schemes, we observe that both of them were able the avoid
+overshoots, with the PPM-L04 \citep{lin:2004} being more accurate than \citep{colella:1984}.
+
+The difference between the  departure point schemes was observed 
+when we performed a test with variable velocity,
+where the simulation performed with RK1 scheme led to a final first-order error, despite
+of third-order accuracy in the space, while the RK3 scheme preserves to 
+third-order accuracy of the scheme. Clearly, the RK3 leads to a more expensive scheme.
+A possible way to reduce its cost would be to use a Semi-Lagrangian version of the PPM
+when computing the numerical flux \citep{chen:2017}, which allows large time steps,
+as we shortly explained in Section \ref{chp2-sec-flux}.
+
+
