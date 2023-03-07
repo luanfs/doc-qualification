@@ -694,6 +694,44 @@ abstract = {Abstract The rapidly increasing computing powers allow global atmosp
 year = {2021}
 }
 
+@article{katta:2015,
+title = {High-order finite volume shallow water model on the cubed-sphere: 1D reconstruction scheme},
+journal = {Applied Mathematics and Computation},
+volume = {266},
+pages = {316-327},
+year = {2015},
+issn = {0096-3003},
+doi = {https://doi.org/10.1016/j.amc.2015.04.053},
+url = {https://www.sciencedirect.com/science/article/pii/S0096300315005111},
+author = {Kiran K. Katta and Ramachandran D. Nair and Vinod Kumar},
+keywords = {High order scheme, Shallow water equations, Cubed-sphere grid, Advection-diffusion, WENO, Climate modeling},
+abstract = {A central-upwind finite-volume (CUFV) scheme for shallow-water model on a nonorthogonal equiangular cubed-sphere grid is developed, consequently extending the 1D reconstruction CUFV transport scheme developed by us. High-order spatial discretization based on weighted essentially non-oscillatory (WENO) is considered for this effort. The CUFV method combines the alluring features of classical upwind and central schemes. This approach is particularly useful for complex computational domain such as the cubed-sphere. The continuous flux-form spherical shallow water equations in nonorthogonal curvilinear coordinates are utilized. Fluxes along the element boundaries are approximated by a Kurganov–Noelle–Petrova scheme. A fourth-order strong stability preserving Runge–Kutta time stepping scheme for time integration is employed in the present work. The numerical scheme is evaluated with standard shallow water test suite, which accentuate accuracy and conservation properties. In addition, an efficient yet inexpensive bound preserving filter with an optional positivity filter is used to remove spurious oscillations and to achieve strictly positive definite numerical solution. To tackle the discontinuities that arise at the edges of the cubed-sphere grid, we utilize a high-order 1D interpolation procedure combining cubic and quadratic interpolations.The results with the high-order scheme is compared with the results for the same tests for various schemes available in literature. Since, the scheme presented here uses local-cell information, it is expected to be scalable to high number of processors count in a distributed node high-performance computer.}
+}
+
+@article {Katta:2015b,
+      author = "Kiran K. Katta and Ramachandran D. Nair and Vinod Kumar",
+      title = "High-Order Finite-Volume Transport on the Cubed Sphere: Comparison between 1D and 2D Reconstruction Schemes",
+      journal = "Monthly Weather Review",
+      year = "2015",
+      publisher = "American Meteorological Society",
+      address = "Boston MA, USA",
+      volume = "143",
+      number = "7",
+      doi = "https://doi.org/10.1175/MWR-D-13-00176.1",
+      pages=      "2937 - 2954",
+      url = "https://journals.ametsoc.org/view/journals/mwre/143/7/mwr-d-13-00176.1.xml"
+}
+
+@article{Croisille:2013,
+author = {Croisille, Jean-Pierre},
+year = {2013},
+month = {10},
+pages = {},
+title = {Hermitian Compact Interpolation on the Cubed-Sphere Grid},
+volume = {57},
+journal = {Journal of Scientific Computing},
+doi = {10.1007/s10915-013-9702-3}
+}
 
 @Article{lu:2022,
 AUTHOR = {Lu, Fuqiang and Zhang, Fengyuan and Wang, Tian and Tian, Guozhong and Wu, Feng},
@@ -750,7 +788,7 @@ abstract = {Operator splitting is a widely used procedure in the numerical solut
 }
 
 @article {rancic:1992,
-      author = "Miodrag  Rancic",
+      author = "Miodrag  Rančić",
       title = "Semi-Lagrangian Piecewise Biparabolic Scheme for Two-Dimensional Horizontal Advection of a Passive Scalar",
       journal = "Monthly Weather Review",
       year = "1992",
@@ -776,6 +814,22 @@ abstract = {Operator splitting is a widely used procedure in the numerical solut
       pages=      "457 - 475",
       url = "https://journals.ametsoc.org/view/journals/mwre/142/1/mwr-d-13-00048.1.xml"
 }
+
+@article{zerroukat:2022,
+author = {Zerroukat, M. and Allen, T.},
+title = {On the corners of the cubed-sphere grid},
+journal = {Quarterly Journal of the Royal Meteorological Society},
+volume = {148},
+number = {743},
+pages = {778-783},
+keywords = {cubed sphere, grid corners, interpolation, overset grid},
+doi = {https://doi.org/10.1002/qj.4230},
+url = {https://rmets.onlinelibrary.wiley.com/doi/abs/10.1002/qj.4230},
+eprint = {https://rmets.onlinelibrary.wiley.com/doi/pdf/10.1002/qj.4230},
+abstract = {Abstract This note shows how the cubed-sphere grid can be extended (i.e., halo filling) to achieve high-order representation of fields and derivatives near the panel edges and specifically the corners of the cubed sphere. This makes it possible to obtain uniformly high-order multi-dimensional approximations and specifically makes the use of high-order finite differences/volumes or fully multi-dimensional semi-Lagrangian schemes viable options with the cubed sphere.},
+year = {2022}
+}
+
 
 @article{jia:2011,
 title = {A third accurate operator splitting method},
