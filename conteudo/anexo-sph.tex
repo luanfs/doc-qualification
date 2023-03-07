@@ -26,37 +26,7 @@ coordinates $(x,y,p)$, where $(x,y)$ are the cube face coordinates and
 $p \in \{1,2,\cdots, 6\}$ stands for a cube panel, as presented in 
 Chapter \ref{chp-cs-grids}.
 
-\section{Tangent vectors}
-\label{anexo-tangent}
-Let us consider $P \in \mathbb{S}_R^2$, we consider the projection
-on the tangent space $T_P\mathbb{S}^2_R$ which is given by:
-\begin{equation*}
-	\Pi_P(Q) = \frac{\langle P, Q \rangle}{R}P - Q
-\end{equation*}
-
-We introduce the tangent vectors at $\Psi_p(x,y)$
-given by:
-$\boldsymbol{g}_x(x,y;p) = \Pi_P(\Psi_p(x+ \Delta x,y))$, 
-$\boldsymbol{g}_y(x,y;p) = \Pi_P(\Psi_p(x,y + \Delta y))$,
-where $P = \Psi_p(x,y + \Delta y)$.
-We then introduce the normalized vectors:
-\begin{equation*}
-\boldsymbol{e}_x(x,y;p) = 
-\frac{\boldsymbol{g}_x(x,y;p)}{\|\boldsymbol{g}_x(x,y;p)\|}, \quad
-\boldsymbol{e}_y(x,y;p) = 
-\frac{\boldsymbol{g}_y(x,y;p)}{\|\boldsymbol{g}_y(x,y;p)\|},
-\end{equation*}
-where $\|\cdot\|$ is the Euclidean norm. It can be shown
-that the tangent vector of the geodesic from $\Psi_p(x,y)$
-from $\Psi_p(x+\Delta x, y)$ is a multiple of $\boldsymbol{e}_x$
-and  the tangent vector of the geodesic from $\Psi_p(x,y)$
-from $\Psi_p(x, y+\Delta y)$ is a multiple of $\boldsymbol{e}_y$.
-Thus, this process using the projection operator on the tangent space
-allow us to compute the unit tangent vectors for any cubed-sphere mapping
-gridlines at a given point.
-
-\section{Conversions between latitude-longitude  
-and contravariant coordinates}
+\section{Conversions between latitude-longitude and contravariant coordinates}
 \label{anexo-sph-ll}
 We consider the latitude-longitude mapping 
 $\Psi_{ll}: [0,2\pi] \times [-\frac{\pi}{2},\frac{\pi}{2}] \to \mathbb{S}^2_R$, given by:
