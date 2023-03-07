@@ -3,15 +3,45 @@
 
 The cubed-sphere grid was originally proposed by \citet{sadourny:1972}
 and was reinvestigated by \citet{ronchi:1996} and \citet{rancic:1996}.
-As it is usual to Planotic grids, we start with a cube circumscribed
-in a sphere and project its faces on the sphere.
-This chapter aims to review and investigated geometrical properties
-of the cubed-spheres available in the literature.
-This chapter is under development.
+As is usual to Planotic grids, we start with a Platonic solid, in this case, a cube,
+circumscribed in a sphere and project its faces on the sphere.
+The original cubed-sphere proposed by \citet{sadourny:1972}, called equidistant cubed-sphere, leads to non-uniform grid;
+a solution to this problem was proposed with the introduction of angular coordinates, leading to a quasi-uniform grid
+called equiangular cubed-sphere.
+The cubed sphere then consists of six panels, each one having a local Cartesian coordinate system, which 
+make it easier to extend methods from the plane to the sphere.
+Indeed, \citet{putman:2007} extends the dimension splitting from \citet{lin:1996}, presented in
+Chapter \ref{chp-2d-fv}, to the cubed-sphere.
 
-%\citep{taylor:1997}
-%\citep{nair:2005}
-%\citep{lauritzen:2011}
+	There are essentially two major challenges when working on the cubed-sphere:
+1) the non-orthogonal grid system; 2) the discontinuity of the coordinate system
+at the cube edges. Challenge 1) is more related to the appearance of metric terms
+in the equations, which adds more computational cost requiring, for instance, several conversions
+between contravariant/covariant components of a velocity field.
+The second challenge, perhaps the most problematic, is related to the computation
+of stencils along the cube edges, where the coordinate system is discontinuous.
+A possible way to compute the stencil at the edges is to extend the local coordinate of 
+each panel to its neighbor panels, adding ghost cells in the so-called halo region. 
+In this case, the equiangular cubed sphere has ghost cell values, 
+lying on the same geodesics containing the data from its neighbor panels,
+which allows us to use one-dimensional high-order Lagrange interpolation (for a review of this method, see \citet{zerroukat:2022}).
+This approach was already investing since the work of \citet{ronchi:1996}
+and it is widely used in the literature \citep{Croisille:2013, katta:2015,Katta:2015b,chen:2021}.
+\citet{putman:2007}, on the other hand, uses extrapolation
+at grid values near the cube edges. Another approach that avoids the need for interpolation/extrapolation
+near the edges is the conformal cubed-sphere developed by \citet{rancic:1996}. This grid
+leads to an orthogonal and continuous coordinate system near the edges, but it generates grid singularities
+near the cube corners, similar to the pole problem. An improved and more uniform conformal grid,
+called Uniform Jacobian cubed sphere, was later proposed \citet{rancic:2017}.
+Each approach is likely to generate grid imprinting and one of our goals
+this work is to investigate how much grid-imprinting each method generates.
+
+This chapter aims to review and investigated the geometrical properties
+of the cubed-sphere. Besides that, we also aim to investigate the process
+of interpolating/extrapolating near the cube edges.
+We start with a basic review of the cubed-sphere mappings in Section \ref{cs-mappings},
+while Section \ref{cs-halodata} investigates the interpolation/extrapolation near the cube edges
+with some numerical experiments.
 
 \section{Cubed-sphere mappings}
 \label{cs-mappings}
@@ -53,12 +83,13 @@ where:
 	\label{chp3-eqdistant-psi6}
 	\Psi_{6}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(y, x, -a).
 \end{equation}
-
-The family of maps $\{\Psi_{p}, p = 1, \cdots, 6\}$ allow us to cover the sphere, and 
-by creating an uniform partition of the square $[-a,a]\times[-a,a]$,
-we generate the equidistant cubed-sphere grid. 
-we show an example of an equidistante cubed-sphere grid.
-
+The family of maps $\{\Psi_{p}, p = 1, \cdots, 6\}$ allow us to cover the sphere.
+Here $p$ denotes a panel, and they are defined as Figure \ref{chp4-panels} shows.
+\begin{figure}[!htb]
+	\centering
+		\includegraphics[width=0.8\linewidth]{chp4_panels}
+	\caption{Cubed-sphere panels definition. Figure taken from \citet{ronchi:1996}.\label{chp4-panels}}
+\end{figure}
 The derivative of the maps $\Psi_p$ are given by:
 \begin{equation}
 	\label{chp3-eqdistant-dpsi1}
@@ -69,7 +100,6 @@ The derivative of the maps $\Psi_p$ are given by:
 		 -xy  & a^2+x^2
 	\end{bmatrix},
 \end{equation}
-
 \begin{equation}
 	\label{chp3-eqdistant-dpsi2}
 	D\Psi_{2}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}
@@ -79,7 +109,6 @@ The derivative of the maps $\Psi_p$ are given by:
 		 -xy &  a^2+x^2
 	\end{bmatrix},
 \end{equation}
-
 \begin{equation}
 	\label{chp3-eqdistant-dpsi3}
 	D\Psi_{3}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}
@@ -89,7 +118,6 @@ The derivative of the maps $\Psi_p$ are given by:
 		 -xy &  a^2+x^2
 	\end{bmatrix},
 \end{equation}
-
 \begin{equation}
 	\label{chp3-eqdistant-dpsi4}
 	D\Psi_{4}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}	
@@ -99,7 +127,6 @@ The derivative of the maps $\Psi_p$ are given by:
 		 -xy &  a^2+x^2
 	\end{bmatrix},
 \end{equation}
-
 \begin{equation}
 	\label{chp3-eqdistant-dpsi5}
 	D\Psi_{5}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}	
@@ -109,7 +136,6 @@ The derivative of the maps $\Psi_p$ are given by:
 		-ax & -ay
 	\end{bmatrix},
 \end{equation}
-
 \begin{equation}
 	\label{chp3-eqdistant-dpsi6}
 	D\Psi_{6}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}
@@ -119,7 +145,6 @@ The derivative of the maps $\Psi_p$ are given by:
 		 ax &  ay
 	\end{bmatrix}.
 \end{equation}
-
 With the aid of the derivative, we may define a basis of tangent vectors 
 $\{ \boldsymbol{g}_{1}, \boldsymbol{g}_{2} \}$ on each point on the sphere by:
 \begin{equation}
@@ -132,11 +157,10 @@ $\{ \boldsymbol{g}_{1}, \boldsymbol{g}_{2} \}$ on each point on the sphere by:
 	\begin{bmatrix}
 		 0 \\
 		 1
-	\end{bmatrix},
+	\end{bmatrix}.
 \end{equation}
-
 In other words, we have $\{\boldsymbol{g}_{1}(x,y;p),\boldsymbol{g}_{2}(x,y;p)\} \subset T_{\Psi_p(x,y)}
-\mathbb{S}_{R}^2$, $\forall (x,y) \in [-a,a]\times[-a,a]$.
+\mathbb{S}_{R}^2$, $\forall (x,y) \in [-a,a]\times[-a,a]$ (see Appendix \ref{anexo-sph} for the definition of tangent space).
 Notice that
 \begin{equation}
 	\label{chp3-eqdistant-psitensor}
@@ -147,7 +171,6 @@ Notice that
 		 -xy & a^2 + y^2
 	\end{bmatrix},
 \end{equation}
-
 does not depend on $p$.
 Hence, it makes sense to define the matrix 
 $G_{\Psi}(x,y) = [D\Psi_{p}(x,y)]^TD\Psi_{p}(x,y)$ 
@@ -161,24 +184,26 @@ It is easy to see that:
 		\langle \boldsymbol{g}_{1}(x,y;p), \boldsymbol{g}_{2}(x,y;p) \rangle \\
 		\langle \boldsymbol{g}_{1}(x,y;p), \boldsymbol{g}_{2}(x,y;p) \rangle  &
 		\langle \boldsymbol{g}_{2}(x,y;p), \boldsymbol{g}_{2}(x,y;p) \rangle 
-	\end{bmatrix}
+	\end{bmatrix},
 \end{equation}
 and that $G_{\Psi}(x,y)$ is positive-definite, 
 $\forall (x,y) \in [-a,a]\times[-a,a]$.
 The Jacobian of the metric tensor $G_{\Psi}(x,y)$ is then given by:
 \begin{equation}
-	\sqrt{|\det{G_{\Psi}(x,y)}|} = \frac{R^2}{(a^2+x^2+y^2)^{3/2}}a 
+	\sqrt{|\det{G_{\Psi}(x,y)}|} = \frac{R^2}{(a^2+x^2+y^2)^{3/2}}a.
 \end{equation}
-
 \subsection{Equiangular cubed-sphere}
 \label{equiangular-cs}
+Another cubed-sphere mapping is the equiangular mapping \citep{ronchi:1996},
+which leads to a more uniform grid. This mapping is a composition of equidistant mapping with
+angular coordinates.
 We consider again $a=\frac{R}{\sqrt{3}}$
 and we define the family of maps
 $\Phi_{p}: [-\frac{\pi}{4},\frac{\pi}{4}] 
 \times [-\frac{\pi}{4},\frac{\pi}{4}] 
 \to \mathbb{S}^2_R$, $p=1, \cdots, 6$,
 given by $\Phi_{p}(x,y) = \Psi_{p}(a\tan{x}, a\tan{y})$.
-The coordinates $(a\tan{x}, a\tan{y})$ are called as angular coordinates.
+The coordinates $(a\tan{x}, a\tan{y})$ are called angular coordinates.
 By the chain rule:
 \begin{equation}
 	D\Phi_{p}(x,y) = a
@@ -186,9 +211,8 @@ By the chain rule:
 	\begin{bmatrix}
 		\frac{1}{\cos^2 x} & 0 \\ 
 		0 & \frac{1}{\cos^2 y} 
-	\end{bmatrix}	
+	\end{bmatrix},
 \end{equation}
-
 and therefore we can define the following tangent vectors
 \begin{align}
 	\boldsymbol{r}_{1}(x,y;p) = D\Phi_{p}(x,y)
@@ -211,8 +235,6 @@ that is, $\{\boldsymbol{r}_{1}(x,y;p),\boldsymbol{r}_{2,p}(x,y;p)\} \subset T_{\
 \mathbb{S}_{R}^2$, $\forall (x,y) \in 
 [-\frac{\pi}{4},\frac{\pi}{4}] 
 \times [-\frac{\pi}{4},\frac{\pi}{4}]$.
-
-
 Again, it makes sense to define the matrix 
 \begin{align}
 	G_{\Phi}(x,y) &= [D\Phi_{p}(x,y)]^TD\Phi_{p}(x,y) \\
@@ -222,7 +244,7 @@ Again, it makes sense to define the matrix
 		\frac{1}{\cos^4 x} & 0 \\ 
 		0 & \frac{1}{\cos^4 y} 
 	\end{bmatrix}
-	D\Psi_{p}(a\tan{x}, a\tan{y})
+	D\Psi_{p}(a\tan{x}, a\tan{y}),
 \end{align}
 that does not depend on $p$ and is the  metric tensor.
 It is easy to see that:
@@ -234,7 +256,7 @@ It is easy to see that:
 		\langle \boldsymbol{r}_{1}(x,y;p), \boldsymbol{r}_{2}(x,y;p) \rangle \\
 		\langle \boldsymbol{r}_{1}(x,y;p), \boldsymbol{r}_{2}(x,y;p) \rangle  &
 		\langle \boldsymbol{r}_{2}(x,y;p), \boldsymbol{r}_{2}(x,y;p) \rangle 
-	\end{bmatrix}
+	\end{bmatrix},
 \end{equation}
 and that $G_{\Phi}(x,y)$ is positive-definite, 
 $\forall (x,y) \in [-\frac{\pi}{4},\frac{\pi}{4}] 
@@ -244,6 +266,135 @@ The Jacobian of the metric tensor $G_{\Phi}(x,y)$ is then given by:
 	\sqrt{|\det{G_{\Phi}(x,y)}|} &= \frac{a}{\cos^2 x \cos^2 y}
 	\frac{R^2}{(a^2 + a^2\tan^2x + a^2\tan^2y)^{3/2}}a\\
 	&= \frac{R^2}{\cos^2 x \cos^2 y}
-	\frac{1}{(1 + \tan^2x + \tan^2y)^{3/2}}
-\end{align}
+	\frac{1}{(1 + \tan^2x + \tan^2y)^{3/2}}.
+\end{align}	
+\subsection{Examples}
+To represent the cubed-sphere grid, we consider the notation of Section \ref{sec:fv-2d}.
+We shall assume that we have a $(\Delta x, \Delta y)-$grid of $[-a,a]^2$, with $\Delta x= \Delta y$, $N=M$,
+where $a$ depends on the mapping considered.
+Similarly to Chapter \ref{chp-2d-fv}, we may extend the grid to ghost cells.
+Hence, for each $p=1, \cdots, 6$, we apply the mapping $\Psi_p$ or $\Phi_p$ on
+each local coordinate system grid to generate the cubed-sphere with $6N^2$ cells.
+In Figure \ref{chp4-cs-grid}, we depict an example of the grids generated using 
+the equidistant and equiangular mappings for $N=20$.
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equidistant_20_sphere}
+		\caption{Equidistant}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_20_sphere}
+		\caption{Equidistant}
+	\end{subfigure}
+	\caption{Equidistant (a) and equiangular cubed-spheres generated with $N=20$.
+		\label{chp4-cs-grid}}
+\end{figure}
 
+From Figure \ref{chp4-cs-grid}, we notice that the equiangular cubed-sphere is much more uniform
+than the equidistant cubed-sphere. As pointed out by \citet{rancic:1996}, the ratio
+between the maximum and minimum cell area on the equiangular cubed-sphere is approximately 1.3,
+while the same ratio is approximately 5.2 on the equidistant cubed-sphere. 
+
+\section{Edges treatment}
+\label{cs-halodata}
+\subsection{Interpolation}
+Hereafter, we are going to use the notation $(x,y;p)$ for $p=1,\cdots, 6$, to represent a
+point on the sphere obtained trough the equiangular cubed-sphere mapping.
+Let us assume that we have a function $q: \mathbb{S}^2_R \to \mathbb{R}$
+given in the cell centroids and let us denote these values by $q_{ijp} = q(x_i,y_j;p)$,
+for $i,j=1\cdots, N$, $p=1,\cdots, 6$. We wish to estimate these values outside of the range
+$1, \cdots, N$, that is, we wish to estimate them at ghost cells positions.
+
+As we pointed out before, this can be done by noticing that the ghost cells on the local
+Cartesian systems are mapped onto the geodesic of a neighbor panel, which allows us to use Lagrange interpolation 
+to obtain the ghost cell values.
+To illustrate this process in Panel 1, in Figure \ref{chp4-cs-halodata} we depict the values of $q_{ijp}$ in Panel 1 using green circles, for $N=8$ 
+and black circles for the other panels. Assuming a halo size equal to 3, we also show the target value at ghost cells 
+using yellow and magenta circles. Observe that the dashed yellow lines in Figure \ref{chp4-cs-halodata} illustrate
+how the ghost cells are in geodesics containing grid values from neighbor panels. Except for the magenta circles,
+all the ghost values may be obtained using 1D Lagrange interpolation using the surrounding black circles on the geodesic.
+This can be performed for all panels. After that, the magenta circles may be interpolated using values obtained in the first step of interpolation,
+(see cyan circles in Figure \ref{chp4-cs-halodata}), preserving the order of accuracy of the interpolation, supposing this one is fixed. 
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=1.0\linewidth]{gnomonic_equiangular_8_mercator}
+	\caption{Equidistant cubed-sphere panel 1 with $N=8$: 
+	centroid at panel 1 (green circles) and others panel centroids (black circles), 
+	ghost cell points at panel 1 (yellow and magenta circles) and others panels (cyan circles).}
+	\label{chp4-cs-halodata}
+\end{figure}
+
+We are going to show some numerical example of this interpolation process using a halo region of size 3.
+First, we consider the following function represented in $\mathbb{R}^3$ coordinates as
+\begin{align}
+		\label{chp4-ic1}
+		q(X,Y,Z) = \exp(-10((X-X_0)^2+(Y-Y_0)^2+(Z-Z_0)^2)),
+\end{align}
+where $(X_0,Y_0,Z_0)$ represent the $\mathbb{R}^3$ coordinates of the latitude-longitude point
+$(\frac{\pi}{4},\frac{\pi}{6})$ as in \citet{zerroukat:2022}, which consists of a Gaussian centered 
+at a panel 1 corner as Figure \ref{chp4-cs-ic1} shows.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.9\linewidth]{gnomonic_equiangular_1024_interp_q_ic_1_mercator}
+	\caption{Gaussian defined by Equation \eqref{chp4-ic1}.}
+	\label{chp4-cs-ic1}
+\end{figure}
+
+We shall also consider the following function, which is the divergence of a velocity field,
+as in \citet{peixoto:13} in our tests:
+\begin{align}
+	\label{chp4-ic2}
+	\begin{split}
+	q(\lambda, \phi) = \frac{1}{\cos(\phi)}\bigg(-2\cos^3(\phi) \sin(\lambda) \cos(\lambda)
+	+16\sin^2(\lambda)\cos(\lambda)\cos^3(\phi)\sin(\phi)\bigg),
+	\end{split}
+\end{align}
+whose graph is depicted in Figure \ref{chp4-cs-ic2}.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_interp_q_ic_2_mercator}
+	\caption{Function defined by Equation \eqref{chp4-ic2}.}
+	\label{chp4-cs-ic2}
+\end{figure}
+
+We are going to consider the relative error in the maximum norm and the convergence rate 
+at the host cell positions defined analogously as in Section \ref{sec-ds-exp}. 
+We also consider values os $N$ given by $2^k$, for $k=4, \cdot, 10$, in order to compute the error and convergence rate.
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_interp_ic2_normlinf_errors}
+		\caption{Error.\label{chp4-exp1-error}}
+	\end{subfigure}
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_interp_ic2_normlinf_convergence_rate}
+		\caption{Convergence rate.\label{chp4-exp1-CR}}
+	\end{subfigure}
+	\caption{Relative error convergence (a) and convergence rate (b) for the ghost cell interpolation process for different
+		polynomial degrees, using the function given by Equation \eqref{chp4-ic1}.\label{chp4-exp1}}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_interp_ic2_normlinf_errors}
+		\caption{Error.\label{chp4-exp2-error}}
+	\end{subfigure}
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_interp_ic2_normlinf_convergence_rate}
+		\caption{Convergence rate.\label{chp4-exp2-CR}}
+	\end{subfigure}
+	\caption{As Figure \ref{chp4-exp1} but using the function given by Equation \eqref{chp4-ic2}.\label{chp4-exp2}}
+\end{figure}
+\break
+In Figures \ref{chp4-exp1} and \ref{chp4-exp2} we show the errors and convergence rate for the functions from Equations \eqref{chp4-ic1} and \eqref{chp4-ic2},
+respectively, considering polynomials of degrees from 0 up to 4. As both graphs show, we were able to achieve the expected order of convergence.
+Next, we shall use the ghost cell interpolation when computing the stencils from PPM edge reconstructions presented in Chapter \ref{chp-1d-fv}
+in each direction of a panel and also compare the results obtained with extrapolation.
