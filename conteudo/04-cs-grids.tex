@@ -263,11 +263,15 @@ $\forall (x,y) \in [-\frac{\pi}{4},\frac{\pi}{4}]
 \times [-\frac{\pi}{4},\frac{\pi}{4}]$.
 The Jacobian of the metric tensor $G_{\Phi}(x,y)$ is then given by:
 \begin{align}
-	\sqrt{|\det{G_{\Phi}(x,y)}|} &= \frac{a}{\cos^2 x \cos^2 y}
-	\frac{R^2}{(a^2 + a^2\tan^2x + a^2\tan^2y)^{3/2}}a\\
-	&= \frac{R^2}{\cos^2 x \cos^2 y}
-	\frac{1}{(1 + \tan^2x + \tan^2y)^{3/2}}.
-\end{align}	
+	\label{metrictensor-cs-equiangular}
+	\begin{split}
+		\sqrt{|\det{G_{\Phi}(x,y)}|} &= \frac{a}{\cos^2 x \cos^2 y}
+		\frac{R^2}{(a^2 + a^2\tan^2x + a^2\tan^2y)^{3/2}}a\\
+		&= \frac{R^2}{\cos^2 x \cos^2 y}
+		\frac{1}{(1 + \tan^2x + \tan^2y)^{3/2}}.
+	\end{split}
+\end{align}
+Hereafter, we shall denote $g(x,y) = |\det{G_{\Phi}(x,y)}|$.
 \subsection{Examples}
 To represent the cubed-sphere grid, we consider the notation of Section \ref{sec:fv-2d}.
 We shall assume that we have a $(\Delta x, \Delta y)-$grid of $[-a,a]^2$, with $\Delta x= \Delta y$, $N=M$,
@@ -287,9 +291,9 @@ the equidistant and equiangular mappings for $N=20$.
 	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_20_sphere}
-		\caption{Equidistant}
+		\caption{Equiangular}
 	\end{subfigure}
-	\caption{Equidistant (a) and equiangular cubed-spheres generated with $N=20$.
+	\caption{Equidistant (a) and equiangular (b) cubed-spheres generated with $N=20$.
 		\label{chp4-cs-grid}}
 \end{figure}
 
@@ -300,7 +304,8 @@ while the same ratio is approximately 5.2 on the equidistant cubed-sphere.
 
 \section{Edges treatment}
 \label{cs-halodata}
-\subsection{Interpolation}
+\subsection{Ghost cells interpolation}
+\label{cs-interp}
 Hereafter, we are going to use the notation $(x,y;p)$ for $p=1,\cdots, 6$, to represent a
 point on the sphere obtained trough the equiangular cubed-sphere mapping.
 Let us assume that we have a function $q: \mathbb{S}^2_R \to \mathbb{R}$
@@ -321,13 +326,14 @@ This can be performed for all panels. After that, the magenta circles may be int
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1.0\linewidth]{gnomonic_equiangular_8_mercator}
-	\caption{Equidistant cubed-sphere panel 1 with $N=8$: 
+	\caption{Equiangular cubed-sphere panel 1 with $N=8$: 
 	centroid at panel 1 (green circles) and others panel centroids (black circles), 
 	ghost cell points at panel 1 (yellow and magenta circles) and others panels (cyan circles).}
 	\label{chp4-cs-halodata}
 \end{figure}
 
-We are going to show some numerical example of this interpolation process using a halo region of size 3.
+We are going to show some numerical example of this interpolation process using a halo region of size 3 and 
+assuming the radius of the sphere equal to one.
 First, we consider the following function represented in $\mathbb{R}^3$ coordinates as
 \begin{align}
 		\label{chp4-ic1}
@@ -338,12 +344,12 @@ $(\frac{\pi}{4},\frac{\pi}{6})$ as in \citet{zerroukat:2022}, which consists of 
 at a panel 1 corner as Figure \ref{chp4-cs-ic1} shows.
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=0.9\linewidth]{gnomonic_equiangular_1024_interp_q_ic_1_mercator}
+	\includegraphics[width=0.9\linewidth]{gnomonic_equidistant_1024_interp_q_ic_1_mercator}
 	\caption{Gaussian defined by Equation \eqref{chp4-ic1}.}
 	\label{chp4-cs-ic1}
 \end{figure}
 
-We shall also consider the following function, which is the divergence of a velocity field,
+We shall also consider the following trigonometric function, which is the divergence of a velocity field,
 as in \citet{peixoto:13} in our tests:
 \begin{align}
 	\label{chp4-ic2}
@@ -355,14 +361,14 @@ as in \citet{peixoto:13} in our tests:
 whose graph is depicted in Figure \ref{chp4-cs-ic2}.
 \begin{figure}[!htb]
 	\centering
-	\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_interp_q_ic_2_mercator}
-	\caption{Function defined by Equation \eqref{chp4-ic2}.}
+	\includegraphics[width=1\linewidth]{gnomonic_equidistant_1024_interp_q_ic_2_mercator}
+	\caption{Trigonometric function defined by Equation \eqref{chp4-ic2}.}
 	\label{chp4-cs-ic2}
 \end{figure}
 
 We are going to consider the relative error in the maximum norm and the convergence rate 
 at the host cell positions defined analogously as in Section \ref{sec-ds-exp}. 
-We also consider values os $N$ given by $2^k$, for $k=4, \cdot, 10$, in order to compute the error and convergence rate.
+We also consider values os $N$ given by $2^k$, for $k=4, \cdots, 10$, in order to compute the error and convergence rate.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
@@ -376,7 +382,7 @@ We also consider values os $N$ given by $2^k$, for $k=4, \cdot, 10$, in order to
 		\caption{Convergence rate.\label{chp4-exp1-CR}}
 	\end{subfigure}
 	\caption{Relative error convergence (a) and convergence rate (b) for the ghost cell interpolation process for different
-		polynomial degrees, using the function given by Equation \eqref{chp4-ic1}.\label{chp4-exp1}}
+		polynomial degrees, using the Gaussian function given by Equation \eqref{chp4-ic1}.\label{chp4-exp1}}
 \end{figure}
 
 \begin{figure}[!htb]
@@ -391,10 +397,156 @@ We also consider values os $N$ given by $2^k$, for $k=4, \cdot, 10$, in order to
 		\includegraphics[width=1\linewidth]{cs_interp_ic2_normlinf_convergence_rate}
 		\caption{Convergence rate.\label{chp4-exp2-CR}}
 	\end{subfigure}
-	\caption{As Figure \ref{chp4-exp1} but using the function given by Equation \eqref{chp4-ic2}.\label{chp4-exp2}}
+	\caption{As Figure \ref{chp4-exp1} but using the trigonometric function given by Equation \eqref{chp4-ic2}.\label{chp4-exp2}}
 \end{figure}
 \break
 In Figures \ref{chp4-exp1} and \ref{chp4-exp2} we show the errors and convergence rate for the functions from Equations \eqref{chp4-ic1} and \eqref{chp4-ic2},
 respectively, considering polynomials of degrees from 0 up to 4. As both graphs show, we were able to achieve the expected order of convergence.
 Next, we shall use the ghost cell interpolation when computing the stencils from PPM edge reconstructions presented in Chapter \ref{chp-1d-fv}
 in each direction of a panel and also compare the results obtained with extrapolation.
+
+\subsection{Edges reconstruction}
+\label{cs-recon}
+Let denote a control volume of the cubed-sphere by $\Omega_{ijp}$, that is:
+\begin{equation*}
+	\Omega_{ijp} = \Phi_p([x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}] \times [y_{j-\frac{1}{2}}, y_{j+\frac{1}{2}}]),
+	\quad 1 \leq i, j \leq N, \quad 1 \leq p \leq 6.
+\end{equation*}
+We define the average values of a function $q$ with the aid of the metric tensor $g(x,y)$ (Equation \ref{metrictensor-cs-equiangular}):
+\begin{equation*}
+	Q_{ijp} = \frac{1}{|\Omega_{ijp}|}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
+	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}  q(x,y;p) \sqrt{g(x,y)}\,dx \,dy,
+\end{equation*}
+where $|\Omega_{ijp}|$ is the control volume area given by:
+\begin{equation*}
+	|\Omega_{ijp}| = \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}\sqrt{g(x,y)} \,dx \,dy.
+\end{equation*}
+Similar to Proposition \ref{prop-bound-centroid-2d}, we may approximate the average value using the centroid value, that is
+\begin{equation*}
+	Q_{ijp} - q_{ijp} = O(\Delta x ^2), 
+\end{equation*}
+where $q_{ijp} = q(x_i,y_j; p)$, recalling that on the cubed-sphere we always assume $\Delta x = \Delta y$.
+In this work, we shall always approximate the average values since our schemes are expected to be at most second-order,
+this approximation does not deteriorate the convergence order.
+
+Let us consider the following problem: given the values $q_{ijp}$ we wish to find approximations of 
+the function $q$ at the control volume edge midpoints denoted by
+$q^{L,x}_{ijp}  \approx q_{{i-\frac{1}{2}},j,p}$,
+$q^{R,x}_{ijp}  \approx q_{{i+\frac{1}{2}},j,p}$,
+$q^{L,y}_{ijp}  \approx q_{i,{j-\frac{1}{2}},p}$,
+$q^{R,y}_{ijp}  \approx q_{i,{j+\frac{1}{2}},p}$, where we also using the notations
+$q_{{i+\frac{1}{2}},j,p}  \approx q(x_{i+\frac{1}{2}},y_j; p)$,
+$q_{i,{j+\frac{1}{2}},p}  \approx q(x_i,y_{j+\frac{1}{2}}; p)$.
+These points are illustrated in Figure \ref{csgrid-rpoints} for panel 1.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=1\linewidth]{gnomonic_equiangular_8_mercator_2}
+	\caption{The reconstruction problem on the cubed-sphere panel 1: we are given the centroid values of a function (black circles)
+		and we wish to estimate these values at the edges midpoints in the $x$ direction (blue circles) and $y$ direction (red circles).
+		This figure uses an equiangular cubed-sphere with $N=8$.} \label{csgrid-rpoints}
+\end{figure}
+
+We can estimate the desired values using the one-dimensional reconstruction schemes from Sections \ref{chp2-sec-recon} and \ref{chp2-sec-mono}
+by performing the PPM reconstruction in the $x$ and $y$ directions independently. Notice that all the schemes from 
+Sections \ref{chp2-sec-recon} and \ref{chp2-sec-mono} are expected to be second-order accurate due to centroid point approximation.
+The major difference here is that when we compute the stencil near the cube edges. Unlikely the previous chapters where we
+assumed periodic boundary conditions, the boundary conditions are related to the adjacent panel.
+One to overcome this problem is just to add ghost cell layers and use the process described in Section \ref{cs-interp}, hence
+all the stencils may be computed. This approach shall be referred to as \textbf{ET-1} (ET stands for edge treatment).
+Observe that the points that lie on a cube edge are computed twice, where each calculation uses one adjacent panel per time.
+One possible way to uniquely define this value while preserving the order is
+to average the two values obtained by the adjacent panels. This scheme is named \textbf{ET-2}.
+
+An approach that avoids the use of ghost has been developed by \citet{putman:2007} using 
+extrapolation at the cells surrounding to the cube edge.
+We are going to describe this scheme that we shall name \textbf{ET-3}. This scheme uses the extrapolation:
+\begin{align*}
+	q^{L,x}_{1,j,p} &= \frac{1}{2}\bigg(3Q_{1,j,p} - Q_{2,j,p}\bigg),\\
+	q^{R,x}_{N,j,p} &= \frac{1}{2}\bigg(3Q_{N,j,p} - Q_{N-1,j,p}\bigg),\\
+	q^{L,y}_{i,1,p} &= \frac{1}{2}\bigg(3Q_{i,1,p} - Q_{i,2,p}\bigg),\\
+	q^{R,y}_{i,N,p} &= \frac{1}{2}\bigg(3Q_{i,N,p} - Q_{i,N-1,p}\bigg),\\
+\end{align*}
+at the points that are located on the cube edges. The other edge values are estimated as:
+\begin{align*}
+	q^{R,x}_{1,j,p} &= \frac{1}{14}\bigg(3Q_{1,j,p} + 11Q_{2,j,p} - 2(Q_{3,j,p} - Q_{1,j,p})\bigg),\\
+	q^{L,x}_{2,j,p} &= q^{R,x}_{1,j,p},\\
+	q^{L,x}_{N,j,p} &= \frac{1}{14}\bigg(3Q_{N,j,p} + 11Q_{N-1,j,p} - 2(Q_{N-2,j,p} - Q_{N,j,p})\bigg),\\
+	q^{R,x}_{N-1,j,p} &= q^{L,x}_{N,j,p},\\
+\end{align*}
+in the $x$ direction and in the $y$ direction we use the formulas
+\begin{align*}
+	q^{R,y}_{i,1,p} &= \frac{1}{14}\bigg(3Q_{i,1,p} + 11Q_{i,2,p} - 2(Q_{i,3,p} - Q_{i,1,p})\bigg),\\
+	q^{L,y}_{i,2,p} &= q^{R,x}_{i,1,p},\\
+	q^{L,y}_{i,N,p} &= \frac{1}{14}\bigg(3Q_{i,N,p} + 11Q_{i,N-1,p} - 2(Q_{i,N-2,p} - Q_{i,N,p})\bigg),\\
+	q^{R,y}_{i,N-1,p} &= q^{L,y}_{i,N,p}.\\
+\end{align*}
+Again, we can average to values at the cube edges, which leads to the scheme named \textbf{ET-4}.
+We are going to use the trigonometric (Equation \eqref{chp4-ic1}) functions
+as before on the unit sphere to compare the schemes ET-1, ET-2, ET-3 and ET-4.
+We going to introduce the relative errors:
+\begin{align*}
+	e_{{i-\frac{1}{2}},j,p} &= (|q_{{i-\frac{1}{2}},j,p} - q^{L,x}_{ijp}|)/|q_{{i-\frac{1}{2}},j,p}|,\\
+	e_{{i+\frac{1}{2}},j,p} &= (|q_{{i+\frac{1}{2}},j,p} - q^{R,x}_{ijp}|)/|q_{{i+\frac{1}{2}},j,p}|,\\
+	e_{i,{j-\frac{1}{2}},p} &= (|q_{i,{j-\frac{1}{2}},p} - q^{L,y}_{ijp}|)/|q_{i,{j-\frac{1}{2}},p}|,\\
+	e_{i,{j+\frac{1}{2}},p} &= (|q_{i,{j+\frac{1}{2}},p} - q^{R,y}_{ijp}|)/|q_{i,{j+\frac{1}{2}},p}|,\\
+	e_{ijp} &= \max\{e_{{i-\frac{1}{2}},j,p}, e_{{i+\frac{1}{2}},j,p} , e_{i,{j-\frac{1}{2}},p}, e_{i,{j+\frac{1}{2}},p} \},\\
+	E &= \max \{e_{ijp}\}.
+\end{align*}
+We are going to compute $E$ for different values of $N$ as in the numerical experiments of Section \ref{cs-interp}.
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_recon_ic2_normlinf_parabola_errors}
+		\caption{Error.\label{chp4-exp3-error}}
+	\end{subfigure}
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_recon_ic2_normlinf_convergence_rate}
+		\caption{Convergence rate.\label{chp4-exp3-CR}}
+	\end{subfigure}
+	\caption{Relative error convergence (a) and convergence rate (b) for the reconstruction problem for different
+	edge treatments (ET), using the trigonometric function given by Equation \eqref{chp4-ic2}.\label{chp4-exp3}}
+\end{figure}
+
+In Figure \ref{chp4-exp3} we show the errors and the convergence rate using the PPM-PLO07 and PPM-L04 reconstruction schemes.
+We can observe that all the schemes converge to zero with second-order.
+Besides that, the scheme ET1 and ET2 produce essentially the same error, and so are the schemes ET3 and ET4.
+The difference between the ghost cell interpolation-based schemes and the extrapolation-based schemes
+may be observed in Figure \ref{chp4-exp4} and Figure \ref{chp4-exp5}, for the  PPM-PL07 and PPM-L04 reconstruction schemes,
+respectively.
+We notice that the cube edges appear on the error graph when we use the ET4 scheme. This is an example of grid imprinting.
+Although all schemes are second-order, the ghost cell interpolation-based schemes do seem to produce grid imprinting
+in the reconstruction problem.
+The graphs of ET1 are very similar to the graph of ET2 and the graphs of ET3 are very similar to the graph of ET4 (not shown).
+\newpage
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-PL07_et2_sphere}
+		\caption{ET2.\label{chp4-exp4-a}}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-PL07_et4_sphere}
+		\caption{ET4.\label{chp4-exp4-b}}
+	\end{subfigure}
+	\caption{Error for the edge midpoint values considering the trigonometric function (Equation \eqref{chp4-ic2})
+		with edges treatment schemes ET2 (a) and ET4 (b) for the cubed-sphere with $N=1024$ using the reconstruction PPM-PL07.\label{chp4-exp4}}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-L04_et2_sphere}
+		\caption{ET2.\label{chp4-exp5-a}}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-L04_et4_sphere}
+		\caption{ET4.\label{chp4-exp5-b}}
+	\end{subfigure}
+	\caption{As Figure in \ref{chp4-exp4} but using the PPM-L04 scheme.\label{chp4-exp5}}
+\end{figure}

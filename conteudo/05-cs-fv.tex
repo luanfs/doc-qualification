@@ -81,30 +81,3 @@ to the variable $\sqrt{\det{g_{\Psi}}}q$.
 However, when computing the stencils near to the cube edges,
 we need to approximate the values of $q$ in the ghost cells in order to compute
 the stencils.
-
-
-\begin{figure}[ht] % [H] é obrigatório em apresentações!
-	\centering
-	\includegraphics[width = 0.4\linewidth]{lagrange}
-	\caption{Ghost cells on the equiangular cubed-sphere. Figure from \citet{chen:2021}}
-	\label{lagrange}
-\end{figure}
-
-We adopted the strategy proposed by \citet{chen:2021},
-that works only in the equiangular cubed-sphere.
-This approach exploits that the center of the ghost cells
-lye on a geodesic that connects the center of cells of the neighbor panel,
-as it is shown in Figure \ref{lagrange}.
-Therefore, we can employ a Lagrange interpolation over a geodesic
-to approximate the values at the ghost cells.
-We decided to use a third-order Lagrange interpolation.
-
-\section{Numerical experiments}
-We are going to show some results using the velocity vector field from
-the deformational flow test case on the proposed by \citet{nair:2010}. 
-In these simulation, we do not use the monotonicity constraints.
-
-For the first test case, we assume that the scalar field $q$ is constant and equal to 1.
-Since the velocity field is non-divergente, the scalar field should remain constant.
-
-
