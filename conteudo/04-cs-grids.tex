@@ -482,7 +482,8 @@ in the $x$ direction and in the $y$ direction we use the formulas
 \end{align*}
 Again, we can average to values at the cube edges, which leads to the scheme named \textbf{ET-4}.
 We are going to use the trigonometric (Equation \eqref{chp4-ic1}) functions
-as before on the unit sphere to compare the schemes ET-1, ET-2, ET-3 and ET-4.
+as before on the unit sphere to compare the schemes ET-1, ET-2, ET-3 and ET-4. The scheme ET-1 and ET-2
+uses cubic polynomials.
 We going to introduce the relative errors:
 \begin{align*}
 	e_{{i-\frac{1}{2}},j,p} &= (|q_{{i-\frac{1}{2}},j,p} - q^{L,x}_{ijp}|)/|q_{{i-\frac{1}{2}},j,p}|,\\
@@ -511,29 +512,29 @@ We are going to compute $E$ for different values of $N$ as in the numerical expe
 
 In Figure \ref{chp4-exp3} we show the errors and the convergence rate using the PPM-PLO07 and PPM-L04 reconstruction schemes.
 We can observe that all the schemes converge to zero with second-order.
-Besides that, the scheme ET1 and ET2 produce essentially the same error, and so are the schemes ET3 and ET4.
+Besides that, the scheme ET-1 and ET-2 produce essentially the same error, and so are the schemes ET-3 and ET-4.
 The difference between the ghost cell interpolation-based schemes and the extrapolation-based schemes
 may be observed in Figure \ref{chp4-exp4} and Figure \ref{chp4-exp5}, for the  PPM-PL07 and PPM-L04 reconstruction schemes,
 respectively.
-We notice that the cube edges appear on the error graph when we use the ET4 scheme. This is an example of grid imprinting.
+We notice that the cube edges appear on the error graph when we use the ET-4 scheme. This is an example of grid imprinting.
 Although all schemes are second-order, the ghost cell interpolation-based schemes do seem to produce grid imprinting
 in the reconstruction problem.
-The graphs of ET1 are very similar to the graph of ET2 and the graphs of ET3 are very similar to the graph of ET4 (not shown).
+The graphs of ET1 are very similar to the graph of ET-2 and the graphs of ET-3 are very similar to the graph of ET4 (not shown).
 \newpage
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.49\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-PL07_et2_sphere}
-		\caption{ET2.\label{chp4-exp4-a}}
+		\caption{ET-2.\label{chp4-exp4-a}}
 	\end{subfigure}
 	\begin{subfigure}{0.49\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-PL07_et4_sphere}
-		\caption{ET4.\label{chp4-exp4-b}}
+		\caption{ET-4.\label{chp4-exp4-b}}
 	\end{subfigure}
 	\caption{Error for the edge midpoint values considering the trigonometric function (Equation \eqref{chp4-ic2})
-		with edges treatment schemes ET2 (a) and ET4 (b) for the cubed-sphere with $N=1024$ using the reconstruction PPM-PL07.\label{chp4-exp4}}
+		with edges treatment schemes ET-2 (a) and ET-4 (b) for the cubed-sphere with $N=1024$ using the reconstruction PPM-PL07.\label{chp4-exp4}}
 \end{figure}
 
 \begin{figure}[!htb]
@@ -541,12 +542,12 @@ The graphs of ET1 are very similar to the graph of ET2 and the graphs of ET3 are
 	\begin{subfigure}{0.49\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-L04_et2_sphere}
-		\caption{ET2.\label{chp4-exp5-a}}
+		\caption{ET-2.\label{chp4-exp5-a}}
 	\end{subfigure}
 	\begin{subfigure}{0.49\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-L04_et4_sphere}
-		\caption{ET4.\label{chp4-exp5-b}}
+		\caption{ET-4.\label{chp4-exp5-b}}
 	\end{subfigure}
 	\caption{As Figure in \ref{chp4-exp4} but using the PPM-L04 scheme.\label{chp4-exp5}}
 \end{figure}
