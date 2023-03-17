@@ -2377,32 +2377,32 @@ Section \ref{chp2-sec-numerical-exp-2}.
   \centering
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t9_N16_PPM-0_dpRK1}
+			\includegraphics[width=1\linewidth]{1d_adv_tc1_ic2_vf2_t39_N32_PPM-0_dpRK1}
 			\caption{PPM-0.\label{chp2-sec-exp-adv5-a}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t9_N16_PPM-PL07_dpRK1}
+			\includegraphics[width=1\linewidth]{1d_adv_tc1_ic2_vf2_t39_N32_PPM-PL07_dpRK1}
 			\caption{PPM-PL07.\label{chp2-sec-exp-adv5-b}}
   \end{subfigure}
 
   \begin{subfigure}{0.49\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t9_N16_PPM-CW84_dpRK1}
+		\includegraphics[width=1\linewidth]{1d_adv_tc1_ic2_vf2_t39_N32_PPM-CW84_dpRK1}
     \caption{PPM-CW84.\label{chp2-sec-exp-adv5-c}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t9_N16_PPM-L04_dpRK1}
+			\includegraphics[width=1\linewidth]{1d_adv_tc1_ic2_vf2_t39_N32_PPM-L04_dpRK1}
       \caption{PPM-L04.\label{chp2-sec-exp-adv5-d}}
   \end{subfigure} 
 
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t639_N1024_PPM-0_dpRK1}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t5119_N1024_PPM-0_dpRK1}
       \caption{Reference solution.\label{chp2-sec-exp-adv5-e}}
   \end{subfigure} 
-	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=16$, 
+	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=32$, 
 	the initial condition given by Equation \eqref{chp2-ic2}, the variable velocity given by Equation
 	\eqref{chp2-vel2} and the final time is 2.5 (half a period). In (e) we show a reference solution, using the PPM-0 scheme with 
 	1024 cells. \label{chp2-sec-exp-adv5}}
@@ -2412,9 +2412,9 @@ Section \ref{chp2-sec-numerical-exp-2}.
 We are going to consider the velocity
 \begin{equation}
 	\label{chp2-vel2}
-	u(x,t) = u_0\cos{\bigg(\frac{\pi t}{T}\bigg)}\sin^2(\pi x).
+	u(x,t) = u_0\cos{\bigg(\frac{\pi t}{T}\bigg)}\sin^2\bigg(\pi \bigg(x-\frac{t}{T}\bigg)\bigg) + u_1.
 \end{equation}
-We adopt the parameters $u_0 = 0.2$ and $T = 5$.
+We adopt the parameters $u_0 = u_1 = 0.2$,  and $T = 5$.
 In this case, the solution has a period equal to 5, then the profile returns to its
 initial shape and position after 5 time units we can compute the error.
 We point out that the velocity from Equation \eqref{chp2-vel2} is based on the deformational
@@ -2425,31 +2425,31 @@ use the departure point schemes RK1 and RK2 described in Section \ref{chp2-sec-f
   \centering
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t19_N16_PPM-0_dpRK1}
+			\includegraphics[width=1\linewidth]{1d_adv_tc1_ic2_vf2_t79_N32_PPM-0_dpRK1}
 			\caption{PPM-0.\label{chp2-sec-exp-adv6-a}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t19_N16_PPM-PL07_dpRK1}
+			\includegraphics[width=1\linewidth]{1d_adv_tc1_ic2_vf2_t79_N32_PPM-PL07_dpRK1}
 			\caption{PPM-PL07.\label{chp2-sec-exp-adv6-b}}
   \end{subfigure}
 
   \begin{subfigure}{0.49\textwidth}
     \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t19_N16_PPM-CW84_dpRK1}
+		\includegraphics[width=1\linewidth]{1d_adv_tc1_ic2_vf2_t79_N32_PPM-CW84_dpRK1}
     \caption{PPM-CW84.\label{chp2-sec-exp-adv6-c}}
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t19_N16_PPM-L04_dpRK1}
+			\includegraphics[width=1\linewidth]{1d_adv_tc1_ic2_vf2_t79_N32_PPM-L04_dpRK1}
       \caption{PPM-L04.\label{chp2-sec-exp-adv6-d}}
   \end{subfigure} 
-	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=16$, 
+	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=32$, 
 	the initial condition given by Equation \eqref{chp2-ic2} and the variable velocity given by Equation
 	\eqref{chp2-vel2} \label{chp2-sec-exp-adv6}.}
 \end{figure}
 In Figure \ref{chp2-sec-exp-adv5} we show the numerical after half period using the RK1
-scheme and $N=16$. 
+scheme and $N=32$. 
 We also depict a reference solution in Figure \ref{chp2-sec-exp-adv5-e} at a high resolution
 ($N=1024$).
 In Figure \ref{chp2-sec-exp-adv6} we show the profile obtained for each PPM scheme after
