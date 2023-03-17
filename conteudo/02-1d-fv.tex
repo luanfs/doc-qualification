@@ -1635,25 +1635,40 @@ which are quite popular in atmospheric modeling.
 For a review on departure point calculation methods, we refer to  \citet[Chapter 3]{tumolo:2011} and the references therein. 
 There are different approaches to compute the departure point, such as integrating the ODE from Equation \ref{chp2-sec-flux:prop1}
 using different time integrators \citep{durran:2011} backward in time.
-The Runge-Kutta methods are a possible choice to compute the departure point (cf. e.g. \citet{guo:2014}, \citet{lu:2022}). In this work,
-we shall consider a third-order Runge-Kutta to compute the departure point, which we express in terms of $\tilde{u}^n_{i+\frac{1}{2}}$ as
+The Runge-Kutta methods are a possible choice to compute the departure point (\textit{cf. e.g.} \citet{guo:2014}, \citet{lu:2022}). In this work,
+we shall consider a second-order Runge-Kutta to compute the departure point, which we express in terms of $\tilde{u}^n_{i+\frac{1}{2}}$ 
+using the following equations \citep{durran:2010}
 \begin{align}
-	\label{chp-sec-flux:dp_RK3}		
-	K_1 &= u(x_{i+\frac{1}{2}},t^{n+1}), \nonumber \\
-	K_2 &= u\big(x_{i+\frac{1}{2}}-\frac{\Delta t}{2}K_1,t^{n+1}-\frac{\Delta t}{2}\big), \nonumber \\
-	K_3 &= u\big(x_{i+\frac{1}{2}}-\frac{\Delta t}{2}K_2+{\Delta t}K_1,t^{n}\big), \nonumber\\
-	\tilde{u}^n_{i+\frac{1}{2}} &= \frac{K_1+4K_2+K_3}{6}.
+	\label{chp-sec-flux:dp_RK2}		
+	x^{d}_{i+\frac{1}{2}} &= x_{i+\frac{1}{2}} - u_{i+\frac{1}{2}}^n \frac{\Delta t}{2}, \nonumber \\
+	\tilde{u}^n_{i+\frac{1}{2}} &= u\bigg(x^{d}_{i+\frac{1}{2}}, t^n + \frac{\Delta t}{2}\bigg).
 \end{align}
-This scheme leads to a 4-th order error in departure point: 
+Notice that this scheme requires values of $u$ at points that are not grid points, both in time and space. 
+This problem is addressed firstly using a second-order extrapolation in time
+\begin{equation}
+	u^{n+\frac{1}{2}}_{i+\frac{1}{2}} = \frac{3}{2}u^{n}_{i+\frac{1}{2}}-\frac{1}{2}u^{n-1}_{i+\frac{1}{2}}.
+\end{equation}
+and then we use a linear interpolation in space,
+\begin{equation}
+	\tilde{u}^n_{i+\frac{1}{2}}  = 
+	\begin{cases}
+		\bigg(1-\frac{x_{i+\frac{1}{2}} - x^{d}_{i+\frac{1}{2}}}{\Delta x} \bigg)u^{n+\frac{1}{2}}_{i+\frac{1}{2}} + 
+		\bigg(\frac{x_{i+\frac{1}{2}}-x^{d}_{i+\frac{1}{2}}}{\Delta x}\bigg)u^{n+\frac{1}{2}}_{i-\frac{1}{2}}	& 
+		\text{if } {u}^n_{i+\frac{1}{2}}\geq 0,\\
+		\bigg(\frac{x_{i+\frac{1}{2}} - x^{d}_{i+\frac{1}{2}}}{\Delta x} \bigg)u^{n+\frac{1}{2}}_{i+\frac{3}{2}} + 
+		\bigg(1-\frac{x_{i+\frac{1}{2}}-x^{d}_{i+\frac{1}{2}}}{\Delta x}\bigg)u^{n+\frac{1}{2}}_{i+\frac{1}{2}}	& 
+		\text{if } {u}^n_{i+\frac{1}{2}} < 0.\\
+	\end{cases}
+\end{equation}
+This scheme leads to a 3-th order error in departure point (see \textit{e.g.} \citet[Section 7.1.2]{durran:2010} ): 
 \begin{align}		
-	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2}}\Delta t + C\Delta t^4,
+	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2}}\Delta t + C\Delta t^3,
 \end{align}
-where is a constant depending on $u$ and its derivatives.
-This scheme shall be referred to as \textbf{RK3}.
-Notice that the Runge-Kutta scheme requires values of $u$ at points that are not grid points, both in time and space. 
-A possible way to overcome this problem is to use interpolation in space and extrapolation in time using the grid data, 
-as it is usual in Semi-Lagrangian schemes. In this Chapter we are going to simplify and assume that the values of $u$ are known at the
-whole domain.
+where $C$ is a constant depending on $u$ and its derivatives.
+This scheme shall be referred to as \textbf{RK2}. Notice that for this scheme, we need ghost values
+for the velocity, namely ${u}^n_{-\frac{1}{2}}$ and ${u}^n_{N+\frac{3}{2}}$.
+The linear interpolation described makes sense when we assume the CFL condition. When we have a larger 
+CFL number, it is straightforward to modify the linear interpolation to compute the velocity needed.
 \subsubsection{Numerical flux}
 Let us assume the framework from Problem \ref{chp2-sec2-prob3}.
 Supposing that $Q^{n} \in \mathbb{R}^{\Delta x}$ is known,
@@ -1662,7 +1677,7 @@ This is achieved using a scheme of the type given in Problem \ref{chp2-sec2-prob
 Therefore, we need to estimate the time-averaged flux. 
 From Proposition \ref{chp2-sec-flux:prop1}, we conclude that the time-averaged flux
 may be compute as a spatial integral, which requires an estimate of the departure point using, for instance,
-a time-average velocity as in Equations \eqref{chp-sec-flux:departurepoint3} and \eqref{chp-sec-flux:dp_RK3}.
+a time-average velocity as in Equations \eqref{chp-sec-flux:departurepoint3} and \eqref{chp-sec-flux:dp_RK2}.
 For each control volume edge $i=0, \cdots, N$ and $y>0$ 
 we define the following average of the Piecewise-Parabolic approximation
 defined in Equation \eqref{chp2-sec3-1-eq2} for $Q^{n}$ \citep{colella:1984}:
@@ -2168,13 +2183,13 @@ than the monotonic schemes.
 \newpage
 \subsection{Linear advection equation with constant velocity simulations}
 \label{chp2-sec-numerical-exp-1}
-For the linear advection equation with the constant velocity we shall adopt the $u=0.2$ and 
+For the linear advection equation with constant velocity we shall adopt the $u=0.2$ and 
 a CFL number equal to $0.8$.
 The spatial domain will be given by $[0,1]$ and the time integration interval will be $[0,5]$. We again use $\Delta x^{(k)}-$grids with $\Delta x^{(k)} = 1/2^k$ for $k=4,
  \cdots, 10$.
 Since we are going to assume periodic boundary conditions, the period is equal to $5$. 
 Hence, the simulations presented here shall advect an initial profile for one time period. 
-The departure schemes RK1 and RK3 introduced in Section \ref{chp2-sec-flux} compute
+The departure schemes RK1 and RK2 introduced in Section \ref{chp2-sec-flux} compute
 the departure point exactly in this case, therefore we are going only to use the RK1 scheme.
 This shall be the general setup for all simulations presented in this subsection. 
 What will distinguish the simulations is the initial condition.
@@ -2404,7 +2419,7 @@ In this case, the solution has a period equal to 5, then the profile returns to 
 initial shape and position after 5 time units we can compute the error.
 We point out that the velocity from Equation \eqref{chp2-vel2} is based on the deformational
 flow test case from on \citet{nair:2010}. Since the velocity is variable, we are going to
-use the departure point schemes RK1 and RK3 described in Section \ref{chp2-sec-flux}.
+use the departure point schemes RK1 and RK2 described in Section \ref{chp2-sec-flux}.
 
 \begin{figure}[!htb]
   \centering
@@ -2441,13 +2456,13 @@ In Figure \ref{chp2-sec-exp-adv6} we show the profile obtained for each PPM sche
 one period.
 From Figures \ref{chp2-sec-exp-adv5} and \ref{chp2-sec-exp-adv6} we get a similar
 conclusion about the dissipation of each scheme as in Section \ref{chp2-sec-numerical-exp-2}.
-The difference between the schemes RK1 and RK3 is clear when we observe the relative error
+The difference between the schemes RK1 and RK2 is clear when we observe the relative error
 in Figure \ref{chp2-sec-exp-adv6-2} and the convergence rate in
 Figure \ref{chp2-sec-exp-adv6-3}.
 The RK1 scheme leads to a first-order in the departure point that dominates the total error
 for all PPM schemes, in agreement with Proposition \ref{chp2-sec-flux:prop4}.
-When we employ the RK3 scheme, we can achieve third-order for the schemes PPM-0
-and PPM-L07 as expected from Proposition \ref{chp2-sec-flux:prop4}.
+When we employ the RK2 scheme, we can achieve third-order for the schemes PPM-0
+and PPM-L07 which is better than the expected from Proposition \ref{chp2-sec-flux:prop4}.
 This experiment illustrates the impact of the error in the departure point calculation
 in the total error.
 
@@ -2460,10 +2475,10 @@ in the total error.
   \end{subfigure}
   \begin{subfigure}{0.49\textwidth}
     \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK3_normlinf_parabola_errors}
-		\caption{RK3.\label{chp2-sec-exp-adv6-rl3}}
+			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK2_normlinf_parabola_errors}
+		\caption{RK2.\label{chp2-sec-exp-adv6-rl3}}
   \end{subfigure}
-	\caption{ Relative error for different PPM schemes using the RK1 (left) and RK3 (right)
+	\caption{ Relative error for different PPM schemes using the RK1 (left) and RK2 (right)
 	departure point scheme for the initial condition given by Equation
 	\eqref{chp2-ic2} and the variable 
 	velocity given by Equation \eqref{chp2-vel2}.\label{chp2-sec-exp-adv6-2}}
@@ -2478,10 +2493,10 @@ in the total error.
 	\end{subfigure}
 	\begin{subfigure}{0.49\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK3_normlinf_convergence_rate}
-		\caption{RK3.\label{chp2-sec-exp-adv6-cf-rk3}}
+		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK2_normlinf_convergence_rate}
+		\caption{RK2.\label{chp2-sec-exp-adv6-cf-RK2}}
 	\end{subfigure}
-	\caption{ Convergence rate for different PPM schemes using the RK1 (left) and RK3 (right)
+	\caption{ Convergence rate for different PPM schemes using the RK1 (left) and RK2 (right)
 	departure point scheme for the initial condition given by Equation
 	\eqref{chp2-ic2} and the variable 
 	velocity given by Equation \eqref{chp2-vel2}.\label{chp2-sec-exp-adv6-3}}
@@ -2500,7 +2515,7 @@ and some of its variants. Without monotonicity constraints, we were able to
 achieve third in the reconstruction process.
 The second task was performed using the first-order departure point calculation from
 \citet{colella:1984} (RK1). We also explored a third-order approach using a three stages
-Runge-Kutta scheme (RK3) to integrate the departure point ODE.
+Runge-Kutta scheme (RK2) to integrate the departure point ODE.
 
 From the numerical experiments, we observe that the PPM-L07 \citep{putman:2007},
 which uses a fifth-order reconstruction at the edges, leads to a third-order but more
@@ -2512,8 +2527,12 @@ overshoots, with the PPM-L04 \citep{lin:2004} being more accurate than \citep{co
 The difference between the  departure point schemes was observed 
 when we performed a test with variable velocity,
 where the simulation performed with RK1 scheme led to a final first-order error, despite
-of third-order accuracy in the space, while the RK3 scheme preserves to 
-third-order accuracy of the scheme. Clearly, the RK3 leads to a more expensive scheme.
+of third-order accuracy in the space, while the RK2 scheme preserves to 
+third-order accuracy of the scheme, despite the RK2 scheme is only second-order accurate.
+We expect that, in general, the PPM combined with the RK2 scheme must be at least second-order
+accurate.
+Clearly, the RK2 leads to a more expensive scheme, since
+we need to compute a time extrapolation and a linear interpolation of the velocity field.
 A possible way to reduce its cost would be to use a Semi-Lagrangian version of the PPM
 when computing the numerical flux \citep{chen:2017}, which allows large time steps,
 as we shortly explained in Section \ref{chp2-sec-flux}.
