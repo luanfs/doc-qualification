@@ -921,9 +921,9 @@ Figure \ref{chp3-sec-exp-adv3}.
 Employing the RK1 scheme and also considering the PPM-PL07 scheme, 
 from Figure \ref{chp3-sec-exp-adv5} and Figure \ref{chp3-sec-exp-adv6} we observe that the AVLT has the larger error considering and
 all schemes have first-order of accuracy (Figure \ref{chp3-sec-exp-adv6-error1}).
-However, when we use the RK3 scheme, the most accurate schemes are obtained with AVLT with PPM-L07,
+However, when we use the RK2 scheme, the most accurate schemes are obtained with AVLT with PPM-L07,
 which reaches third-order (Figure \ref{chp3-sec-exp-adv6-error2}), despite AVLT being second-order, followed by AVLT with PPM-L04 (Figure \ref{chp3-sec-exp-adv5-error2}).
-The other schemes seem only to not improve but get a larger error using RK3. Therefore, we conclude that the L04 and PL07 splitting 
+The other schemes seem only to not improve but get a larger error using RK2. Therefore, we conclude that the L04 and PL07 splitting 
 introduce a first-order error. Furthermore, these schemes do not seem to differ from each other.
 \begin{figure}[!htb]
 	\centering
@@ -974,7 +974,7 @@ the PL07 and L04 schemes are slightly more accurate than AVLT for the 1D PPM-PL0
 All these schemes reaches a converge-order superior to two (Figure \ref{chp3-sec-exp-adv8-error1}).
 When we use the 1D scheme PPM-L04, all the splitting method are very similar,
 regardless the departure point scheme.
-However, when use the RK3 schemes, the AVLT is the most accurate and reaches third-order (Figure \ref{chp3-sec-exp-adv8-error2}).
+However, when use the RK2 schemes, the AVLT is the most accurate and reaches third-order (Figure \ref{chp3-sec-exp-adv8-error2}).
 
 \begin{figure}[!htb]
 	\centering
@@ -985,15 +985,15 @@ However, when use the RK3 schemes, the AVLT is the most accurate and reaches thi
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf2_dpRK3_normlinf_parabola_errors}
-		\caption{RK3.\label{chp3-sec-exp-adv5-error2}}
+		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf2_dpRK2_normlinf_parabola_errors}
+		\caption{RK2.\label{chp3-sec-exp-adv5-error2}}
 	\end{subfigure}
 	\caption{Convergence of the error for the schemes
 	PPM-PL07and PPM-L04 with AVLT/L04/PL07/ splitting
 	applied to the linear advection problem using a velocity from Equation
 	a CFL number equal to $0.8$, a final time of integration equal to 5 time units
 	and the initial condition given by Equation \eqref{chp3-ic1}.
-	The departure points are computed using the RK1 (left) and RK3 (right) schemes.\label{chp3-sec-exp-adv5}}
+	The departure points are computed using the RK1 (left) and RK2 (right) schemes.\label{chp3-sec-exp-adv5}}
 \end{figure}
 
 \begin{figure}[!htb]
@@ -1005,8 +1005,8 @@ However, when use the RK3 schemes, the AVLT is the most accurate and reaches thi
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf2_dpRK3_normlinf_convergence_rate}
-		\caption{RK3.\label{chp3-sec-exp-adv6-error2}}
+		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf2_dpRK2_normlinf_convergence_rate}
+		\caption{RK2.\label{chp3-sec-exp-adv6-error2}}
 	\end{subfigure}
 	\caption{Similar to Figure \ref{chp3-sec-exp-adv5} but considering the convergence rate.\label{chp3-sec-exp-adv6}}
 \end{figure}
@@ -1021,8 +1021,8 @@ However, when use the RK3 schemes, the AVLT is the most accurate and reaches thi
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf3_dpRK3_normlinf_parabola_errors}
-		\caption{RK3.\label{chp3-sec-exp-adv7-error2}}
+		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf3_dpRK2_normlinf_parabola_errors}
+		\caption{RK2.\label{chp3-sec-exp-adv7-error2}}
 	\end{subfigure}
 	\caption{Similar to Figure \ref{chp3-sec-exp-adv5} but using the velocity from Equation \eqref{chp3-vf2}.\label{chp3-sec-exp-adv7}}
 \end{figure}
@@ -1036,29 +1036,29 @@ However, when use the RK3 schemes, the AVLT is the most accurate and reaches thi
 	\end{subfigure}
 	\begin{subfigure}{0.45\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf3_dpRK3_normlinf_convergence_rate}
-		\caption{RK3.\label{chp3-sec-exp-adv8-error2}}
+		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf3_dpRK2_normlinf_convergence_rate}
+		\caption{RK2.\label{chp3-sec-exp-adv8-error2}}
 	\end{subfigure}
 	\caption{Similar to Figure \ref{chp3-sec-exp-adv6} but using the velocity from Equation   \eqref{chp3-vf2}.\label{chp3-sec-exp-adv8}}
 \end{figure}
 
 \break
 \section{Concluding remarks}
-In this Chapter, we introduced the dimension-splitting method which replaces the solution
-of the 2D advection equation by the solution of multiples 1D advection equations.
+In this chapter, we introduced the dimension-splitting method which replaces the solution
+of the 2D advection equation by the solution of multiple 1D advection equations.
 The average of two Lie-Trotter splitting. which is second-order accurate, was modified to ensure the preservation of a constant scalar field
 with a divergence-free velocity, which the classical averaging Lie-Trotter splitting lacks, following
 the methodology used in FV3.
 
 From the constant velocity simulations, we conclude that all the splitting schemes are equal 
-and they do not introduce any splitting error. In fact, they are exact. We could observe
-that all conclusion for the 1D simulations were wit in the 2D case, with mass conservation
-and monotonicity  being respected in the 2D case whenever we employ it in the 1D subproblems.
+and they do not introduce any splitting error. In fact, the splittings are exact. We could observe
+that all conclusions for the 1D simulations were wit in the 2D case, with mass conservation
+and monotonicity  being respected in the 2D case whenever we employ the monotic limiters in the 1D subproblems.
 
-For variable velocity simulations, we investigated two deformation test cases.
+For variable velocity simulations, we investigated two flow deformation test cases.
 We observed that all splitting schemes preserved the monotonicity.
 The schemes PL07 and L04 yields very similar results and they introduced a first-order error,
-which was observed when we employed the RK3 scheme to compute the departure point.
+which was observed when we employed the RK2 scheme to compute the departure point.
 In this case, the AVLT reached third-order of accuracy, which is better than expected since this scheme
 is only second-order. Therefore, we can conclude that a more accurate departure point calculation
 benefits more the AVLT splitting. However, when using a first-order departure point computation, the splitting schemes
