@@ -19,51 +19,47 @@
 \theoremstyle{plain}
 \newtheorem{definition}{Definition}[chapter]
 
+The aim of this chapter is to provide a detailed description of one-dimensional (1D)
+finite-volume (FV) schemes within a Semi-Lagrangian (SL) framework, specifically applied
+to the 1D advection equation with periodic boundary conditions. To introduce the FV-SL
+schemes, we begin by discretizing the spatial and temporal domains into uniform grids.
+Subsequently, the FV-SL schemes involve three steps.
+    
 
-The aim of this chapter is to give a detailed description of the celebrated
-Piecewise-Parabolic Method (PPM) proposed by \citet{colella:1984}.
-As we shall see, the PPM is a one-dimensional finite-volume method for
-hyperbolic conservation laws that at each time step requires two tasks. 
-The first task may be stated as: given the estimates of average values of the
-conservation laws solution, find a Piecewise-Parabolic function that approximates 
-the function and preserves its local integral value (also referred as local mass).
-The second task is the following: given the Piecewise-Parabolic approximation 
-(also known as reconstruction), solve the conservation law using the parabolas 
-to obtain the solution at the next time-step.
-For instance, if the conservation law is the advection equation, the second step
-consists of advecting the parabolas.
-In the first step, we may also require some monotonization constraints on the parabolas,
-to ensure that no new extreme value is created in the Piecewise-Parabolic reconstruction, 
-ensuring that the scheme is free of numerical oscillations.
-The steps required for PPM make it an REA (reconstruct, evolve, and average) algorithm,
-or also referred to as a Godonuv-type method, which was originally proposed by 
-\citet{godunov:1959}.
+The first step involves computing the departure points of the spatial grid edges.
+The second step, known as reconstruction, utilizes the grid cell average values to
+determine a piecewise function within each cell. This piecewise function approximates the
+values of the advected quantity and ensures the preservation of its local mass within each grid cell.
+The third step entails updating the fluxes at the grid edges by integrating the reconstruction
+function over a domain that extends from the departure point of the grid edge to the grid edge itself.
 
-The PPM approach has become popular in the literature for gas 
-dynamics simulations, astrophysical phenomena modeling \citep{woodward:1986}
-and later on atmospheric simulations \citep{carpenter:1990}.
-Indeed, the PPM has been implemented in the FV3 dynamical core on its 
-latitude-longitude grid \citep{lin:2004} and cubed-sphere \citep{putman:2007}
-versions.
-We point out that the reconstruction function may be built using other basis 
-functions rather than parabolas. In fact, PPM may be thought of as an extension of 
-the Piecewise-Linear method from \citet{vanleer:1977}, which, on the other hand,
-was inspired by the Piecewise-Constant method attributed to \citet{godunov:1959}.
-Besides that, other schemes inspired by PPM were proposed in the literature using
-higher-order polynomials, such as quartic polynomials \citep{white:2008}.
-For a review of general piecewise-polynomial reconstruction we refer 
-to the technical report from \citet{engwirda:2016}, \citet{lauritzen:2011}
-and the references therein.
-Even though many other shapes for the basis functions are available in the 
-literature, as well higher order schemes, \citet{harris:2021} points out that the PPM
-scheme suits well the FV3 needs in the sense of being a flexible method 
-that can be modified to ensure low diffusivity or shape-preservation, for example.
-Besides that, a finite-volume numerical method usually requires
-monotonicity constraints, which by Godunov's theorem, limits 
-the order of convergence to at most 1.
-Thus, a higher-order scheme needs to be well-balanced on the trade-off between 
-computational cost increasing and potential benefits.
+The first step of FV-SL schemes can be accomplished by integrating an ordinary differential
+equation backward in time.
+The second step is performed using the Piecewise-Parabolic Method (PPM) proposed by \citet{colella:1984}.
+As the name suggests, PPM employs piecewise-parabolic functions.
+The third and final step is computed exactly, as the reconstruction functions consist of parabolas that preserve the local mass.
 
+It is worth noting that the reconstruction function can be constructed using functions other than parabolas. In fact, the Piecewise-Parabolic Method (PPM) can be seen as an
+extension of the Piecewise-Linear method proposed by \citet{vanleer:1977}, which,
+in turn, was inspired by the Piecewise-Constant method introduced by \citet{godunov:1959}. 
+Additionally, other schemes inspired by PPM have been proposed in the literature utilizing
+higher-order polynomials, such as quartic polynomials \citep{white:2008}. For a
+comprehensive review of general piecewise-polynomial reconstruction, we recommend
+referring to the technical report by \citet{engwirda:2016}, \citet{lauritzen:2011}, and the
+references therein.
+
+
+The PPM approach has become popular in the literature for gas dynamics simulations, astrophysical 
+phenomena modeling \citep{woodward:1986}, and later on atmospheric simulations \citep{carpenter:1990}. 
+Indeed, PPM has been implemented in the FV3 dynamical core on its latitude-longitude grid \citep{lin:2004}
+and cubed-sphere \citep{putman:2007} versions.
+Although many other shapes for the basis functions and higher-order schemes are available in the literature, 
+\citet{harris:2021} points out that the PPM scheme suits the needs of FV3 well. It is a flexible method that
+ can be modified to ensure low diffusivity or shape preservation, for example.
+Additionally, a finite-volume numerical method usually requires monotonicity constraints, which, according 
+to Godunov's theorem, limit the order of convergence to at most 1. 
+Therefore, a higher-order scheme needs to strike a well-balanced trade-off between increasing computational 
+cost and potential benefits.
 
 This chapter starts with a basic review of one-dimensional conservation laws in
 the integral form in Section \ref{chp2-sec1}, and in Section \ref{chp2-sec2} 
@@ -81,116 +77,111 @@ some conclusions.
 The usage of PPM to solve two-dimensional problems
 will be addressed in Chapter \ref{chp-2d-fv}.
 
-\section{One-dimensional conservation law in integral form}
+\section{One-dimensional advection equation in integral form}
 \label{chp2-sec1}
-In this section, we are going to present the derivation of one-dimensional 
-conservation laws in the integral form. 
-The derivation presented here follows \citet{leveque:1990} and \citet{leveque:2002} closely and will
-be useful to fix some notation. \index{Conservation law}
-Let us assume that $x$ and $t$ represent the spatial and time coordinates, respectively.
-Given $[x_1, x_2] \subset \mathbb{R}$, $x_1 \leq x_2$, and a time 
-interval $[t_1, t_2] \subset ]0, +\infty[$, $t_1 \leq t_2$, 
-we aim to describe how a state variable density given by a function
-$q: \mathbb{R}\times[0, +\infty[ \to \mathbb{R}$ 
-evolve within time in the considered time interval, assuming that we have neither sinks nor sources 
-for the mass of the state variable and also assuming that the mass
-flow rate is known.
-
-To set the problem in more mathematical terms, let us denote by 
-${q}: \mathbb{R}\times [0, +\infty[\to \mathbb{R}$, 
-${q} = {q}(x,t)$, the state variable.
-The mass of ${q}$ in $[x_1, x_2]$ at time $t$ is defined by:
+\subsection{Notation}
+Before introducing the FV-SL schemes, let us establish some notation by introducing
+the concepts of a $\Delta x$-grid, a $\Delta t$-temporal grid, and the
+$(\Delta x, \Delta t, \lambda)$-discretization, as well as the concept of grid function/winds.
+\begin{definition}[$\Delta x$-grid]
+	For a given interval $[a,b]$ and a positive real number $\Delta x$ such that $\Delta x = (b-a)/N$ for some positive integer $N$, 
+	we say that $\mathcal{X} = \{X_i \}_{i=1}^{N}$ is a $\Delta x$-grid for $[a,b]$ if
+	$X_i = [x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}]$,
+	$a = x_{\frac{1}{2}} < x_{\frac{3}{2}} < \cdots < x_{N-\frac{1}{2}} < x_{N+\frac{1}{2}} = b$,
+	and $\Delta x = x_{i+\frac{1}{2}} - x_{i-\frac{1}{2}}$. 
+	Each $X_i$ is referred to as a control volume or cell, and $x_{i-\frac{1}{2}}$ and 
+	$x_{i+\frac{1}{2}}$ are the edges of the control volume $X_i$.
+	The cell centroid is defined by $x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}})$, $\forall i = 1, \cdots, N$, 
+	and $\Delta x$ is the cell length.
+\end{definition}
+\begin{remark}
+	We may extend the definition of cells $X_i$ for values of $i$ outside the range $1,\cdots,N$ as $X_i = [a+(i-1)\Delta x, a+i\Delta x]$.
+	These cells are known as ghost cells.
+\end{remark}
+\begin{definition}[$\Delta t$-temporal grid]
+	For a given interval $[0,T]$ and a positive real number $\Delta t$ such that $\Delta t = T/N_T$
+    for some positive integer $N_T$, we say that  $\mathcal{T} = \{T_n\}_{n=0}^{N_T}$ a $\Delta t$-temporal grid for $[0,T]$ if
+	$T_n = [t^n, t^{n+1}]$, $t^n = n\Delta t$, $\Delta t = \frac{T}{N_T}$, for all $n = 0, \cdots, N_T$.
+\end{definition}
+\begin{definition}[$(\Delta x,\Delta t, \lambda)$-discretization]
+	Given $[a,b]\times [0,T]$ and positive real numbers $\Delta x$ and $\Delta t$,
+    we say that $(\mathcal{X}, \mathcal{T})$ is a $(\Delta x, \Delta t, \lambda)$-discretization 
+    of $[a,b]\times [0,T]$ as follows: $\mathcal{X}$ is a $\Delta x$-grid for $[a,b]$, 
+    $\mathcal{T}$ is a $\Delta t$-temporal grid for $[0,T]$, and $\frac{\Delta t}{\Delta x} = \lambda$.
+\end{definition}
+\begin{remark}
+	Whenever we refer to a $\Delta x$-grid, a $\Delta t$-temporal grid, or a $(\Delta x, \Delta t, \lambda)$-discretization, 
+	the values of $X_i$, $N$, $t^n$, and $N_T$ are assumed to be implicitly defined.
+\end{remark}
+Next, we introduce the definitions of grid functions at cell centroids and edges.
+\begin{definition}[$\Delta x$-grid function]
+	For a $\Delta x$-grid $\mathcal{X}$, we say that $Q$ is a $\Delta x$-grid function if $Q = (Q_1, \ldots, Q_N) \in \mathbb{R}^N$.
+	We denote the space of $\Delta x$-grid functions by $\mathbb{R}^{\Delta x}$.
+\end{definition}
+\begin{definition}[$\Delta x$-C-grid wind]
+	For a $\Delta x$-grid $\mathcal{X}$, we say that $u$ is a $\Delta x$-C-grid function if
+	$u = (u_{\frac{1}{2}}, \ldots, u_{N+\frac{1}{2}}) \in \mathbb{R}^{N+1}$.
+	We denote the space of $\Delta x$-C-grid winds by $\mathbb{R}^{\Delta x, C}$.
+\end{definition}
+The definition of a $\Delta x$-C-grid wind is based on the Arakawa grids \citep{arakawa:1977}.
+Given a $\Delta x-$grid and $Q \in \mathbb{R}^{\Delta x}$, we define the $p$-norm by
 \begin{equation}
-	\label{chp2-sec1-eq1}
-	{M}_{[x_1, x_2]}(t) := \int_{x_1}^{x_2} {q}(x,t) \,dx.
+	\label{chp2-sec-not1}
+	\|Q\|_{p,\Delta x}=
+	\begin{cases}
+		\bigg( \sum_{i=1}^{N} |Q_i|^p \bigg)^{\frac{1}{p}} & \text{if } 1\leq p < \infty,\\
+		\max_{i=1, \cdots, N}{|Q_i|} & \text{otherwise }.
+	\end{cases}
 \end{equation}
+Using a similar notation to \citet{engwirda:2016}, we define the $(r, s)$-stencil and a grid function evaluated on a stencil as follows.
+\begin{definition}[$(r, s)$-stencil]
+	For a $\Delta x$-grid $\mathcal{X}$ and each $i = 0, \ldots, N$, we define a $(r, s)$-stencil as
+	$\mathcal{S}_{i+\frac{1}{2}} = \{i-r+1, \ldots, i-1, i, i+1, \ldots, i+s\}$.
+\end{definition}
+\begin{definition}[Grid function restricted to a stencil]
+	For a $\Delta x$-grid, a $(r, s)$-stencil $\mathcal{S}_{i+\frac{1}{2}}$,
+	 and a $\Delta x$-grid function $Q$, we define $Q(\mathcal{S}_{i+\frac{1}{2}}) = (Q_k)_{k \in \mathcal{S}_{i+\frac{1}{2}}}$.
+\end{definition}
+These definitions provide the necessary notation for describing grid functions and their evaluations on stencils.
 
-%Thus, the mass in $[x_1, x_2]$ of the $k$-th state variable $q_k$ is equal to
-%$({M}_{[x_1, x_2]}(t))_k$, $\forall k = 1, \cdots, m$.
-We are going to assume the following physical constraints concerning the total mass of the state variable:
-\begin{enumerate}
-	\item No mass is created;
-	\item No mass is destroyed.
-\end{enumerate}
+When computing $Q(\mathcal{S}_{i+\frac{1}{2}})$, it may be necessary to access values of $Q_i$ for $i$ outside the range $1,\ldots,N$.
+In such cases, we can consider $Q_i$ as a ghost cell value.
+Since we assume periodic boundary conditions in this chapter, this issue is resolved by assuming periodicity in the grid function $Q$.
+For example, for a $(3,3)$-stencil, we can assume $Q_{0} = Q_{N}$, $Q_{-1} = Q_{N-1}$, $Q_{-2} = Q_{N-2}$, and
+$Q_{N+1}=Q_1$, $Q_{N+2}=Q_2$, $Q_{N+2}=Q_3$. The same applies to $\Delta x$-C-grid winds.
+Furthermore, considering functions $q, u: [a,b]\times[0,T] \to \mathbb{R}$ and a $(\Delta x,\Delta t, \lambda)$-discretization of $[a,b]\times[0,T]$, we introduce the grid functions $q^n \in \mathbb{R}^{\Delta x}$ and $u^n \in \mathbb{R}^{\Delta x,C}$. Here, ${q}^n_{i} = {q}(x_i, t^{n})$ and $u^n_{i+\frac{1}{2}} = u(x_{i+\frac{1}{2}},t^n)$ for $n=0, \ldots, N_T$. These grid functions represent the discrete values of $q$ and $u$ at the cell centroids and edges, respectively, for each time level $t^n$.
 
-Also, let us assume that the mass flow rate in a point $x$ and at a time 
-$t > 0$ is given by ${f}({q}(x,t))$, where ${f}:\mathbb{R} \to \mathbb{R}$ is 
-a continuously differentiable ($\mathcal{C}^1$) function. This function ${f}$ is known as flux function.
-With the physical constraints that we imposed, the following equation must hold for the mass:
+Additionally, we introduce the average value of $q$ in the $i$-th control volume at time $t$, denoted as ${Q}i(t)$, defined by:
+\begin{equation}
+	\label{chp2-sec1-not2}
+	{Q}_i(t) = \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x,t) ,dx.
+\end{equation}
+Moreover, we define the $\Delta x$-grid function of average values as $Q(t) = (Q_1(t), Q_2(t), \ldots, Q_N(t))$.
+Here, $Q_i(t)$ represents the average value of $q$ in the $i$-th control volume at time $t$.
+
+\subsection{The 1D advection equation}
+In this section, we will present the derivation of the 1D advection equation in its integral form.
+Let us assume that $x$ and $t$ represent the spatial and time coordinates, respectively.
+The advection in the differential form is given by:
+\begin{equation}
+	\label{chp2-sec-adv-1}
+	\frac{\partial q}{\partial t}(x, t) +
+	\frac{\partial (uq)}{\partial x}(x, t)
+	= 0, \quad \forall (x,t) \in \mathbb{R}\times ]0, +\infty[.
+\end{equation}
+Here, $q: \mathbb{R}\times[0, +\infty[ \to \mathbb{R}$ represents the advected quantity, 
+and $u: \mathbb{R}\times[0, +\infty[ \to \mathbb{R}$ represents the velocity.
+We assume that both $q$ and $u$ are continuously differentiable functions.
+We will focus on the advection equation with periodic boundary conditions on 
+$D = [a,b]\times[0,T]$, where $a<b$ and $T>0$. The boundary conditions are given as:
 \begin{equation}
 	\label{chp2-sec1-eq2}
-	\frac{d}{dt} \bigg( \int_{x_1}^{x_2} {q}(x,t) \,dx \bigg) = 
-	{f}({q}(x_1,t)) - {f}({q}(x_2,t)) .
+	{q}(a, t) = {q}(b, t),\quad \forall t \in [0, T].
 \end{equation}
-Equation \eqref{chp2-sec1-eq2} is known as a conservation law written in integral form and tell us how the mass 
-${M}_{[x_1, x_2]}(t)$ varies with time. Another integral form of the conservation law may be obtained integrating
-Equation \eqref{chp2-sec1-eq2} with respect to time in $[t_1, t_2]$ leading to: \index{Conservation law !in integral form}
-\begin{equation}
-	\label{chp2-sec1-eq3}
-	\int_{x_1}^{x_2} {q}(x, t_2) \,dx = 
-	\int_{x_1}^{x_2} {q}(x, t_1) \,dx + 
-	\int_{t_1}^{t_2} {f}({q}(x_1, t)) \,dt -
-	\int_{t_1}^{t_2}{f}({q}(x_2, t)) \,dt .
-\end{equation}
+Furthermore, we are given an initial condition $q_0(x) = q(x,0)$. Thus, a Cauchy problem is specified.
+We say that ${q}$ is a strong or classical solution to the advection equation
+if it is $\mathcal{C}^1$ and satisfies the Equation \eqref{chp2-sec1-eq1}.
 
-Assuming that ${q}$ is a $\mathcal{C}^1$ function, we may write:
-\begin{equation}
-	\label{chp2-sec1-eq4}
-	\int_{t_1}^{t_2} 
-	\frac{\partial q}{\partial t}(x,t) \,dt
-	= {q}(x, t_2) - {q}(x, t_1) ,
-\end{equation}
-and
-\begin{equation}
-	\label{chp2-sec1-eq5}
-	\int_{x_1}^{x_2} \frac{\partial f}{\partial x}({q}(x,t)) \,dx 
-	= {f}({q}(x_2, t)) -
-	{f}( {q}(x_1, t)) .
-\end{equation}
-
-Replacing Equations \eqref{chp2-sec1-eq4} and \eqref{chp2-sec1-eq5}
-in \eqref{chp2-sec1-eq3} we get the differential form of the conservation law:
-\index{Conservation law !in differential form}
-\begin{equation}
-	\label{chp2-sec1-eq6}
-	\int_{t_1}^{t_2} \int_{x_1}^{x_2} 
-	\bigg( \frac{\partial q}{\partial t}(x, t) 
-	+ \frac{\partial f}{\partial x}({q}(x, t)) \bigg) 
-	\,dx \,dt  = 0.
-\end{equation}
-
-Since Equation \eqref{chp2-sec1-eq6} must hold for all $x_1, x_2, t_1$ and $t_2$ such that
-$[x_1, x_2] \times [t_1, t_2] \subset \mathbb{R}\times ]0, +\infty[$, we obtain the differential form of the conservation law:
-\begin{equation}
-	\label{chp2-sec1-eq7}
-	\frac{\partial q}{\partial t}(x, t) +
-	\frac{\partial f}{\partial x} ({q}(x, t))
-	= 0, \quad \forall (x,t) \in \mathbb{R}\times ]0, +\infty[. 
-\end{equation}
-
-%We shall assume that the eigenvalues of the Jacobian matrix of the flux function
-%$D{f}(q)$ are all real and that $D{f}(q)$ is a diagonalizable matrix,
-%$\forall q \in \mathbb{R}^m$, so that 
-Equation \eqref{chp2-sec1-eq7}
-is a hyperbolic partial differential equation \citep{leveque:1990}. As we will 
-specify latter, some initial conditions will also be supposed to be known as well.
-
-Many physically relevant equations may be written as Equation \eqref{chp2-sec1-eq7}.
-%Some examples are the Euler equations for gas dynamics, obtained when $m = 3$,
-%and the one-dimensional shallow-water equations, obtained $m = 2$.
-For instance, the Burgers equation, which is obtained when
-$m = 1$ and $f(q) = q^2$. The Burgers equation is well known for developing shocks,
-even for smooth initial conditions, and is a simple prototype to study shock formation.
-The linear advection equation is another interesting example, which is obtained
-when $m = 1$ and $f(q(x,t)) = u(x,t)q(x,t)$, where $u(x,t)$ is a given velocity.
-Strictly speaking, the linear advection is not in the form given by the Equation
-\eqref{chp2-sec1-eq7} since $f$ depends on $q$ but also on $(x,t)$.
-But, one may check that Equation \eqref{chp2-sec1-eq7} is still hyperbolic
-in this case. The linear advection equation will play a key role in this work due to its importance
-to the development of atmospheric dynamical cores.
-
-We say that ${q}$ is a strong or classical solution to the conservation law \eqref{chp2-sec1-eq7}
-if it is $\mathcal{C}^1$ and satisfies the Equation \eqref{chp2-sec1-eq7}.
 Applying the steps from Equation \eqref{chp2-sec1-eq3} to Equation \eqref{chp2-sec1-eq7}
 in reverse order, one may check that if ${q}$ is a strong solution,
 then it satisfies the integral form \eqref{chp2-sec1-eq3} for all $x_1, x_2, t_1$ and $t_2$ such that
@@ -243,18 +234,6 @@ and so is Equation \eqref{chp2-sec1-eq3}:
 	\int_{t_1}^{t_2}{f}({q}(x_2, t)) \,dt \bigg).
 \end{equation}
 
-To move towards finite volume schemes, we will restrict our attention
-to a conservation law in a bounded domain of the form 
-$D = [a,b]\times[0,T]$, $a<b$, $T>0$. However, we must 
-impose some boundary conditions. One possible way that we will adopt 
-in the text are the periodic boundary conditions:
-\begin{equation}
-	\label{chp2-sec1-eq12}
-	{q}(a, t) = {q}(b, t),\quad \forall t \in [0, T].
-\end{equation}
-
-Also, we assume that an initial condition $q_0(x) = q(x,0)$ is given.
-Thus, we have specified a Cauchy problem.
 We notice that Equations \eqref{chp2-sec1-eq10} and \eqref{chp2-sec1-eq11}
 hold for all $x_1, x_2, t_1$ and $t_2$ such that
 $[x_1, x_2] \times [t_1, t_2] \subset D$.
@@ -354,6 +333,11 @@ even though the PPM approach is applicable for semi-discrete methods (\textit{e.
 
 \section{The finite-volume approach}
 \label{chp2-sec2}
+In Section \ref{chp2-sec1} we introduced a version of Problem \ref{chp2-sec2-prob1}
+considering a discretization of the domain $[a,b] \times [0,T]$. 
+
+
+
 We summarize the problem of the system of conservation laws in the integral form 
 discussed in Section \ref{chp2-sec1} in Problem \ref{chp2-sec2-prob1}.
 For simplicity, hereafter we shall constrain our attention to the one-dimensional advection equation, 
@@ -410,34 +394,9 @@ conservation law solution.
 In Section \ref{chp2-sec1} we introduced a version of Problem \ref{chp2-sec2-prob1}
 considering a discretization of the domain $[a,b] \times [0,T]$. 
 To define the discretization, we introduce the concepts of $\Delta x$-grid and $\Delta t$-temporal grid and $(\Delta x, \Delta t, \lambda)$ discretization.
-\begin{definition}[$\Delta x$-grid]
-	\label{chp2-def-1dgrid}
-	For a given interval $[a,b]$ and a positive real number $\Delta x$ such that $\Delta x = (b-a)/N$, for some positive integer $N$,
-	we say that a $N$-tuple $\mathcal{X}=(X_i)_{i=1}^N$ is a $\Delta x$-grid for $[a,b]$ if
-	$X_i = [x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}]$, 
-	$a = x_{\frac{1}{2}} < x_{\frac{3}{2}} < \cdots < x_{N-\frac{1}{2}} < x_{N+\frac{1}{2}} = b$,
-	$\Delta x = x_{i+\frac{1}{2}}-x_{i-\frac{1}{2}}$. Each $X_i$ is called control volume or cell and
-	$x_{i-\frac{1}{2}}$, $x_{i+\frac{1}{2}}$ are called edges of the control volume $X_i$.
-\end{definition}
 \begin{remark}
 	We may define the cells $X_i$ for $i$ outside of the range $1,\cdots, N$ by 
 	$X_i = [a+(i-1)\Delta x,a+i\Delta x]$.  These cells are called ghost cells.
-\end{remark}
-\begin{definition}[$\Delta t$-temporal grid]
-	\label{chp2-def-timegrid}
-	For a given interval $[0,T]$ and a positive real number $\Delta t$ such that $\Delta t = T/N_T$, for some positive integer $N_T$,
-	we say that a $(N_T+1)$-tuple $\mathcal{T}=(T_n)_{n=0}^{N_T}$ is a $\Delta t$-temporal grid for $[0,T]$ if 
-	$ T_n = [t^n, t^{n+1}]$, $t^{n} = n\Delta t$, $\Delta t = \frac{T}{N_T}$, $\forall n = 0, \cdots, N_T$.
-\end{definition}
-\begin{definition}[$(\Delta x,\Delta t, \lambda)$-discretization]
-	\label{chp2-def-dxtimegrid}
-	Given $[a,b]\times [0,T]$ and positive real numbers $\Delta x$ and $\Delta t$, we say that $(\mathcal{X},\mathcal{T})$ is a
-	$(\Delta x, \Delta t, \lambda)-$discretization of $[a,b]\times [0,T]$ if $\mathcal{X}$ is a $\Delta x$-grid for $[a,b]$ and
-	$\mathcal{T}$ is a $\Delta t$-temporal grid for $[0,T]$ and $\frac{\Delta t}{\Delta x} = \lambda$.
-\end{definition}
-\begin{remark}
-	Whenever we mention a $\Delta x-$grid, or a $\Delta t$-temporal grid or a $(\Delta x,\Delta t, \lambda)$-discretization,
-	then $X_i$, $N$, $t^n$ and $N_T$ shall be assumed implicitly defined.
 \end{remark}
 Now we define a discretized version of Problem \ref{chp2-sec2-prob1}  in Problem \ref{chp2-sec2-prob2}.
 \begin{prob}
@@ -461,43 +420,7 @@ Now we define a discretized version of Problem \ref{chp2-sec2-prob1}  in Problem
 	In other words, we would like to find the average values of ${q}$
 	in each control volume $X_i$ at the considered time instants.
 \end{prob}
-Next, we introduce the definitions of grid functions at cell centroids and edges. 
-\begin{definition}[$\Delta x$- grid function]
-	\label{chp2-rmk-1d-gridfunction1}
-	For a $\Delta x$-grid $\mathcal{X}$, we say that $Q$ is a $\Delta x$-grid function if $Q = (Q_1,\cdots, Q_N) \in \mathbb{R}^N$.
-	We denote the space of $\Delta x$-grid functions by $\mathbb{R}^{\Delta x}$.
-\end{definition}
-\begin{definition}[$\Delta x$-C-grid wind]
-	\label{chp2-rmk-1d-gridfunction2}
-	For a $\Delta x$-grid $\mathcal{X}$, we say that $u$ is a $\Delta x$-C-grid function if $u = (u_{\frac{1}{2}}, \cdots, u_{N+\frac{1}{2}}) \in \mathbb{R}^{N+1}$.
-	We denote the space of $\Delta x$-C-grid wind by $\mathbb{R}^{\Delta x+1}$.
-\end{definition}
-The definition of $\Delta x$-C-grid wind is based on the Arakawa grids \citep{arakawa:1977}.
-Using a similar notation to \citet{engwirda:2016}, we define the $(r,s)$-stencil and a grid function evaluated on a stencil as follows.
-\begin{definition}[$(r,s)$-stencil]
-	\label{chp2-def-1d-stencil}
-	For a $\Delta x$-grid $\mathcal{X}$, for each $i=0, \cdots, N$, we say define a $(r,s)$-stencil as
-	$\mathcal{S}_{i+\frac{1}{2}} = \{i-r+1, \cdots, i-1, i,i+1, \cdots, i+s\}$.
-\end{definition}
-\begin{definition}[Grid function restricted to a stencil]
-	\label{chp2-rmk-1d-Qstencil}
-	For a $\Delta x$-grid, a $(r,s)$-stencil $\mathcal{S}_{i+\frac{1}{2}}$ and $Q$ a $\Delta x$-grid function, we define 
-	$Q(\mathcal{S}_{i+\frac{1}{2}} )$ = $(Q_k)_{k \in \mathcal{S}_{i+\frac{1}{2}}}$.
-\end{definition}
-\begin{remark}
-	When computing $Q(\mathcal{S}_{i+\frac{1}{2}} )$ , we may need values of $Q_i$ that are out of the range $1,\cdots, N$.
-	In this case, we may think of $Q_{i}$ as a ghost cell value. 
-	Since we are under the assumption of periodic boundary conditions, this problem
-	is overcome by assuming periodicity on the grid function $Q$. 
-	For instance, if for a $(3,3)-$stencil, we assume $Q_{0} = Q_{N}$, $Q_{-1} = Q_{N-1},$
-	$Q_{-2} = Q_{N-2}$ and $Q_{N+1}=Q_1$, $Q_{N+2}=Q_2$, $Q_{N+2}=Q_3$. 
-	The same applies for $\Delta x$-C-grid winds.
-\end{remark}
-\begin{remark}
-	For Problem \ref{chp2-sec2-prob2}, we define the $\Delta x$-grid functions
-	$q^n$ and $Q(t^n)$ , where ${q}^n_{i} = {q}(x_i, t^{n})$, $Q(t^n)_i = Q_i(t^n)$, for $n=0, \cdots, N_T$.
-	We also define the $\Delta x$-C-grid wind $u^n$  where $u_{i+\frac{1}{2}}^n = u(x_{i+\frac{1}{2}},t^{n})$.
-\end{remark}
+
 Finally, we define the one-dimensional (1D) finite-volume (FV)
 scheme problem as follows in Problem \ref{chp2-sec2-prob3}.
 \begin{prob}[1D-FV scheme]
@@ -598,15 +521,7 @@ the scheme for a single time-step using the exact solution.
 The 1D-FV scheme is said to be consistent
 if the LTE converges to zero.
 
-Given a $\Delta x-$grid and $Q \in \mathbb{R}^{\Delta x}$, we define the $p$-norm by
-\begin{equation}
-	\label{chp2-pnorm}
-	\|Q\|_{p,\Delta x}=
-	\begin{cases}
-		\bigg( \sum_{i=1}^{N} |Q_i|^p \bigg)^{\frac{1}{p}} & \text{if } 1\leq p < \infty,\\
-		\max_{i=1, \cdots, N}{|Q_i|} & \text{otherwise }.
-	\end{cases}
-\end{equation}
+
 We the define $\tau^n = (\tau_1^n, \cdots, \tau^n_N)$, which represent the LTEs at the time-step $n$.
 Now we can define consistency.
 \begin{definition}[Consistency]
