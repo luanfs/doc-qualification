@@ -24,7 +24,6 @@ finite-volume (FV) schemes within a Semi-Lagrangian (SL) framework, specifically
 to the 1D advection equation with periodic boundary conditions. To introduce the FV-SL
 schemes, we begin by discretizing the spatial and temporal domains into uniform grids.
 Subsequently, the FV-SL schemes involve three steps.
-    
 
 The first step involves computing the departure points of the spatial grid edges.
 The second step, known as reconstruction, utilizes the grid cell average values to
@@ -48,14 +47,13 @@ comprehensive review of general piecewise-polynomial reconstruction, we recommen
 referring to the technical report by \citet{engwirda:2016}, \citet{lauritzen:2011}, and the
 references therein.
 
-
 The PPM approach has become popular in the literature for gas dynamics simulations, astrophysical 
 phenomena modeling \citep{woodward:1986}, and later on atmospheric simulations \citep{carpenter:1990}. 
 Indeed, PPM has been implemented in the FV3 dynamical core on its latitude-longitude grid \citep{lin:2004}
 and cubed-sphere \citep{putman:2007} versions.
 Although many other shapes for the basis functions and higher-order schemes are available in the literature, 
 \citet{harris:2021} points out that the PPM scheme suits the needs of FV3 well. It is a flexible method that
- can be modified to ensure low diffusivity or shape preservation, for example.
+can be modified to ensure low diffusivity or shape preservation, for example.
 Additionally, a finite-volume numerical method usually requires monotonicity constraints, which, according 
 to Godunov's theorem, limit the order of convergence to at most 1. 
 Therefore, a higher-order scheme needs to strike a well-balanced trade-off between increasing computational 
@@ -80,18 +78,25 @@ will be addressed in Chapter \ref{chp-2d-fv}.
 \section{One-dimensional advection equation in integral form}
 \label{chp2-sec1}
 \subsection{Notation}
+\label{chp2-sec-not}
 Before introducing the FV-SL schemes, let us establish some notation by introducing
 the concepts of a $\Delta x$-grid, a $\Delta t$-temporal grid, and the
 $(\Delta x, \Delta t, \lambda)$-discretization, as well as the concept of grid function/winds.
 \begin{definition}[$\Delta x$-grid]
-	For a given interval $[a,b]$ and a positive real number $\Delta x$ such that $\Delta x = (b-a)/N$ for some positive integer $N$, 
-	we say that $\mathcal{X} = \{X_i \}_{i=1}^{N}$ is a $\Delta x$-grid for $[a,b]$ if
-	$X_i = [x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}]$,
-	$a = x_{\frac{1}{2}} < x_{\frac{3}{2}} < \cdots < x_{N-\frac{1}{2}} < x_{N+\frac{1}{2}} = b$,
+	For a given interval $\Omega = [a,b]$ and a positive real number $\Delta x$ such that 
+    $\Delta x = (b-a)/N$ for some positive integer $N$, 
+	we say that $\Omega_{\Delta x}= \{X_i \}_{i=1}^{N}$ is a $\Delta x$-grid for $[a,b]$ if
+	\begin{align*}
+        X_i = [x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}],
+	    \quad a = x_{\frac{1}{2}} < x_{\frac{3}{2}} < \cdots < x_{N-\frac{1}{2}} < x_{N+\frac{1}{2}} = b,
+    \end{align*}
 	and $\Delta x = x_{i+\frac{1}{2}} - x_{i-\frac{1}{2}}$. 
 	Each $X_i$ is referred to as a control volume or cell, and $x_{i-\frac{1}{2}}$ and 
 	$x_{i+\frac{1}{2}}$ are the edges of the control volume $X_i$.
-	The cell centroid is defined by $x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}})$, $\forall i = 1, \cdots, N$, 
+	The cell centroid is defined by
+    \begin{align*}
+    x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}}),\quad \forall i = 1, \cdots, N,
+    \end{align*}
 	and $\Delta x$ is the cell length.
 \end{definition}
 \begin{remark}
@@ -100,31 +105,32 @@ $(\Delta x, \Delta t, \lambda)$-discretization, as well as the concept of grid f
 \end{remark}
 \begin{definition}[$\Delta t$-temporal grid]
 	For a given interval $[0,T]$ and a positive real number $\Delta t$ such that $\Delta t = T/N_T$
-    for some positive integer $N_T$, we say that  $\mathcal{T} = \{T_n\}_{n=0}^{N_T}$ a $\Delta t$-temporal grid for $[0,T]$ if
-	$T_n = [t^n, t^{n+1}]$, $t^n = n\Delta t$, $\Delta t = \frac{T}{N_T}$, for all $n = 0, \cdots, N_T$.
+    for some positive integer $N_T$, we say that  $T_{\Delta T}= \{T_n\}_{n=0}^{N_T}$ a $\Delta t$-temporal grid for $[0,T]$ if
+    \begin{align*}
+	T_n = [t^n, t^{n+1}], \quad t^n = n\Delta t, \quad \Delta t = \frac{T}{N_T}, \quad \forall n = 0, \cdots, N_T.
+    \end{align*}
 \end{definition}
 \begin{definition}[$(\Delta x,\Delta t, \lambda)$-discretization]
-	Given $[a,b]\times [0,T]$ and positive real numbers $\Delta x$ and $\Delta t$,
-    we say that $(\mathcal{X}, \mathcal{T})$ is a $(\Delta x, \Delta t, \lambda)$-discretization 
-    of $[a,b]\times [0,T]$ as follows: $\mathcal{X}$ is a $\Delta x$-grid for $[a,b]$, 
-    $\mathcal{T}$ is a $\Delta t$-temporal grid for $[0,T]$, and $\frac{\Delta t}{\Delta x} = \lambda$.
+\label{chp2-def-dxtimegrid}
+	Given $\Omega \times [0,T]$, $\Omega = [a,b]$ and positive real numbers $\Delta x$ and $\Delta t$,
+    we say that $(\Omega_{\Delta x}, T_{\Delta t})$ is a $(\Delta x, \Delta t, \lambda)$-discretization 
+    of $\Omega \times [0,T]$ if $\Omega_{\Delta x}$ is a $\Delta x$-grid for $\Omega$, 
+    ${T}_{\Delta t}$ is a $\Delta t$-temporal grid for $[0,T]$, and $\frac{\Delta t}{\Delta x} = \lambda$.
 \end{definition}
 \begin{remark}
 	Whenever we refer to a $\Delta x$-grid, a $\Delta t$-temporal grid, or a $(\Delta x, \Delta t, \lambda)$-discretization, 
-	the values of $X_i$, $N$, $t^n$, and $N_T$ are assumed to be implicitly defined.
+	$X_i$, $N$, $t^n$, and $N_T$ are assumed to be implicitly defined.
 \end{remark}
 Next, we introduce the definitions of grid functions at cell centroids and edges.
 \begin{definition}[$\Delta x$-grid function]
-	For a $\Delta x$-grid $\mathcal{X}$, we say that $Q$ is a $\Delta x$-grid function if $Q = (Q_1, \ldots, Q_N) \in \mathbb{R}^N$.
-	We denote the space of $\Delta x$-grid functions by $\mathbb{R}^{\Delta x}$.
+	For a $\Delta x$-grid, we say that $Q$ is a $\Delta x$-grid function if $Q = (Q_1, \ldots, Q_N) \in \mathbb{C}^N$.
 \end{definition}
-\begin{definition}[$\Delta x$-C-grid wind]
-	For a $\Delta x$-grid $\mathcal{X}$, we say that $u$ is a $\Delta x$-C-grid function if
-	$u = (u_{\frac{1}{2}}, \ldots, u_{N+\frac{1}{2}}) \in \mathbb{R}^{N+1}$.
-	We denote the space of $\Delta x$-C-grid winds by $\mathbb{R}^{\Delta x, C}$.
+\begin{definition}[$\Delta x$-grid wind]
+	For a $\Delta x$-grid, we say that $u$ is a $\Delta x$-grid wind if
+	$u = (u_{\frac{1}{2}}, \ldots, u_{N+\frac{1}{2}}) \in \mathbb{C}^{N+1}$.
 \end{definition}
-The definition of a $\Delta x$-C-grid wind is based on the Arakawa grids \citep{arakawa:1977}.
-Given a $\Delta x-$grid and $Q \in \mathbb{R}^{\Delta x}$, we define the $p$-norm by
+The definition of a $\Delta x$-grid wind is based on the Arakawa grids \citep{arakawa:1977}.
+Given $Q \in \mathbb{C}^{N}$, we define the $p$-norm as
 \begin{equation}
 	\label{chp2-sec-not1}
 	\|Q\|_{p,\Delta x}=
@@ -148,230 +154,75 @@ When computing $Q(\mathcal{S}_{i+\frac{1}{2}})$, it may be necessary to access v
 In such cases, we can consider $Q_i$ as a ghost cell value.
 Since we assume periodic boundary conditions in this chapter, this issue is resolved by assuming periodicity in the grid function $Q$.
 For example, for a $(3,3)$-stencil, we can assume $Q_{0} = Q_{N}$, $Q_{-1} = Q_{N-1}$, $Q_{-2} = Q_{N-2}$, and
-$Q_{N+1}=Q_1$, $Q_{N+2}=Q_2$, $Q_{N+2}=Q_3$. The same applies to $\Delta x$-C-grid winds.
-Furthermore, considering functions $q, u: [a,b]\times[0,T] \to \mathbb{R}$ and a $(\Delta x,\Delta t, \lambda)$-discretization of $[a,b]\times[0,T]$, we introduce the grid functions $q^n \in \mathbb{R}^{\Delta x}$ and $u^n \in \mathbb{R}^{\Delta x,C}$. Here, ${q}^n_{i} = {q}(x_i, t^{n})$ and $u^n_{i+\frac{1}{2}} = u(x_{i+\frac{1}{2}},t^n)$ for $n=0, \ldots, N_T$. These grid functions represent the discrete values of $q$ and $u$ at the cell centroids and edges, respectively, for each time level $t^n$.
+$Q_{N+1}=Q_1$, $Q_{N+2}=Q_2$, $Q_{N+2}=Q_3$. The same applies to $\Delta x$-grid winds.
+Furthermore, considering functions $q, u: [a,b]\times[0,T] \to \mathbb{R}$ and a $(\Delta x,\Delta t, \lambda)$-discretization
+of $[a,b]\times[0,T]$, we introduce the grid functions $q^n \in \mathbb{C}^{N}$ and $u^n \in \mathbb{C}^{N+1}$. 
+Here, ${q}^n_{i} = {q}(x_i, t^{n})$ and $u^n_{i+\frac{1}{2}} = u(x_{i+\frac{1}{2}},t^n)$ for $n=0, \ldots, N_T$.
+These grid functions represent the discrete values of $q$ and $u$ at the cell centroids and edges, respectively,
+for each time level $t^n$.
 
-Additionally, we introduce the average value of $q$ in the $i$-th control volume at time $t$, denoted as ${Q}i(t)$, defined by:
+Additionally, we introduce the average value of $q$ in the $i$-th control volume at time $t$, denoted as ${Q}_i(t)$, defined by:
 \begin{equation}
 	\label{chp2-sec1-not2}
-	{Q}_i(t) = \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x,t) ,dx.
+	{Q}_i(t) = \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x,t) \,dx.
 \end{equation}
 Moreover, we define the $\Delta x$-grid function of average values as $Q(t) = (Q_1(t), Q_2(t), \ldots, Q_N(t))$.
 Here, $Q_i(t)$ represents the average value of $q$ in the $i$-th control volume at time $t$.
 
+For the consideration of periodic boundary conditions, we can define spaces of periodic functions over 
+the interval $\Omega=[a,b]$ as follows:
+\begin{align*}
+	\mathcal{S}_P(\Omega) &= \{q:\mathbb{R}\times[0,+\infty[\to \mathbb{R}: q(x+b-a,t)=q(x,t), \quad \forall x \in \mathbb{R}, \quad t>0\}.
+\end{align*}
+Similarly, the space of $k$-times periodically differentiable functions $\mathcal{C}_P^k(\Omega)$ can be defined as:
+\begin{align*}
+	\mathcal{C}_P^k(\Omega) &= \mathcal{S}_P(\Omega)\cup \mathcal{C}^k(\mathbb{R}\times[0,\infty[),
+\end{align*}
+where $\mathcal{C}^k(\mathbb{R}\times[0,+\infty[)$ denotes the space of functions that are $k$ 
+times continuously differentiable in both the spatial and temporal variables.
+In summary, $\mathcal{S}_P(\Omega)$ represents the space of periodic functions, and $\mathcal{C}_P^k(\Omega)$
+represents the space of $k$-times periodically differentiable functions over the interval $\Omega=[a,b]$ subject to periodic boundary conditions.
+
 \subsection{The 1D advection equation}
-In this section, we will present the derivation of the 1D advection equation in its integral form.
-Let us assume that $x$ and $t$ represent the spatial and time coordinates, respectively.
-The advection in the differential form is given by:
+In this section, we will derive the integral form of the 1D advection equation with periodic boundary conditions over the interval $\Omega=[a,b]$.
+What is going to be presented here follows \citet{leveque:1990,leveque:2002} closely.
+The advection equation with periodic boundary conditions in its differential form is given by:
 \begin{equation}
-	\label{chp2-sec-adv-1}
-	\frac{\partial q}{\partial t}(x, t) +
-	\frac{\partial (uq)}{\partial x}(x, t)
-	= 0, \quad \forall (x,t) \in \mathbb{R}\times ]0, +\infty[.
+	\label{chp2-sec-adv-eq1}
+	\begin{cases}
+		{\partial_t q}(x, t) + {\partial_x (uq)}(x, t)
+		= 0, \quad \forall (x,t) \in \mathbb{R}\times ]0, +\infty[,\\
+		{q}(a, t) = {q}(b, t), \quad \forall t>0,\\
+		q_0(x) = q(x,0).
+	\end{cases}
 \end{equation}
-Here, $q: \mathbb{R}\times[0, +\infty[ \to \mathbb{R}$ represents the advected quantity, 
-and $u: \mathbb{R}\times[0, +\infty[ \to \mathbb{R}$ represents the velocity.
-We assume that both $q$ and $u$ are continuously differentiable functions.
-We will focus on the advection equation with periodic boundary conditions on 
-$D = [a,b]\times[0,T]$, where $a<b$ and $T>0$. The boundary conditions are given as:
+Here, $q \in \mathcal{C}_P^1{(\Omega)}$ represents the advected quantity, and $u \in \mathcal{C}_P^1{(\Omega)}$ represents the velocity.
+We will focus on Equation \eqref{chp2-sec-adv-eq1} over the domain $D = \Omega\times[0,T]$, where $T>0$ is a finite time.
+A strong or classical solution to the advection equation is defined as a function ${q}$ that is $\mathcal{C}^1$ 
+and satisfies Equation \eqref{chp2-sec-adv-eq1}.
+In order to deduce the integral form of Equation \eqref{chp2-sec-adv-eq1}, we consider
+$[x_1, x_2]\times[t_1,t_2]\subset D$. 
+Integrating Equation \eqref{chp2-sec-adv-eq2} over $[x_1, x_2]$, we obtain:
 \begin{equation}
-	\label{chp2-sec1-eq2}
-	{q}(a, t) = {q}(b, t),\quad \forall t \in [0, T].
+    \label{chp2-sec-adv-eq2}
+	\frac{d}{dt} \int_{x_1}^{x_2} q(x,t) \,dx =  
+	-({(uq)}(x_2,t) - {(uq)}(x_1,t)) ,
 \end{equation}
-Furthermore, we are given an initial condition $q_0(x) = q(x,0)$. Thus, a Cauchy problem is specified.
-We say that ${q}$ is a strong or classical solution to the advection equation
-if it is $\mathcal{C}^1$ and satisfies the Equation \eqref{chp2-sec1-eq1}.
-
-Applying the steps from Equation \eqref{chp2-sec1-eq3} to Equation \eqref{chp2-sec1-eq7}
-in reverse order, one may check that if ${q}$ is a strong solution,
-then it satisfies the integral form \eqref{chp2-sec1-eq3} for all $x_1, x_2, t_1$ and $t_2$ such that
-$[x_1, x_2] \times [t_1, t_2] \subset \mathbb{R}\times ]0, +\infty[$. 
-Therefore, Equations \eqref{chp2-sec1-eq3} and \eqref{chp2-sec1-eq7} are
-equivalent when ${q}$ is $\mathcal{C}^1$.
-However, the problem \eqref{chp2-sec1-eq3} can be formulated
-to functions that are not $\mathcal{C}^1$ and have discontinuities.
-More generally speaking, we say that ${q}$ is a weak solution 
-if it satisfies the Equation 
-\eqref{chp2-sec1-eq3} for all $x_1, x_2, t_1$ and $t_2$ such that
-$[x_1, x_2] \times [t_1, t_2] \subset \mathbb{R}\times ]0, +\infty[$.
-Of course $q$ and $u$ must be such that all the integrals in Equation 
-\eqref{chp2-sec1-eq3} makes sense. Later (Problem \ref {chp2-sec2-prob1}), we specify the spaces where $q$ and $u$ belong.
-It can be shown that this notion of weak solution is equivalent to requiring that \citep{leveque:1990}:
+and integrating Equation \eqref{chp2-sec-adv-eq2} over $[t_1,t_2]$, we get
 \begin{equation}
-	\label{chp2-sec1-eq8}
-	\int_{-\infty}^{+\infty} \int_{0}^{+\infty} \bigg(
-	\frac{\partial \phi}{\partial t} (x, t){q}(x, t) +
-	\frac{\partial \phi}{\partial x} (x ,t){f}({q}(x, t)) 
-	\bigg)\,dt \,dx = 
-	\int_{-\infty}^{+\infty} \phi(x, 0){q}(x, 0) \,dx  , \quad
+    \label{chp2-sec-adv-eq3}
+    \int_{x_1}^{x_2} q(x,t_2) \,dx=  \int_{x_1}^{x_2} q(x,t_1)
+	-\bigg( \int_{t_1}^{t_2} 
+	{(uq)}(x_2, t) \,dt - 
+	\int_{t_1}^{t_2}{(uq)}(x_1, t) \,dt \bigg).
 \end{equation}
-$\forall \phi \in C_{0}^{1}(\mathbb{R}\times[0, +\infty[)$
-where $C_{0}^{1}(\mathbb{R}\times[0, +\infty[)$ denotes the set
-of all continuously differentiable functions with compact support 
-in $\mathbb{R}\times[0, +\infty[$. This formulation of weak solution
-is more commonly employed in the construction of Discontinuous Galerkin
-methods \citep{nair:2011}.
-
-In order to develop finite-volume methods for a conservation law, it is useful to define the
-average value of the state variable ${q}$ in the interval $[x_1, x_2]$ at a time $t$ by:
-\begin{equation}
-	\label{chp2-sec1-eq9}
-	{Q}(t) = \frac{1}{\Delta x}
-	\int_{x_1}^{x_2} {q}(x,t) \,dx,
-\end{equation}
-where $\Delta x = x_2 - x_1$. The Equation \eqref{chp2-sec1-eq2} may be  rewritten in terms of ${Q}$ as:
-\begin{equation}
-        \label{chp2-sec1-eq10}
-	\frac{dQ}{dt} (t) = \frac{1}{\Delta x} 
-	({f}({q}(x_1,t)) - {f}({q}(x_2,t))) ,
-\end{equation}
-and so is Equation \eqref{chp2-sec1-eq3}:
-\begin{equation}
-        \label{chp2-sec1-eq11}
-	{Q}(t_2) =  {Q}(t_1) + 
-	\frac{1}{\Delta x}\bigg( \int_{t_1}^{t_2} 
-	{f}({q}(x_1, t)) \,dt - 
-	\int_{t_1}^{t_2}{f}({q}(x_2, t)) \,dt \bigg).
-\end{equation}
-
-We notice that Equations \eqref{chp2-sec1-eq10} and \eqref{chp2-sec1-eq11}
-hold for all $x_1, x_2, t_1$ and $t_2$ such that
-$[x_1, x_2] \times [t_1, t_2] \subset D$.
-So, let us discretize the domain $D$ and write 
-Equations \eqref{chp2-sec1-eq10} and \eqref{chp2-sec1-eq11} in terms of this discretization.
-Given a positive integer $N_T$, we define the time step 
-$\Delta t = \frac{T}{N_T}$, $t^{n} = n \Delta t$, for $n = 0, 1 ,\cdots, N_T$.
-For the spatial discretization, we consider a uniformly spaced partition of $[a, b]$ given by: 
-\begin{equation}
-	\label{chp2-sec1-eq13}
-	[a,b] = \bigcup_{i=1}^N X_i, 
-	\text{ where } X_i= [x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}] \text{ and } 
-	a = x_{\frac{1}{2}} < x_{\frac{3}{2}} < \cdots < x_{N-\frac{1}{2}} < x_{N+\frac{1}{2}} = b.
-\end{equation}
-
-Each interval $X_i$ is referred to as the control volume. \index{Control volume}
-We shall use the notations $\Delta x = x_{i+\frac{1}{2}} - x_{i-\frac{1}{2}}$ 
-and $x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}})$, $\forall i = 1, \cdots, N$, 
-to define the control volume length and centroid, respectively.
-We also denote by ${Q}_i(t)$ as the
-average values of state variable at time $t$
-in the control volume $X_i$, $\forall i = 1, \cdots, N$. Replacing $t_1, t_2, x_1$ and 
-$x_2$ by $t^{n}, t^{n+1}, x_{i-\frac{1}{2}}$ and $x_{i+\frac{1}{2}}$,
-respectively, in Equation \eqref{chp2-sec1-eq10}, we get:
-\begin{equation}
-	\label{chp2-sec1-eq14}
-	\frac{dQ_i}{dt} (t) = \frac{1}{\Delta x}
-	({f}({q}(x_{i-\frac{1}{2}},t)) -
-	{f}({q}(x_{i+\frac{1}{2}},t))) ,
-	\quad \forall i = 1, \cdots, N.
-\end{equation}
-Similarly, Equation \eqref{chp2-sec1-eq11} becomes:
-\begin{equation}
-        \label{chp2-sec1-eq15}
-	\begin{aligned}
-		{Q}_i(t^{n+1}) =  {Q}_i(t^{n}) +
-		\frac{1}{\Delta x}\bigg( \int_{t^{n}}^{t^{n+1}}
-        	{f}({q}(x_{i-\frac{1}{2}}, t)) \,dt -
-		\int_{t^{n}}^{t^{n+1}}{f}({q}(x_{i+\frac{1}{2}}, t)) \,dt \bigg),
-       		\\
-		\quad \forall i = 1, \cdots, N,
-		\quad \forall n = 0, \cdots, N_T-1.
-	\end{aligned}
-\end{equation}
-In order to use a more compact notation, it is helpful to use the following centered difference notation:
-\begin{equation}
-	\label{chp2-sec1-eq16}
-	\delta_x {g}(x_i,t) = 
-	{g}(x_{i+\frac{1}{2}},t) - 
-	{g}(x_{i-\frac{1}{2}},t),
-\end{equation}
-for an arbitrary vector valued function ${g}$. 
-Using this notation, Equations \eqref{chp2-sec1-eq14}
-and \eqref{chp2-sec1-eq15} lead to:
-\begin{equation}
-        \label{chp2-sec1-eq17}
-        \frac{dQ_i}{dt}(t) = -\frac{1}{\Delta x}
-	\delta_x {f}({q}(x_{i},t))
-        \quad \forall i = 1, \cdots, N,
-\end{equation}
-and
-\begin{equation}
-        \label{chp2-sec1-eq18}
-        {Q}_i(t^{n+1}) =  {Q}_i(t^{n}) -
-	\frac{\Delta t}{  \Delta x} \delta _x\bigg( \frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}}
-        {f}({q}(x_{i}, t)) \,dt \bigg),
-        \quad \forall i = 1, \cdots, N,
-        \quad \forall n = 0, \cdots, N_T-1,
-\end{equation}
-respectively.
-It is worth pointing out that we have made no approximation in Equations
-\eqref{chp2-sec1-eq17} and \eqref{chp2-sec1-eq18}. Indeed, if ${q}$ satisfies Equation
-$\eqref{chp2-sec1-eq2}$, $\forall [x_1, x_2] \subset [a,b]$ and $\forall t \in [0,T]$,
-then Equation \eqref{chp2-sec1-eq17} is just Equation
-\eqref{chp2-sec1-eq2} evaluated in the control volumes and written
-in terms of the average values ${Q}$. 
-Similarly, if ${q}$ satisfies Equation
-$\eqref{chp2-sec1-eq3}$, $\forall [x_1, x_2] \times [t_1, t_2] \subset D$,
-then Equation \eqref{chp2-sec1-eq18} is just Equation
-\eqref{chp2-sec1-eq3} evaluated in the control volumes,
-at the time instants $t^{n}$, and written
-in terms of the average values ${Q}$.
-
-Notice that in Equation \eqref{chp2-sec1-eq18} we divided and multiplied by $\Delta t$, so that 
-we can interpret $\frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}}
-{f}({q}(x_{i}, t)) \,dt $ as a time-averaged flux.
-This interpretation is very handy for the derivation of finite-volume schemes.
-
-The formulations given by Equations \eqref{chp2-sec1-eq17} and \eqref{chp2-sec1-eq18} are the cornerstone 
-of the development of finite volume methods for conservation laws. 
-On the right-hand side of Equation \eqref{chp2-sec1-eq17}, the flux function ${f}$ 
-may be discretized leading to an ordinary differential equation (ODE)
-that might be solved using classical ODE integrators.
-These methods are known as semi-discrete methods \citep{leveque:2002}, since only the spatial coordinate is discretized.
-In this work, we shall restrict our attention to methods based on Equation \eqref{chp2-sec1-eq18},
-even though the PPM approach is applicable for semi-discrete methods (\textit{e.g.} \ \citet{suresh:1997}).
-
-\section{The finite-volume approach}
-\label{chp2-sec2}
-In Section \ref{chp2-sec1} we introduced a version of Problem \ref{chp2-sec2-prob1}
-considering a discretization of the domain $[a,b] \times [0,T]$. 
-
-
-
-We summarize the problem of the system of conservation laws in the integral form 
-discussed in Section \ref{chp2-sec1} in Problem \ref{chp2-sec2-prob1}.
-For simplicity, hereafter we shall constrain our attention to the one-dimensional advection equation, 
-that is, we are going to assume that the flux function has the form 
-$f(q(x,t)) = u(x,t)q(x,t)$, where $u(x,t)$ is the velocity which is assumed to be given.
-
-Since we are going to consider periodic boundary conditions, it is useful to introduce some
-spaces of periodic functions of period $b-a$. We are going to use the notation $\mathbb{S}^1=[a,b]$
-to represent the interval that we are interested. 
-This notation is justified by thinking of periodic functions as functions defined on the circle of length $b-a$.
-Whenever we use the notation $\mathbb{S}^1$, $a$ and $b$ will be implicitly defined.
-With that said, we define:
-\begin{align*}
-	\mathcal{F}(\mathbb{S}^1) &= \{q:\mathbb{R} \to \mathbb{R};\quad q(x+b-a) = q(x), \quad \forall x \in \mathbb{R}\},\\
-	\mathcal{F}(\mathbb{S}^1_{T}) &= \{q:\mathbb{R}\times[0,T]\to \mathbb{R};\quad q(\cdot,t) \in \mathcal{F}(\mathbb{S}^1), \quad \forall t \in [0,T]\},\\
-	\mathcal{C}^k(\mathbb{S}^1_{T}) &= \{q\in \mathcal{C}^k(\mathbb{R}\times[0,T]): q \in \mathcal{F}(\mathbb{S}^1_{T})\}.
-\end{align*}
-where we are using the notation $\mathbb{S}^1_{T} = \mathbb{S}^1\times[0,T]$. 
-We also introduce the following the locally integrable periodic functions:
-\begin{align*}
-	L^p_{\text{loc}}(\Omega) &= \{q:\Omega\to \mathbb{R};\quad \int_{K} |q(x)|^p\,dx < +\infty, \quad \text{for all compact sets } K \subset \Omega\},\\
-	{L}^{p}_{\text{loc}}(\mathbb{S}^1) &= \{q\in \mathcal{F}(\mathbb{S}^1): \quad  q \in L^p_{\text{loc}}(\mathbb{R})\},\\
-	{L}^{p,x}_{\text{loc}}(\mathbb{S}^1_{T}) &= \{q\in \mathcal{F}(\mathbb{S}^1_{T}): \forall t \in [0,T], \quad q(\cdot,t) \in L^p_{\text{loc}}(\mathbb{R})\},\\
-	{L}^{p,t}_{\text{loc}}(\mathbb{S}^1_{T}) &= \{q\in \mathcal{F}(\mathbb{S}^1_{T}): \forall x \in \mathbb{R},\quad q(x,\cdot) \in L^p_{\text{loc}}([0,T])\},\\
-	{L}^{p,x,t}_{\text{loc}}(\mathbb{S}^1_{T}) &= {L}^{p,x}_{\text{loc}}(\mathbb{S}^1_{T}) \cap {L}^{p,t}_{\text{loc}}(\mathbb{S}^1_{T}).
-\end{align*}
-\subsection{Discretization of the problem}
+The presented problem, Problem \ref{chp2-sec2-prob1}, aims to find a solution, called weak solution, to the advection equation
+in its integral form, considering the given initial condition ${q}_0$ and velocity function $u$.
 \theoremstyle{plain} 
 \newtheorem{prob}{Problem}[chapter]
 \begin{prob}
 	\label{chp2-sec2-prob1}
-	Given an initial condition ${q}_0\in {L}^{1}_{\text{loc}}(\mathbb{S}^1) \cap {L}^{2}_{\text{loc}}(\mathbb{S}^1)$ and
-	a velocity function $u \in {L}^{2,t}_{\text{loc}}(\mathbb{S}^1_{T})$,
-	we would like to find a weak solution ${q} \in {L}^{1,x,t}_{\text{loc}}(\mathbb{S}^1_{T}) \cap {L}^{2,x,t}_{\text{loc}}(\mathbb{S}^1_{T})$
+	Given an initial condition ${q}_0$ and a velocity function $u$  we would like to find a weak solution ${q}$
 	of the advection equation in the integral form:
 	\begin{equation*}
 	        \int_{x_1}^{x_2} {q}(x, t_2) \,dx = 
@@ -379,39 +230,211 @@ We also introduce the following the locally integrable periodic functions:
         	\int_{t_1}^{t_2} {(uq)}(x_1, t) \,dt -
 		\int_{t_1}^{t_2}{(uq)}(x_2, t) \,dt ,
 	\end{equation*}
-	$\forall [x_1, x_2]\times[t_1, t_2] \subset [a,b] \times [0,T]$, 
+	$\forall [x_1, x_2]\times[t_1, t_2] \subset \Omega \times [0,T]$, 
 	and
-	${q}(x,0) = {q}_0(x)$, $\forall x \in [a,b]$.
+	${q}(x,0) = {q}_0(x)$, $\forall x \in \Omega$, $q(a,t)=q(b,t)$, $\forall t \in [0,T]$.
 \end{prob}
-We point out that, for Problem \ref{chp2-sec2-prob1}, 
-the total mass in $[a,b]$ satisfies: 
-\begin{equation}
+We point out that, for Problem \ref{chp2-sec2-prob1}, the total mass in $\Omega$ at time $t$ defined by:
+\begin{equation*}
+{M}_{[a,b]}(t) = \int_{a}^{b} q(x,t) \,dx,
+\end{equation*}
+remains constant over time, i.e.,
+\begin{equation*}
 	{M}_{[a,b]}(t) = {M}_{[a,b]}(0), \quad \forall t \in [0,T].
+\end{equation*}
+This conservation of total mass property is highly desirable for numerical schemes aiming
+to approximate general conservation law solutions accurately.
+
+Applying the steps from Equation \eqref{chp2-sec-adv-eq1} to Equation \eqref{chp2-sec-adv-eq3} in reverse order,
+one can verify that if ${q}$ is a weak solution and $q$ is $\mathcal{C}^1$, then it satisfies Equation \eqref{chp2-sec-adv-eq1}.
+Therefore, Equation \eqref{chp2-sec-adv-eq1} and Problem \eqref{chp2-sec2-prob1} are equivalent when ${q}$ is $\mathcal{C}^1$.
+However, Problem \eqref{chp2-sec2-prob1} can be formulated for functions that are not $\mathcal{C}^1$ and have discontinuities.
+In fact, Problem \eqref{chp2-sec2-prob1} only requires that $q$ and $uq$ are locally integrable.
+
+It is worth noting that Equation \eqref{chp2-sec-adv-eq3} holds for all $x_1, x_2, t_1$, and $t_2$ such that $[x_1, x_2]
+\times [t_1, t_2] \subset D$. Therefore, let us consider a $(\Delta x, \Delta t, \lambda)$-discretization of $D$ and 
+rewrite Equation \eqref{chp2-sec-adv-eq3} in terms of this discretization. By replacing $t_1, t_2, x_1$, and $x_2$ with
+$t^{n}, t^{n+1}, x_{i-\frac{1}{2}}$, and $x_{i+\frac{1}{2}}$, respectively, in Equation \eqref{chp2-sec-adv-eq3}, we obtain:
+\begin{equation}
+    \label{chp2-sec-adv-eq4}
+	\begin{aligned}
+		{Q}_i(t^{n+1}) =  {Q}_i(t^{n}) -
+		\frac{1}{\Delta x}\bigg( \int_{t^{n}}^{t^{n+1}}
+        	{(uq)}(x_{i+\frac{1}{2}}, t) \,dt -
+		\int_{t^{n}}^{t^{n+1}}{(uq)}(x_{i-\frac{1}{2}}, t) \,dt \bigg), \\
+		\quad \forall i = 1, \cdots, N,
+		\quad \forall n = 0, \cdots, N_T-1.
+	\end{aligned}
 \end{equation}
-This is the conservation of total mass propriety and is highly desirable
-for any numerical scheme that intends to give a robust approximation of a
-conservation law solution.
-In Section \ref{chp2-sec1} we introduced a version of Problem \ref{chp2-sec2-prob1}
-considering a discretization of the domain $[a,b] \times [0,T]$. 
-To define the discretization, we introduce the concepts of $\Delta x$-grid and $\Delta t$-temporal grid and $(\Delta x, \Delta t, \lambda)$ discretization.
-\begin{remark}
-	We may define the cells $X_i$ for $i$ outside of the range $1,\cdots, N$ by 
-	$X_i = [a+(i-1)\Delta x,a+i\Delta x]$.  These cells are called ghost cells.
-\end{remark}
-Now we define a discretized version of Problem \ref{chp2-sec2-prob1}  in Problem \ref{chp2-sec2-prob2}.
+To achieve a more compact notation, we can use the centered difference notation:
+\begin{equation}
+    \label{chp2-sec-adv-eq5}
+	\delta_x {g}(x_i,t) = 
+	{g}(x_{i+\frac{1}{2}},t) - 
+	{g}(x_{i-\frac{1}{2}},t),
+\end{equation}
+for an arbitrary function ${g}$. Using this notation, Equation
+\eqref{chp2-sec-adv-eq4} can be rewritten as:
+\begin{equation}
+    \label{chp2-sec-adv-eq6}
+    {Q}_i(t^{n+1}) =  {Q}_i(t^{n}) -
+	\frac{1}{\Delta x} \delta _x\bigg( \int_{t^{n}}^{t^{n+1}}
+        {(uq)}(x_{i}, t) \,dt \bigg),
+        \quad \forall i = 1, \cdots, N,
+        \quad \forall n = 0, \cdots, N_T-1.
+\end{equation}
+Now we can define a discretized version of Problem \ref{chp2-sec2-prob1} as Problem \ref{chp2-sec2-prob2}.
 \begin{prob}
-    \label{chp2-sec2-prob2}
-	Assume the framework of Problem \ref{chp2-sec2-prob1}
-    and that $(\mathcal{X},\mathcal{T})$ is a $(\Delta x, \Delta t, \lambda)$-discretization of $[a,b]\times [0,T]$.
-	Since we are in the framework of Problem \ref{chp2-sec2-prob1}, it follows that:
+	\label{chp2-sec2-prob2}
+	Let us consider the framework of Problem \ref{chp2-sec2-prob1} and a $(\Delta x, \Delta t, \lambda)$-discretization of 
+	$\Omega \times [0,T]$. Since we are operating within the framework of Problem \ref{chp2-sec2-prob1}, the following relationship holds:
 	\begin{equation}
-			\label{1d-fvexact-scheme}
-				{Q}_i(t^{n+1}) =  {Q}_i(t^{n}) -
-				\lambda \delta _x\bigg( \frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}}
-				{(uq)}(x_{i}, t) \,dt \bigg),
-				\quad \forall i = 1, \cdots, N,
-				\quad \forall n = 0, \cdots, N_T-1,
+		\label{1d-fvexact-scheme}
+		{Q}_i(t^{n+1}) = {Q}_i(t^{n}) - \lambda \delta_x\bigg( \frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}}{(uq)}(x_{i}, t) ,dt \bigg),
+		 \quad \forall i = 1, \cdots, N, \quad \forall n = 0, \cdots, N_T-1,
 	\end{equation}
+	where ${Q}_i(t) = \frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x,t) ,dx$. 
+	Our objective now is to determine the values ${Q}_i(t^{n})$, $\forall i = 1, \cdots, N$, $\forall n = 0, \cdots, N_T-1$,
+	given the initial values ${Q}_i(0)$, $\forall i = 1, \cdots N$. 
+	In other words, we aim to find the average values of ${q}$ in each control volume $X_i$ at the specified time instances.
+\end{prob}
+It is important to note that no approximations have been made in problems \eqref{chp2-sec2-prob1} and \eqref{chp2-sec2-prob2}. 
+In Equation \eqref{1d-fvexact-scheme}, we divided and multiplied by $\Delta t$ to interpret
+$\frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}}({uq})(x_{i\pm \frac{1}{2}}, t) ,dt$ 
+as a time-averaged flux. This interpretation is useful for deriving finite-volume schemes.
+
+In Problem \ref{chp2-sec2-prob2}, we need to approximate the time-averaged flux at the cell edges $x_{i\pm\frac{1}{2}}$
+to derive a finite-volume scheme. This flux, in principle, requires knowledge of $q$ over the entire interval $[t^n, t^{n+1}]$. 
+To overcome this, we can express the temporal integral as a spatial integral at time $t^n$. 
+This approach avoids the need for information about $q$ throughout the entire interval $[t^n, t^{n+1}]$. 
+Furthermore, this spatial integral domain is closely related to the definition of the 
+departure point. 
+
+To introduce the definition of departure point, for each $s \in [t^n,t^{n+1}]$,
+we consider the following Cauchy problem backward in time:
+\begin{equation}
+	\label{chp-sec-flux:analysis-eq3}
+	\begin{cases}
+		\frac{\partial X}{\partial t} (t,s;x_{i+\frac{1}{2}}) = u(X(t,s;x_{i+\frac{1}{2}}) ,t),\quad t\in[t^{n},s] \\
+		X(s,s;x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}}.
+	\end{cases}
+\end{equation}
+The point $X(t^n,s;x_{i+\frac{1}{2}})$ is called departure point at time $t^n$
+of the point $x_{i+\frac{1}{2}}$ at time $s$.
+Integrating Equation $\eqref{chp-sec-flux:analysis-eq3}$ over the interval
+$[t,s]$, we get:
+\begin{equation}
+	\label{chp-sec-flux:analysis-eq4}
+	X(t,s;x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \int_{t}^{s}u(X(\theta,s;x_{i+\frac{1}{2}}),\theta) \,d\theta.
+\end{equation}
+In the following Proposition, we show how the time-averaged flux is 
+related to a spatial integral over a interval depending on departure points.
+\begin{prop}
+	\label{chp2-sec-flux:prop1}
+	Assume the framework of Problem \ref{chp2-sec2-prob2}.
+	If $q$ and $u$ are $\mathcal{C}^1$ functions, then:
+	\begin{align}
+		\label{chp2-sec-flux:approx1}
+		\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds = 
+		\int^{x_{i+\frac{1}{2}}}_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})} q(x,t^n)\,dx
+	\end{align}
+\end{prop}
+\begin{proof}
+	Using the Leibniz rule for integration in Equation \eqref{chp-sec-flux:analysis-eq4}, it follows that:
+	\begin{align}
+		\begin{split}
+			\label{chp-sec-flux:dxds}
+			\frac{\partial X}{\partial s} (t,s;x_{i+\frac{1}{2}}) &= - \bigg(u(x_{i+\frac{1}{2}},s) + 
+			\int_{t}^{s} \frac{du}{ds}(X(\theta,s;x_{i+\frac{1}{2}}),\theta) \,d\theta \bigg)\\
+			&=- u(x_{i+\frac{1}{2}},s) -
+			\int_{t}^{s} \frac{\partial u}{\partial x}(X(\theta, s; x_{i+\frac{1}{2}}),\theta) 
+			\frac{\partial X}{\partial s} (\theta, s; x_{i+\frac{1}{2}})\,d\theta.
+		\end{split}
+	\end{align}
+	Taking the derivative with respect to $t$ of Equation \eqref{chp-sec-flux:dxds}, we have:
+	\begin{align}
+		\begin{split}
+			\label{chp-sec-flux:dxds_2}
+			\frac{\partial }{\partial t} \bigg(\frac{\partial X}{\partial s} \bigg)
+			(t,s;x_{i+\frac{1}{2}}) = \frac{\partial u}{\partial x}(X(t, s; x_{i+\frac{1}{2}}), t) 
+			\frac{\partial X}{\partial s} (t, s; x_{i+\frac{1}{2}}).
+		\end{split}
+	\end{align}
+	Using standard ordinary differential equations techniques (ODE), 
+    we get that $X$ that solves Equations \eqref{chp-sec-flux:dxds} and \eqref{chp-sec-flux:dxds_2}
+	is given by:
+	\begin{align}
+		\begin{split}
+			\label{chp-sec-flux:xs_int}
+			\frac{\partial X}{\partial s}(t,s;x_{i+\frac{1}{2}}) = -
+			\exp{\bigg(\int_{t}^{s} \frac{\partial u}{\partial x}(X(\theta,s;x_{i+\frac{1}{2}}),\theta)  \,d\theta \bigg)}
+			u(x_{i+\frac{1}{2}},s).
+		\end{split}
+	\end{align}
+	Computing $q$ on the trajectory give by $X(t,s;x_{i+\frac{1}{2}})$ and taking
+	its time derivative, we obtain:
+	\begin{align}
+		\label{chp-sec-flux:dqdt}
+		\begin{split}
+			\frac{dq}{dt} (X(t,s;x_{i+\frac{1}{2}}),t) &= 
+			\frac{\partial q}{\partial t} (X(t,s;x_{i+\frac{1}{2}}),t)+
+			u (X(t,s;x_{i+\frac{1}{2}}),t)\frac{\partial q}{\partial x} (X(t,s;x_{i+\frac{1}{2}}),t) \\
+			&= -\frac{\partial u}{\partial x}(X(t,s;x_{i+\frac{1}{2}}),t)  q (X(t,s;x_{i+\frac{1}{2}}),t),
+		\end{split}
+	\end{align}
+	where we used that $q$ satisfies the linear advection equation on its differential form and that $X(t,s;x_{i+\frac{1}{2}})$
+	solves Equation \eqref{chp-sec-flux:analysis-eq3}.
+	Using again standard ODE techniques, we get that $q$ that solves Equation \eqref{chp-sec-flux:dqdt}
+	is given by:
+	\begin{align}
+		\begin{split}
+			\label{chp-sec-flux:q_int}
+			q(X(t,s;x_{i+\frac{1}{2}}),t) &= 
+			\exp{\bigg(-\int_{t}^{s} \frac{\partial u}{\partial x}(X(\theta,s;x_{i+\frac{1}{2}}),\theta)  \,d\theta \bigg)}
+			q(x_{i+\frac{1}{2}},s).\\
+		\end{split}
+	\end{align}
+	Notice that if $u$ does not depend on $x$, then $q$ is constant along the trajectory $X(t,s;x_{i+\frac{1}{2}})$.
+	
+	Let us consider the mapping $s\in[t^n,t^{n+1}] \to X(t^n,s,x_{i+\frac{1}{2}})$. 
+	Integrating $q$ over all departure points at time $t^n$ from $x_{i+\frac{1}{2}}$ at time $s$, we have
+	\begin{equation}
+		\label{chp-sec-flux:depint_1}
+		\int^{X(t^n,t^{n+1};x_{i+\frac{1}{2}})}_{X(t^n,t^{n};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}}} q(x,t^n)\,dx 
+		= \int_{t^n}^{t^{n+1}} q(X(t^n,s;x_{i+\frac{1}{2}}),t^n) \frac{\partial X}{\partial s} (t^n,s;x_{i+\frac{1}{2}})\,ds,
+	\end{equation}
+	where we are just using the variable change integration formula.
+	Then, it follows from Equations  \eqref{chp-sec-flux:xs_int}
+	and \eqref{chp-sec-flux:q_int} with $t=t^n$ that:
+	\begin{align*}
+		\label{chp-sec-flux:depint_2}
+		\begin{split}
+			&\int^{X(t^n,t^{n+1};x_{i+\frac{1}{2}})}_{x_{i+\frac{1}{2}}} q(x,t^n)\,dx 
+			= -\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds, \\ 
+		\end{split}
+	\end{align*}
+	which is the desired formula.
+\end{proof}
+
+With the aid of Proposition \ref{chp2-sec-flux:prop1}, we can rewrite Problem \ref{chp2-sec2-prob2}
+in terms of the departure point, avoiding the need for knowledge about $q$ over the
+entire interval $[t^n, t^{n+1}]$. This is described in Problem \ref{chp2-sec2-prob3}:
+\begin{prob}
+    \label{chp2-sec2-prob3}
+	Assume the framework of Problem \ref{chp2-sec2-prob1}
+    and a $(\Delta x, \Delta t, \lambda)$-discretization of $\Omega \times [0,T]$.
+	Since we are in the framework of Problem \ref{chp2-sec2-prob1}, it follows that:
+\begin{equation}
+	\label{1d-fvslexact-scheme}
+	\begin{split}
+{Q}_i(t^{n+1}) =  {Q}_i(t^{n}) -
+\frac{1}{\Delta x}
+\bigg( \int_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})}^{x_{i+\frac{1}{2}}}{q}(x, t^n) \,dx-
+\int_{X(t^n,t^{n+1};x_{i-\frac{1}{2}})}^{x_{i-\frac{1}{2}}}{q}(x, t^n) \,dx \bigg),\\
+\quad \forall i = 1, \cdots, N,
+\quad \forall n = 0, \cdots, N_T-1,
+	\end{split}
+\end{equation}
 	where ${Q}_i(t) = \frac{1}{\Delta x}
 	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x,t) \,dx$.
 	Our problem now consists of finding the values ${Q}_i(t^{n})$, 
@@ -420,42 +443,44 @@ Now we define a discretized version of Problem \ref{chp2-sec2-prob1}  in Problem
 	In other words, we would like to find the average values of ${q}$
 	in each control volume $X_i$ at the considered time instants.
 \end{prob}
+At each time step $t^n$, we compute the values of ${Q}_i(t^{n+1})$ based on ${Q}_i(t^{n})$ and the integrals 
+of $q(x, t^n)$ over specific intervals. These intervals are defined by the departure points 
+$X(t^n, t^{n+1}; x_{i+\frac{1}{2}})$ and $X(t^n, t^{n+1}; x_{i-\frac{1}{2}})$.
+To perform the computations, we need to determine the departure points from the edges of all control volumes
+and calculate the required integrals. This idea serves as the motivation for defining finite-volume 
+Semi-Lagrangian schemes. These schemes involve estimating the departure points and reconstructing the 
+function $q$ at time $t^n$ using its average values $Q_i(t^n)$, which enables us to compute the necessary integrals.
 
-Finally, we define the one-dimensional (1D) finite-volume (FV)
-scheme problem as follows in Problem \ref{chp2-sec2-prob3}.
-\begin{prob}[1D-FV scheme]
-	\label{chp2-sec2-prob3}
-	Assume the framework defined in Problem \ref{chp2-sec2-prob2}.
-	The finite-volume approach of Problem \ref{chp2-sec2-prob2}
+\section{The finite-volume Semi-Lagrangian approach}
+Finally, we define the 1D FV-SL scheme problem as follows in Problem \ref{chp2-sec2-prob3}.
+
+\begin{prob}[1D FV-SL scheme]
+	\label{chp2-sec2-prob4}
+	Assume the framework defined in Problem \ref{chp2-sec2-prob3}.
+	The finite-volume Semi-Lagrangian approach of Problem \ref{chp2-sec2-prob3}
 	consists of finding a scheme of the form:
-        \begin{equation}
-					\label{1d-fv-scheme}
-		{Q}_{i}^{n+1} =  {Q}_{i}^{n} -
-            \lambda \delta_i {F}_{i}^{n},
-                \quad \forall i = 1, \cdots, N,
-                \quad \forall n = 0, \cdots, N_T-1,
-        \end{equation}
-	where $\delta_i {F}_{i}^{n} = 
-    {F}_{i+\frac{1}{2}}^{n} - {F}_{i-\frac{1}{2}}^{n}$
-    and the ${Q}^{n} \in \mathbb{R}^{\Delta x}$ is intended to be an approximation
-	of the other  ${Q}(t^{n})\in \mathbb{R}^{\Delta x}$ in some sense. We define
-    ${Q}_{i}^{0} = {Q}_i(0)$ or ${Q}_{i}^{0} = {q}^{0}_{i}$. 
-	The terms ${F}_{i+\frac{1}{2}}^{n} = \mathcal{F}
-    (Q^{n}(\mathcal{S}_{i+\frac{1}{2}} ), \tilde{u}^n_{i+\frac{1}{2}})$ are known as numerical flux, 
-    where $\mathcal{S}_{i+\frac{1}{2}}$ is a $(p,q)$-stencil, $\mathcal{F}:\mathbb{R}^{p+q}\times \mathbb{R} \to \mathbb{R}$ 
-    is the numerical flux function, and it approximates
-	$\frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}} 
-    {(uq)}(x_{i+\frac{1}{2}}, t) \,dt $,
-	$\forall i = 0, 1, \cdots, N$,
-	or, in other words, it estimates the time-averaged fluxes at
-    the control volume $X_i$ boundaries. The value $\tilde{u}_{i+\frac{1}{2}}^n$ is related to the time-averaged velocity
-    and depends on values of $u_{i+\frac{1}{2}}^n$.
+	\begin{equation}
+		\label{1d-fv-scheme}
+		{Q}_{i}^{n+1} = {Q}_{i}^{n} -
+		\frac{1}{\Delta x} ({F}_{i+\frac{1}{2}}^{n} - {F}_{i-\frac{1}{2}}^{n}),
+		\quad \forall i = 1, \cdots, N,
+		\quad \forall n = 0, \cdots, N_T-1,
+	\end{equation}
+	where ${Q}^{n} \in \mathbb{R}^{N}$ is intended to be an approximation
+	of ${Q}(t^{n})\in \mathbb{R}^{N}$ in some sense. We define
+	${Q}_{i}^{0} = {Q}_i(0)$ or ${Q}_{i}^{0} = {q}^{0}_{i}$.
+	The terms ${F}_{i\pm\frac{1}{2}}^{n}$ are known as numerical flux and are given by
+	\begin{equation}
+		{F}_{i\pm\frac{1}{2}}^{n} =
+		\int_{x_{i\pm\frac{1}{2}}^d}^{x_{i\pm\frac{1}{2}}}\tilde{q}(x; Q^n) \,dx,
+	\end{equation}
+	where ${x_{i\pm\frac{1}{2}}^d}$ is an estimate of the departure point $X(t^n,t^{n+1};x_{i\pm \frac{1}{2}})$,
+	and $\tilde{q}$ is a reconstruction function for $q$ built with the values $Q^n$.
+	Thus, ${F}_{i\pm\frac{1}{2}}^{n}$ approximates
+	$\int_{X(t^n,t^{n+1};x_{i\pm \frac{1}{2}})}^{x_{i\pm \frac{1}{2}}}{q}(x, t^n) \,dx$.
 \end{prob}
-\begin{remark}
-	A scheme of the form from Equation \eqref{1d-fv-scheme} is referred to as a 1D-FV scheme and
-	it is also known as a conservative scheme.
-\end{remark}
-For a 1D-FV the discrete total mass at the time-step $n$ is given by
+
+For a 1D FV-SL the discrete total mass at the time-step $n$ is given by
 \begin{equation}
 	\label{1d-fv-mass}
 	M^n =  \Delta x \sum_{i=1}^N Q_i^n.
@@ -470,311 +495,155 @@ which follows from a straightforward computation:
 \end{align*}
 where we are using that $F^n_{N+\frac{1}{2}} = F^n_{\frac{1}{2}}$, since we are assuming periodic boundary
 conditions.
-The numerical flux function for the PPM will be introduced in Section \ref{chp2-sec-flux}.
 
-\subsection{Consistency and convergence}
-\label{chp2-sub-CC}
-Before moving to the definition of convergence, we point out an important relation
-between the average values of $q$ and its value at the cell centroids.
-We mentioned in Problem \ref{chp2-sec2-prob3} that the initial condition may be considered as $q_i^0$
-instead of $Q_i(0)$. 
-Furthermore, when analyzing the convergence of a 1D-FV scheme, we may 
-want to compare $Q_i^n$ with $q_i^n$ since $Q_i(t^n)$ requires the computation of 
-an analytical integral, which may be too complicated to obtain in some cases.
-In the following Proposition \ref{prop-bound-centroid}, we give a simple proof
-of that $q_i^n$ approximates $Q_i(t^n)$ with second order error when $q$ is twice
-continuously differentiable.
+We would like to highlight an important relationship between the average values of $q$ and
+its values at the cell centroids. In Problem \ref{chp2-sec2-prob4}, we mentioned that 
+the initial condition can be represented as $q_i^0$ instead of $Q_i(0)$.
+Moreover, when analyzing the convergence of a FV-SL scheme, it is useful
+to compare $Q_i^n$ with $q_i^n$ since computing $Q_i(t^n)$ requires evaluating an analytical
+integral, which can be challenging in certain cases. In Proposition \ref{prop-bound-centroid},
+we provide a simple proof that $q_i^n$ approximates $Q_i(t^n)$ with second-order error
+when $q$ is twice continuously differentiable.
 \begin{prop}
 	\label{prop-bound-centroid}
-	If $q \in \mathcal{C}^2(\mathbb{S}_{T}^1)$, then $Q_i(t^n)-q_i^n = C_1 \Delta x^2$, where 
-	$C_1 = \frac{1}{24}\frac{\partial^2 q}{\partial x^2} (\eta, t^n)$,  $\eta \in X_i$
+	If $q \in \mathcal{C}^2_P(\Omega)$, then $Q_i(t^n)-q_i^n = C_1 \Delta x^2$, where 
+	$C_1 = \frac{1}{24}\frac{\partial^2 q}{\partial x^2} (\eta, t^n)$,  $\eta \in X_i$.
 \end{prop}
 \begin{proof}
 	Just apply Theorem \ref{prop-bound-midpoint1d} for the function $q(x,t^n)$.	
 \end{proof}
-To move towards the convergence of 1D-FV schemes, for  Problem \ref{chp2-sec2-prob3} we introduce the local truncation error (LTE hereafter)
-$\tau_i^n$ following \citet{leveque:2002}:
-\begin{equation}
-	\label{consistency-1d-eq1}
-	Q_i(t^{n+1}) = Q_i(t^n) - \lambda
-	\bigg(\mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}})-
-	\mathcal{F}(Q(t^n)(\mathcal{S}_{i-\frac{1}{2}}),\tilde{u}^n_{i-\frac{1}{2}}) \bigg) + \Delta t \tau_i^n.
-\end{equation}
-Notice the LTE is obtained by replacing the exact solution in Equation \eqref{1d-fv-scheme}.
-Since $Q_i(t^n)$ is the exact solution of Equation \eqref{1d-fvexact-scheme}, 
-the LTE may be rewritten as
-\begin{align}
-	\begin{split}
-	\label{consistency-1d-eq2}
-		\tau_{i}^n = 
-		\frac{1}{\Delta x} \bigg[  \bigg( \frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}}
-		{(uq)}(x_{i+\frac{1}{2}}, t) \,dt - \mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}} ),\tilde{u}^n_{i+\frac{1}{2}}) \bigg) +\\
-		\bigg( \frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}}
-		{(uq)}(x_{i-\frac{1}{2}}, t) \,dt - \mathcal{F}(Q(t^n)(\mathcal{S}_{i-\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}}) \bigg)
-		\bigg].
-	\end{split}
-\end{align}
-The LTE gives a measure of how well the 1D-FV scheme approximates the integral form
-of the considered conservation law. 
-Another interpretation of the LTE is that the LTE gives the error obtained after applying
-the scheme for a single time-step using the exact solution.
-The 1D-FV scheme is said to be consistent
-if the LTE converges to zero.
+The Problem of the convergence of 1D FV-SL schemes is addressed in Section \ref{convergence-1dfvsl}.
 
-
-We the define $\tau^n = (\tau_1^n, \cdots, \tau^n_N)$, which represent the LTEs at the time-step $n$.
-Now we can define consistency.
-\begin{definition}[Consistency]
-	\label{chp2-def-cons}
-	Let us consider the framework of Problem \ref{chp2-sec2-prob3}.
-	A 1D-FV scheme is said to be consistency in the $p$-norm if for any sequence of $(\Delta x^{(k)}, \Delta t^{(k)},\lambda)$-discretizations, 
-	$k \in \mathbb{N}$, with $\lim_{k\to \infty }{\Delta x^{(k)}} = \lim_{k\to \infty }{\Delta t^{(k)}} = 0$, we have:
-	\begin{equation*}
-		\lim_{k \to \infty}\bigg[ {\max_{1\leq n\leq N_T^{(k)}}}{\|\tau^n\|_{p,\Delta x^{(k)}}} \bigg] = 0,
-	\end{equation*}
-	and it is said to be consistent with order $P$ in the $p-$norm if %there 
-	%exists a constant 
-	%$C$ that does not depend neither on $\Delta t$ nor on $\Delta x$, such that
-	\begin{equation*}
-		{\max_{1\leq n\leq N_T^{(k)}}}{\|\tau^n\|_{p,\Delta x^{(k)}}} = O(\Delta x^P).
-	\end{equation*}
+\section{Departure point computation}
+It follows from Proposition \ref{chp2-sec-flux:prop1} that  the evaluation of the time-averaged flux
+may be replaced by the departure point calculation.
+We recall the definition of the Courant-Friedrichs-Lewy (CFL) condition.
+\begin{definition}
+	\label{chp2-sec-flux:CFL}
+	For Problem \ref{chp2-sec2-prob4}, we say that the CFL condition holds if $\frac{\Delta t}{\Delta x} |u^n_{i+\frac{1}{2}}| \leq 1$, $\forall i=0, \cdots, N$, $n=0,\cdots,N_T$.
+	The CFL number is defined by $\frac{\Delta t}{\Delta x} 
+	\max \{|u^n_{i+\frac{1}{2}}|: i=0, \cdots, N, n=0, \cdots, N_T\}$.
 \end{definition}
-From Equation \eqref{consistency-1d-eq2}, it follows that we basically need to ensure that 
-the numerical flux function $\mathcal{F}$ converges to the time-averaged flux at edges
-when $\Delta x \to 0$ in order to guarantee consistency.
-In Section \ref{chp2-sec-flux} we shall address how the numerical flux from PPM
-approximates the time-averaged flux at edges.
-
-At last, we define the point-wise error at time-step $n$ by:
-\begin{equation*}
-	E_i^n = Q_i(t^n) - Q_i^n, \quad i=1, \cdots, N,
-\end{equation*}
-and we define the vector of errors by $E^n = (E_1^n, \cdots, E_N^n)$. 
-\begin{definition}[Convergence]
-	\label{chp2-def-conv}
-	Let us consider the framework of Problem \ref{chp2-sec2-prob3}.
-	A 1D-FV scheme is said to be convergent in the $p$-norm if for any sequence of $(\Delta x^{(k)}, \Delta t^{(k)},\lambda)$-discretizations, 
-	$k \in \mathbb{N}$, with $\lim_{k\to \infty }{\Delta x^{(k)}} = \lim_{k\to \infty }{\Delta t^{(k)}} = 0$, we have:
+Before addressing the question of how compute the departure point, we point out that Equation \eqref{chp-sec-flux:analysis-eq4} is useful to 
+show that the trajectory $X(t,s;x_{i+\frac{1}{2}})$ remains on a single control volume,
+provided some basic assumptions, as we show on the next proposition.
+\begin{prop}
+	\label{chp2-sec-flux:departurebound}
+	If $u \in \mathcal{C}^1$, the CFL condition is satisfied and if $\Delta t$ and $\Delta x$ are small enough, then
+	for any $s \in [t^n, t^{n+1}]$, $t \in [t^n, s]$, we have that $X(t,s;x_{i+\frac{1}{2}}) \in X_i$ if $u_{i+\frac{1}{2}}^n>0$ 
+	and	$X(t,s;x_{i+\frac{1}{2}}) \in X_{i+1}$ if $u_{i+\frac{1}{2}}^n<0$.
+\end{prop}
+\begin{proof}
+	Let us assume $u_{i+\frac{1}{2}}^n>0$. Since $u$ is continuous and the CFL condition is satisfied,
+	there exist $\Delta t$ and $\Delta x$ such that $|u(X(t,s;x_{i+\frac{1}{2}}),t)| \frac{\Delta t}{\Delta x}\leq1$ and $u(X(t,s;x_{i+\frac{1}{2}}),t)>0$, 
+	$\forall s \in [t^n, t^{n+1}]$, $t \in [t^n, s]$.
+	Hence, it follows from Equation \eqref{chp-sec-flux:analysis-eq4} and the mean value theorem for integrals
+	(see Theorem \ref{anexo-numint-mv}) that:
 	\begin{equation*}
-		\lim_{k\to \infty}\bigg[ {\max_{1\leq n\leq N_T^{(k)}}}{\|E^n\|_{p,\Delta x^{(k)}}} \bigg] = 0,
+		X(t,s;x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - (t-s)u(X(\theta_1,s;x_{i+\frac{1}{2}}),\theta_1),
 	\end{equation*}
-	and it is said to converge with order $P$ in the $p-$norm if
-	%there exists a constant 
-	%$C$ that does not depend neither on $\Delta t$ nor on $\Delta x$, such that
+	for some $\theta_1 \in [t,s]$. Therefore:
 	\begin{equation*}
-		{\max_{1\leq n\leq N_T^{(k)}}}{\|E^n\|_{p,\Delta x^{(k)}}} = O(\Delta x^P).
+		X(t,s;x_{i+\frac{1}{2}}) \geq x_{i+\frac{1}{2}} - \Delta t u(X(\theta_1,s;x_{i+\frac{1}{2}}),\theta_1)
+		\geq x_{i+\frac{1}{2}} - \Delta x = x_{i-\frac{1}{2}},
 	\end{equation*}
-\end{definition}
-Subtracting Equation \eqref{1d-fv-scheme} from Equation \eqref{consistency-1d-eq1} we get
-the following equation for the error:
-\begin{align}
-	\begin{split}
-	\label{erroreq-1d-eq2}
-		E^{n+1}_i = E^n_i -
-		&\lambda
-		\bigg[
-			\bigg( \mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}} ),\tilde{u}^n_{i+\frac{1}{2}}) - \mathcal{F}(Q^n(\mathcal{S}_{i+\frac{1}{2}} ),\tilde{u}^n_{i+\frac{1}{2}}) \bigg) \\
-		   &-\bigg( \mathcal{F}(Q(t^n)(\mathcal{S}_{i-\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}}) - \mathcal{F}(Q^n(\mathcal{S}_{i-\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}}) \bigg)
-		\bigg] 
-		+ \tau_{i}^n \Delta t .
-	\end{split}
-\end{align}
-Notice that if $q,u \in \mathcal{C}^3$, we can rewrite Equation \ref{consistency-1d-eq2} as:
-\begin{align*}
-	\begin{split}
-		\tau_{i}^n = 
-		\bigg[ \frac{1}{\Delta x \Delta t}  \int_{t^{n}}^{t^{n+1}} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-		{\frac{\partial (uq)}{\partial x}}(x, t) \,dx \,dt - 
-		\bigg(\frac{\mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}})) -\mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}})}{\Delta x} \bigg)
-		\bigg].
-	\end{split}
-\end{align*}
-Using the midpoint rule for integration (Theorem \ref{prop-bound-midpoint1d}) and the mean value theorem for integrals
-(Theorem \ref{anexo-numint-mv}), 
-we have:
-\begin{align}
-	\begin{split}
-		\label{consistency-1d-eq3}
-		\tau_{i}^n 
-		&= 
-		\bigg[ \frac{1}{\Delta t}  \int_{t^{n}}^{t^{n+1}}
-		{\bigg(\frac{\partial (uq)}{\partial x}}(x_i, t) + \frac{\Delta x^2}{24}\frac{\partial (uq)}{\partial x}(\xi, t) \bigg) \,dt - 
-		\bigg(\frac{\mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}})) 
-		-\mathcal{F}(Q(t^n)(\mathcal{S}_{i-\frac{1}{2}}),\tilde{u}^n_{i-\frac{1}{2}})}{\Delta x} \bigg)
-		\bigg] \\
-		& = 
-		\bigg[ \frac{1}{\Delta t}  \int_{t^{n}}^{t^{n+1}}
-		{\frac{\partial (uq)}{\partial x}}(x_i, t) \,dt - 
-		\bigg(\frac{\mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}})) -\mathcal{F}(Q(t^n)(\mathcal{S}_{i-\frac{1}{2}}),\tilde{u}^n_{i-\frac{1}{2}})}{\Delta x} \bigg)
-		\bigg] +  \frac{\Delta x^2}{24}\frac{\partial^3 (uq)}{\partial x^3}(\xi, \overline{t}), 
-	\end{split}
-\end{align}
-for $\xi \in X_i$ and $\overline{t} \in [t^{n},t^{n+1}]$. Therefore, if $q,u \in \mathcal{C}^3$ the scheme is
-consistent, if and only if, $\frac{1}{\Delta t}  \int_{t^{n}}^{t^{n+1}} {\frac{\partial (uq)}{\partial x}}(x_i, t) \,dt$
-is approximated by 
-$\frac{\mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}})) -\mathcal{F}(Q(t^n)(\mathcal{S}_{i-\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}})}{\Delta x}$.
-This shall be very useful when we consider two-dimensional schemes, where we are going to use the discrete operators to estimate the divergence
-of velocity fields.
-
-\subsection{Stability}
-\label{chp2-sub-stability}
-In order to define the concept of stability, it is useful to introduce an operator
-representation of 1D-FV schemes.
-In the context of Problem \ref{chp2-sec2-prob3}, we define the operators
-$\mathcal{H}_{\Delta x,n}: \mathbb{R}^{\Delta x} \to \mathbb{R}^{\Delta x}$ whose $i$-th entry is given by:
+	from which the claim follows.
+	The case $u_{i+\frac{1}{2}}^n<0$  is very similar to the case  $u_{i+\frac{1}{2}}^n>0$.
+\end{proof}
+Equation \eqref{chp-sec-flux:analysis-eq4} allow us to compute or estimate the departure point.
+For instance, if $u$ is constant, then the departure point at time $t^n$ of the point 
+$x_{i+\frac{1}{2}}$ at time $t^{n+1}$ is given by:
 \begin{equation}
-	[\mathcal{H}_{\Delta x,n}(Q)]_i = Q_i -
-	\lambda \bigg( \mathcal{F}(Q(\mathcal{S}_{i+\frac{1}{2}} ),\tilde{u}^n_{i+\frac{1}{2}}) 
-	- \mathcal{F}(Q(\mathcal{S}_{i-\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}}) \bigg),
+	\label{chp-sec-flux:departurepoint}
+	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - u\Delta t.
 \end{equation}
-for $i=1, \cdots, N$, $n=0, \cdots, N_T-1$.
-Notice that the dependence on $n$ is due to the velocity that may be allowed
-to vary with time.
-As it is usual, we are assuming periodicity in the entries of $Q$ when 
-we apply the operator $\mathcal{H}_{\Delta x,n}$.
-Thus, Equation \eqref{1d-fv-scheme} may be rewritten in a vector form by
-\begin{equation*}
-	Q^{n+1} = \mathcal{H}_{\Delta x,n}(Q^n),
-\end{equation*}
-and Equation \eqref{consistency-1d-eq1} in a vector form reads
-\begin{equation*}
-	Q(t^{n+1}) = \mathcal{H}_{\Delta x,n}(Q(t^n)) + \Delta t \tau^n,
-\end{equation*}
-and the error equation \eqref{erroreq-1d-eq2} is given by
+For the general case where $u$ may depend on $x$ and $t$, we follow the approach of
+the original PPM scheme from \citet{colella:1984} using:
 \begin{equation}
-	\label{erroreq-1d-eq3}
-	E^{n+1} = \mathcal{H}_{\Delta x,n}(Q(t^n)) - \mathcal{H}_{\Delta x,n}(Q^n) +  \Delta t \tau^n.
+	\label{chp-sec-flux:departurepoint3}
+	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2}}\Delta t + C\Delta t^2,
 \end{equation}
-The stability theory focus on uniformly bounding the norm of $\mathcal{H}_{\Delta x,n}(Q(t^n)) - \mathcal{H}_{\Delta x,n}(Q^n)$ \citep{leveque:2002}.
-We define stability as follows.
-
-\begin{definition}[Stability]
-	In the context of Problem  \ref{chp2-sec2-prob3},
-	a 1D-FV scheme is stable in the $p-$norm if for any $(\Delta x, \Delta t, \lambda)$-discretization of $[a,b]\times [0,T]$ we have:
+with $\tilde{u}^{n}_{i+\frac{1}{2}} = {u}^{n}_{i+\frac{1}{2}}$.
+This scheme shall be referred to as \textbf{RK1}.
+Our aim now is to exhibit the constant $C$ on the next proposition. It is useful to before introduce the material derivative
+\begin{equation*}
+	\frac{Dh}{Dt}  = \frac{\partial h}{\partial t} + u\frac{\partial h}{\partial x},
+\end{equation*}
+for a function $h \in \mathcal{C}^1$.
+\begin{prop}
+	\label{chp-sec-flux:dp_euler}
+	If $u\in \mathcal{C}^1$, then $X$ that solves Equation \eqref{chp-sec-flux:analysis-eq3} satisfies:
 	\begin{equation}
-		\|\mathcal{H}_{\Delta x,n}(Q) - \mathcal{H}_{\Delta x,n}(P)\|_{p,\Delta x} \leq (1+\alpha \Delta t)  \|Q-P\|_{p,\Delta x},
+		X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - {u}^{n}_{i+\frac{1}{2}}\Delta t + C\Delta t^2,
 	\end{equation}
-	for all $Q, P \in \mathbb{R}^{\Delta x}$ and $\alpha$ is a constant
-	that does not depend neither on $\Delta x$ nor on  $\Delta t$.
-\end{definition}
-Assuming that the scheme is stable in the $p-$norm, then it follows from Equation \eqref{erroreq-1d-eq3} that:
-\begin{align}
-	\label{chp2-sec2-erroreq}
-	\begin{split}
-	\|E^{n+1}\|_{p,\Delta x} 
-	&\leq \|\mathcal{H}_{\Delta x,n}(Q(t^n)) - \mathcal{H}_{\Delta x,n}(Q^n)\|_{p,\Delta x} +  \Delta t \max_{n=1, \cdots, N_T}\|\tau^n\|_{p,\Delta x}\\
-	&\leq (1+\alpha \Delta t)\|E^n\|_{p,\Delta x} +  \Delta t \max_{n=1, \cdots, N_T}\|\tau^n\|_{p,\Delta x}\\
-	&\leq (1+\alpha \Delta t)^n\|E^0\|_{p,\Delta x} +  \Delta t \max_{n=1, \cdots, N_T}\|\tau^n\|_{p,\Delta x}
-	\sum_{k=0}^{n-1} (1+\alpha \Delta t)^k\\
-  &\leq e^{\alpha T}(\|E^0\|_{p,\Delta x} + T\max_{n=1, \cdots, N_T}\|\tau^n\|_{p,\Delta x}), \\
-	\end{split}
-\end{align}
-where we used $n \Delta t\leq T $, $T=N\Delta t$ and the inequality $e^t> 1+t$.
-When computing the initial average values using the value at the cell centroid, 
-the initial error $E^0$ converges to zero provided $q$ is twice continuously differentiable
-by Proposition \ref{prop-bound-centroid}.
-Therefore, it follows that if the scheme is stable and consistent
-then it is convergent. 
-Furthermore, if it is stable and consistent with order $P$, then
-the convergence order is at least equal to $\min\{{P,2}\}$.
-In the case where both the conservation law and $\mathcal{H}_{\Delta x,n}$ are linear,
-this result is a particular case of the Lax-Ritchmyer stability and the convergence
-is guaranteed by the Lax equivalence theorem \citep{leveque:2002}.
-In this Chapter, we are interested only in the linear advection equation.
-However, as we shall see in Section \ref{chp2-sec-flux}, the operator $\mathcal{H}_{\Delta x,n}$
-may become non-linear when monotonicity constraints are activated.
-
-Notice that, if $\mathcal{H}_{\Delta x,n}$ is linear, then stability is equivalent to require that
-\begin{equation*}
-	\|\mathcal{H}_{\Delta x,n}\|_{p,\Delta x} \leq 1+ \alpha \Delta t,
-\end{equation*}
-where
-\begin{equation*}
-	\|\mathcal{H}_{\Delta x,n}\|_{p,\Delta x} = \sup_{Q\in \mathbb{R}^{\Delta x}} \frac{\|\mathcal{H}_{\Delta x,n}(Q)\|_{p,\Delta x}}{\|Q\|_{p,\Delta x}},
-\end{equation*}
-is the operator $p$-norm.
-
-For linear operators, we may use the discrete Fourier transform \citep{trefethen:2000}
-to estimate the 2-norm of $\mathcal{H}_{\Delta x,n}$. This approach is known as Von Neumann stability analysis.
-We define the nodes $\theta_i = i\frac{2\pi}{N}$, $i=1, \cdots, N$, $\Delta \theta = \frac{2\pi}{N}$,
-$\theta = (\theta_1, \theta_2, \cdots, \theta_N)$.
-The imaginary unit is denoted by $\imath$.
-The Fourier modes are given by:
-\begin{equation*}
-	e^{\imath k \theta} = (e^{\imath k\theta_1}, e^{\imath k\theta_2}, \cdots, e^{\imath k\theta_N}) \in \mathbb{C}^N, 
-\end{equation*}
-for $k=1, \cdots, N$. 
-Each $k$ is referred to wavenumber and $\theta_k$ is called  dimensionless wavenumber.
-The Fourier modes form an orthogonal basis of $\mathbb{C}^N$ with respect to the 
-inner product
-\begin{equation*}
-	\langle Q, P \rangle = \frac{1}{N}\sum_{i=1}^{N}{Q_i \overline{P_i}},
-\end{equation*}
-for $P, Q \in \mathbb{C}$ and $\overline{z}$ denotes the complex conjugate of $z$. 
-Given $Q \in \mathbb{R}^{\Delta x}$, we may may express it in terms of the Fourier modes
-\begin{equation*}
-	Q = \sum_{k=1}^{N} a_k \exp(\imath k \theta),
-\end{equation*}
-where $a_k \in \mathbb{C}$. The 2-norm of $Q$ is then given by:
-\begin{equation*}
-	\|Q\|_{2,\Delta x} = \sqrt{N \sum_{k=1}^{N} |a_k|^2}.
-\end{equation*}
-The idea of Von Neumann stability analysis is to apply the operator $\mathcal{H}_{\Delta x,n}$ on each Fourier mode and
-analyze how it modifies its amplitude.
-For ease of analysis, we assume that the velocity is constant, which implies that
-the operator $\mathcal{H}_{\Delta x,n}$ has constant coefficients and does not depend on $n$.
-For the general case, where the velocity is not constant, the stability
-can be ensured using the frozen coefficients method \citep[p.~59]{strikwerda:2004}.
-This method boils down to performing multiple times the stability analysis with a constant velocity
-being equal to each one of the possible values of the velocity on the grid.
-If the scheme is stable for all the possible constant velocities, then stability is ensured.
-Since the operator is supposed to be linear with constant coefficients and we
-are assuming periodic boundaries conditions, we may write:
-\begin{equation*}
-	\mathcal{H}_{\Delta x,n}(e^{\imath k \theta}) = \rho(k)  e^{\imath k \theta},
-\end{equation*}
-where the term $\rho(k)$ is called amplification factor and it is an eigenvalue of $\mathcal{H}_{\Delta x,n}$.
-The norm of $\mathcal{H}_{\Delta x,n}(Q)$ is bounded by:
-\begin{equation*}
-	\|\mathcal{H}_{\Delta x,n}(Q)\|_{2,\Delta x}^2 = N \sum_{k=1}^{N} |a_k|^2 |\rho(k)|^2 \leq 
-	\max_{k=1, \cdots, N}{|\rho(k)|}^2 \|Q\|_{2,\Delta x}^2.
-\end{equation*}
-Therefore:
-\begin{equation*}
-	\|\mathcal{H}_{\Delta x,n}\|_{2,\Delta x} \leq \max_{k=1, \cdots, N}{|\rho(k)|}.
-\end{equation*}
-If we show that $\max_{k=1, \cdots, N}{|\rho(k)|} \leq 1 + \alpha \Delta t$, 
-with $\alpha$ independent of $\Delta t$, $N$ and $n$, then we ensure the stability of $\mathcal{H}_{\Delta x,n}$.
-Generally speaking, the numerical flux can be written as a linear function
-\begin{equation*}
-	\mathcal{F}(Q(\mathcal{S}_{i+\frac{1}{2}}), \tilde{u}^n_{i+\frac{1}{2}}) = \sum_{l \in \mathcal{S}_{i+\frac{1}{2}}} \alpha_{l,i} Q_{l}, 
-\end{equation*}
-when no monotonicity constraint is imposed, 
-where the coefficients $\alpha_{l,i}$ depend on $\tilde{u}^n, \Delta t$ and $\Delta x$.
-We can then express $\rho$ in terms of $\alpha_{l,i}$.
-Indeed, when we apply the operator $\mathcal{H}_{\Delta x,n}$ in a Fourier mode, we get:
-\begin{align*}
-	\begin{split}
-		[\mathcal{H}_{\Delta x,n}(e^{\imath k\theta})]_i &= e^{\imath k\theta_i} - \lambda 
-		\bigg(\sum_{l \in \mathcal{S}_{i+\frac{1}{2}}} \alpha_{l,i}   e^{\imath k\theta_{l}} - 
-		\sum_{l \in \mathcal{S}_{i-\frac{1}{2}}} \alpha_{l,i-1} e^{\imath k\theta_{l-1}} \bigg)\\
-		&= e^{\imath k \theta_i}\bigg(1 - \lambda 
-		\bigg(\sum_{l \in \mathcal{S}_{i+\frac{1}{2}}} \alpha_{l,i}   e^{\imath k\theta_{l-i}} - 
-		\sum_{l \in \mathcal{S}_{i-\frac{1}{2}}} \alpha_{l,i-1} e^{\imath k\theta_{l-1-i}} \bigg) \bigg).\\
-	\end{split}
-\end{align*}
-Hence, the amplification factor has the form
+\end{prop}
+for a constant $C$ depending on $u$.
+\begin{proof}
+Using Corollary \ref{anexo-numint-col1} for the function $f(t) = u(X(t,t^{n+1};x_{i+\frac{1}{2}}),t)$
+in Equation  \eqref{chp-sec-flux:analysis-eq4}, we get:
 \begin{equation}
-\label{chp2-amplification}
-\rho(k) = 1 - \lambda
-					\bigg(\sum_{l \in \mathcal{S}_{i+\frac{1}{2}}} \alpha_{l,i}   e^{\imath k\theta_{l-i}} - 
-					\sum_{l \in \mathcal{S}_{i-\frac{1}{2}}} \alpha_{l,i-1} e^{\imath k\theta_{l-1-i}} \bigg).
+	\label{chp-sec-flux:departurepoint4}
+	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - u(X(t^n,t^{n+1};x_{i+\frac{1}{2}}),t^n)\Delta t + \frac{1}{2}\frac{Du}{Dt}(\tilde{x}_1,\tilde{t}_1)\Delta t^2,
 \end{equation}
-In Section \ref{chp2-sec-flux} we shall analyse $|\rho(k)|$ in terms of the PPM coefficients.
+for $\tilde{x}_1 \in X_i \cup X_{i+1}$, $\tilde{t}_1 \in [t^n, t^{n+1}]$, for small $\Delta x$ and $\Delta t$ as in Proposition \ref{chp2-sec-flux:departurebound}.
+Using the Taylor's expansion of $u(X(t,t^{n+1};x_{i+\frac{1}{2}}),t^n)$ we have:
+\begin{equation}
+	\label{chp-sec-flux:departurepoint5}
+	u(X(t^n,t^{n+1};x_{i+\frac{1}{2}}),t^n) = u^n_{i+\frac{1}{2}} - \bigg(u\frac{\partial u}{\partial x}\bigg)(\tilde{x}_2,\tilde{t}_2)\Delta t,
+\end{equation}
+for $\tilde{t}_2 \in [t^n, t^{n+1}]$.
+Hence, replacing Equation \eqref{chp-sec-flux:departurepoint5} in Equation \eqref{chp-sec-flux:departurepoint4} 
+we obtain the desired constant $C$ given by:
+\begin{equation}
+	\label{chp-sec-flux:departurepoint6}
+	C =  C(\tilde{x}_1, \tilde{x}_2, \tilde{t}_1, \tilde{t}_2) = 
+	\bigg( \frac{1}{2}\frac{Du}{Dt}(\tilde{x}_1,\tilde{t}_1) - \bigg(u\frac{\partial u}{\partial x}\bigg)(\tilde{x}_2,\tilde{t}_2)\bigg)\Delta t.
+\end{equation}
+\end{proof}
+The problem of estimating the departure point is very common in Semi-Lagrangian scheme,
+which are quite popular in atmospheric modeling.
+For a review on departure point calculation methods, we refer to  \citet[Chapter 3]{tumolo:2011} and the references therein. 
+There are different approaches to compute the departure point, such as integrating the ODE from Equation \ref{chp2-sec-flux:prop1}
+using different time integrators \citep{durran:2011} backward in time.
+The Runge-Kutta methods are a possible choice to compute the departure point (\textit{cf. e.g.} \citet{guo:2014}, \citet{lu:2022}). In this work,
+we shall consider a second-order Runge-Kutta to compute the departure point, which we express in terms of $\tilde{u}^n_{i+\frac{1}{2}}$ 
+using the following equations \citep{durran:2010}
+\begin{align}
+	\label{chp-sec-flux:dp_RK2}		
+	x^{d}_{i+\frac{1}{2}} &= x_{i+\frac{1}{2}} - u_{i+\frac{1}{2}}^n \frac{\Delta t}{2}, \nonumber \\
+	\tilde{u}^n_{i+\frac{1}{2}} &= u\bigg(x^{d}_{i+\frac{1}{2}}, t^n + \frac{\Delta t}{2}\bigg).
+\end{align}
+Notice that this scheme requires values of $u$ at points that are not grid points, both in time and space. 
+This problem is addressed firstly using a second-order extrapolation in time
+\begin{equation}
+	u^{n+\frac{1}{2}}_{i+\frac{1}{2}} = \frac{3}{2}u^{n}_{i+\frac{1}{2}}-\frac{1}{2}u^{n-1}_{i+\frac{1}{2}}.
+\end{equation}
+and then we use a linear interpolation in space,
+\begin{equation}
+	\tilde{u}^n_{i+\frac{1}{2}}  = 
+	\begin{cases}
+		\bigg(1-\frac{x_{i+\frac{1}{2}} - x^{d}_{i+\frac{1}{2}}}{\Delta x} \bigg)u^{n+\frac{1}{2}}_{i+\frac{1}{2}} + 
+		\bigg(\frac{x_{i+\frac{1}{2}}-x^{d}_{i+\frac{1}{2}}}{\Delta x}\bigg)u^{n+\frac{1}{2}}_{i-\frac{1}{2}}	& 
+		\text{if } {u}^n_{i+\frac{1}{2}}\geq 0,\\
+		\bigg(\frac{x_{i+\frac{1}{2}} - x^{d}_{i+\frac{1}{2}}}{\Delta x} \bigg)u^{n+\frac{1}{2}}_{i+\frac{3}{2}} + 
+		\bigg(1-\frac{x_{i+\frac{1}{2}}-x^{d}_{i+\frac{1}{2}}}{\Delta x}\bigg)u^{n+\frac{1}{2}}_{i+\frac{1}{2}}	& 
+		\text{if } {u}^n_{i+\frac{1}{2}} < 0.\\
+	\end{cases}
+\end{equation}
+This scheme leads to a 3-th order error in departure point (see \textit{e.g.} \citet[Section 7.1.2]{durran:2010} ): 
+\begin{align}		
+	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2}}\Delta t + C\Delta t^3,
+\end{align}
+where $C$ is a constant depending on $u$ and its derivatives.
+This scheme shall be referred to as \textbf{RK2}. Notice that for this scheme, we need ghost values
+for the velocity, namely ${u}^n_{-\frac{1}{2}}$ and ${u}^n_{N+\frac{3}{2}}$.
+The linear interpolation described makes sense when we assume the CFL condition. When we have a larger 
+CFL number, it is straightforward to modify the linear interpolation to compute the velocity needed.
 
 
-\section{The Piecewise-Parabolic Method}
-\label{chp2-sec-ppm}
+
+\section{Reconstruction}
+\label{chp2-sec-recon}
 In this Section, we are going to review and analyze the Piecewise-Parabolic method (PPM).
 This method was proposed by \citet{colella:1984} for gas dynamic simulations and
 its viability for atmospheric simulations has been shown by \citet{carpenter:1990}.
@@ -787,8 +656,8 @@ we present and analyze the PPM reconstruction method and the monotonization and
 flux computation are presented and analyzed in Subsections 
 \ref{chp2-sec-mono} and \ref{chp2-sec-flux}, respectively.
 
-\subsection{Reconstruction}
-\label{chp2-sec-recon}
+\subsection{The Piecewise-Parabolic Method}
+\label{chp2-sec-ppm}
 Let us consider a function ${q} \in L^{1}_{\text{loc}}(\mathbb{R})$, a $\Delta x$-grid 
 $\mathcal{X}$ of $[a,b]$ and assume that we are given the average values ${Q}_i = \frac{1}{\Delta x} 
 \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x) \,dx$
@@ -954,7 +823,7 @@ based on the work \citet{suresh:1997}. The fifth-order reconstruction formula re
 However, we notice that this reconstruction scheme allows discontinuity of the 
 Piecewise-Parabolic function at the control volume edges since the stencil it is not symmetric.
 
-\subsubsection{PPM reconstruction order analysis}
+\subsection{PPM reconstruction order analysis}
 \label{chp2-sec-numerical-analysis}
 As we pointed out before, the approximation of $q$ at the control volumes edges
 given by Equation \eqref{chp2-sec-recon-ppm-eq9} is fourth-order accurate when $q \in \mathcal{C}^4(\mathbb{R})$. 
@@ -1338,257 +1207,13 @@ The monotonicity is achieved by the following scheme:
 This scheme may be further improved to reduce the diffusion even more as described by \citet{lin:2004}, but
 we are not going to assess this approach here.
 
-\subsection{Flux}
+\section{Flux}
 \label{chp2-sec-flux}
 
-\subsubsection{Time-averaged flux}
-As we pointed out in  Problem \ref{chp2-sec2-prob3}, we must approximate the time-averaged flux 
-$\frac{1}{\Delta t}\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},t) \,dt$ at the cell edges $x_{i+\frac{1}{2}}$ 
-to deduce a finite-volume scheme. One way to do that is to first write this temporal integral as 
-a spatial integral at time $t^n$. After that, we can estimate this spatial integral
-using the reconstruction function at time $t^n$. As we shall see soon, this spatial integral
-domain is related with the definition of departure point.
-
-To introduce the definition of departure point, for each $s \in [t^n,t^{n+1}]$,
-we consider the following Cauchy problem backward in time:
-\begin{equation}
-	\label{chp-sec-flux:analysis-eq3}
-	\begin{cases}
-		\frac{\partial X}{\partial t} (t,s;\alpha) = u(X(t,s;\alpha) ,t),\quad t\in[t^{n},s] \\
-		X(s,s;\alpha) = \alpha.
-	\end{cases}
-\end{equation}
-The point $X(t^n,s;\alpha)$ is called departure point at time $t^n$
-of the point $\alpha$ at time $s$.
-Integrating Equation $\eqref{chp-sec-flux:analysis-eq3}$ over the interval
-$[t,s]$, we get:
-\begin{equation}
-	\label{chp-sec-flux:analysis-eq4}
-	X(t,s;\alpha) = \alpha - \int_{t}^{s}u(X(\theta,s;\alpha),\theta) \,d\theta.
-\end{equation}
-In the next proposition, we show how the time-averaged integral is related to 
-a spatial integral over the departure points.
-\begin{prop}
-	\label{chp2-sec-flux:prop1}
-	Assume the framework of Problem \ref{chp2-sec2-prob2}.
-	If $q$ and $u$ are $\mathcal{C}^1$ functions, then:
-	\begin{align}
-		\label{chp2-sec-flux:approx1}
-		\int_{t^n}^{t^{n+1}} (uq)(\alpha,s) \,ds = 
-		\int^{\alpha}_{X(t^n,t^{n+1};\alpha)} q(x,t^n)\,dx
-	\end{align}
-\end{prop}
-\begin{proof}
-	Using the Leibniz rule for integration in Equation \eqref{chp-sec-flux:analysis-eq4}, it follows that:
-	\begin{align}
-		\begin{split}
-			\label{chp-sec-flux:dxds}
-			\frac{\partial X}{\partial s} (t,s;\alpha) &= - \bigg(u(\alpha,s) + 
-			\int_{t}^{s} \frac{du}{ds}(X(\theta,s;\alpha),\theta) \,d\theta \bigg)\\
-			&=- u(\alpha,s) -
-			\int_{t}^{s} \frac{\partial u}{\partial x}(X(\theta, s; \alpha),\theta) 
-			\frac{\partial X}{\partial s} (\theta, s; \alpha)\,d\theta.
-		\end{split}
-	\end{align}
-	Taking the derivative with respect to $t$ of Equation \eqref{chp-sec-flux:dxds}, we have:
-	\begin{align}
-		\begin{split}
-			\label{chp-sec-flux:dxds_2}
-			\frac{\partial }{\partial t} \bigg(\frac{\partial X}{\partial s} \bigg)
-			(t,s;\alpha) = \frac{\partial u}{\partial x}(X(t, s; \alpha), t) 
-			\frac{\partial X}{\partial s} (t, s; \alpha).
-		\end{split}
-	\end{align}
-	Using standard ODE techniques, we get that $X$ that solves Equations \eqref{chp-sec-flux:dxds} and \eqref{chp-sec-flux:dxds_2}
-	is given by:
-	\begin{align}
-		\begin{split}
-			\label{chp-sec-flux:xs_int}
-			\frac{\partial X}{\partial s}(t,s;\alpha) = -
-			\exp{\bigg(\int_{t}^{s} \frac{\partial u}{\partial x}(X(\theta,s;\alpha),\theta)  \,d\theta \bigg)}
-			u(\alpha,s).
-		\end{split}
-	\end{align}
-	Computing $q$ on the trajectory give by $X(t,s;\alpha)$ and taking
-	its time derivative, we obtain:
-	\begin{align}
-		\label{chp-sec-flux:dqdt}
-		\begin{split}
-			\frac{dq}{dt} (X(t,s;\alpha),t) &= 
-			\frac{\partial q}{\partial t} (X(t,s;\alpha),t)+
-			u (X(t,s;x_{i+\frac{1}{2}}),t)\frac{\partial q}{\partial x} (X(t,s;\alpha),t) \\
-			&= -\frac{\partial u}{\partial x}(X(t,s;\alpha),t)  q (X(t,s;\alpha),t),
-		\end{split}
-	\end{align}
-	where we used that $q$ satisfies the linear advection equation on its differential form and that $X(t,s;x_{i+\frac{1}{2}})$
-	solves Equation \eqref{chp-sec-flux:analysis-eq3}.
-	Using again standard ODE techniques, we get that $q$ that solves Equation \eqref{chp-sec-flux:dqdt}
-	is given by:
-	\begin{align}
-		\begin{split}
-			\label{chp-sec-flux:q_int}
-			q(X(t,s;\alpha),t) &= 
-			\exp{\bigg(-\int_{t}^{s} \frac{\partial u}{\partial x}(X(\theta,s;\alpha),\theta)  \,d\theta \bigg)}
-			q(\alpha,s).\\
-		\end{split}
-	\end{align}
-	Notice that if $u$ does not depend on $x$, then $q$ is constant along the trajectory $X(t,s;\alpha)$.
-	
-	Let us consider the mapping $s\in[t^n,t^{n+1}] \to X(t^n,s,\alpha)$. 
-	Integrating $q$ over all departure points at time $t^n$ from $\alpha$ at time $s$, we have
-	\begin{equation}
-		\label{chp-sec-flux:depint_1}
-		\int^{X(t^n,t^{n+1};\alpha)}_{X(t^n,t^{n};\alpha) = \alpha} q(x,t^n)\,dx 
-		= \int_{t^n}^{t^{n+1}} q(X(t^n,s;\alpha),t^n) \frac{\partial X}{\partial s} (t^n,s;\alpha)\,ds,
-	\end{equation}
-	where we are just using the variable change integration formula.
-	Then, it follows from Equations  \eqref{chp-sec-flux:xs_int}
-	and \eqref{chp-sec-flux:q_int} with $t=t^n$ that:
-	\begin{align*}
-		\label{chp-sec-flux:depint_2}
-		\begin{split}
-			&\int^{X(t^n,t^{n+1};\alpha)}_{\alpha} q(x,t^n)\,dx 
-			= -\int_{t^n}^{t^{n+1}} (uq)(\alpha,s) \,ds, \\ 
-		\end{split}
-	\end{align*}
-	which is the desired formula.
-\end{proof}
-Therefore, we can conclude from Proposition \ref{chp2-sec-flux:prop1} that the flux computation at
-an edge $\alpha = x_{i+\frac{1}{2}}$ requires three step: reconstruction of the solution,
-computation of the departure points from $x_{i+\frac{1}{2}}$ and computation of the  spatial integral.
-Since the reconstruction problem has been  already addressed in Section \ref{chp2-sec-recon}, 
-we now focus on the departure point computation.
-
-\subsubsection{Departure point computation}
-It follows from Proposition \ref{chp2-sec-flux:prop1} that  the evaluation of the time-averaged flux
-may be replaced by the departure point calculation.
-We recall the definition of the Courant-Friedrichs-Lewy (CFL) condition.
-\begin{definition}
-	\label{chp2-sec-flux:CFL}
-	For Problem \ref{chp2-sec2-prob3}, we say that the CFL condition holds if $\frac{\Delta t}{\Delta x} |u^n_{i+\frac{1}{2}}| \leq 1$, $\forall i=0, \cdots, N$, $n=0,\cdots,N_T$.
-	The CFL number is defined by $\frac{\Delta t}{\Delta x} 
-	\max \{|u^n_{i+\frac{1}{2}}|: i=0, \cdots, N, n=0, \cdots, N_T\}$.
-\end{definition}
-Before addressing the question of how compute the departure point, we point out that Equation \eqref{chp-sec-flux:analysis-eq4} is useful to 
-show that the trajectory $X(t,s;x_{i+\frac{1}{2}})$ remains on a single control volume,
-provided some basic assumptions, as we show on the next proposition.
-\begin{prop}
-	\label{chp2-sec-flux:departurebound}
-	If $u \in \mathcal{C}^1$, the CFL condition is satisfied and if $\Delta t$ and $\Delta x$ are small enough, then
-	for any $s \in [t^n, t^{n+1}]$, $t \in [t^n, s]$, we have that $X(t,s;x_{i+\frac{1}{2}}) \in X_i$ if $u_{i+\frac{1}{2}}^n>0$ 
-	and	$X(t,s;x_{i+\frac{1}{2}}) \in X_{i+1}$ if $u_{i+\frac{1}{2}}^n<0$.
-\end{prop}
-\begin{proof}
-	Let us assume $u_{i+\frac{1}{2}}^n>0$. Since $u$ is continuous and the CFL condition is satisfied,
-	there exist $\Delta t$ and $\Delta x$ such that $|u(X(t,s;x_{i+\frac{1}{2}}),t)| \frac{\Delta t}{\Delta x}\leq1$ and $u(X(t,s;x_{i+\frac{1}{2}}),t)>0$, 
-	$\forall s \in [t^n, t^{n+1}]$, $t \in [t^n, s]$.
-	Hence, it follows from Equation \eqref{chp-sec-flux:analysis-eq4} and the mean value theorem for integrals
-	(see Theorem \ref{anexo-numint-mv}) that:
-	\begin{equation*}
-		X(t,s;x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - (t-s)u(X(\theta_1,s;x_{i+\frac{1}{2}}),\theta_1),
-	\end{equation*}
-	for some $\theta_1 \in [t,s]$. Therefore:
-	\begin{equation*}
-		X(t,s;x_{i+\frac{1}{2}}) \geq x_{i+\frac{1}{2}} - \Delta t u(X(\theta_1,s;x_{i+\frac{1}{2}}),\theta_1)
-		\geq x_{i+\frac{1}{2}} - \Delta x = x_{i-\frac{1}{2}},
-	\end{equation*}
-	from which the claim follows.
-	The case $u_{i+\frac{1}{2}}^n<0$  is very similar to the case  $u_{i+\frac{1}{2}}^n>0$.
-\end{proof}
-Equation \eqref{chp-sec-flux:analysis-eq4} allow us to compute or estimate the departure point.
-For instance, if $u$ is constant, then the departure point at time $t^n$ of the point 
-$x_{i+\frac{1}{2}}$ at time $t^{n+1}$ is given by:
-\begin{equation}
-	\label{chp-sec-flux:departurepoint}
-	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - u\Delta t.
-\end{equation}
-For the general case where $u$ may depend on $x$ and $t$, we follow the approach of
-the original PPM scheme from \citet{colella:1984} using:
-\begin{equation}
-	\label{chp-sec-flux:departurepoint3}
-	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2}}\Delta t + C\Delta t^2,
-\end{equation}
-with $\tilde{u}^{n}_{i+\frac{1}{2}} = {u}^{n}_{i+\frac{1}{2}}$.
-This scheme shall be referred to as \textbf{RK1}.
-Our aim now is to exhibit the constant $C$ on the next proposition. It is useful to before introduce the material derivative
-\begin{equation*}
-	\frac{Dh}{Dt}  = \frac{\partial h}{\partial t} + u\frac{\partial h}{\partial x},
-\end{equation*}
-for a function $h \in \mathcal{C}^1$.
-\begin{prop}
-	\label{chp-sec-flux:dp_euler}
-	If $u\in \mathcal{C}^1$, then $X$ that solves Equation \eqref{chp-sec-flux:analysis-eq3} satisfies:
-	\begin{equation}
-		X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - {u}^{n}_{i+\frac{1}{2}}\Delta t + C\Delta t^2,
-	\end{equation}
-\end{prop}
-for a constant $C$ depending on $u$.
-\begin{proof}
-Using Corollary \ref{anexo-numint-col1} for the function $f(t) = u(X(t,t^{n+1};x_{i+\frac{1}{2}}),t)$
-in Equation  \eqref{chp-sec-flux:analysis-eq4}, we get:
-\begin{equation}
-	\label{chp-sec-flux:departurepoint4}
-	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - u(X(t^n,t^{n+1};x_{i+\frac{1}{2}}),t^n)\Delta t + \frac{1}{2}\frac{Du}{Dt}(\tilde{x}_1,\tilde{t}_1)\Delta t^2,
-\end{equation}
-for $\tilde{x}_1 \in X_i \cup X_{i+1}$, $\tilde{t}_1 \in [t^n, t^{n+1}]$, for small $\Delta x$ and $\Delta t$ as in Proposition \ref{chp2-sec-flux:departurebound}.
-Using the Taylor's expansion of $u(X(t,t^{n+1};x_{i+\frac{1}{2}}),t^n)$ we have:
-\begin{equation}
-	\label{chp-sec-flux:departurepoint5}
-	u(X(t^n,t^{n+1};x_{i+\frac{1}{2}}),t^n) = u^n_{i+\frac{1}{2}} - \bigg(u\frac{\partial u}{\partial x}\bigg)(\tilde{x}_2,\tilde{t}_2)\Delta t,
-\end{equation}
-for $\tilde{t}_2 \in [t^n, t^{n+1}]$.
-Hence, replacing Equation \eqref{chp-sec-flux:departurepoint5} in Equation \eqref{chp-sec-flux:departurepoint4} 
-we obtain the desired constant $C$ given by:
-\begin{equation}
-	\label{chp-sec-flux:departurepoint6}
-	C =  C(\tilde{x}_1, \tilde{x}_2, \tilde{t}_1, \tilde{t}_2) = 
-	\bigg( \frac{1}{2}\frac{Du}{Dt}(\tilde{x}_1,\tilde{t}_1) - \bigg(u\frac{\partial u}{\partial x}\bigg)(\tilde{x}_2,\tilde{t}_2)\bigg)\Delta t.
-\end{equation}
-\end{proof}
-The problem of estimating the departure point is very common in Semi-Lagrangian scheme,
-which are quite popular in atmospheric modeling.
-For a review on departure point calculation methods, we refer to  \citet[Chapter 3]{tumolo:2011} and the references therein. 
-There are different approaches to compute the departure point, such as integrating the ODE from Equation \ref{chp2-sec-flux:prop1}
-using different time integrators \citep{durran:2011} backward in time.
-The Runge-Kutta methods are a possible choice to compute the departure point (\textit{cf. e.g.} \citet{guo:2014}, \citet{lu:2022}). In this work,
-we shall consider a second-order Runge-Kutta to compute the departure point, which we express in terms of $\tilde{u}^n_{i+\frac{1}{2}}$ 
-using the following equations \citep{durran:2010}
-\begin{align}
-	\label{chp-sec-flux:dp_RK2}		
-	x^{d}_{i+\frac{1}{2}} &= x_{i+\frac{1}{2}} - u_{i+\frac{1}{2}}^n \frac{\Delta t}{2}, \nonumber \\
-	\tilde{u}^n_{i+\frac{1}{2}} &= u\bigg(x^{d}_{i+\frac{1}{2}}, t^n + \frac{\Delta t}{2}\bigg).
-\end{align}
-Notice that this scheme requires values of $u$ at points that are not grid points, both in time and space. 
-This problem is addressed firstly using a second-order extrapolation in time
-\begin{equation}
-	u^{n+\frac{1}{2}}_{i+\frac{1}{2}} = \frac{3}{2}u^{n}_{i+\frac{1}{2}}-\frac{1}{2}u^{n-1}_{i+\frac{1}{2}}.
-\end{equation}
-and then we use a linear interpolation in space,
-\begin{equation}
-	\tilde{u}^n_{i+\frac{1}{2}}  = 
-	\begin{cases}
-		\bigg(1-\frac{x_{i+\frac{1}{2}} - x^{d}_{i+\frac{1}{2}}}{\Delta x} \bigg)u^{n+\frac{1}{2}}_{i+\frac{1}{2}} + 
-		\bigg(\frac{x_{i+\frac{1}{2}}-x^{d}_{i+\frac{1}{2}}}{\Delta x}\bigg)u^{n+\frac{1}{2}}_{i-\frac{1}{2}}	& 
-		\text{if } {u}^n_{i+\frac{1}{2}}\geq 0,\\
-		\bigg(\frac{x_{i+\frac{1}{2}} - x^{d}_{i+\frac{1}{2}}}{\Delta x} \bigg)u^{n+\frac{1}{2}}_{i+\frac{3}{2}} + 
-		\bigg(1-\frac{x_{i+\frac{1}{2}}-x^{d}_{i+\frac{1}{2}}}{\Delta x}\bigg)u^{n+\frac{1}{2}}_{i+\frac{1}{2}}	& 
-		\text{if } {u}^n_{i+\frac{1}{2}} < 0.\\
-	\end{cases}
-\end{equation}
-This scheme leads to a 3-th order error in departure point (see \textit{e.g.} \citet[Section 7.1.2]{durran:2010} ): 
-\begin{align}		
-	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2}}\Delta t + C\Delta t^3,
-\end{align}
-where $C$ is a constant depending on $u$ and its derivatives.
-This scheme shall be referred to as \textbf{RK2}. Notice that for this scheme, we need ghost values
-for the velocity, namely ${u}^n_{-\frac{1}{2}}$ and ${u}^n_{N+\frac{3}{2}}$.
-The linear interpolation described makes sense when we assume the CFL condition. When we have a larger 
-CFL number, it is straightforward to modify the linear interpolation to compute the velocity needed.
-\subsubsection{Numerical flux}
-Let us assume the framework from Problem \ref{chp2-sec2-prob3}.
+Let us assume the framework from Problem \ref{chp2-sec2-prob4}.
 Supposing that $Q^{n} \in \mathbb{R}^{\Delta x}$ is known,
 we would like to compute the values $Q^{n+1}$.
-This is achieved using a scheme of the type given in Problem \ref{chp2-sec2-prob3}.
+This is achieved using a scheme of the type given in Problem \ref{chp2-sec2-prob4}.
 Therefore, we need to estimate the time-averaged flux. 
 From Proposition \ref{chp2-sec-flux:prop1}, we conclude that the time-averaged flux
 may be compute as a spatial integral, which requires an estimate of the departure point using, for instance,
@@ -2019,89 +1644,15 @@ and in Subsection \ref{chp2-sec-numerical-exp-2}
 the results are based on the linear advection equation with variable velocity.
 The code used in this Section may be found in Appendix \ref{anexo-code}.
 
-\subsection{Reconstruction at edges accuracy}
-\label{chp2-num-exp-recon}
-Before moving toward advection simulations, we are going to assess the accuracy the 
-order of the reconstruction schemes PPM-0, PPM-CW84, PPM-PL07 and PPM-L04 at the
-edges of the control volumes.
-To this purpose we consider the function to be reconstructed given by:
-\begin{equation}
-	\label{chp2-ic1}
-	q(x) = \sin (2\pi k x) + 1, \quad x \in [0,1].
-\end{equation}
-Here $k$ denotes the wavenumber and we adopt $k=5$.
 Inspired by \citet{trefethen:2000}, we also consider the following periodic Gaussian profile:
 \begin{equation}
 	\label{chp2-ic2}
 	q(x) = \exp(-10\cos^2 (2\pi x)),\quad x \in [0,1].
 \end{equation}
-Both functions from Equations \eqref{chp2-ic2} and \eqref{chp2-ic2} are smooth.
-To check the convergence of the error at the edges, we consider $\Delta x^{(k)}-$grids with $\Delta x^{(k)} = 1/2^k$ for $k=4, \cdots, 10$ and then we compute the normalized maximum error:
-\begin{equation*}
-	E_k =\frac{\max_{i=1, \cdots 2^k}\{|q_{L,i}-q_0(x_{i-\frac{1}{2}})|,|q_{R,i}-q_0(x_{i+\frac{1}{2}})|\}}
-	{\max_{i=0, \cdots 2^k}\{|q_0(x_{i+\frac{1}{2}})(x)|\}},
-\end{equation*}
-and the values $q_{L,i}$ and $q_{R,i}$ where explained in Subsection \ref{chp2-sec-recon} (Equation \eqref{chp2-sec-recon-ppm-eq1}). The convergence rate is defined by
-\begin{equation*}
-	 CR_k = \frac{\ln{\bigg(\frac{E_{k}}{E_{k-1}}}\bigg)}{\ln 2}, \quad \text{for} \quad k = 5, \cdots 10.
-\end{equation*}
-The major difference between the functions from Equations \eqref{chp2-ic1} and
-\eqref{chp2-ic2} is the fact of the function from \eqref{chp2-ic1} having an explicit formula for its primitive, allowing us to compute its average values exactly, while
-the function from \eqref{chp2-ic1} does not have an explicit formula of its primitive.
-As discussed in Section \ref{chp2-sec-recon} (Proposition \ref{prop:ppm-bound1}), we may approximate the average value using the value at
-the cell centroid with second-order accuracy for functions differentiable enough.
-Therefore, we expect that for the function from Equation \eqref{chp2-ic1}, the error
-should converge with fourth and fifth order for the schemes PPM-0 and PPM-L07, respectively.
-For the function from \eqref{chp2-ic2} we expect at least a second-order error for both
- schemes due to the approximation of the average value. 
-\begin{figure}[!ht]
-	\centering
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{recon_1d_ic1_normlinf_parabola_errors}
-		\caption{Error.\label{chp2-sec-exp-rec1-error}}
-	\end{subfigure}
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{recon_1d_ic1_normlinf_convergence_rate}
-		\caption{Convergence rate.\label{chp2-sec-exp-rec1-CR}}
-	\end{subfigure}
-	\caption{Convergence of the relative error at edges (a) and convergence rate (b) in
-		 the maximum norm for the reconstruction
-		 schemes PPM-0, PPM-CW84, and PPM-PL07 with PPM-L04 applied to the function
-		 given by Equation \eqref{chp2-ic1}.\label{chp2-sec-exp-rec1}}
-\end{figure}
-\begin{figure}[!ht]
-	\centering
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{recon_1d_ic2_normlinf_parabola_errors}
-		\caption{Error.\label{chp2-sec-exp-rec2-error}}
-	\end{subfigure}
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{recon_1d_ic2_normlinf_convergence_rate}
-		\caption{Convergence rate.\label{chp2-sec-exp-rec2-CR}}
-	\end{subfigure}
-	\caption{Similar to Figure \ref{chp2-sec-exp-rec1} the using function
-		    given by Equation \eqref{chp2-ic1}}
-\end{figure}
-
-We can observe from Figure \ref{chp2-sec-exp-rec1} that the reconstruction error
-for the function agrees with the theory: PPM-0 has fourth-order accuracy
-while PPM-PL07  has fifth-order accuracy. Besides that, both monotonic schemes PPM-CW84 and
-PPM-L04 converges with second-order having almost the same error.
-However, when we consider the Gaussian wave, due to the average value approximation
-by the centroid value, we observe that all schemes converge with second-order,
-also as expected, but the non-monotonic schemes have an error almost tenfold smaller
-than the monotonic schemes. 
-\newpage
-\subsection{Linear advection equation with constant velocity simulations}
-\label{chp2-sec-numerical-exp-1}
 For the linear advection equation with constant velocity we shall adopt the $u=0.2$ and 
 a CFL number equal to $0.8$.
-The spatial domain will be given by $[0,1]$ and the time integration interval will be $[0,5]$. We again use $\Delta x^{(k)}-$grids with $\Delta x^{(k)} = 1/2^k$ for $k=4,
- \cdots, 10$.
+The spatial domain will be given by $[0,1]$ and the time integration interval will be $[0,5]$. 
+We again use $\Delta x^{(k)}-$grids with $\Delta x^{(k)} = 1/2^k$ for $k=4,\ldots, 10$.
 Since we are going to assume periodic boundary conditions, the period is equal to $5$. 
 Hence, the simulations presented here shall advect an initial profile for one time period. 
 The departure schemes RK1 and RK2 introduced in Section \ref{chp2-sec-flux} compute
@@ -2143,102 +1694,7 @@ Therefore, since $q_0$ is smooth, we expect that the error convergence shall be 
 \end{equation*}
 where $M^n$ is given by Equation \eqref{1d-fv-mass}. For all the simulations, the
 mass is preserved with machine precision. 
-\newpage
-\begin{figure}[!htb]
-  \centering
-  \begin{subfigure}{0.45\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t39_N32_PPM-0_dpRK1}
-			\caption{PPM-0.\label{chp2-sec-exp-adv1-a}}
-  \end{subfigure}
-  \begin{subfigure}{0.45\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t39_N32_PPM-PL07_dpRK1}
-			\caption{PPM-PL07.\label{chp2-sec-exp-adv1-b}}
-  \end{subfigure}
 
-  \begin{subfigure}{0.45\textwidth}
-    \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t39_N32_PPM-CW84_dpRK1}
-    \caption{PPM-CW84.\label{chp2-sec-exp-adv1-c}}
-  \end{subfigure}
-  \begin{subfigure}{0.45\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_t39_N32_PPM-L04_dpRK1}
-      \caption{PPM-L04.\label{chp2-sec-exp-adv1-d}}
-  \end{subfigure} 
-	\caption{Linear advection experiment using a constant velocity equal to $0.1$,
-  a CFL number equal to $0.8$, $N=32$ cells, and the initial condition is given by Equation \eqref{chp2-ic1}.
-	These figures show the advected profile after 5 time units (one time period).
-	Reconstruction schemes employed: PPM-0 (a), PPM-PL07 (b), PPM-CW84
-	(c) and PPM-L04 (d). \label{chp2-sec-exp-adv1}}
-\end{figure}
-
-\begin{figure}[!htb]
-  \centering
-  \begin{subfigure}{0.45\textwidth}
-    \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_dpRK1_normlinf_parabola_errors}
-		\caption{Error.\label{chp2-sec-exp-adv1-error}}
-  \end{subfigure}
-  \begin{subfigure}{0.45\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic1_vf1_dpRK1_normlinf_convergence_rate}
-		\caption{Convergence rate.\label{chp2-sec-exp-adv1-CR}}
-  \end{subfigure}
-	\caption{Convergence of the error (a) and convergence rate (b) for the schemes
-  PPM, hybrid PPM, PPM with the CW84 monotonization and PPM with L04 monotonization
-	applied to the linear advection problem using a constant velocity equal to $0.1$,
-	a CFL number equal to $0.8$, a final time of integration equal to 5 time units
-	and the initial condition given by Equation \eqref{chp2-ic1}.\label{chp2-sec-exp-adv1-2}}
-\end{figure}
-
-\newpage
-
-\begin{figure}[!htb]
-  \centering
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t19_N16_PPM-0_dpRK1}
-			\caption{PPM-0.\label{chp2-sec-exp-adv2-a}}
-  \end{subfigure}
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t19_N16_PPM-PL07_dpRK1}
-			\caption{PPM-PL07.\label{chp2-sec-exp-adv2-b}}
-  \end{subfigure}
-
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t19_N16_PPM-CW84_dpRK1}
-    \caption{PPM-CW84.\label{chp2-sec-exp-adv2-c}}
-  \end{subfigure}
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_t19_N16_PPM-L04_dpRK1}
-      \caption{PPM-L04.\label{chp2-sec-exp-adv2-d}}
-  \end{subfigure} 
-	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=16$
-	and the initial condition given by Equation \eqref{chp2-ic2}.\label{chp2-sec-exp-adv2}}
-\end{figure}
-
-\begin{figure}[!htb]
-  \centering
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_dpRK1_normlinf_parabola_errors}
-		\caption{Error.\label{chp2-sec-exp-adv2-error}}
-  \end{subfigure}
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf1_dpRK1_normlinf_convergence_rate}
-		\caption{Convergence rate.\label{chp2-sec-exp-adv2-CR}}
-  \end{subfigure}
-	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1-2} but using
-	the initial condition given by Equation \eqref{chp2-ic2}. \label{chp2-sec-exp-adv2-2}}
-\end{figure}
-
-\newpage
 When $q_0$ is given by Equation \eqref{chp2-ic3}, it follows from Figure
 \ref{chp2-sec-exp-adv1} that monotonic scheme PPM-L04 is less dissipative than PPM-CW84,
 and PPM-L07 is less dissipative than PPM-0, which agrees with the amplification factors
@@ -2278,52 +1734,17 @@ presented in the non-monotonic schemes, and they avoid generation of new extrema
 			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t79_N64_PPM-L04_dpRK1}
       \caption{PPM-L04.\label{chp2-sec-exp-adv3-d}}
   \end{subfigure} 
-	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=64$
-	and the initial condition given by Equation \eqref{chp2-ic3}.\label{chp2-sec-exp-adv3}}
+	\caption{Linear advection experiment using a constant velocity equal to $0.1$,
+		a CFL number equal to $0.8$, $N=32$ cells, and the initial condition is given by Equation \eqref{chp2-ic3}.
+		These figures show the advected profile after 5 time units (one time period).
+		Reconstruction schemes employed: PPM-0 (a), PPM-PL07 (b), PPM-CW84
+		(c) and PPM-L04 (d).\label{chp2-sec-exp-adv3}}
 \end{figure}
 
-\subsection{Linear advection equation with variable velocity simulations}
-\label{chp2-sec-numerical-exp-2}
 In this Subsection, we shall investigate the how the PPM schemes behave when the velocity
 is variable. The initial condition is given by Equation \eqref{chp2-ic2}.
 The relative errors are computed using the centroid values of $q$ as described in
 Section \ref{chp2-sec-numerical-exp-2}. 
-\begin{figure}[!htb]
-  \centering
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc1_ic2_vf2_t39_N32_PPM-0_dpRK1}
-			\caption{PPM-0.\label{chp2-sec-exp-adv5-a}}
-  \end{subfigure}
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc1_ic2_vf2_t39_N32_PPM-PL07_dpRK1}
-			\caption{PPM-PL07.\label{chp2-sec-exp-adv5-b}}
-  \end{subfigure}
-
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-		\includegraphics[width=1\linewidth]{1d_adv_tc1_ic2_vf2_t39_N32_PPM-CW84_dpRK1}
-    \caption{PPM-CW84.\label{chp2-sec-exp-adv5-c}}
-  \end{subfigure}
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc1_ic2_vf2_t39_N32_PPM-L04_dpRK1}
-      \caption{PPM-L04.\label{chp2-sec-exp-adv5-d}}
-  \end{subfigure} 
-
-  \begin{subfigure}{0.49\textwidth}
-    \centering
-			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_t5119_N1024_PPM-0_dpRK1}
-      \caption{Reference solution.\label{chp2-sec-exp-adv5-e}}
-  \end{subfigure} 
-	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=32$, 
-	the initial condition given by Equation \eqref{chp2-ic2}, the variable velocity given by Equation
-	\eqref{chp2-vel2} and the final time is 2.5 (half a period). In (e) we show a reference solution, using the PPM-0 scheme with 
-	1024 cells. \label{chp2-sec-exp-adv5}}
-\end{figure}
-
-\newpage
 We are going to consider the velocity
 \begin{equation}
 	\label{chp2-vel2}
@@ -2359,7 +1780,8 @@ use the departure point schemes RK1 and RK2 described in Section \ref{chp2-sec-f
 			\includegraphics[width=1\linewidth]{1d_adv_tc1_ic2_vf2_t79_N32_PPM-L04_dpRK1}
       \caption{PPM-L04.\label{chp2-sec-exp-adv6-d}}
   \end{subfigure} 
-	\caption{ Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=32$, 
+	\caption{ 
+		Similar to Figure \ref{chp2-sec-exp-adv1} but using $N=32$, 
 	the initial condition given by Equation \eqref{chp2-ic2} and the variable velocity given by Equation
 	\eqref{chp2-vel2} \label{chp2-sec-exp-adv6}.}
 \end{figure}
@@ -2393,7 +1815,7 @@ in the total error.
 			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK2_normlinf_parabola_errors}
 		\caption{RK2.\label{chp2-sec-exp-adv6-rl3}}
   \end{subfigure}
-	\caption{ Relative error for different PPM schemes using the RK1 (left) and RK2 (right)
+	\caption{Relative error for different PPM schemes using the RK1 (left) and RK2 (right)
 	departure point scheme for the initial condition given by Equation
 	\eqref{chp2-ic2} and the variable 
 	velocity given by Equation \eqref{chp2-vel2}.\label{chp2-sec-exp-adv6-2}}
@@ -2411,7 +1833,7 @@ in the total error.
 		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK2_normlinf_convergence_rate}
 		\caption{RK2.\label{chp2-sec-exp-adv6-cf-RK2}}
 	\end{subfigure}
-	\caption{ Convergence rate for different PPM schemes using the RK1 (left) and RK2 (right)
+	\caption{Convergence rate for different PPM schemes using the RK1 (left) and RK2 (right)
 	departure point scheme for the initial condition given by Equation
 	\eqref{chp2-ic2} and the variable 
 	velocity given by Equation \eqref{chp2-vel2}.\label{chp2-sec-exp-adv6-3}}
