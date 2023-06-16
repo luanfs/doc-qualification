@@ -754,24 +754,6 @@ and a rectangular profile given by:
 	\end{cases}
 \end{equation}
 
-\begin{figure}[!ht]
-	\centering
-	\begin{subfigure}{0.4\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic2_vf1_dpRK1_normlinf_parabola_errors}
-		\caption{Error.\label{chp3-sec-exp-adv1-error}}
-	\end{subfigure}
-	\begin{subfigure}{0.4\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic2_vf1_dpRK1_normlinf_convergence_rate}
-		\caption{Convergence rate.\label{chp3-sec-exp-adv1-CR}}
-	\end{subfigure}
-	\caption{Relative error convergence (a) and convergence rate (b) for PPM schemes with AVLT splitting
-		applied to the advection equation using a constant velocity
-		$\boldsymbol{u} = (0.2,-0.2)$, a CFL number equal to $0.8$, a final time equal to 5 time units
-		and the initial condition given by Equation \eqref{chp3-ic1}.\label{chp3-sec-exp-adv1}}
-\end{figure}
-
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.4\textwidth}
@@ -870,49 +852,6 @@ We shall employ biperiodic boundary conditions to simplify the problem.
 Both velocity fields are divergence-free and they deform the initial condition after 5 time units the scalar field
 returns to its initial position and shape, therefore we can compute the error.
 
-\newpage
-\begin{figure}[!htb]
-	\centering
-	\begin{subfigure}{0.4\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc1_ic4_vf2_t200_N64_SP-AVLT_PPM-L04_RK1}
-		\caption{AVLT splitting at $t=2.5$.\label{chp3-sec-exp-adv3-a}}
-	\end{subfigure}
-	\begin{subfigure}{0.4\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc1_ic4_vf2_t400_N64_SP-AVLT_PPM-L04_RK1}
-		\caption{AVLT splitting at $t=5$.\label{chp3-sec-exp-adv3-b}}
-	\end{subfigure}
-	
-	\begin{subfigure}{0.4\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc1_ic4_vf2_t200_N64_SP-L04_PPM-L04_RK1}
-		\caption{L04 splitting at $t=2.5$.\label{chp3-sec-exp-adv3-c}}
-	\end{subfigure}
-	\begin{subfigure}{0.4\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc1_ic4_vf2_t400_N64_SP-L04_PPM-L04_RK1}
-		\caption{L04 splitting at $t=5$.\label{chp3-sec-exp-adv3-d}}
-	\end{subfigure} 
-
-	\begin{subfigure}{0.4\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc1_ic4_vf2_t200_N64_SP-PL07_PPM-L04_RK1}
-		\caption{PL07 splitting at $t=2.5$.\label{chp3-sec-exp-adv3-e}}
-	\end{subfigure}
-	\begin{subfigure}{0.4\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc1_ic4_vf2_t400_N64_SP-PL07_PPM-L04_RK1}
-		\caption{PL07 splitting at $t=5$.\label{chp3-sec-exp-adv3-f}}
-	\end{subfigure} 
-	
-	\caption{Linear advection experiment using the velocity from Equation \eqref{chp3-vf1},
-		a CFL number equal to $0.8$, $N=M=64$, and the initial condition is given by Equation \eqref{chp3-ic3}.
-		We use the scheme PPM-L04 with AVLT  (a and b), L04 (c and d) and PL07 (e and f) splitting and RK1 departure point scheme.
-		These figures show the advected profile after 2.5 (left) and 5  (right) time units (one time period).
-		\label{chp3-sec-exp-adv3}}
-\end{figure}
-
 In Figure \ref{chp3-sec-exp-adv3} we depict the results obtained using the two Gaussian hills and the velocity field from
 Equation \eqref{chp3-vf2} using the PPM-L04 with AVLT, L04, and PL07 splitting and RK1 as the departure point scheme.
 We can observe how the scalar field has deformed and returns to its initial position. However, we can notice
@@ -959,9 +898,11 @@ introduce a first-order error. Furthermore, these schemes do not seem to differ 
 		\includegraphics[width=1\linewidth]{2d_adv_tc1_ic4_vf3_t800_N128_SP-PL07_PPM-L04_RK1}
 		\caption{PL07 splitting at $t=5$.\label{chp3-sec-exp-adv4-f}}
 	\end{subfigure} 
-	
-	\caption{Similar to Figure \ref{chp3-sec-exp-adv4} but using the velocity from Equation \eqref{chp3-vf2} and $N=128$.
-		\label{chp3-sec-exp-adv4}}
+	\caption{Linear advection experiment using the velocity from Equation \eqref{chp3-vf1},
+	a CFL number equal to $0.8$, $N=M=128$, and the initial condition is given by Equation \eqref{chp3-ic3}.
+	We use the scheme PPM-L04 with AVLT  (a and b), L04 (c and d) and PL07 (e and f) splitting and RK1 departure point scheme.
+	These figures show the advected profile after 2.5 (left) and 5  (right) time units (one time period).
+	\label{chp3-sec-exp-adv4}}	
 \end{figure}
 
 In Figure \ref{chp3-sec-exp-adv4} we depict the results using the same setup and schemes as before but using the velocity from
@@ -976,41 +917,6 @@ When we use the 1D scheme PPM-L04, all the splitting method are very similar,
 regardless the departure point scheme.
 However, when use the RK2 schemes, the AVLT is the most accurate and reaches third-order (Figure \ref{chp3-sec-exp-adv8-error2}).
 
-\begin{figure}[!htb]
-	\centering
-	\begin{subfigure}{0.45\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf2_dpRK1_normlinf_parabola_errors}
-		\caption{RK1.\label{chp3-sec-exp-adv5-error1}}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf2_dpRK2_normlinf_parabola_errors}
-		\caption{RK2.\label{chp3-sec-exp-adv5-error2}}
-	\end{subfigure}
-	\caption{Convergence of the error for the schemes
-	PPM-PL07and PPM-L04 with AVLT/L04/PL07/ splitting
-	applied to the linear advection problem using a velocity from Equation
-	a CFL number equal to $0.8$, a final time of integration equal to 5 time units
-	and the initial condition given by Equation \eqref{chp3-ic1}.
-	The departure points are computed using the RK1 (left) and RK2 (right) schemes.\label{chp3-sec-exp-adv5}}
-\end{figure}
-
-\begin{figure}[!htb]
-	\centering
-	\begin{subfigure}{0.45\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf2_dpRK1_normlinf_convergence_rate}
-		\caption{RK1.\label{chp3-sec-exp-adv6-error1}}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf2_dpRK2_normlinf_convergence_rate}
-		\caption{RK2.\label{chp3-sec-exp-adv6-error2}}
-	\end{subfigure}
-	\caption{Similar to Figure \ref{chp3-sec-exp-adv5} but considering the convergence rate.\label{chp3-sec-exp-adv6}}
-\end{figure}
-
 
 \begin{figure}[!htb]
 	\centering
@@ -1024,7 +930,12 @@ However, when use the RK2 schemes, the AVLT is the most accurate and reaches thi
 		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf3_dpRK2_normlinf_parabola_errors}
 		\caption{RK2.\label{chp3-sec-exp-adv7-error2}}
 	\end{subfigure}
-	\caption{Similar to Figure \ref{chp3-sec-exp-adv5} but using the velocity from Equation \eqref{chp3-vf2}.\label{chp3-sec-exp-adv7}}
+	\caption{Convergence of the error for the schemes
+	PPM-PL07and PPM-L04 with AVLT/L04/PL07/ splitting
+	applied to the linear advection problem using a velocity from Equation \eqref{chp3-vf2},
+	a CFL number equal to $0.8$, a final time of integration equal to 5 time units
+	and the initial condition given by Equation \eqref{chp3-ic1}.
+	The departure points are computed using the RK1 (left) and RK2 (right) schemes.\label{chp3-sec-exp-adv5}}
 \end{figure}
 
 \begin{figure}[!htb]
@@ -1039,10 +950,10 @@ However, when use the RK2 schemes, the AVLT is the most accurate and reaches thi
 		\includegraphics[width=1\linewidth]{2d_adv_tc2_ic4_vf3_dpRK2_normlinf_convergence_rate}
 		\caption{RK2.\label{chp3-sec-exp-adv8-error2}}
 	\end{subfigure}
-	\caption{Similar to Figure \ref{chp3-sec-exp-adv6} but using the velocity from Equation   \eqref{chp3-vf2}.\label{chp3-sec-exp-adv8}}
+	\caption{Similar to Figure \ref{chp3-sec-exp-adv5} but considering the convergence rate.\label{chp3-sec-exp-adv6}}
 \end{figure}
 
-\break
+
 \section{Concluding remarks}
 In this chapter, we introduced the dimension-splitting method which replaces the solution
 of the 2D advection equation by the solution of multiple 1D advection equations.
@@ -1053,7 +964,7 @@ the methodology used in FV3.
 From the constant velocity simulations, we conclude that all the splitting schemes are equal 
 and they do not introduce any splitting error. In fact, the splittings are exact. We could observe
 that all conclusions for the 1D simulations were wit in the 2D case, with mass conservation
-and monotonicity  being respected in the 2D case whenever we employ the monotic limiters in the 1D subproblems.
+and monotonicity  being respected in the 2D case whenever we employ the monotonic limiters in the 1D subproblems.
 
 For variable velocity simulations, we investigated two flow deformation test cases.
 We observed that all splitting schemes preserved the monotonicity.
