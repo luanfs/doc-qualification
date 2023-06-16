@@ -38,7 +38,8 @@ The second step is performed using the Piecewise-Parabolic Method (PPM) proposed
 As the name suggests, PPM employs piecewise-parabolic functions.
 The third and final step is computed exactly, as the reconstruction functions consist of parabolas that preserve the local mass.
 
-It is worth noting that the reconstruction function can be constructed using functions other than parabolas. In fact, the Piecewise-Parabolic Method (PPM) can be seen as an
+It is worth noting that the reconstruction function can be constructed using functions other than parabolas.
+ In fact, the Piecewise-Parabolic Method (PPM) can be seen as an
 extension of the Piecewise-Linear method proposed by \citet{vanleer:1977}, which,
 in turn, was inspired by the Piecewise-Constant method introduced by \citet{godunov:1959}. 
 Additionally, other schemes inspired by PPM have been proposed in the literature utilizing
@@ -415,7 +416,6 @@ related to a spatial integral over a interval depending on departure points.
 	\end{align*}
 	which is the desired formula.
 \end{proof}
-
 With the aid of Proposition \ref{chp2-sec-flux:prop1}, we can rewrite Problem \ref{chp2-sec2-prob2}
 in terms of the departure point, avoiding the need for knowledge about $q$ over the
 entire interval $[t^n, t^{n+1}]$. This is described in Problem \ref{chp2-sec2-prob3}:
@@ -453,7 +453,6 @@ function $q$ at time $t^n$ using its average values $Q_i(t^n)$, which enables us
 
 \section{The finite-volume Semi-Lagrangian approach}
 Finally, we define the 1D FV-SL scheme problem as follows in Problem \ref{chp2-sec2-prob3}.
-
 \begin{prob}[1D FV-SL scheme]
 	\label{chp2-sec2-prob4}
 	Assume the framework defined in Problem \ref{chp2-sec2-prob3}.
@@ -472,14 +471,13 @@ Finally, we define the 1D FV-SL scheme problem as follows in Problem \ref{chp2-s
 	The terms ${F}_{i\pm\frac{1}{2}}^{n}$ are known as numerical flux and are given by
 	\begin{equation}
 		{F}_{i\pm\frac{1}{2}}^{n} =
-		\int_{x_{i\pm\frac{1}{2}}^d}^{x_{i\pm\frac{1}{2}}}\tilde{q}(x; Q^n) \,dx,
+		\int_{\tilde{x}_{i\pm\frac{1}{2}}}^{x_{i\pm\frac{1}{2}}}\tilde{q}(x; Q^n) \,dx,
 	\end{equation}
-	where ${x_{i\pm\frac{1}{2}}^d}$ is an estimate of the departure point $X(t^n,t^{n+1};x_{i\pm \frac{1}{2}})$,
+	where ${\tilde{x}_{i\pm\frac{1}{2}}}$ is an estimate of the departure point $X(t^n,t^{n+1};x_{i\pm \frac{1}{2}})$,
 	and $\tilde{q}$ is a reconstruction function for $q$ built with the values $Q^n$.
 	Thus, ${F}_{i\pm\frac{1}{2}}^{n}$ approximates
 	$\int_{X(t^n,t^{n+1};x_{i\pm \frac{1}{2}})}^{x_{i\pm \frac{1}{2}}}{q}(x, t^n) \,dx$.
 \end{prob}
-
 For a 1D FV-SL the discrete total mass at the time-step $n$ is given by
 \begin{equation}
 	\label{1d-fv-mass}
@@ -513,207 +511,192 @@ when $q$ is twice continuously differentiable.
 	Just apply Theorem \ref{prop-bound-midpoint1d} for the function $q(x,t^n)$.	
 \end{proof}
 The Problem of the convergence of 1D FV-SL schemes is addressed in Section \ref{convergence-1dfvsl}.
+Now we are going to address the problem of the departure point estimation and the reconstruction problem.
 
 \section{Departure point computation}
-It follows from Proposition \ref{chp2-sec-flux:prop1} that  the evaluation of the time-averaged flux
-may be replaced by the departure point calculation.
-We recall the definition of the Courant-Friedrichs-Lewy (CFL) condition.
-\begin{definition}
-	\label{chp2-sec-flux:CFL}
-	For Problem \ref{chp2-sec2-prob4}, we say that the CFL condition holds if $\frac{\Delta t}{\Delta x} |u^n_{i+\frac{1}{2}}| \leq 1$, $\forall i=0, \cdots, N$, $n=0,\cdots,N_T$.
-	The CFL number is defined by $\frac{\Delta t}{\Delta x} 
-	\max \{|u^n_{i+\frac{1}{2}}|: i=0, \cdots, N, n=0, \cdots, N_T\}$.
-\end{definition}
-Before addressing the question of how compute the departure point, we point out that Equation \eqref{chp-sec-flux:analysis-eq4} is useful to 
-show that the trajectory $X(t,s;x_{i+\frac{1}{2}})$ remains on a single control volume,
-provided some basic assumptions, as we show on the next proposition.
-\begin{prop}
-	\label{chp2-sec-flux:departurebound}
-	If $u \in \mathcal{C}^1$, the CFL condition is satisfied and if $\Delta t$ and $\Delta x$ are small enough, then
-	for any $s \in [t^n, t^{n+1}]$, $t \in [t^n, s]$, we have that $X(t,s;x_{i+\frac{1}{2}}) \in X_i$ if $u_{i+\frac{1}{2}}^n>0$ 
-	and	$X(t,s;x_{i+\frac{1}{2}}) \in X_{i+1}$ if $u_{i+\frac{1}{2}}^n<0$.
-\end{prop}
-\begin{proof}
-	Let us assume $u_{i+\frac{1}{2}}^n>0$. Since $u$ is continuous and the CFL condition is satisfied,
-	there exist $\Delta t$ and $\Delta x$ such that $|u(X(t,s;x_{i+\frac{1}{2}}),t)| \frac{\Delta t}{\Delta x}\leq1$ and $u(X(t,s;x_{i+\frac{1}{2}}),t)>0$, 
-	$\forall s \in [t^n, t^{n+1}]$, $t \in [t^n, s]$.
-	Hence, it follows from Equation \eqref{chp-sec-flux:analysis-eq4} and the mean value theorem for integrals
-	(see Theorem \ref{anexo-numint-mv}) that:
-	\begin{equation*}
-		X(t,s;x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - (t-s)u(X(\theta_1,s;x_{i+\frac{1}{2}}),\theta_1),
-	\end{equation*}
-	for some $\theta_1 \in [t,s]$. Therefore:
-	\begin{equation*}
-		X(t,s;x_{i+\frac{1}{2}}) \geq x_{i+\frac{1}{2}} - \Delta t u(X(\theta_1,s;x_{i+\frac{1}{2}}),\theta_1)
-		\geq x_{i+\frac{1}{2}} - \Delta x = x_{i-\frac{1}{2}},
-	\end{equation*}
-	from which the claim follows.
-	The case $u_{i+\frac{1}{2}}^n<0$  is very similar to the case  $u_{i+\frac{1}{2}}^n>0$.
-\end{proof}
-Equation \eqref{chp-sec-flux:analysis-eq4} allow us to compute or estimate the departure point.
-For instance, if $u$ is constant, then the departure point at time $t^n$ of the point 
-$x_{i+\frac{1}{2}}$ at time $t^{n+1}$ is given by:
+\label{chp2-sec-dp}
+\subsection{RK1 scheme}
+Equation \eqref{chp-sec-flux:analysis-eq4} enables us to compute or estimate the departure point.
+For instance, if $u$ is constant, the departure point at time $t^n$ for the point $x_{i+\frac{1}{2}}$ at time $t^{n+1}$ is given by:
 \begin{equation}
-	\label{chp-sec-flux:departurepoint}
+	\label{chp-sec-dp-eq1}
 	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - u\Delta t.
 \end{equation}
-For the general case where $u$ may depend on $x$ and $t$, we follow the approach of
-the original PPM scheme from \citet{colella:1984} using:
+In general, the estimated departure point, denoted by $\tilde{x}_{i+\frac{1}{2}}^n$, takes the form:
 \begin{equation}
-	\label{chp-sec-flux:departurepoint3}
-	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2}}\Delta t + C\Delta t^2,
+	\label{chp-sec-dp-eq2}
+	\tilde{x}_{i+\frac{1}{2}}^n = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2}}\Delta t,
 \end{equation}
-with $\tilde{u}^{n}_{i+\frac{1}{2}} = {u}^{n}_{i+\frac{1}{2}}$.
-This scheme shall be referred to as \textbf{RK1}.
-Our aim now is to exhibit the constant $C$ on the next proposition. It is useful to before introduce the material derivative
+where $\tilde{u}^{n}_{i+\frac{1}{2}}$ represents the time-averaged wind and approximates:
+\begin{equation}
+	\label{chp-sec-dp-eq3}
+	\frac{1}{\Delta t}\int_{t^n}^{t^{n+1}}u(X(\theta,t^{n+1};x_{i+\frac{1}{2}}),\theta) ,d\theta.
+\end{equation}
+The departure point $\tilde{x}_{i+\frac{1}{2}}^n$ is said to be $p$-order accurate if there exists a constant $C$ that does not depend on $\Delta t$, such that:
+\begin{equation}
+	\label{chp-sec-dp-eq4}
+	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) - \tilde{x}_{i+\frac{1}{2}}^n = C\Delta t^p.
+\end{equation}
+One possible way of estimating the time-averaged wind is by using:
+\begin{equation}
+	\label{chp-sec-dp-eq5}
+	\tilde{u}^n_{i+\frac{1}{2}} = u^n_{i+\frac{1}{2}},
+\end{equation}
+as in the original PPM scheme by \citet{colella:1984}. This scheme will be referred to as \textbf{RK1}.
+Our objective now is to determine the constant $C$ and the value of $p$ in Equation \eqref{chp-sec-dp-eq4}
+in the following proposition. It is useful to introduce the concept of a material derivative beforehand:
 \begin{equation*}
-	\frac{Dh}{Dt}  = \frac{\partial h}{\partial t} + u\frac{\partial h}{\partial x},
+	\frac{Dh}{Dt} = \frac{\partial h}{\partial t} + u\frac{\partial h}{\partial x},
 \end{equation*}
-for a function $h \in \mathcal{C}^1$.
+where $h$ is a function belonging to $\mathcal{C}^1$.
 \begin{prop}
 	\label{chp-sec-flux:dp_euler}
-	If $u\in \mathcal{C}^1$, then $X$ that solves Equation \eqref{chp-sec-flux:analysis-eq3} satisfies:
+	If $u\in \mathcal{C}^1$ and the time-average wind is computed using Equation \eqref{chp-sec-dp-eq5}, then the departure point from Equation \eqref{chp-sec-dp-eq2} satisfies:
 	\begin{equation}
-		X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - {u}^{n}_{i+\frac{1}{2}}\Delta t + C\Delta t^2,
+		X(t^n,t^{n+1};x_{i+\frac{1}{2}}) - \tilde{x}_{i+\frac{1}{2}}^n = C\Delta t^2,
 	\end{equation}
+	for a constant $C$ that depends on $u$.
 \end{prop}
-for a constant $C$ depending on $u$.
 \begin{proof}
-Using Corollary \ref{anexo-numint-col1} for the function $f(t) = u(X(t,t^{n+1};x_{i+\frac{1}{2}}),t)$
-in Equation  \eqref{chp-sec-flux:analysis-eq4}, we get:
-\begin{equation}
-	\label{chp-sec-flux:departurepoint4}
-	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - u(X(t^n,t^{n+1};x_{i+\frac{1}{2}}),t^n)\Delta t + \frac{1}{2}\frac{Du}{Dt}(\tilde{x}_1,\tilde{t}_1)\Delta t^2,
-\end{equation}
-for $\tilde{x}_1 \in X_i \cup X_{i+1}$, $\tilde{t}_1 \in [t^n, t^{n+1}]$, for small $\Delta x$ and $\Delta t$ as in Proposition \ref{chp2-sec-flux:departurebound}.
-Using the Taylor's expansion of $u(X(t,t^{n+1};x_{i+\frac{1}{2}}),t^n)$ we have:
-\begin{equation}
-	\label{chp-sec-flux:departurepoint5}
-	u(X(t^n,t^{n+1};x_{i+\frac{1}{2}}),t^n) = u^n_{i+\frac{1}{2}} - \bigg(u\frac{\partial u}{\partial x}\bigg)(\tilde{x}_2,\tilde{t}_2)\Delta t,
-\end{equation}
-for $\tilde{t}_2 \in [t^n, t^{n+1}]$.
-Hence, replacing Equation \eqref{chp-sec-flux:departurepoint5} in Equation \eqref{chp-sec-flux:departurepoint4} 
-we obtain the desired constant $C$ given by:
-\begin{equation}
-	\label{chp-sec-flux:departurepoint6}
-	C =  C(\tilde{x}_1, \tilde{x}_2, \tilde{t}_1, \tilde{t}_2) = 
-	\bigg( \frac{1}{2}\frac{Du}{Dt}(\tilde{x}_1,\tilde{t}_1) - \bigg(u\frac{\partial u}{\partial x}\bigg)(\tilde{x}_2,\tilde{t}_2)\bigg)\Delta t.
-\end{equation}
+	Using Proposition \ref{anexo-numint-col1} for the function $f(t) = u(X(t,t^{n+1};x_{i+\frac{1}{2}}),t)$ in Equation \eqref{chp-sec-flux:analysis-eq4}, we obtain:
+	\begin{equation}
+		\label{chp-sec-flux:departurepoint4}
+		X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - u(X(t^n,t^{n+1};x_{i+\frac{1}{2}}),t^n)\Delta t 
+        - \frac{1}{2}\frac{Du}{Dt}(X(\theta_1,t^{n+1};x_{i+\frac{1}{2}}),\theta_1)\Delta t^2,
+	\end{equation}
+	for $\theta_1 \in [t^n, t^{n+1}]$.
+	Using Taylor's expansion of $u(X(t,t^{n+1};x_{i+\frac{1}{2}}),t^n)$, we have:
+	\begin{equation}
+		\label{chp-sec-flux:departurepoint5}
+		u(X(t^n,t^{n+1};x_{i+\frac{1}{2}}),t^n) = u^n_{i+\frac{1}{2}} - 
+        \bigg(u\frac{\partial u}{\partial x}\bigg)(X(\theta_2,t^{n+1};x_{i+\frac{1}{2}}),t^n))\Delta t,
+	\end{equation}
+	for $\theta_2 \in [t^n, t^{n+1}]$.
+	Substituting Equation \eqref{chp-sec-flux:departurepoint5} into Equation \eqref{chp-sec-flux:departurepoint4}, we obtain the desired constant $C$ given by:
+	\begin{equation}
+		\label{chp-sec-flux:departurepoint6}
+		C = C(\theta_1, \theta_2) = -\frac{1}{2}\frac{Du}{Dt}(X(\theta_1,t^{n+1};x_{i+\frac{1}{2}}),\theta_1)
+        - \bigg(u\frac{\partial u}{\partial x}\bigg)(X(\theta_2,t^{n+1};x_{i+\frac{1}{2}}),t^n).
+	\end{equation}
 \end{proof}
-The problem of estimating the departure point is very common in Semi-Lagrangian scheme,
-which are quite popular in atmospheric modeling.
-For a review on departure point calculation methods, we refer to  \citet[Chapter 3]{tumolo:2011} and the references therein. 
-There are different approaches to compute the departure point, such as integrating the ODE from Equation \ref{chp2-sec-flux:prop1}
-using different time integrators \citep{durran:2011} backward in time.
-The Runge-Kutta methods are a possible choice to compute the departure point (\textit{cf. e.g.} \citet{guo:2014}, \citet{lu:2022}). In this work,
-we shall consider a second-order Runge-Kutta to compute the departure point, which we express in terms of $\tilde{u}^n_{i+\frac{1}{2}}$ 
-using the following equations \citep{durran:2010}
+\subsection{RK2 scheme}
+Before presenting a higher-order estimate for the departure point,
+let us recall the definition of the Courant-Friedrichs-Lewy (CFL) number.
+\begin{definition}
+	\label{chp2-sec-flux:cfl}
+	For Problem \ref{chp2-sec2-prob4}, the CFL number at an edge $x_{i+\frac{1}{2}}$ and at a time level $t^n$ is defined by
+	\begin{equation}
+		c^n_{i+\frac{1}{2}} = \frac{\Delta t}{\Delta x}u^n_{i+\frac{1}{2}}.
+	\end{equation}
+\end{definition}
+The problem of estimating the departure point is very common in Semi-Lagrangian schemes, which are 
+quite popular in atmospheric modeling. For a review of departure point calculation methods, we refer
+to \citet[Chapter 3]{tumolo:2011} and the references therein. There are different approaches to compute
+the departure point, such as integrating the ODE from Equation \ref{chp2-sec-flux:prop1} using different
+time integrators \citep{durran:2011} backward in time. The Runge-Kutta methods are a possible choice to 
+compute the departure point (\textit{cf. e.g.} \citet{guo:2014}, \citet{lu:2022}). In this work, we shall
+consider a second-order Runge-Kutta method to compute the departure point, which we express in terms of
+$\tilde{u}^n_{i+\frac{1}{2}}$ using the following equations \citep{durran:2010}:
 \begin{align}
-	\label{chp-sec-flux:dp_RK2}		
-	x^{d}_{i+\frac{1}{2}} &= x_{i+\frac{1}{2}} - u_{i+\frac{1}{2}}^n \frac{\Delta t}{2}, \nonumber \\
-	\tilde{u}^n_{i+\frac{1}{2}} &= u\bigg(x^{d}_{i+\frac{1}{2}}, t^n + \frac{\Delta t}{2}\bigg).
+	\label{chp-sec-flux:dp_RK2}
+	\tilde{x}_{i+\frac{1}{2}}^{n+\frac{1}{2}} &= x_{i+\frac{1}{2}} - u_{i+\frac{1}{2}}^n
+	 \frac{\Delta t}{2} = x_{i+\frac{1}{2}} - c_{i+\frac{1}{2}}^n \frac{\Delta x}{2}, \nonumber \\
+	\tilde{u}^n_{i+\frac{1}{2}} &= u\bigg(\tilde{x}^{n+\frac{1}{2}}_{i+\frac{1}{2}}, t^n + \frac{\Delta t}{2}\bigg).
 \end{align}
-Notice that this scheme requires values of $u$ at points that are not grid points, both in time and space. 
-This problem is addressed firstly using a second-order extrapolation in time
+Notice that this scheme requires values of $u$ at points that are not grid points,
+both in time and space. This problem is addressed firstly using a second-order extrapolation in time:
 \begin{equation}
 	u^{n+\frac{1}{2}}_{i+\frac{1}{2}} = \frac{3}{2}u^{n}_{i+\frac{1}{2}}-\frac{1}{2}u^{n-1}_{i+\frac{1}{2}}.
 \end{equation}
-and then we use a linear interpolation in space,
+Then we use linear interpolation in space:
 \begin{equation}
-	\tilde{u}^n_{i+\frac{1}{2}}  = 
+	\tilde{u}^n_{i+\frac{1}{2}} =
 	\begin{cases}
-		\bigg(1-\frac{x_{i+\frac{1}{2}} - x^{d}_{i+\frac{1}{2}}}{\Delta x} \bigg)u^{n+\frac{1}{2}}_{i+\frac{1}{2}} + 
-		\bigg(\frac{x_{i+\frac{1}{2}}-x^{d}_{i+\frac{1}{2}}}{\Delta x}\bigg)u^{n+\frac{1}{2}}_{i-\frac{1}{2}}	& 
-		\text{if } {u}^n_{i+\frac{1}{2}}\geq 0,\\
-		\bigg(\frac{x_{i+\frac{1}{2}} - x^{d}_{i+\frac{1}{2}}}{\Delta x} \bigg)u^{n+\frac{1}{2}}_{i+\frac{3}{2}} + 
-		\bigg(1-\frac{x_{i+\frac{1}{2}}-x^{d}_{i+\frac{1}{2}}}{\Delta x}\bigg)u^{n+\frac{1}{2}}_{i+\frac{1}{2}}	& 
-		\text{if } {u}^n_{i+\frac{1}{2}} < 0.\\
+		\big(1-\alpha_{i+\frac{1}{2}}^n \big)u^{n+\frac{1}{2}}_{i+\frac{1}{2}-k} +
+        \alpha_{i+\frac{1}{2}}^n u^{n+\frac{1}{2}}_{i-\frac{1}{2}-k} & \text{if } {u}^n_{i+\frac{1}{2}}\geq 0,\\
+		\alpha_{i+\frac{1}{2}}^n u^{n+\frac{1}{2}}_{i+\frac{3}{2}-k} + \big(1-\alpha_{i+\frac{1}{2}}^n\big)
+        u^{n+\frac{1}{2}}_{i+\frac{1}{2}-k} & \text{if } {u}^n_{i+\frac{1}{2}} < 0,\
 	\end{cases}
 \end{equation}
-This scheme leads to a 3-th order error in departure point (see \textit{e.g.} \citet[Section 7.1.2]{durran:2010} ): 
-\begin{align}		
-	X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \tilde{u}^{n}_{i+\frac{1}{2}}\Delta t + C\Delta t^3,
-\end{align}
-where $C$ is a constant depending on $u$ and its derivatives.
-This scheme shall be referred to as \textbf{RK2}. Notice that for this scheme, we need ghost values
-for the velocity, namely ${u}^n_{-\frac{1}{2}}$ and ${u}^n_{N+\frac{3}{2}}$.
-The linear interpolation described makes sense when we assume the CFL condition. When we have a larger 
-CFL number, it is straightforward to modify the linear interpolation to compute the velocity needed.
-
-
+where $c_{i+\frac{1}{2}}^n = \alpha_{i+\frac{1}{2}}^n + k$, 
+$k=\lfloor \frac{c_{i+\frac{1}{2}}^n}{2} \rfloor$, $\alpha_{i+\frac{1}{2}}^n \in [0,1[$, and $\lfloor \cdot \rfloor$ is
+the floor function. This scheme leads to a third-order error in the departure point estimate (see \textit{e.g.} 
+\citet[Section 7.1.2]{durran:2010}). This scheme shall be referred to as \textbf{RK2}. 
+Notice that for this scheme, we need ghost values for the velocity, depending on how large the CFL number is.
+Finally, the impact of the departure point approximation on the time-averaged flux is investigated in 
+Section \ref{chp2-sub-flux}.
 
 \section{Reconstruction}
 \label{chp2-sec-recon}
-In this Section, we are going to review and analyze the Piecewise-Parabolic method (PPM).
-This method was proposed by \citet{colella:1984} for gas dynamic simulations and
-its viability for atmospheric simulations has been shown by \citet{carpenter:1990}.
-This method is based on using parabolas to reconstruct the function from its 
-average values, ensuring mass conservation and monotonicity.
-PPM is an extension of the Piecesiwe-Linear method from \citet{vanleer:1977}
-and it is employed in the FV3 model using the dimension splitting method from \citet{lin:1996}.
-This section is organized as follows: in Subsection \ref{chp2-sec-recon} 
-we present and analyze the PPM reconstruction method and the monotonization and 
-flux computation are presented and analyzed in Subsections 
-\ref{chp2-sec-mono} and \ref{chp2-sec-flux}, respectively.
+In this section, we will review the Piecewise-Parabolic Method (PPM). 
+The analysis of its accuracy will be presented in Section \ref{chp2-sec-numerical-analysis-ppm}.
+PPM was originally proposed by \citet{colella:1984} for gas dynamic simulations, and its applicability
+to atmospheric simulations has been demonstrated by \citet{carpenter:1990}. 
+This method is based on utilizing parabolas to reconstruct the function using its average values,
+ensuring both mass conservation and monotonicity. PPM is an extension of the Piecewise-Linear Method 
+introduced by \citet{vanleer:1977}, and it is implemented in the FV3 model using the dimension
+splitting method developed by \citet{lin:1996}.
 
-\subsection{The Piecewise-Parabolic Method}
-\label{chp2-sec-ppm}
-Let us consider a function ${q} \in L^{1}_{\text{loc}}(\mathbb{R})$, a $\Delta x$-grid 
-$\mathcal{X}$ of $[a,b]$ and assume that we are given the average values ${Q}_i = \frac{1}{\Delta x} 
-\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x) \,dx$
-on each control volume $X_i$, $\forall i = 1, \cdots, N $. In this context, it is useful to define 
-the $\Delta x$-grid function $Q=(Q_1, \cdots, Q_N) \in \mathbb{R}^{\Delta x}$.
-We make use of the indicator function of each control volume $X_i$ defined by:
+Let's consider a function ${q}$ defined in $\Omega=[a,b]$ and a $\Delta x$-grid covering $\Omega$. 
+We assume that we are given the average values ${Q}_i = \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x) ,dx$ 
+for each control volume $X_i$, where $i = 1, \cdots, N$. 
+In this context, it is convenient to define the $\Delta x$-grid function $Q=(Q_1, \cdots, Q_N) \in \mathbb{R}^{N}$.
+To facilitate the discussion, we introduce the indicator function $\chi_{i}(x)$ for each control volume $X_i$, defined as:
 \begin{equation*}
 	\label{chp2-sec3-1-eq1}
 	\chi_{i}(x)=
 	\begin{cases}
-		1 & \text{if } x \in X_i\\
-		0 & \text{otherwise }
+		1 & \text{if } x \in X_i,\\
+		0 & \text{otherwise.}
 	\end{cases}
 \end{equation*}
-Using a notation similar to \citet[Chapter~1]{stoer:2002}, 
-we assume that we have a family of functions $\Phi(\xi;\mu)$ defined for $\xi \in [0,1]$ depending on
-a parameter $\mu =(\mu_0, \mu_1,\cdots, \mu_d)\in \mathbb{R}^{d+1}$. 
-The reconstruction problem consists of finding a piecewise function:
+Drawing inspiration from \citet[Chapter~1]{stoer:2002}, we consider a family of functions $\Phi(\xi;\mu)$ 
+defined for $\xi \in [0,1]$, depending on a parameter $\mu =(\mu_0, \mu_1,\cdots, \mu_d)\in \mathbb{R}^{d+1}$.
+The reconstruction problem involves finding a piecewise function:
 \begin{equation}
 	\label{chp2-sec3-1-eq2}
 	q_{Pd}(x;Q) = \sum_{i=1}^{N} \chi_i(x) q_i(x;Q),
 \end{equation}
-where $q_i(x;Q) = \Phi\big(\frac{x-x_{i-\frac{1}{2}}}{\Delta x};\alpha_i\big)$, 
-$\alpha_i= (\alpha_{i0},\alpha_{i1}, \cdots \alpha_{id})\in\mathbb{R}^{d+1}$ is such that:
+where $q_i(x;Q) = \Phi\big(\frac{x-x_{i-\frac{1}{2}}}{\Delta x};\alpha_i\big)$ and 
+$\alpha_i= (\alpha_{i0},\alpha_{i1}, \cdots \alpha_{id})\in\mathbb{R}^{d+1}$. It is required that:
 \begin{equation*}
-	\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}_{Pd}(x;Q) \,dx =
-	\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} q_i(x;Q) \,dx =
-	\int_{0}^{1} \Phi(\xi;\alpha_i) \,d\xi = {Q}_i,
+	\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}{Pd}(x;Q) ,dx =
+	\frac{1}{\Delta x}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} q_i(x;Q) ,dx =
+	\int_{0}^{1} \Phi(\xi;\alpha_i) ,d\xi = {Q}_i,
 \end{equation*}
-that is, $q_i(x;Q)$ preserves the mass on each control volume $X_i$.
+which means that $q_i(x;Q)$ preserves the mass within each control volume $X_i$.
 
-Notice that since $q_i(x;Q) = \Phi\big(\frac{x-x_{i-\frac{1}{2}}}{\Delta x};\alpha_i\big)$, 
-it is reasonable that $\Phi(0;\alpha_i)$ should approximate $q_i(x_{i-\frac{1}{2}})$ and $\Phi(1;\alpha_i)$ should approximate $q(x_{i+\frac{1}{2}})$.
-Furthermore, if $q$ and $\Phi$ are differentiable enough, then 
-$\Phi^{(l)}(0;\alpha_i)$ should approximate $(\Delta x)^l q^{(l)}(x_{i-\frac{1}{2}})$ and $\Phi^{(l)}(1;\alpha_i)$ should approximate
-$(\Delta x)^l q^{(l)}(x_{i+\frac{1}{2}})$, whenever these derivatives exist.
-One way to estimate these values at the edges $x_{i+\frac{1}{2}}$ using the average values $Q$ is to use the reconstruction method
-based on primitive functions \citep[Chapter~17]{leveque:2002}.
-Observe that if we define 
+Notice that, given $q_i(x;Q) = \Phi\big(\frac{x-x_{i-\frac{1}{2}}}{\Delta x};\alpha_i\big)$, 
+it is reasonable to expect that $\Phi(0;\alpha_i)$ approximates $q_i(x_{i-\frac{1}{2}})$ and
+$\Phi(1;\alpha_i)$ approximates $q_i(x_{i+\frac{1}{2}})$. Additionally, if both $q$ and
+$\Phi$ are sufficiently differentiable, $\Phi^{(l)}(0;\alpha_i)$ should approximate
+$(\Delta x)^l q^{(l)}(x_{i-\frac{1}{2}})$ and $\Phi^{(l)}(1;\alpha_i)$ should
+approximate $(\Delta x)^l q^{(l)}(x_{i+\frac{1}{2}})$, provided these derivatives exist.
+
+One approach to estimating these values at the edges $x_{i+\frac{1}{2}}$ using the average 
+values $Q$ is by employing a reconstruction method based on primitive functions \citep[Chapter~17]{leveque:2002}. 
+It is worth noting that if we define:
 \begin{equation}
-\label{chp2-sec-recon-ppm-eq5}
-Q(x) = \int_{a}^x q(\xi) \,d\xi,
+	\label{chp2-sec-recon-ppm-eq5}
+	Q(x) = \int_{a}^x q(\xi) ,d\xi,
 \end{equation}
-we have $Q^{(l)}(x) = q^{(l-1)}(x)$. In particular, $Q^{(l)}(x_{i+\frac{1}{2}}) = q^{(l-1)}(x_{i+\frac{1}{2}})$ and
-$Q^{(l)}(x_{i+\frac{1}{2}}) = \Delta x\sum_{k=1}^i Q_k$, $\forall i=0, \cdots, N$.
-Therefore we can use finite-difference schemes to estimate $q^{(l-1)}(x_{i+\frac{1}{2}})$
-using the $\Delta x$-grid function $Q$, once this one is assumed to be given.
-Let us assume that the $l-$th derivative of $Q$ at $x_{i+\frac{1}{2}}$ is approximated using
-a stencil $\mathcal{S}^{(l)}_{i+\frac{1}{2}}$ and weights $\beta^{(l)}_{k,i}$, $k \in \mathcal{S}^l_{i+\frac{1}{2}}$.
-If $d$ is odd, then we may search for a parameter $\alpha_i \in \mathbb{R}^{d+1}$ that ensures mass conservation and approximation of 
-$q$ and its derivatives at edges by solving:
+we have $Q^{(l)}(x) = q^{(l-1)}(x)$. 
+Specifically, $Q^{(l)}(x_{i+\frac{1}{2}}) = q^{(l-1)}(x_{i+\frac{1}{2}})$ and 
+$Q^{(l)}(x_{i+\frac{1}{2}}) = \Delta x\sum_{k=1}^i Q_k$, for all $i=0, \cdots, N$.
+Therefore, we can employ finite-difference schemes to estimate $q^{(l-1)}(x_{i+\frac{1}{2}})$
+using the $\Delta x$-grid function $Q$, given that it is assumed to be known.
+
+Let us assume that the $l$-th derivative of $Q$ at $x_{i+\frac{1}{2}}$ is approximated using a
+stencil $\mathcal{S}^{(l)}_{i+\frac{1}{2}}$ and weights $\beta^{(l)}_{k,i}$, where 
+$k \in \mathcal{S}^{(l)}_{i+\frac{1}{2}}$. When $d$ is odd, we can seek a parameter
+$\alpha_i \in \mathbb{R}^{d+1}$ that ensures mass conservation and approximates
+$q$ and its derivatives at the edges by solving the following system:
 \begin{equation}
 	\label{chp2-recon-sys1}
 	\begin{cases}
-		\int_{0}^{1} \Phi(\xi;\alpha_i) \,d\xi &= {Q}_i,\\
-		\Phi^{(l)}(0;\alpha_i) &= (\Delta x)^l \sum_{k \in \mathcal{S}^{(l)}_{i-\frac{1}{2}}} \beta_{k,i}^{(l)} {Q}_k, \quad \text{for } l = 0, \cdots, d-1.
+		\int_{0}^{1} \Phi(\xi;\alpha_i) ,d\xi &= {Q}_i,\\
+		\Phi^{(l)}(0;\alpha_i) &= (\Delta x)^l \sum_{k \in 
+		\mathcal{S}^{(l)}_{i-\frac{1}{2}}} \beta_{k,i}^{(l)} {Q}_k, \quad \text{for } l = 0, \cdots, d-1.
 	\end{cases}
 \end{equation}
 If $d$ is even, similarly we look for a parameter $\alpha_i \in \mathbb{R}^{d+1}$ that solves:
@@ -725,22 +708,24 @@ If $d$ is even, similarly we look for a parameter $\alpha_i \in \mathbb{R}^{d+1}
 		\Phi^{(l)}(1;\alpha_i) &= (\Delta x)^l \sum_{k \in \mathcal{S}^{(l)}_{i+\frac{1}{2}}} \beta_{k,i}^{(l)} {Q}_k, \quad \text{for } l = 0, \cdots, \frac{d}{2}-1.
 	\end{cases}
 \end{equation}
-The reconstruction problem is linear if $\Phi(\xi;\mu)$ may be expressed as:
+The reconstruction problem becomes linear when $\Phi(\xi;\mu)$ can be expressed as:
 \begin{equation*}
 	\Phi(\xi;\mu) = \sum_{k=0}^d \mu_k \Phi_k(\xi),
 \end{equation*}
-for functions $\Phi_k$ defined on $[0,1]$. In this case, Equation \eqref{chp2-recon-sys1} and  Equation \eqref{chp2-recon-sys2}
-are $(d+1)\times (d+1)$ linear systems.
-It is usually common to assume that $\Phi_k$'s are linearly independent.
-Thus, we have described a method that allows us to reconstruct a function from its average values
-preserving its mass in each control value and approximates $q$ at the edges that, in principle,
-works for functions $\Phi_k$ provided they are differentiable enough.
-For instance, we could choose $d=0$, and $\Phi_0(\xi)=1$. 
-In this case, we have piecewise constant functions as used in \citet{godunov:1959}.
-If we choose $d=1$, $\Phi_0(\xi)=1$ and $\Phi_1(\xi)=\xi$, 
-we have a piecewise linear reconstruction as in \citet{vanleer:1977}. 
-For further polynomial reconstruction schemes, we refer to \citet{engwirda:2016} and the references therein.
-
+where $\Phi_k$ are functions defined on $[0,1]$. In this case, Equation 
+\eqref{chp2-recon-sys1} and Equation \eqref{chp2-recon-sys2} form $(d+1)\times (d+1)$ linear systems.
+It is common to assume that the $\Phi_k$'s are linearly independent.
+Therefore, we have described a method that allows us to reconstruct a 
+function from its average values, preserving its mass in each control volume, 
+and approximating $q$ at the edges. This method works for functions $\Phi_k$
+as long as they are sufficiently differentiable.
+For example, choosing $d=0$ and $\Phi_0(\xi)=1$ gives us piecewise constant
+functions, as used in \citet{godunov:1959}.
+If we choose $d=1$, $\Phi_0(\xi)=1$, and $\Phi_1(\xi)=\xi$, we 
+obtain a piecewise linear reconstruction, similar to \citet{vanleer:1977}.
+For polynomial reconstruction schemes, we refer to \citet{engwirda:2016} and the references therein.
+\subsection{The Piecewise-Parabolic Method}
+\label{chp2-sec-ppm}
 Hereafter, we are going the focus on the piecewise parabolic method from \citet{colella:1984} that uses $d=2$, 
 $\Phi_0(\xi)=1$, $\Phi_1(\xi)=\xi$, $\Phi_1(\xi)=(1-\xi)\xi$. 
 In this case, we denote $q_{Pd}$ by $q_{PP}$.
@@ -822,320 +807,9 @@ based on the work \citet{suresh:1997}. The fifth-order reconstruction formula re
 \end{align}
 However, we notice that this reconstruction scheme allows discontinuity of the 
 Piecewise-Parabolic function at the control volume edges since the stencil it is not symmetric.
-
-\subsection{PPM reconstruction order analysis}
-\label{chp2-sec-numerical-analysis}
-As we pointed out before, the approximation of $q$ at the control volumes edges
-given by Equation \eqref{chp2-sec-recon-ppm-eq9} is fourth-order accurate when $q \in \mathcal{C}^4(\mathbb{R})$. 
-This is proved as a Corollary of the following Proposition \ref{prop:ppm-bound1}.
-\begin{prop}
-	\label{prop:ppm-bound1}
-	Let $q \in \mathcal{C}^{4}(\mathbb{R})$, $\overline{x} \in \mathbb{R} $ and $h>0$.
-	Then, the following identity holds:
-	\begin{equation}
-		\label{prop:ppm-bound1-eq1}
-		q(\overline{x} ) = \frac{7}{12}\bigg( \frac{1}{h} \int_{\overline{x} }^{\overline{x}+h} q(x) \,dx 
-		       + \frac{1}{h} \int_{\overline{x} -h}^{\overline{x} } q(x) \,dx  \bigg)
-		       - \frac{1}{12}\bigg( \frac{1}{h} \int_{\overline{x} +h}^{\overline{x}+2h} q(x) \,dx 
-		       + \frac{1}{h} \int_{\overline{x} -2h}^{\overline{x} -h} q(x) \,dx  \bigg) + C_1h^4,
-	\end{equation}
-	where $C_1$ is a constant that depends on $q$ and $h$.
-\end{prop}
-\begin{proof}
-	We define $Q(x) = \int_{a}^{x} q(\xi) \,d\xi$ for fixed $a \in \mathbb{R}$ as in 
-	Equation \eqref{chp2-sec-recon-ppm-eq5}. It follows that:
-	\begin{align*}
-		\int_{\overline{x}}^{\overline{x}+h} q(\xi) \,d\xi + \int_{\overline{x}-h}^{\overline{x}} q(\xi) \,d\xi &=
-		Q(\overline{x}+h) - Q(\overline{x}-h), \\
-		\int_{\overline{x}+h}^{\overline{x}+2h} q(\xi) \,d\xi + \int_{\overline{x}-2h}^{\overline{x}-h} q(\xi) \,d\xi &=
-		Q(\overline{x}+2h) - Q(\overline{x}-2h) - (Q(\overline{x}+h) - Q(\overline{x}-h)). \\
-	\end{align*}
-	Using these identities, Equation \eqref{prop:ppm-bound1-eq1} may be rewritten as:
-	\begin{equation}
-		\label{prop:ppm-bound1-eq2}
-		q(\overline{x}) = \frac{4}{3} \bigg(\frac{Q(\overline{x}+h) - Q(\overline{x}-h)}{2h}\bigg)
-		       - \frac{1}{3} \bigg(\frac{Q(\overline{x}+2h) - Q(\overline{x}-2h)}{4h}\bigg) + C_1h^4,
-	\end{equation}
-	which consists of finite-difference approximations. 
-	Thus, Equation \eqref{prop:ppm-bound1-eq1} follows from Lemma \ref{lemma:fd-ppm-est1}
-	with:
-	\begin{equation}
-		\label{prop:ppm-bound1-eq3}
-		C_1 = C_1(\mu_1,\mu_2) = \frac{1}{720}\bigg(6q^{(4)}(\mu{1}) -32q^{(4)}(\mu_{2})\bigg), 
-	\end{equation}
-	where $\mu_{1}, \mu_{2} \in [\overline{x}-2h,\overline{x}+2h]$,
-	which concludes the proof.
-\end{proof}
-\begin{corollary}
-	\label{prop:ppm-bound1-corollary}
-	It follows from Proposition \ref{prop:ppm-bound1} with
-	$\overline{x} = x_{i+\frac{1}{2}}$ and $h = \Delta x$
-	that $q_{i+\frac{1}{2}}$ given by Equation \eqref{chp2-sec-recon-ppm-eq9} satisfies:
-	\begin{equation}
-		\label{ppm-edges-bound1}
-		q{(x_{i+\frac{1}{2}})} - q_{i+\frac{1}{2}} = C_1\Delta x^4,
-	\end{equation}
-	with $C_1$ given by Equation \eqref{prop:ppm-bound1-eq3}, whenever $q \in \mathcal{C}^4(\mathbb{R}).$
-\end{corollary}
-\begin{remark}
-	Similarly, one can show that the formulas are given by Equation
-	\eqref{chp2-sec-recon-ppm-eq12} and Equation \eqref{chp2-sec-recon-ppm-eq12}
-	are fifth-order accurate.
-\end{remark}
-The parabolic function from \eqref{chp2-sec-recon-ppm-eq1}  given with 
-coefficients specified before approximates $q$ with order 3 when 
-$q \in \mathcal{C}^4(\mathbb{R})$.
-In order to check this, for $x \in X_i$ we rewrite Equation 
-\eqref{chp2-sec-recon-ppm-eq1} as: 
-\begin{equation}
-	\label{chp2-ppm-newton}
-	q_i(x;Q) = q_{L,i} + \frac{(\Delta q_i + q_{6, i})}{\Delta x}(x-x_{i-\frac{1}{2}})
-	-\frac{q_{6, i}}{\Delta x^2}(x-x_{i-\frac{1}{2}})^2
-\end{equation}
-and we write $q$ using its Taylor expansion assuming $q \in \mathcal{C}^4(\mathbb{R})$:
-\begin{equation}
-	\label{chp2-ppm-taylor}
-	q(x) = q(x_{i-\frac{1}{2}}) + q'(x_{i-\frac{1}{2}})(x-x_{i-\frac{1}{2}})
-	+ \frac{q''(x_{i-\frac{1}{2}})}{2}(x-x_{i-\frac{1}{2}})^2
-	+ \frac{q^{(3)}(\theta_i)}{6}(x-x_{i-\frac{1}{2}})^3,
-\end{equation}
-where $\theta_i \in X_i$.
-Comparing Equation \eqref{chp2-ppm-newton} with Equation \eqref{chp2-ppm-taylor},
-it is reasonable to seek to some bound to the expressions:
-\begin{equation}
-	\label{chp2-ppm-bound2eq}
-	q'(x_{i-\frac{1}{2}})-\frac{(\Delta q_i + q_{6, i})}{\Delta x},
-\end{equation}
-and:
-\begin{equation} 
-	\label{chp2-ppm-bound3eq}
-	\frac{q''(x_{i-\frac{1}{2}})}{2} -\bigg(-\frac{q_{6, i}}{\Delta x^2}\bigg).
-\end{equation}
-We have seen that term $q_{L,i}$ gives a fourth-order approximation to $q(x_{i-\frac{1}{2}})$.
-The Corollary \ref{prop:ppm-bound2-corollary} shall prove that 
-the term \eqref{chp2-ppm-bound2eq} has a bound proportional to $\Delta x^2$, and
-the Corollary \ref{prop:ppm-bound3-corollary} shall prove that the
-term \eqref{chp2-ppm-bound3eq} is bounded by a constant times $\Delta x$.
-
-Before proving the desired bounds, it is useful to rewrite some terms
-explicitly as functions of the values of the $\Delta x$-grid function $Q$.
-Combining Equation \eqref{chp2-sec-recon-ppm-eq4} with Equations
-\eqref{chp2-sec-recon-ppm-eq10} and \eqref{chp2-sec-recon-ppm-eq11}, 
-we may write $q_{6,i}$ as:
-\begin{equation}
-	\label{def:q6i-2}
-	q_{6,i} = \frac{1}{4} \bigg( Q_{i-2} - 6Q_{i-1} + 10Q_{i} -6Q_{i+1}  + Q_{i+2} \bigg).
-\end{equation}
-Recalling the definition of $\Delta q_i$ from Equation \eqref{chp2-sec-recon-ppm-eq2},
-and applying Equations \eqref{chp2-sec-recon-ppm-eq10} and \eqref{chp2-sec-recon-ppm-eq11}, 
-we may express $\Delta q_i$ as:
-\begin{equation}
-	\label{def:dqi-2}
-	\Delta q_i = \frac{1}{12} \bigg(Q_{i-2} -8Q_{i-1} + 8Q_{i+1} -Q_{i+2} \bigg).
-\end{equation}
-Finally, we combine Equations \eqref{def:q6i-2} and \eqref{def:dqi-2} and write their sum as:
-\begin{equation} 
-	\label{def:dqi_d6i}
-	\frac{(\Delta q_i + q_{6, i})}{\Delta x} = 
-	\frac{2Q_{i-2}-13Q_{i-1} +15Q_i -5Q_{i+1} + Q_{i+2}}{6\Delta x}.
-\end{equation}
-The next Proposition \ref{prop:ppm-bound2} proves that Equation \eqref{def:dqi_d6i}
-approximates $q'(x_{i-\frac{1}{2}})$ with order 2.
-\begin{prop}
-	\label{prop:ppm-bound2}
-	Let $q \in \mathcal{C}^{3}(\mathbb{R})$, $\overline{x}\in \mathbb{R}$ and $h>0$.
-	Then, the following identity holds:
-	\begin{equation}
-		\begin{split}
-		\label{prop:ppm-bound2-eq1}
-		q'(\overline{x} ) = \frac{1}{6h}
-		\bigg( \frac{2}{h} \int_{\overline{x}-2h}^{\overline{x}-h} q(x) \,dx 
-		      -\frac{13}{h}\int_{\overline{x}-h}^{\overline{x}} q(x) \,dx   
-		      +\frac{15}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx  \\ 
-		      -\frac{5}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
-		      +\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
-		\bigg) + C_2h^2,
-		\end{split}
-	\end{equation}
-	where $C_2$ is a constant that depends on $q$ and $h$.
-\end{prop}
-
-\begin{proof}
-	We consider again $Q(x) = \int_{a}^{x} q(\xi) \,d\xi$ for $a \in \mathbb{R}$ fixed as in 
-	Equation \eqref{chp2-sec-recon-ppm-eq5}. 
-	Like in Proposition \ref{prop:ppm-bound2}, we have:
-	\begin{align*}
-	\frac{1}{6h}
-	\bigg( \frac{2}{h} \int_{\overline{x}-2h}^{\overline{x}-h} q(x) \,dx 
-		      -\frac{13}{h}\int_{\overline{x}-h}^{\overline{x}} q(x) \,dx   
-		      +\frac{15}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx 
-		      -\frac{5}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
-		      +\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
-		\bigg)\\
-		= \frac{1}{6h} \bigg(
-		\frac{2}{h}   \big( Q(\overline{x}-h)- Q(\overline{x}-2h)\big) 
-		-\frac{13}{h} \big( Q(\overline{x}) - Q(\overline{x}-h) \big) 
-		+\frac{15}{h} \big( Q(\overline{x}+h) - Q(\overline{x})  \big) \\
-		-\frac{5}{h}  \big( Q(\overline{x}+2h) - Q(\overline{x}+h)  \big) 
-		+\frac{1}{h}  \big( Q(\overline{x}+3h) - Q(\overline{x}+2h)  \big) 
-		\bigg)\\
-		= \frac{1}{6h^2}\bigg(-2Q(\overline{x}-2h) + 15Q(\overline{x}-h) - 28Q(\overline{x}) 
-		+20Q(\overline{x}+h) -6Q(\overline{x}+2h) + Q(\overline{x}+3h)  \bigg),
-	\end{align*}
-	which consists of the finite-difference scheme from Lemma \ref{lemma:fd-ppm-est2}. 
-	Therefore, Equation \eqref{prop:ppm-bound2-eq1} follows from Lemma \ref{lemma:fd-ppm-est2} with:
-	\begin{equation}
-		\label{prop:ppm-bound2-eq2}
-		C_2 = C_2(\mu_1,\mu_2) = \frac{1}{24}\bigg(128q^{(3)}(\mu_{1}) - 116q^{(3)}(\mu_{2})\bigg), 
-	\end{equation}
-	where $\mu_{1}, \mu_{2} \in [x_0-2h,x_0+3h]$, which concludes the proof.
-\end{proof}
-\begin{corollary}
-	\label{prop:ppm-bound2-corollary}
-	It follows from Proposition \ref{prop:ppm-bound2} with $\overline{x} = x_{i-\frac{1}{2}}$
-	and $h = \Delta x$ that $\Delta q_i$ given by Equation \eqref{def:dqi-2} 
-	and $q_{6,i}$ given by Equation \eqref{def:q6i-2} satisfy:
-	\begin{equation}
-	q'(x_{i-\frac{1}{2}})-\frac{(\Delta q_i + q_{6, i})}{\Delta x}  = C_2\Delta x^2,
-	\end{equation}
-	with $C_2$ given by Equation \eqref{prop:ppm-bound2-eq2}, whenever $q \in \mathcal{C}^3(\mathbb{R})$.
-\end{corollary}
-Now, we analyse the following expression:
-\begin{equation}
-	\label{def:q6i-3}
-	-\frac{2q_{6,i}}{\Delta x^2} = 
-	-\frac{1}{2\Delta x^2} \bigg( Q_{i-2} - 6Q_{i-1} + 10Q_{i} -6Q_{i+1}  + Q_{i+2} \bigg).
-\end{equation}
-deduced from Equation \eqref{def:q6i-2}
-and we prove in Proposition \ref{prop:ppm-bound3} that Equation \eqref{def:q6i-3}
-approximates $q''(x_{i-\frac{1}{2}})$ with order 1.
-\begin{prop}
-	\label{prop:ppm-bound3}
-	Let $q \in \mathcal{C}^{3}(\mathbb{R})$, $\overline{x} \in \mathbb{R}$ and $h>0$.
-	Then, the following identity holds:
-	\begin{equation}
-		\begin{split}
-		\label{prop:ppm-bound3-eq1}
-		q''(\overline{x} ) = \frac{1}{2h^2}
-		\bigg(-\frac{1}{h} \int_{\overline{x}-2h}^{\overline{x}-h} q(x) \,dx 
-		      +\frac{6}{h}\int_{\overline{x}-h}^{\overline{x}} q(x) \,dx   
-		      -\frac{10}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx  \\ 
-		      +\frac{6}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
-		      -\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
-		\bigg) + C_3h,
-		\end{split}
-	\end{equation}
-	where $C_3$ is a constant that depends on $q$ and $h$.
-\end{prop}
-\begin{proof}
-	Similarly to Proposition \ref{prop:ppm-bound2} using the same function $Q$, we have:
-	\begin{align*}
-	\frac{1}{2h^2}
-		\bigg(-\frac{1}{h} \int_{\overline{x}-2h}^{\overline{x}-h} q(x) \,dx 
-		      +\frac{6}{h}\int_{\overline{x}-h}^{\overline{x}} q(x) \,dx   
-		      -\frac{10}{h}\int_{\overline{x}}^{\overline{x}+h} q(x) \,dx  
-		      +\frac{6}{h} \int_{\overline{x}+h}^{\overline{x}+2h} q(x) \,dx   
-		      -\frac{1}{h} \int_{\overline{x}+2h}^{\overline{x}+3h} q(x) \,dx   
-		\bigg)\\ 
-		= \frac{1}{2h^2} \bigg(
-		-\frac{1}{h}   \big( Q(\overline{x}-h)- Q(\overline{x}-2h)\big) 
-		+\frac{6}{h} \big( Q(\overline{x}) - Q(\overline{x}-h) \big) 
-		-\frac{10}{h} \big( Q(\overline{x}+h) - Q(\overline{x})  \big) \\
-		+\frac{6}{h}  \big( Q(\overline{x}+2h) - Q(\overline{x}+h)  \big) 
-		-\frac{1}{h}  \big( Q(\overline{x}+3h) - Q(\overline{x}+2h)  \big) 
-		\bigg)\\
-		= \frac{1}{2h^3}\bigg(Q(\overline{x}-2h) - 7Q(\overline{x}-h) + 16Q(\overline{x}) 
-		-16Q(\overline{x}+h) +7Q(\overline{x}+2h) - Q(\overline{x}+3h)  \bigg),
-	\end{align*}
-	which consists of the finite-difference scheme from Lemma \ref{lemma:fd-ppm-est3}. 
-	Therefore, Equation \eqref{prop:ppm-bound3-eq1} follows from 
-	Lemma \ref{lemma:fd-ppm-est3} with:
-	\begin{equation}
-		\label{prop:ppm-bound3-eq2}
-		C_3 = C_3(\mu_1,\mu_{2}) = \frac{1}{48}\bigg(104q^{(3)}(\mu_{1}) - 128q^{(3)}(\mu_{2}) \bigg), 
-	\end{equation}
-	where $\mu_{1}, \mu_{2} \in [x_0-2h,x_0+3h]$, which concludes the proof.
-\end{proof}
-\begin{corollary}
-	\label{prop:ppm-bound3-corollary}
-	It follows from Proposition \ref{prop:ppm-bound3} with 
-	$\overline{x} = x_{i-\frac{1}{2}}$ and $h = \Delta x$
-	that $q_{6,i}$ given by Equation \eqref{chp2-sec-recon-ppm-eq9} satisfies:
-	\begin{equation}
-		\label{ppm-edges-bound3}
-	q''(x_{i-\frac{1}{2}}) -\bigg(-\frac{2q_{6, i}}{\Delta x^2}\bigg) = C_3\Delta x,
-	\end{equation}
-	with $C_3$ given by Equation \eqref{prop:ppm-bound3-eq2}, whenever $q \in \mathcal{C}^3(\mathbb{R})$.
-\end{corollary}
-With the aid of Corollaries \ref{prop:ppm-bound1-corollary}, \ref{prop:ppm-bound2-corollary},
-and  \ref{prop:ppm-bound3-corollary}, we are able to prove
-that the PPM reconstruction approximates $q$ with order 3.
-Indeed, we prove this on the follow up Proposition \ref{prop:ppm-bound4}.
-\begin{prop}
-	\label{prop:ppm-bound4}
-	Let $q \in \mathcal{C}^{4}([a,b])$.
-	Then, the Piecewise-Parabolic function given by
-	Equation \eqref{chp2-sec-recon-ppm-eq1} with 
-	the parameters $q_{R,i}$ and $q_{L,i}$ obeying Equations
-	\eqref{chp2-sec-recon-ppm-eq10} and \eqref{chp2-sec-recon-ppm-eq11}
-	gives a third-order approximation to $q$ on the control volume $X_i$.
-	Namely, there exist constants $M_1$ and $M_2$ such that
-	\begin{equation*}
-		\begin{split}
-			|q(x)-q_i(x;Q)| \leq  M_1 \Delta x ^4 + M_2 \Delta x ^3, \quad \forall x \in X_i.
-		\end{split}
-	\end{equation*}
-\end{prop}
-\begin{proof}
-For $x \in X_i$, from Equations \eqref{chp2-ppm-taylor} and \eqref{chp2-ppm-newton}, we have:
-\begin{equation*}
-	\begin{split}
-	q(x)-q_i(x;Q) = (q'(x_{i-\frac{i}{2}})-q_{L,i})	
-	+ \bigg(q'(x_{i-\frac{1}{2}})-  \frac{(\Delta q_i + q_{6, i})}{\Delta x}\bigg)(x-x_{i-\frac{1}{2}})
-	\\+ \bigg(\frac{q''(x_{i-\frac{1}{2}})}{2} + \frac{q_{6, i}}{\Delta x^2}\bigg)(x-x_{i-\frac{1}{2}})^2
-	+ \frac{q^{(3)}(\theta_i)}{6}(x-x_{i-\frac{1}{2}})^3.
-	\end{split}
-\end{equation*}
-Using this fact with Corollaries \ref{prop:ppm-bound1-corollary}, \ref{prop:ppm-bound2-corollary},
-and  \ref{prop:ppm-bound3-corollary}, we have:
-\begin{equation*}
-	\begin{split}
-	q(x)-q_i(x;Q) =  C_1 \Delta x ^4 + C_2 \Delta x ^2(x-x_{i-\frac{1}{2}})
-	+ \frac{C_3}{2} \Delta x (x-x_{i-\frac{1}{2}})^2
-	+ C_4(x-x_{i-\frac{1}{2}})^3,
-	\end{split}
-\end{equation*}
-where $C_1, C_2$ and $C_3$ are given by Equations \eqref{prop:ppm-bound1-eq3},
-\eqref{prop:ppm-bound2-eq2} and \eqref{prop:ppm-bound3-eq2}, respectively, and
-\begin{equation}
-	\label{prop:ppm-bound4-eq3}
-	C_4 = C_4(\theta_i) = \frac{q^{(3)}(\theta_i)}{6}.
-\end{equation}
-For $x\in X_i$, we have $|x -x_{i-\frac{i}{2}}| \leq \Delta x$, thus:
-\begin{equation*}
-	\begin{split}
-		|q(x)-q_i(x;Q)| \leq  M_1 \Delta x ^4 + M_2 \Delta x ^3,
-	\end{split}
-\end{equation*}
-where 
-\begin{equation*}
-M_1 = \frac{38}{720}\sup_{\xi \in [a,b]} |q^{(4)}(\xi)|, 
-\end{equation*}
-\begin{equation*}
-M_2 = \bigg(\frac{244}{24} + \frac{232}{96} + \frac{1}{6} \bigg)
-\sup_{\xi \in [a,b]} |q^{(3)}(\xi)| = \frac{143}{12} \sup_{\xi \in [a,b]} |q^{(3)}(\xi)|,
-\end{equation*}
-which concludes the proof.
-\end{proof}
-
-\begin{remark}
-	Replacing the formulas for $q_{R,i}$ and $q_{L,i}$ given by Equations
-	\eqref{chp2-sec-recon-ppm-eq10}and \eqref{chp2-sec-recon-ppm-eq11}
-	by the formulas given by Equations \eqref{chp2-sec-recon-ppm-eq12}
-	and \eqref{chp2-sec-recon-ppm-eq13}, does not change the order of convergence
-	of the parabolic approximation.
-\end{remark}
-
+The PPM scheme, utilizing Equations \eqref{chp2-sec-recon-ppm-eq10} and \eqref{chp2-sec-recon-ppm-eq11},
+will be referred to as \textbf{PPM-0}. On the other hand, the PPM scheme, employing Equations 
+\eqref{chp2-sec-recon-ppm-eq12} and \eqref{chp2-sec-recon-ppm-eq13}, will be denoted as \textbf{PPM-PL07}.
 \subsection{Monotonization}
 	\label{chp2-sec-mono}
 	This section is dedicated to presenting possible ways of ensuring the creation of new 
@@ -1143,8 +817,7 @@ extrema values in the PPM reconstruction. We are going to present the original
 monotonic scheme from \citet{colella:1984} and an alternative scheme from \citet{lin:2004},
 which was an attempt to reduce the diffusion of the original scheme \citet{colella:1984}
 and is currently employed in the FV3 dynamical core \citep{harris:2021}.
-		
-\subsubsection{Limiter from \citet{colella:1984}}
+\subsubsection{Limiter from \citet{colella:1984} - PPM-CW84}
 To avoid numerical oscillations in the parabolas, especially when discontinuities are present,
 \citet{colella:1984} ensures that the reconstructed value 
 at cell edges (namely, $q_{i+\frac{1}{2}}$) does not stay outside of the range of its 
@@ -1187,29 +860,27 @@ In this case, the values are updated as follows:
 \end{equation}
 In this step, we are changing the value at the edge where the extreme is closer and ensuring
 again that no new extreme is created.
-
-\subsubsection{Limiter from \citet{lin:2004}}
-	Similarly to \citet{colella:1984}, \citet{lin:2004} reduces numerical oscilations in the parabolas
-replacing the term $\delta Q_i$ in Equation \eqref{chp2-sec-recon-ppm-eq7} by the values $\delta_m Q_i$ given by:
+This scheme is referred to as \textbf{PPM-CW84}.
+\subsubsection{Limiter from \citet{lin:2004} - PPM-L04}
+Similarly to \citet{colella:1984}, \citet{lin:2004} reduces numerical oscillations in the parabolas by replacing the term $\delta Q_i$ in Equation \eqref{chp2-sec-recon-ppm-eq7} with the values $\delta_m Q_i$ given by:
 \begin{equation}
 	\label{chp2-sec-mono-eq4}
 	\delta_m Q_{i} =
-	\max(|\delta Q_i|,2\delta Q_{\min,i},2\delta Q_{\max,i}) \cdot \text{sgn}(\delta Q_i), 
+	\max(|\delta Q_i|, 2\delta Q_{\min,i}, 2\delta Q_{\max,i}) \cdot \text{sgn}(\delta Q_i),
 \end{equation}
-where $\delta Q_{\min,i} = Q_i - \min(Q_{i+1},Q_i,Q_{i-1})$ and
-$\delta Q_{\max,i} = \max(Q_{i+1},Q_i,Q_{i-1}) - Q_i$.
-The monotonicity is achieved by the following scheme:	
+where $\delta Q_{\min,i} = Q_i - \min(Q_{i+1}, Q_i, Q_{i-1})$ and
+$\delta Q_{\max,i} = \max(Q_{i+1}, Q_i, Q_{i-1}) - Q_i$.
+The monotonicity is achieved by the following scheme:
 \begin{align}
 	\label{chp2-sec-mono-eq5}
-	q_{L,i} \leftarrow Q_i - \max(|\delta_m Q_i|,|q_{L,i}-Q_i|) \cdot \text{sgn}(\delta_m Q_i),\\ 
-	q_{R,i} \leftarrow Q_i - \max(|\delta_m Q_i|,|q_{R,i}-Q_i|) \cdot \text{sgn}(\delta_m Q_i). 
+	q_{L,i} &\leftarrow Q_i - \max(|\delta_m Q_i|, |q_{L,i}-Q_i|) \cdot \text{sgn}(\delta_m Q_i),\\
+	q_{R,i} &\leftarrow Q_i - \max(|\delta_m Q_i|, |q_{R,i}-Q_i|) \cdot \text{sgn}(\delta_m Q_i).
 \end{align}
-This scheme may be further improved to reduce the diffusion even more as described by \citet{lin:2004}, but
-we are not going to assess this approach here.
+This scheme may be further improved to reduce the diffusion even more, as described by \citet{lin:2004}, but we are not going to assess this approach here.
+This scheme is referred to as \textbf{PPM-L04}.
 
 \section{Flux}
 \label{chp2-sec-flux}
-
 Let us assume the framework from Problem \ref{chp2-sec2-prob4}.
 Supposing that $Q^{n} \in \mathbb{R}^{\Delta x}$ is known,
 we would like to compute the values $Q^{n+1}$.
@@ -1287,348 +958,7 @@ This approach allows larger-time steps \citep{chen:2017}.
 
 If the monotonic scheme from \citet{lin:2004} is employed, then $\mathcal{S}_{i+\frac{1}{2}} = \{i-3,i-2,i-1,i,i+1,i+2,i+3\}$.
 Otherwise the stencil is given by $\mathcal{S}_{i+\frac{1}{2}} = \{i-2,i-1,i,i+1,i+2\}$ for all the other schemes that we presented.
-In the absence of monotonization, it follows from Equations
-\eqref{chp2-sec-recon-ppm-eq10}, \eqref{chp2-sec-recon-ppm-eq11},
-\eqref{def:q6i-2} and \eqref{def:dqi-2}
-that the numerical flux may be expressed as the following sum:
-\begin{equation*}
-	\label{chp-sec-flux:numerical-flux-stencil}
-	\mathcal{F}(Q(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}_{i+\frac{1}{2}}^n) = \tilde{u}_{i+\frac{1}{2}}^n
-	\sum_{k=-2}^{3} \alpha_{i,k}Q_{i+k}^n,
-\end{equation*}
-where the coefficients are satisfies:
-\begin{equation*}
-	12\alpha_{i,-2} =  
-    	\begin{cases}
-		c_{i+\frac{1}{2}}-c_{i+\frac{1}{2}}^2 &
-		\text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
-		0 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
-    	\end{cases}
-\end{equation*}
 
-\begin{equation*}
-	12\alpha_{i,-1} =  
-    	\begin{cases}
-		-1 - 5c_{i+\frac{1}{2}}  + 6c_{i+\frac{1}{2}}^2 
-		& \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
-		-1 +  2c_{i+\frac{1}{2}}   -   c_{i+\frac{1}{2}}^2 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
-    	\end{cases}
-\end{equation*}
-
-\begin{equation*}
-	12\alpha_{i,0} =  
-    	\begin{cases}
-		7 + 15c_{i+\frac{1}{2}} - 10c_{i+\frac{1}{2}}^2 
-		& \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
-		7 - 13c_{i+\frac{1}{2}}  +  6c_{i+\frac{1}{2}}^2 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
-    	\end{cases}
-\end{equation*}
-
-\begin{equation*}
-	12\alpha_{i,1} =  
-    	\begin{cases}
-		7 - 13c_{i+\frac{1}{2}} +  6c_{i+\frac{1}{2}}^2 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
-		7 + 15c_{i+\frac{1}{2}} - 10c_{i+\frac{1}{2}}^2 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
-    	\end{cases}
-\end{equation*}
-
-\begin{equation*}
-	12\alpha_{i,2} =  
-    	\begin{cases}
-		-1 +  2c_{i+\frac{1}{2}} -   c_{i+\frac{1}{2}}^2 
-		& \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
-		-1 - 5c_{i+\frac{1}{2}} +  6c_{i+\frac{1}{2}}^2 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
-    	\end{cases}
-\end{equation*}
-
-\begin{equation*}
-	12\alpha_{i,3} =  
-    	\begin{cases}
-		0 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
-		c_{i+\frac{1}{2}}-   c_{i+\frac{1}{2}}^2 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
-    	\end{cases}
-\end{equation*}
-
-If the reconstruction at the edges is calculated using Equation \eqref{chp2-sec-recon-ppm-eq12}
-and \eqref{chp2-sec-recon-ppm-eq13}, which is leads to a scheme called hybrid PPM \citep{putman:2007}, 
-the flux stencil coefficients may be written as:
-\begin{equation*}
-	60\alpha_{i,-2} =  
-    	\begin{cases}
-		2 - c_{i+\frac{1}{2}}-c_{i+\frac{1}{2}}^2 &
-		\text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
-		0 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
-    	\end{cases}
-\end{equation*}
-
-\begin{equation*}
-	60\alpha_{i,-1} =  
-    	\begin{cases}
-		-13 - c_{i+\frac{1}{2}}  + 14c_{i+\frac{1}{2}}^2 
-		& \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
-		-3 +  4c_{i+\frac{1}{2}}   -   c_{i+\frac{1}{2}}^2 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
-    	\end{cases}
-\end{equation*}
-
-\begin{equation*}
-	60\alpha_{i,0} =  
-    	\begin{cases}
-		47 + 39c_{i+\frac{1}{2}} - 26c_{i+\frac{1}{2}}^2 
-		& \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
-		27 - 41c_{i+\frac{1}{2}}  +  14c_{i+\frac{1}{2}}^2 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
-    	\end{cases}
-\end{equation*}
-
-\begin{equation*}
-	60\alpha_{i,1} =  
-    	\begin{cases}
-		27 - 41c_{i+\frac{1}{2}} + 14c_{i+\frac{1}{2}}^2 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
-		47 + 39c_{i+\frac{1}{2}} - 26c_{i+\frac{1}{2}}^2 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
-    	\end{cases}
-\end{equation*}
-
-\begin{equation*}
-	60\alpha_{i,2} =  
-    	\begin{cases}
-		-3 +  4c_{i+\frac{1}{2}} - c_{i+\frac{1}{2}}^2 
-		& \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
-		-13 - c_{i+\frac{1}{2}} +  14c_{i+\frac{1}{2}}^2 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
-    	\end{cases}
-\end{equation*}
-
-\begin{equation*}
-	60\alpha_{i,3} =  
-    	\begin{cases}
-		0 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
-		2-c_{i+\frac{1}{2}}-   c_{i+\frac{1}{2}}^2 & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
-    	\end{cases}
-\end{equation*}
-
-\subsubsection{Flux numerical analysis}
-With the stencil coefficients, we can compute the amplification factor 
-(Equation \eqref{chp2-amplification}) for the PPM and the hybrid PPM schemes, both without monotonization.
-We assume a constant velocity equal to one and $N=100$ (number of control volumes).
-In Figure \ref{chp2-fig-amplification} we show the amplification factor for both PPM and hybrid PPM schemes
-considering different CFL numbers.
-We can observe that both schemes damp most of the Fourier modes for larger $k$, regardless of the CFL number.
-Besides that, the hybrid scheme is more effective when reducing the Fourier modes amplitude.
-We point out that both schemes are exact when the CFL number is equal to 1.
-From this analysis, we can conclude that the PPM and hybrid PPM schemes satisfy the
-Von Neumann stability criteria when the CFL restriction is respected.
-\begin{figure}[ht]
-	\centering
-	\includegraphics[width=0.49\linewidth]{stability_PPM-0}
-	\includegraphics[width=0.49\linewidth]{stability_PPM-PL07}
-	\caption{Amplification factor for the PPM (left) and hybrid PPM (right) schemes for different CFL numbers.}
-	\label{chp2-fig-amplification}
-\end{figure}
-In order to investigate the consistency of the PPM scheme, we notice that when we are deducing the time average flux, 
-we are making approximations of the form:
-\begin{equation}
-	\label{chp2-sec-flux:analysis-eq1}
-	\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},t) \,dt \approx
-	\int_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t}^{x_{i+\frac{1}{2}}}
-	q_{PP}(x;Q^n)\,dx, 
-\end{equation}
-as we can see from Equations \eqref{chp-sec-flux:fL_1} and \eqref{chp-sec-flux:fR_1},
-which basically replace $q$ by $q_{PP}$ and $X(t^n, t^{n+1},x_{i+\frac{1}{2}})$ by 
-$x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t$
-on the right-hand side of Equation \eqref{chp2-sec-flux:approx1}.
-As we shall see, the approximation \eqref{chp2-sec-flux:analysis-eq1}
-has two sources of error: one related to the departure point estimation and another due to the
-parabolic approximation.
-The next Proposition \eqref{chp2-sec-flux:prop2} investigates how the departure point error
-impacts on the approximation \eqref{chp2-sec-flux:analysis-eq1} replacing $q_{PP}$ by $q$.
-
-\begin{prop}
-	\label{chp2-sec-flux:prop2}
-	Assume the framework of Problem \ref{chp2-sec2-prob2} with $q \in \mathcal{C}^1$  and $u \in \mathcal{C}^P$, for some $P\geq2$. 
-	Furthermore, assume the CFL condition and that $\Delta x$ and $ \Delta t $ are small enough as in Proposition \ref{chp2-sec-flux:departurebound}.
-	
-	Assume also that for some time-average velocity $\tilde{u}^n_{i+\frac{1}{2}}$, we have
-	$X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \tilde{u}^n_{i+\frac{1}{2}}\Delta t + C_{i+\frac{1}{2}}\Delta t^P$, 
-	where the constants $C_{i+\frac{1}{2}}$ can be written as $C_{i+\frac{1}{2}} = F(\tilde{x}_{i+\frac{1}{2}}, \tilde{t}_{i+\frac{1}{2}})$ for 
-	a $\mathcal{C}^1$ function $F:[a,b]^d \times [0,T]^d \to \mathbb{R}$ . 
-	Besides that, assume $\tilde{x}_{i+\frac{1}{2}} \in [x_{i+\frac{1}{2}}-k\Delta x, x_{i+\frac{1}{2}} + k\Delta x]^d$, 
-	where $k$ do not depend on $\Delta x$ and $\tilde{t}_{i+\frac{1}{2}} \in [t^n, t^{n+1}]^d$.
-	Under all these assumptions, we have:
-\begin{align*}
-	&\bigg|\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-	-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx
-	-\bigg( \int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
-	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx  \bigg) \bigg| \\
-	& \leq K_1 \Delta t^{P+1},
-\end{align*}
-	where $K_1$ depends on $q$ and $u$.
-\end{prop}
-\begin{proof}
-	Using Equation \eqref{chp2-sec-flux:approx1} and the mean value theorem for integrals, we get: 
-	\begin{align*}
-	\label{chp-sec-flux:depint_5}
-			  &\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-			 -\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx =
-			 \int^{x_{i+\frac{1}{2}}}_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})} q(x,t^n)\,dx
-			 -\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx \\ 
-			 &= \int_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})}^{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx  
-			 = \big(X(t^n,t^{n+1};x_{i+\frac{1}{2}}) - x_{i+\frac{1}{2}}+\tilde{u}_{i+\frac{1}{2}}^n \Delta t \big)
-			 q(\mu_i,t^n) =  F(\tilde{x}_{i+\frac{1}{2}}, \tilde{t}_{i+\frac{1}{2}}) \Delta t^P q(\mu_{i+\frac{1}{2}},t^n),
-	\end{align*}
-	for some $\mu_{i+\frac{1}{2}} \in X_{i}\cup X_{i+1}$. Similarly, we have:
-	\begin{align*}
-	&\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
-	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx =
-	F(\tilde{x}_{i-\frac{1}{2}},\tilde{t}_{i-\frac{1}{2}}) \Delta t^P q(\mu_{i-\frac{1}{2}},t^n),
-	\end{align*}
-and again, $\mu_{i-\frac{1}{2}} \in X_{i-1}\cup X_{i}$
-We introduce the following auxiliary $\mathcal{C}^1$ function:
-\begin{equation*}
-	G(\nu) = F(\nu_1,\nu_2)q(\nu_3,t^n).
-\end{equation*}
-where $\nu =(\nu_1,\nu_2, \nu_3)$, $\nu_1 \in [a,b]^d$, $\nu_2 \in [0, T]^d$, $\nu_3 \in [a,b]$.
-Introducing $\nu_{i+\frac{1}{2}} = (\tilde{x}_{i+\frac{1}{2}}, \tilde{t}_{i+\frac{1}{2}}, \mu_{i+\frac{1}{2}})$,
-$\nu_{i-\frac{1}{2}} = (\tilde{x}_{i-\frac{1}{2}}, \tilde{t}_{i-\frac{1}{2}}, \mu_{i-\frac{1}{2}})$
-and using the mean value theorem, we have:
-\begin{align*}
-	|G(\nu_{i+\frac{1}{2}})-G(\nu_{i-\frac{1}{2}})|  
-	&\leq \bigg(\sup_{\nu \in [a,b]^d\times[0,T]^d\times[a,b]}{\|\nabla G(\nu) \|_{2d+1}} \bigg)\|\nu_{i+\frac{1}{2}}-\nu_{i-\frac{1}{2}}\|_{2d+1} \\
-	&\leq \bigg(\sqrt{(d(2k+1)^2 + 9){\lambda^2}+d}\sup_{\nu \in [a,b]^d\times[0,T]^d\times[a,b]}{\|\nabla G(\nu) \|_{2d+1}} \bigg) \Delta t,
-\end{align*}
-where $\|\cdot\|_{D}$ is the 2-norm of $\mathbb{R}^{D}$ and we used that $\|\tilde{x}_{i+\frac{1}{2}}-\tilde{x}_{i-\frac{1}{2}}\|_{d}^2  \leq d(2k+1)^2\Delta x^2$, 
-$|\tilde{\mu}_{i+\frac{1}{2}}-\tilde{\mu}_{i-\frac{1}{2}}| \leq 3 \Delta x$,
-and $\|\tilde{t}_{i+\frac{1}{2}}-\tilde{t}_{i-\frac{1}{2}}\|_{d}^2 \leq d\Delta t^2$.
-Finally, we have the desired bound:
-\begin{align*}
-	&\bigg|\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-	-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx
-	-\bigg( \int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
-	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx  \bigg) \bigg| \\
-	&=|(G(\nu_{i+\frac{1}{2}})-G(\nu_{i-\frac{1}{2}}))|\Delta t^P \leq  K_1 \Delta t^{P+1},
-\end{align*}
-where $K_1 = \sqrt{(d(2k+1)^2 + 9){\lambda^2}+d}\sup_{\nu \in [a,b]^d\times[0,T]^d\times[a,b]}{\|\nabla G(\nu) \|_{2d+1}}$.
-\end{proof}
-\begin{remark}
-If the departure point is computed using Equation \eqref{chp-sec-flux:departurepoint3}, it follows from Proposition \ref{chp-sec-flux:dp_euler}
-that $P=2$, $k=3$, $d=2$.
-The function $F$ is defined by the right-hand side of Equation \eqref{chp-sec-flux:departurepoint6}.
-\end{remark}
-The next proposition gives a measure of the impact of the Piecewise-Parabolic approximation
-on the time average flux, considering this last computed using an estimated departure point.
-\begin{prop}
-	\label{chp2-sec-flux:prop3}
-	Assume the framework of Problem \ref{chp2-sec2-prob2}.
-	If $q \in \mathcal{C}^5$ and $u \in \mathcal{C}^1$, then:
-	\begin{align*}
-	 &\bigg|
-	\frac{1}{\Delta t}\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
-	\mathcal{F}(Q(t_n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}}) 
-	-\bigg(\frac{1}{\Delta t}\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
-	\mathcal{F}(Q(t_n)\mathcal{S}_{i-\frac{1}{2}},\tilde{u}^n_{i-\frac{1}{2}})\bigg) \bigg|\\
-	&\leq K_2\Delta x^4,
-	\end{align*}
-	where $K_2$ depends on $q$ and $u$.
-\end{prop}
-\begin{proof}
-	We denote by $q_{PP}$ the piecewise-parabolic approximation of $Q(t^n)$. Then:
-	\begin{equation*}
-	\frac{1}{\Delta t}\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
-	\mathcal{F}(Q(t_n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}}) = 	
-	\frac{1}{\Delta t}\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
-	\frac{1}{\Delta t}\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q_{PP}(x;Q(t^n))\,dx
-	\end{equation*}
-	and
-	\begin{equation*}
-	\frac{1}{\Delta t}\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
-	\mathcal{F}(Q(t_n)(\mathcal{S}_{i-\frac{1}{2}}),\tilde{u}^n_{i-\frac{1}{2}}) = 	
-	\frac{1}{\Delta t}\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
-	\frac{1}{\Delta t}\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q_{PP}(x;Q(t^n))\,dx.
-\end{equation*}
-	Similarly to Proposition \ref{prop:ppm-bound4}, we can write:
-	\begin{align*}
-		q(x,t^n)-q_{PP}(x;Q(t^n)) = &C_1(\mu_1, \mu_2) \Delta x ^4 + C_2(\mu_3, \mu_4) \Delta x ^2(x-x_L)
-		+ \frac{C_3}{2}(\mu_5, \mu_6)\Delta x (x-x_L)^2  \\&+C_4(\mu_7)(x-x_L)^3,
-	\end{align*}
-	where $C_1, C_2$, $C_3$ and $C_4$ are given by Equations \eqref{prop:ppm-bound1-eq3},
-	\eqref{prop:ppm-bound2-eq2}, \eqref{prop:ppm-bound3-eq2} and \eqref{prop:ppm-bound4-eq3} respectively,
-	$x_L$ is the left boundary of the control volume that contains $x$ ($X_i$ or $X_{i+1}$) and 
-	$\mu_k \in [x_{i+\frac{1}{2}} - 3\Delta x,x_{i+\frac{1}{2}} + 3\Delta x]$, $\forall k =1, \cdots, 7$.
-	Similarly to Proposition \ref{chp2-sec-flux:prop2}, using the mean value theorem for integrals, one can write:
-	\begin{equation}
-	\label{chp2-sec-flux:prop3-eq1}
-	\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} (q(x,t^n)-q_{PP}(x;Q(t^n)))\,dx
-	= F(\mu^1)\Delta x^4,
-	\end{equation}
-	and
-	\begin{equation}
-	\label{chp2-sec-flux:prop3-eq2}
-	\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} (q(x,t^n)-q_{PP}(x;Q(t^n)))\,dx
-	= F(\mu^2)\Delta x^4,
-	\end{equation}
-	for an auxiliary function $F:[a,b]^8 \to \mathbb{R}$, $F\in\mathcal{C}^1$, where $F$ depends on $q$, $u$,
-	and $C_1, C_2, C_3$ and $C_4$. Subtracting Equation \eqref{chp2-sec-flux:prop3-eq2} from Equation \eqref{chp2-sec-flux:prop3-eq1}
-	and using the mean value theorem, we get the desired inequality.
-	\end{proof}
-Now we are able to tackle the consistency problem on the next proposition.
-\begin{prop}
-	\label{chp2-sec-flux:prop4}
-	Assume the same hypothesis of Proposition \ref{chp2-sec-flux:prop2} and Proposition \ref{chp2-sec-flux:prop3}.
-	Denote by $q_{PP}$ the Piecewise-Parabolic approximation of $q(x,t^n)$. Then, the LTE given by Equation
-	\eqref{consistency-1d-eq2} satisfies:
-	\begin{equation}
-		|\tau_i^n|\leq M_1 \Delta t^{P-1} + M_2\Delta x^3,
-	\end{equation}
-	where $M_1$ and $M_2$ are constants depending only on $q$ and $u$.
-\end{prop}
-\begin{proof}
-	We have:
-	\begin{align*}
-	 &\Delta x  \tau_i^n = \bigg|
-	 \frac{1}{\Delta t}\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds - 
-	 \mathcal{F}(Q(t_n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}})
-	 - \frac{1}{\Delta t}\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds +
-	 \mathcal{F}(Q(t_n)(\mathcal{S}_{i-\frac{1}{2}}),\tilde{u}^n_{i-\frac{1}{2}}) \bigg| = \\
-	 & \frac{1}{\Delta t} \bigg|
-	 \int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds - 
-	 \int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx
-	 -\bigg(\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds - 
-	 \int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx  
-	  \bigg)\bigg| =\\
-	 &\frac{1}{\Delta t} \bigg|
-	 \int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-	-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-	+\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-	-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx \\
-	 &-\bigg(\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
-	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-	+\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx 
-	 \bigg) \bigg| \leq \\
-	 &\frac{1}{\Delta t} \bigg|
-	\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-	-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-	-\bigg(\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
-	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx \bigg)\bigg|+\\
-     &\frac{1}{\Delta t}\bigg| 
-	 \int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-	-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q_{PP}(x) \,dx 
-	-\bigg(\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-	-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q_{PP}(x) \,dx 
-	\bigg) \bigg| 
-	\end{align*}
-	Therefore, it follows from Propositions \ref{chp2-sec-flux:prop2} and \ref{chp2-sec-flux:prop3} that
-	\begin{align*}
-		|\tau_i^n| \leq \frac{1}{\Delta x \Delta t} K_1 \Delta t^{P+1} + \frac{1}{\Delta x} K_2 \Delta x^4 = 
-		K_1 \lambda \Delta t^{P-1} + K_2 \Delta x^3,
-	\end{align*}
-	from which the proposition follows.
-\end{proof}
-
-	Thus, it follows from Proposition \ref{chp2-sec-flux:prop3} that the PPM scheme is consistent in the $\infty$-norm
-	and has two sources of error: one related to the departure point calculation and another due to the parabolic approximation.
-	In particular, the PPM flux using the departure point from Equation \eqref{chp-sec-flux:departurepoint3}, 
-	we have a first-order error related to the departure point computation. 
-	We point out that, if the velocity is constant, then no error is obtained
-	using the PPM flux, except for the approximation $q_{PP}$ to $q$.
-\newpage
 \section{Numerical experiments}
 \label{chp2-sec-numerical-exp}
 This Section is dedicated to presenting the numerical results of the PPM and its variations discussed here.
@@ -1659,7 +989,7 @@ The departure schemes RK1 and RK2 introduced in Section \ref{chp2-sec-flux} comp
 the departure point exactly in this case, therefore we are going only to use the RK1 scheme.
 This shall be the general setup for all simulations presented in this subsection. 
 What will distinguish the simulations is the initial condition.
-We consider $q_0$ given by Equations \eqref{chp2-ic1} and \eqref{chp2-ic2} as
+We consider $q_0$ given by Equation \eqref{chp2-ic2} as
 in Subsection \ref{chp2-sec-numerical-exp-1}.
 We also consider a discontinuous initial condition given by:
 \begin{equation}
