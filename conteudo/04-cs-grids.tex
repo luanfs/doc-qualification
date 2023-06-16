@@ -1,6 +1,10 @@
 \chapter{Cubed-sphere grids}
 \label{chp-cs-grids}
 
+Consistent Treatment of Boundaries: Boundary conditions play a crucial role in maintaining mass conservation. 
+The treatment of boundaries should ensure that there is no spurious mass exchange between the model domain and the exterior. 
+Various approaches, such as using ghost cells or extrapolation methods, can be employed to enforce mass conservation at the boundaries.
+
 The cubed-sphere grid was originally proposed by \citet{sadourny:1972}
 and was reinvestigated by \citet{ronchi:1996} and \citet{rancic:1996}.
 As is usual to Planotic grids, we start with a Platonic solid, in this case, a cube,
@@ -52,7 +56,7 @@ with some numerical experiments.
 We consider a sphere radius $R>0$ and
 $a = \frac{R}{\sqrt{3}}$ representing the half-length of 
 the cube, and the family of maps
-$\Psi_{p}: [-a,a] \times [-a,a] \to \mathbb{S}^2_R$, $p=1, \cdots, 6$,
+$\Psi_{p}: [-a,a] \times [-a,a] \to \mathbb{S}^2_R$, $p=1, \ldots, 6$,
 where:
 \begin{equation}
 	\label{chp3-eqdistant-psi1}
@@ -83,7 +87,7 @@ where:
 	\label{chp3-eqdistant-psi6}
 	\Psi_{6}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(y, x, -a).
 \end{equation}
-The family of maps $\{\Psi_{p}, p = 1, \cdots, 6\}$ allow us to cover the sphere.
+The family of maps $\{\Psi_{p}, p = 1, \ldots, 6\}$ allow us to cover the sphere.
 Here $p$ denotes a panel, and they are defined as Figure \ref{chp4-panels} shows.
 \begin{figure}[!htb]
 	\centering
@@ -201,7 +205,7 @@ We consider again $a=\frac{R}{\sqrt{3}}$
 and we define the family of maps
 $\Phi_{p}: [-\frac{\pi}{4},\frac{\pi}{4}] 
 \times [-\frac{\pi}{4},\frac{\pi}{4}] 
-\to \mathbb{S}^2_R$, $p=1, \cdots, 6$,
+\to \mathbb{S}^2_R$, $p=1, \ldots, 6$,
 given by $\Phi_{p}(x,y) = \Psi_{p}(a\tan{x}, a\tan{y})$.
 The coordinates $(a\tan{x}, a\tan{y})$ are called angular coordinates.
 By the chain rule:
@@ -277,7 +281,7 @@ To represent the cubed-sphere grid, we consider the notation of Section \ref{sec
 We shall assume that we have a $(\Delta x, \Delta y)-$grid of $[-a,a]^2$, with $\Delta x= \Delta y$, $N=M$,
 where $a$ depends on the mapping considered.
 Similarly to Chapter \ref{chp-2d-fv}, we may extend the grid to ghost cells.
-Hence, for each $p=1, \cdots, 6$, we apply the mapping $\Psi_p$ or $\Phi_p$ on
+Hence, for each $p=1, \ldots, 6$, we apply the mapping $\Psi_p$ or $\Phi_p$ on
 each local coordinate system grid to generate the cubed-sphere with $6N^2$ cells.
 In Figure \ref{chp4-cs-grid}, we depict an example of the grids generated using 
 the equidistant and equiangular mappings for $N=20$.
@@ -306,22 +310,18 @@ while the same ratio is approximately 5.2 on the equidistant cubed-sphere.
 \label{cs-halodata}
 \subsection{Ghost cells interpolation}
 \label{cs-interp}
-Hereafter, we are going to use the notation $(x,y;p)$ for $p=1,\cdots, 6$, to represent a
-point on the sphere obtained trough the equiangular cubed-sphere mapping.
+Hereafter, we are going to use the notation $(x,y;p)$ for $p=1,\ldots, 6$, to represent a point on the sphere obtained through the equiangular cubed-sphere mapping.
 Let us assume that we have a function $q: \mathbb{S}^2_R \to \mathbb{R}$
-given in the cell centroids and let us denote these values by $q_{ijp} = q(x_i,y_j;p)$,
-for $i,j=1\cdots, N$, $p=1,\cdots, 6$. We wish to estimate these values outside of the range
-$1, \cdots, N$, that is, we wish to estimate them at ghost cells positions.
+given at the cell centroids and let us denote these values by $q_{ijp} = q(x_i,y_j;p)$,
+for $i, j=1\ldots, N$, $p=1,\ldots, 6$. We wish to estimate these values outside of the range $1, \ldots, N$, that is, we wish to estimate them at ghost cell positions.
+
 
 As we pointed out before, this can be done by noticing that the ghost cells on the local
-Cartesian systems are mapped onto the geodesic of a neighbor panel, which allows us to use Lagrange interpolation 
-to obtain the ghost cell values.
-To illustrate this process in Panel 1, in Figure \ref{chp4-cs-halodata} we depict the values of $q_{ijp}$ in Panel 1 using green circles, for $N=8$ 
-and black circles for the other panels. Assuming a halo size equal to 3, we also show the target value at ghost cells 
-using yellow and magenta circles. Observe that the dashed yellow lines in Figure \ref{chp4-cs-halodata} illustrate
-how the ghost cells are in geodesics containing grid values from neighbor panels. Except for the magenta circles,
-all the ghost values may be obtained using 1D Lagrange interpolation using the surrounding black circles on the geodesic.
-This can be performed for all panels. After that, the magenta circles may be interpolated using values obtained in the first step of interpolation,
+Cartesian systems are mapped onto the geodesic of a adjacent panel, which allows us to use Lagrange interpolation to obtain the ghost cell values.
+To illustrate this process in Panel 1, in Figure \ref{chp4-cs-halodata} we depict the values of $q_{ijp}$ using green circles for Panel 1 and black circles for the other panels, for $N=8$. Assuming a halo size equal to 3, we also show the target value at ghost cell positions using yellow and magenta circles. Observe that the dashed yellow lines in Figure \ref{chp4-cs-halodata} illustrate
+how the ghost cell points lye in geodesics containing grid position from adjacent panels. Except for the magenta circles,
+all the ghost cell values may be obtained using 1D Lagrange interpolation using the surrounding black circles on the geodesic.
+This can be performed for all panels. After that, the magenta circles may be interpolated using also the values obtained in the first step of interpolation
 (see cyan circles in Figure \ref{chp4-cs-halodata}), preserving the order of accuracy of the interpolation, supposing this one is fixed. 
 \begin{figure}[!htb]
 	\centering
@@ -332,24 +332,9 @@ This can be performed for all panels. After that, the magenta circles may be int
 	\label{chp4-cs-halodata}
 \end{figure}
 
-We are going to show some numerical example of this interpolation process using a halo region of size 3 and 
-assuming the radius of the sphere equal to one.
-First, we consider the following function represented in $\mathbb{R}^3$ coordinates as
-\begin{align}
-		\label{chp4-ic1}
-		q(X,Y,Z) = \exp(-10((X-X_0)^2+(Y-Y_0)^2+(Z-Z_0)^2)),
-\end{align}
-where $(X_0,Y_0,Z_0)$ represent the $\mathbb{R}^3$ coordinates of the latitude-longitude point
-$(\frac{\pi}{4},\frac{\pi}{6})$ as in \citet{zerroukat:2022}, which consists of a Gaussian centered 
-at a panel 1 corner as Figure \ref{chp4-cs-ic1} shows.
-\begin{figure}[!htb]
-	\centering
-	\includegraphics[width=0.9\linewidth]{gnomonic_equidistant_1024_interp_q_ic_1_mercator}
-	\caption{Gaussian defined by Equation \eqref{chp4-ic1}.}
-	\label{chp4-cs-ic1}
-\end{figure}
-
-We shall also consider the following trigonometric function, which is the divergence of a velocity field,
+We are going to show a numerical example of this interpolation process using a halo region of size 4 and 
+assuming the radius of the sphere is equal to one.
+We shall consider the following trigonometric function, which is the divergence of a velocity field,
 as in \citet{peixoto:13} in our tests:
 \begin{align}
 	\label{chp4-ic2}
@@ -358,31 +343,19 @@ as in \citet{peixoto:13} in our tests:
 	+16\sin^2(\lambda)\cos(\lambda)\cos^3(\phi)\sin(\phi)\bigg),
 	\end{split}
 \end{align}
-whose graph is depicted in Figure \ref{chp4-cs-ic2}.
+whose graph is depicted in Figure \ref{chp4-cs-ic2}. We are going to consider the relative error in the maximum norm and the convergence rate 
+at the ghost cell positions defined analogously as in Section \ref{sec-ds-exp}. 
+We also consider values os $N$ given by $2^k$, for $k=4, \ldots, 10$, in order to compute the error and convergence rate.
+In Figures \ref{chp4-exp2} we show the error and convergence rate for the trigonometric function (Equation \eqref{chp4-ic2}),
+respectively, considering polynomials of degrees from 0 up to 4. As both graphs show, we were able to achieve the expected order of convergence.
+Next, we shall use the ghost cell interpolation when computing the stencils from PPM edge reconstructions presented in Chapter \ref{chp-1d-fv}
+in each direction of a panel and also compare the results obtained with extrapolation.
+
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1\linewidth]{gnomonic_equidistant_1024_interp_q_ic_2_mercator}
 	\caption{Trigonometric function defined by Equation \eqref{chp4-ic2}.}
 	\label{chp4-cs-ic2}
-\end{figure}
-
-We are going to consider the relative error in the maximum norm and the convergence rate 
-at the host cell positions defined analogously as in Section \ref{sec-ds-exp}. 
-We also consider values os $N$ given by $2^k$, for $k=4, \cdots, 10$, in order to compute the error and convergence rate.
-\begin{figure}[!htb]
-	\centering
-	\begin{subfigure}{0.45\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{cs_interp_ic2_normlinf_errors}
-		\caption{Error.\label{chp4-exp1-error}}
-	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{cs_interp_ic2_normlinf_convergence_rate}
-		\caption{Convergence rate.\label{chp4-exp1-CR}}
-	\end{subfigure}
-	\caption{Relative error convergence (a) and convergence rate (b) for the ghost cell interpolation process for different
-		polynomial degrees, using the Gaussian function given by Equation \eqref{chp4-ic1}.\label{chp4-exp1}}
 \end{figure}
 
 \begin{figure}[!htb]
@@ -397,13 +370,9 @@ We also consider values os $N$ given by $2^k$, for $k=4, \cdots, 10$, in order t
 		\includegraphics[width=1\linewidth]{cs_interp_ic2_normlinf_convergence_rate}
 		\caption{Convergence rate.\label{chp4-exp2-CR}}
 	\end{subfigure}
-	\caption{As Figure \ref{chp4-exp1} but using the trigonometric function given by Equation \eqref{chp4-ic2}.\label{chp4-exp2}}
+	\caption{Relative error convergence (a) and convergence rate (b) for the ghost cell interpolation process for different
+		polynomial degrees, using the trigonometric function given by Equation \eqref{chp4-ic2}.\label{chp4-exp2}}
 \end{figure}
-\break
-In Figures \ref{chp4-exp1} and \ref{chp4-exp2} we show the errors and convergence rate for the functions from Equations \eqref{chp4-ic1} and \eqref{chp4-ic2},
-respectively, considering polynomials of degrees from 0 up to 4. As both graphs show, we were able to achieve the expected order of convergence.
-Next, we shall use the ghost cell interpolation when computing the stencils from PPM edge reconstructions presented in Chapter \ref{chp-1d-fv}
-in each direction of a panel and also compare the results obtained with extrapolation.
 
 \subsection{Edges reconstruction}
 \label{cs-recon}
@@ -447,19 +416,19 @@ These points are illustrated in Figure \ref{csgrid-rpoints} for panel 1.
 \end{figure}
 
 We can estimate the desired values using the one-dimensional reconstruction schemes from Sections \ref{chp2-sec-recon} and \ref{chp2-sec-mono}
-by performing the PPM reconstruction in the $x$ and $y$ directions independently. Notice that all the schemes from 
-Sections \ref{chp2-sec-recon} and \ref{chp2-sec-mono} are expected to be second-order accurate due to centroid point approximation.
-The major difference here is that when we compute the stencil near the cube edges. Unlikely the previous chapters where we
-assumed periodic boundary conditions, the boundary conditions are related to the adjacent panel.
-One to overcome this problem is just to add ghost cell layers and use the process described in Section \ref{cs-interp}, hence
-all the stencils may be computed. This approach shall be referred to as \textbf{ET-1} (ET stands for edge treatment).
-Observe that the points that lie on a cube edge are computed twice, where each calculation uses one adjacent panel per time.
-One possible way to uniquely define this value while preserving the order is
-to average the two values obtained by the adjacent panels. This scheme is named \textbf{ET-2}.
+by performing the PPM reconstruction in the $x$ and $y$ directions independently.
+Notice that all the schemes from Sections \ref{chp2-sec-recon} and \ref{chp2-sec-mono} are expected to be second-order accurate due to centroid point approximation.
+The major difference here is when we compute the stencil near the cube edges. 
+Unlikely the previous chapters where we assumed periodic boundary conditions, the boundary conditions are related to the adjacent panels.
+One way to overcome this problem is just to add ghost cell layers and use the process described in Section \ref{cs-interp}, hence
+all the stencils may be computed. 
+This approach shall be referred to as \textbf{ET-R96} (ET stands for edge treatment) since this approach of extending the grid lines and using Lagrange interpolation was originally proposed in \citet{ronchi:1996}.
 
-An approach that avoids the use of ghost has been developed by \citet{putman:2007} using 
+Another way to fill the ghost cell values used for instance in \citet{sadourny:1972}, is just to ignore the discontinuity of the coordinate 
+system and use the values of the cells in the adjacent panels as the ghost cell values. This scheme is labeled  \textbf{ET-S72}.
+An approach that avoids the use of ghost cells has been developed by \citet{putman:2007} using 
 extrapolation at the cells surrounding to the cube edge.
-We are going to describe this scheme that we shall name \textbf{ET-3}. This scheme uses the extrapolation:
+We are going to describe this scheme that we shall name \textbf{ET-PL07}. This scheme uses the following extrapolations:
 \begin{align*}
 	q^{L,x}_{1,j,p} &= \frac{1}{2}\bigg(3Q_{1,j,p} - Q_{2,j,p}\bigg),\\
 	q^{R,x}_{N,j,p} &= \frac{1}{2}\bigg(3Q_{N,j,p} - Q_{N-1,j,p}\bigg),\\
@@ -480,11 +449,9 @@ in the $x$ direction and in the $y$ direction we use the formulas
 	q^{L,y}_{i,N,p} &= \frac{1}{14}\bigg(3Q_{i,N,p} + 11Q_{i,N-1,p} - 2(Q_{i,N-2,p} - Q_{i,N,p})\bigg),\\
 	q^{R,y}_{i,N-1,p} &= q^{L,y}_{i,N,p}.\\
 \end{align*}
-Again, we can average to values at the cube edges, which leads to the scheme named \textbf{ET-4}.
-We are going to use the trigonometric (Equation \eqref{chp4-ic1}) functions
-as before on the unit sphere to compare the schemes ET-1, ET-2, ET-3 and ET-4. The scheme ET-1 and ET-2
-uses cubic polynomials.
-We going to introduce the relative errors:
+We are going to use the trigonometric function (Equation \eqref{chp4-ic2})
+as before on the unit sphere to compare the schemes ET-R96, ET-S72 and ET-PL07. The scheme ET-R96 uses cubic polynomials.
+We introduce the relative errors:
 \begin{align*}
 	e_{{i-\frac{1}{2}},j,p} &= (|q_{{i-\frac{1}{2}},j,p} - q^{L,x}_{ijp}|)/|q_{{i-\frac{1}{2}},j,p}|,\\
 	e_{{i+\frac{1}{2}},j,p} &= (|q_{{i+\frac{1}{2}},j,p} - q^{R,x}_{ijp}|)/|q_{{i+\frac{1}{2}},j,p}|,\\
@@ -510,44 +477,50 @@ We are going to compute $E$ for different values of $N$ as in the numerical expe
 	edge treatments (ET), using the trigonometric function given by Equation \eqref{chp4-ic2}.\label{chp4-exp3}}
 \end{figure}
 
-In Figure \ref{chp4-exp3} we show the errors and the convergence rate using the PPM-PLO07 and PPM-L04 reconstruction schemes.
+In Figure \ref{chp4-exp3} we show the errors and the convergence rate using the PPM-PL07 and PPM-L04 reconstruction schemes.
 We can observe that all the schemes converge to zero with second-order.
-Besides that, the scheme ET-1 and ET-2 produce essentially the same error, and so are the schemes ET-3 and ET-4.
-The difference between the ghost cell interpolation-based schemes and the extrapolation-based schemes
-may be observed in Figure \ref{chp4-exp4} and Figure \ref{chp4-exp5}, for the  PPM-PL07 and PPM-L04 reconstruction schemes,
-respectively.
-We notice that the cube edges appear on the error graph when we use the ET-4 scheme. This is an example of grid imprinting.
-Although all schemes are second-order, the ghost cell interpolation-based schemes do seem to produce grid imprinting
-in the reconstruction problem.
-The graphs of ET1 are very similar to the graph of ET-2 and the graphs of ET-3 are very similar to the graph of ET4 (not shown).
-\newpage
+The difference between the edge treatments ET-S72, ET-PL07 and ET-R96 schemes
+may be observed in Figure \ref{chp4-exp4} and Figure \ref{chp4-exp5}, for the  PPM-PL07 and PPM-L04 reconstruction schemes, respectively.
+We notice that the cube edges appear on the error graph when we use the ET-S72 and ET-PL07 schemes. This is an example of grid imprinting.
+Although all schemes are second-order, the scheme ET-R96 do not seem to produce grid imprinting in the reconstruction problem.
+
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.49\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-PL07_et2_sphere}
-		\caption{ET-2.\label{chp4-exp4-a}}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-PL07_etET-S72_sphere}
+		\caption{ET-S72.\label{chp4-exp4-a}}
 	\end{subfigure}
 	\begin{subfigure}{0.49\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-PL07_et4_sphere}
-		\caption{ET-4.\label{chp4-exp4-b}}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-PL07_etET-PL07_sphere}
+		\caption{ET-PL07.\label{chp4-exp4-b}}
 	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+	\centering
+	\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-PL07_etET-R96_sphere}
+	\caption{ET-R96.\label{chp4-exp4-c}}
+\end{subfigure}
 	\caption{Error for the edge midpoint values considering the trigonometric function (Equation \eqref{chp4-ic2})
-		with edges treatment schemes ET-2 (a) and ET-4 (b) for the cubed-sphere with $N=1024$ using the reconstruction PPM-PL07.\label{chp4-exp4}}
+	with edges treatment schemes ET-S72 (a), ET-PL07 (b) and ET-R96 for the cubed-sphere with $N=1024$ using the reconstruction PPM-PL07.\label{chp4-exp4}}
 \end{figure}
 
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.49\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-L04_et2_sphere}
-		\caption{ET-2.\label{chp4-exp5-a}}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-L04_etET-S72_sphere}
+		\caption{ET-S72.\label{chp4-exp5-a}}
 	\end{subfigure}
 	\begin{subfigure}{0.49\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-L04_et4_sphere}
-		\caption{ET-4.\label{chp4-exp5-b}}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-L04_etET-PL07_sphere}
+		\caption{ET-PL07.\label{chp4-exp5-b}}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-L04_etET-R96_sphere}
+		\caption{ET-R96.\label{chp4-exp5-c}}
 	\end{subfigure}
 	\caption{As Figure in \ref{chp4-exp4} but using the PPM-L04 scheme.\label{chp4-exp5}}
 \end{figure}
