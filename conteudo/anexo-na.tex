@@ -4,7 +4,7 @@
 \section{Finite-difference estimates}
 \label{anexo-fd}
 This Section aims to prove all finite-difference error estimations 
-used throughout this text.
+used throughout this appendix.
 All the proves are very simple and consist of applying Taylor's expansions,
 as it is usual when computing the accuracy order of many numerical schemes.
 %\theoremstyle{plain} % As próximas definições usam este estilo
@@ -242,17 +242,7 @@ when working with numerical integration errors.
 	See \citet[\pno~143]{courant:1999}.
 \end{proof}
 
-\begin{corollary}
-	\label{anexo-numint-col1}
-	If $f\in \mathcal{C}^1([0,T])$, $t^n = n\Delta t$, $n=0, \ldots, N_T$, $\Delta t = \frac{T}{N_T}$ for some 
-	$N_T \in \mathbb{N}$, then:
-	\begin{equation}
-		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t  f(t_{n})
-		+ \frac{\Delta t^{2}}{2} f^{'}(\overline{t}),
-	\end{equation}
-for some $\overline{t} \in [t^n, t^{n+1}]$.
-\end{corollary}
-
+\subsection{Midpoint rule}
 When considering finite-volume schemes, it is useful to compare the average value on a  control volume 
 of a function with its value at the  control volume centroid. 
 In the following theorems, for the one and two dimensional cases, respectively,
@@ -359,6 +349,107 @@ on the control volume.
 	$\lambda_1, \lambda_2  \in [y_{j-\frac{1}{2}},y_{j+\frac{1}{2}}]$,
 	from which the proposition follows.
 \end{proof}
+
+\subsection{Multi-step schemes}
+Let us consider the following problem: given a function $f \in \mathcal{C}^{m+1}([0,T])$,
+a discretization of $[0,T]$ given by $t^n= n\Delta t$, $\Delta t = \frac{T}{N_T}$, for some $N_T \in \mathbb{N}$, we wish
+to estimate $\int_{t^n}^{t^{n+1}} f(t)\,dt$ using the values $f(t_{n-k})$, for $k=0,\cdots, m$.
+This kind of problem arises, for instance, when we are interested in computing departure points as in Equation \ref{chp-sec-flux:analysis-eq4}.
+We can estimate the desired integral by computing the interpolating polynomial of $f(t_{n-k})$, for $k=0,\cdots, m$ and
+then integrating this polynomial.
+This approach is exactly what is used in multi-step Adams-Bashforth methods.
+On the next theorem, we give an expression the error of this approach.
+
+\begin{thrm}
+	\label{anexo-numint-adams}
+	If $f\in \mathcal{C}^{m+1}([0,T])$, $t^n = n\Delta t$, $n=0, \cdots, N_T$, $\Delta t = \frac{T}{N_T}$ for some 
+	$N_T \in \mathbb{N}$, then:
+	\begin{equation}
+		\label{anexo-numint-eq0}
+		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \sum_{k=0}^{m} \bigg(\int_{0}^{1} L_k(s) \,ds \bigg) f(t_{n-k})
+		+ \frac{(\Delta t)^{k+1}}{(m+1)!} f^{(m+1)}(\eta)\int_{0}^{1} \omega(s)\,ds, 
+	\end{equation}
+	where $w(s) = s(s+1)\cdots(s+m)$, $\eta \in [t^{n-m}, t^{n}]$.
+\end{thrm}
+
+\begin{proof}
+	We introduce auxiliary functions $\theta(s) = s\Delta t + t_n$, $s \in [-m,1]$ and $g(s) = f(\theta(s))$.
+	It is clear that $f(t_{n-k}) = g(-k)$, for $k=-1,0, \cdots, m$.
+	Hence, we can write:
+	\begin{equation}
+		\label{anexo-numint-eq1}
+		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \int_{0}^{1} f(\theta(s))\,ds = \Delta t \int_{0}^{1} g(s)\,ds.
+	\end{equation}
+	
+	Defining the nodes $s_k=-k$ for $k=0, \cdots, m$, it follows from Theorem 
+	\ref{anexo-interp-error1} that the interpolating polynomial $P_m$ of $g(s_k)$ satisfies:
+	\begin{equation}
+		\label{anexo-numint-eq2}
+		g(s)-P_m(s) = \omega(s)\frac{g^{(m+1)}(\xi)}{(m+1)!},
+	\end{equation}
+	where $\xi \in [-m,1]$.
+	Substituting Equation \eqref{anexo-numint-eq2} in Equation \eqref{anexo-numint-eq1}, we obtain
+	\begin{equation}
+		\label{anexo-numint-eq3}
+		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \sum_{k=0}^{m} \bigg(\int_{0}^{1} L_k(s) \,ds \bigg) g(-k)
+		+ \frac{\Delta t}{(m+1)!} \int_{0}^{1} g^{(m+1)}(\xi) \omega(s)\,ds.
+	\end{equation}
+	Since $w(s)$ does not change its sign in $[0,1]$ it follows from Theorem \ref{anexo-numint-mv} that:
+	\begin{equation}
+		\label{anexo-numint-eq4}
+		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \sum_{k=0}^{m} \bigg(\int_{0}^{1} L_k(s) \,ds \bigg) g(-k)
+		+ \frac{\Delta t}{(m+1)!} g^{(m+1)}(\overline{\xi})\int_{0}^{1} \omega(s)\,ds, 
+	\end{equation}
+	for some $\overline{\xi} \in [-m,1]$. 
+	Notice that by the chain rule we get $g^{(m+1)}(s) = (\Delta t)^k f^{(m+1)}(\theta(s))$, therefore
+	Equation \eqref{anexo-numint-eq4} in terms of $f$ reads:
+	\begin{equation}
+		\label{anexo-numint-eq5}
+		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t \sum_{k=0}^{m} \bigg(\int_{0}^{1} L_k(s) \,ds \bigg) f(t_{n-k})
+		+ \frac{(\Delta t)^{k+1}}{(m+1)!} f^{(m+1)}({\eta})\int_{0}^{1} \omega(s)\,ds, 
+	\end{equation}
+	where $\eta \in [t^{n-m},t^n]$, which is the desired identity.
+\end{proof}
+
+In the following corollaries, we give the explicit formulas for Equation \eqref{anexo-numint-eq5}
+for $m=0,m=1,m=2$. This is achieved by computing the terms $\int_{0}^{1} L_k(s) \,ds$ and $\int_{0}^{1} \omega(s)\,ds$,
+which are trivial to be computed.
+\begin{corollary}
+	\label{anexo-numint-col1}
+	If $f\in \mathcal{C}^1([0,T])$, $t^n = n\Delta t$, $n=0, \cdots, N_T$, $\Delta t = \frac{T}{N_T}$ for some 
+	$N_T \in \mathbb{N}$, then:
+	\begin{equation}
+		\int_{t^n}^{t^{n+1}} f(t)\,dt = \Delta t  f(t_{n})
+		+ \frac{\Delta t^{2}}{2} f^{'}(\overline{t}),
+	\end{equation}
+	for some $\overline{t} \in [t^n, t^{n+1}]$.
+\end{corollary}
+
+\begin{corollary}
+	\label{anexo-numint-col2}
+	If $f\in \mathcal{C}^2([0,T])$, $t^n = n\Delta t$, $n=0, \cdots, N_T$, $\Delta t = \frac{T}{N_T}$ 
+	for some $N_T \in \mathbb{N}$, then:
+	\begin{equation}
+		\int_{t^n}^{t^{n+1}} f(t)\,dt = \frac{\Delta t}{2} (3f(t_{n}) - f(t_{n-1}) )
+		+ \frac{5\Delta t^{3}}{12} f^{(2)}(\overline{t}),
+	\end{equation}
+	for some $\overline{t} \in [t^{n-1}, t^{n+1}]$.
+\end{corollary}
+
+\begin{corollary}
+	\label{anexo-numint-col3}
+	If $f\in \mathcal{C}^3([0,T])$, $t^n = n\Delta t$, $n=0, \cdots, N_T$, $\Delta t = \frac{T}{N_T}$ 
+	for some $N_T \in \mathbb{N}$, then:
+	\begin{equation}
+		\int_{t^n}^{t^{n+1}} f(t)\,dt = \frac{\Delta t}{12} (23f(t_{n}) - 16f(t_{n-1}) + 5f(t_{n-2}) )
+		+ \frac{3\Delta t^{4}}{8} f^{(3)}(\overline{t}),
+	\end{equation}
+	for some $\overline{t} \in [t^{n-2}, t^{n+1}]$.
+\end{corollary}
+
+When using these schemes for and ODE written in its integral form,
+$m=0$ gives the classical Euler method; for $m=1$ we get the second-order Adams-Bashforth scheme
+and for $m=2$ we have the third-order Adams-Bashforth scheme.
 
 \section{PPM reconstruction accuracy analysis}
 \label{chp2-sec-numerical-analysis-ppm}
@@ -979,208 +1070,3 @@ Von Neumann stability criteria when the CFL restriction is respected.
 	\caption{Amplification factor for the PPM (left) and hybrid PPM (right) schemes for different CFL numbers.}
 	\label{chp2-fig-amplification}
 \end{figure}
-In order to investigate the consistency of the PPM scheme, we notice that when we are deducing the time average flux, 
-we are making approximations of the form:
-\begin{equation}
-	\label{chp2-sec-flux:analysis-eq1}
-	\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},t) \,dt \approx
-	\int_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t}^{x_{i+\frac{1}{2}}}
-	q_{PP}(x;Q^n)\,dx, 
-\end{equation}
-as we can see from Equations \eqref{chp-sec-flux:fL_1} and \eqref{chp-sec-flux:fR_1},
-which basically replace $q$ by $q_{PP}$ and $X(t^n, t^{n+1},x_{i+\frac{1}{2}})$ by 
-$x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t$
-on the right-hand side of Equation \eqref{chp2-sec-flux:approx1}.
-As we shall see, the approximation \eqref{chp2-sec-flux:analysis-eq1}
-has two sources of error: one related to the departure point estimation and another due to the
-parabolic approximation.
-The next Proposition \eqref{chp2-sec-flux:prop2} investigates how the departure point error
-impacts on the approximation \eqref{chp2-sec-flux:analysis-eq1} replacing $q_{PP}$ by $q$.
-
-\begin{prop}
-	\label{chp2-sec-flux:prop2}
-	Assume the framework of Problem \ref{chp2-sec2-prob2} with $q \in \mathcal{C}^1$  and $u \in \mathcal{C}^P$, for some $P\geq2$. 
-	Furthermore, assume the CFL condition and that $\Delta x$ and $ \Delta t $ are small enough as in Proposition \ref{chp2-sec-flux:departurebound}.
-	
-	Assume also that for some time-average velocity $\tilde{u}^n_{i+\frac{1}{2}}$, we have
-	$X(t^n,t^{n+1};x_{i+\frac{1}{2}}) = x_{i+\frac{1}{2}} - \tilde{u}^n_{i+\frac{1}{2}}\Delta t + C_{i+\frac{1}{2}}\Delta t^P$, 
-	where the constants $C_{i+\frac{1}{2}}$ can be written as $C_{i+\frac{1}{2}} = F(\tilde{x}_{i+\frac{1}{2}}, \tilde{t}_{i+\frac{1}{2}})$ for 
-	a $\mathcal{C}^1$ function $F:[a,b]^d \times [0,T]^d \to \mathbb{R}$ . 
-	Besides that, assume $\tilde{x}_{i+\frac{1}{2}} \in [x_{i+\frac{1}{2}}-k\Delta x, x_{i+\frac{1}{2}} + k\Delta x]^d$, 
-	where $k$ do not depend on $\Delta x$ and $\tilde{t}_{i+\frac{1}{2}} \in [t^n, t^{n+1}]^d$.
-	Under all these assumptions, we have:
-	\begin{align*}
-		&\bigg|\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-		-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx
-		-\bigg( \int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
-		-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx  \bigg) \bigg| \\
-		& \leq K_1 \Delta t^{P+1},
-	\end{align*}
-	where $K_1$ depends on $q$ and $u$.
-\end{prop}
-\begin{proof}
-	Using Equation \eqref{chp2-sec-flux:approx1} and the mean value theorem for integrals, we get: 
-	\begin{align*}
-		\label{chp-sec-flux:depint_5}
-		&\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-		-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx =
-		\int^{x_{i+\frac{1}{2}}}_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})} q(x,t^n)\,dx
-		-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx \\ 
-		&= \int_{X(t^n,t^{n+1};x_{i+\frac{1}{2}})}^{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx  
-		= \big(X(t^n,t^{n+1};x_{i+\frac{1}{2}}) - x_{i+\frac{1}{2}}+\tilde{u}_{i+\frac{1}{2}}^n \Delta t \big)
-		q(\mu_i,t^n) =  F(\tilde{x}_{i+\frac{1}{2}}, \tilde{t}_{i+\frac{1}{2}}) \Delta t^P q(\mu_{i+\frac{1}{2}},t^n),
-	\end{align*}
-	for some $\mu_{i+\frac{1}{2}} \in X_{i}\cup X_{i+1}$. Similarly, we have:
-	\begin{align*}
-		&\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
-		-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx =
-		F(\tilde{x}_{i-\frac{1}{2}},\tilde{t}_{i-\frac{1}{2}}) \Delta t^P q(\mu_{i-\frac{1}{2}},t^n),
-	\end{align*}
-	and again, $\mu_{i-\frac{1}{2}} \in X_{i-1}\cup X_{i}$
-	We introduce the following auxiliary $\mathcal{C}^1$ function:
-	\begin{equation*}
-		G(\nu) = F(\nu_1,\nu_2)q(\nu_3,t^n).
-	\end{equation*}
-	where $\nu =(\nu_1,\nu_2, \nu_3)$, $\nu_1 \in [a,b]^d$, $\nu_2 \in [0, T]^d$, $\nu_3 \in [a,b]$.
-	Introducing $\nu_{i+\frac{1}{2}} = (\tilde{x}_{i+\frac{1}{2}}, \tilde{t}_{i+\frac{1}{2}}, \mu_{i+\frac{1}{2}})$,
-	$\nu_{i-\frac{1}{2}} = (\tilde{x}_{i-\frac{1}{2}}, \tilde{t}_{i-\frac{1}{2}}, \mu_{i-\frac{1}{2}})$
-	and using the mean value theorem, we have:
-	\begin{align*}
-		|G(\nu_{i+\frac{1}{2}})-G(\nu_{i-\frac{1}{2}})|  
-		&\leq \bigg(\sup_{\nu \in [a,b]^d\times[0,T]^d\times[a,b]}{\|\nabla G(\nu) \|_{2d+1}} \bigg)\|\nu_{i+\frac{1}{2}}-\nu_{i-\frac{1}{2}}\|_{2d+1} \\
-		&\leq \bigg(\sqrt{(d(2k+1)^2 + 9){\lambda^2}+d}\sup_{\nu \in [a,b]^d\times[0,T]^d\times[a,b]}{\|\nabla G(\nu) \|_{2d+1}} \bigg) \Delta t,
-	\end{align*}
-	where $\|\cdot\|_{D}$ is the 2-norm of $\mathbb{R}^{D}$ and we used that $\|\tilde{x}_{i+\frac{1}{2}}-\tilde{x}_{i-\frac{1}{2}}\|_{d}^2  \leq d(2k+1)^2\Delta x^2$, 
-	$|\tilde{\mu}_{i+\frac{1}{2}}-\tilde{\mu}_{i-\frac{1}{2}}| \leq 3 \Delta x$,
-	and $\|\tilde{t}_{i+\frac{1}{2}}-\tilde{t}_{i-\frac{1}{2}}\|_{d}^2 \leq d\Delta t^2$.
-	Finally, we have the desired bound:
-	\begin{align*}
-		&\bigg|\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-		-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx
-		-\bigg( \int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
-		-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx  \bigg) \bigg| \\
-		&=|(G(\nu_{i+\frac{1}{2}})-G(\nu_{i-\frac{1}{2}}))|\Delta t^P \leq  K_1 \Delta t^{P+1},
-	\end{align*}
-	where $K_1 = \sqrt{(d(2k+1)^2 + 9){\lambda^2}+d}\sup_{\nu \in [a,b]^d\times[0,T]^d\times[a,b]}{\|\nabla G(\nu) \|_{2d+1}}$.
-\end{proof}
-\begin{remark}
-	If the departure point is computed using Equation \eqref{chp-sec-flux:departurepoint3}, it follows from Proposition \ref{chp-sec-flux:dp_euler}
-	that $P=2$, $k=3$, $d=2$.
-	The function $F$ is defined by the right-hand side of Equation \eqref{chp-sec-flux:departurepoint6}.
-\end{remark}
-The next proposition gives a measure of the impact of the Piecewise-Parabolic approximation
-on the time average flux, considering this last computed using an estimated departure point.
-\begin{prop}
-	\label{chp2-sec-flux:prop3}
-	Assume the framework of Problem \ref{chp2-sec2-prob2}.
-	If $q \in \mathcal{C}^5$ and $u \in \mathcal{C}^1$, then:
-	\begin{align*}
-		&\bigg|
-		\frac{1}{\Delta t}\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
-		\mathcal{F}(Q(t_n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}}) 
-		-\bigg(\frac{1}{\Delta t}\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
-		\mathcal{F}(Q(t_n)\mathcal{S}_{i-\frac{1}{2}},\tilde{u}^n_{i-\frac{1}{2}})\bigg) \bigg|\\
-		&\leq K_2\Delta x^4,
-	\end{align*}
-	where $K_2$ depends on $q$ and $u$.
-\end{prop}
-\begin{proof}
-	We denote by $q_{PP}$ the piecewise-parabolic approximation of $Q(t^n)$. Then:
-	\begin{equation*}
-		\frac{1}{\Delta t}\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
-		\mathcal{F}(Q(t_n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}}) = 	
-		\frac{1}{\Delta t}\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
-		\frac{1}{\Delta t}\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q_{PP}(x;Q(t^n))\,dx
-	\end{equation*}
-	and
-	\begin{equation*}
-		\frac{1}{\Delta t}\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
-		\mathcal{F}(Q(t_n)(\mathcal{S}_{i-\frac{1}{2}}),\tilde{u}^n_{i-\frac{1}{2}}) = 	
-		\frac{1}{\Delta t}\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx -
-		\frac{1}{\Delta t}\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q_{PP}(x;Q(t^n))\,dx.
-	\end{equation*}
-	Similarly to Proposition \ref{prop:ppm-bound4}, we can write:
-	\begin{align*}
-		q(x,t^n)-q_{PP}(x;Q(t^n)) = &C_1(\mu_1, \mu_2) \Delta x ^4 + C_2(\mu_3, \mu_4) \Delta x ^2(x-x_L)
-		+ \frac{C_3}{2}(\mu_5, \mu_6)\Delta x (x-x_L)^2  \\&+C_4(\mu_7)(x-x_L)^3,
-	\end{align*}
-	where $C_1, C_2$, $C_3$ and $C_4$ are given by Equations \eqref{prop:ppm-bound1-eq3},
-	\eqref{prop:ppm-bound2-eq2}, \eqref{prop:ppm-bound3-eq2} and \eqref{prop:ppm-bound4-eq3} respectively,
-	$x_L$ is the left boundary of the control volume that contains $x$ ($X_i$ or $X_{i+1}$) and 
-	$\mu_k \in [x_{i+\frac{1}{2}} - 3\Delta x,x_{i+\frac{1}{2}} + 3\Delta x]$, $\forall k =1, \ldots, 7$.
-	Similarly to Proposition \ref{chp2-sec-flux:prop2}, using the mean value theorem for integrals, one can write:
-	\begin{equation}
-		\label{chp2-sec-flux:prop3-eq1}
-		\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} (q(x,t^n)-q_{PP}(x;Q(t^n)))\,dx
-		= F(\mu^1)\Delta x^4,
-	\end{equation}
-	and
-	\begin{equation}
-		\label{chp2-sec-flux:prop3-eq2}
-		\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} (q(x,t^n)-q_{PP}(x;Q(t^n)))\,dx
-		= F(\mu^2)\Delta x^4,
-	\end{equation}
-	for an auxiliary function $F:[a,b]^8 \to \mathbb{R}$, $F\in\mathcal{C}^1$, where $F$ depends on $q$, $u$,
-	and $C_1, C_2, C_3$ and $C_4$. Subtracting Equation \eqref{chp2-sec-flux:prop3-eq2} from Equation \eqref{chp2-sec-flux:prop3-eq1}
-	and using the mean value theorem, we get the desired inequality.
-\end{proof}
-Now we are able to tackle the consistency problem on the next proposition.
-\begin{prop}
-	\label{chp2-sec-flux:prop4}
-	Assume the same hypothesis of Proposition \ref{chp2-sec-flux:prop2} and Proposition \ref{chp2-sec-flux:prop3}.
-	Denote by $q_{PP}$ the Piecewise-Parabolic approximation of $q(x,t^n)$. Then, the LTE given by Equation
-	\eqref{consistency-1d-eq2} satisfies:
-	\begin{equation}
-		|\tau_i^n|\leq M_1 \Delta t^{P-1} + M_2\Delta x^3,
-	\end{equation}
-	where $M_1$ and $M_2$ are constants depending only on $q$ and $u$.
-\end{prop}
-\begin{proof}
-	We have:
-	\begin{align*}
-		&\Delta x  \tau_i^n = \bigg|
-		\frac{1}{\Delta t}\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds - 
-		\mathcal{F}(Q(t_n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}})
-		- \frac{1}{\Delta t}\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds +
-		\mathcal{F}(Q(t_n)(\mathcal{S}_{i-\frac{1}{2}}),\tilde{u}^n_{i-\frac{1}{2}}) \bigg| = \\
-		& \frac{1}{\Delta t} \bigg|
-		\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds - 
-		\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx
-		-\bigg(\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds - 
-		\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx  
-		\bigg)\bigg| =\\
-		&\frac{1}{\Delta t} \bigg|
-		\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-		-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-		+\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-		-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx \\
-		&-\bigg(\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
-		-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-		+\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-		-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q_{PP}(x)\,dx 
-		\bigg) \bigg| \leq \\
-		&\frac{1}{\Delta t} \bigg|
-		\int_{t^n}^{t^{n+1}} (uq)(x_{i+\frac{1}{2}},s) \,ds 
-		-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-		-\bigg(\int_{t^n}^{t^{n+1}} (uq)(x_{i-\frac{1}{2}},s) \,ds 
-		-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx \bigg)\bigg|+\\
-		&\frac{1}{\Delta t}\bigg| 
-		\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-		-\int^{x_{i+\frac{1}{2}}}_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2}}^n \Delta t} q_{PP}(x) \,dx 
-		-\bigg(\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q(x,t^n)\,dx 
-		-\int^{x_{i-\frac{1}{2}}}_{x_{i-\frac{1}{2}}-\tilde{u}_{i-\frac{1}{2}}^n \Delta t} q_{PP}(x) \,dx 
-		\bigg) \bigg| 
-	\end{align*}
-	Therefore, it follows from Propositions \ref{chp2-sec-flux:prop2} and \ref{chp2-sec-flux:prop3} that
-	\begin{align*}
-		|\tau_i^n| \leq \frac{1}{\Delta x \Delta t} K_1 \Delta t^{P+1} + \frac{1}{\Delta x} K_2 \Delta x^4 = 
-		K_1 \lambda \Delta t^{P-1} + K_2 \Delta x^3,
-	\end{align*}
-	from which the proposition follows.
-\end{proof}
-Thus, it follows from Proposition \ref{chp2-sec-flux:prop3} that the PPM scheme is consistent in the $\infty$-norm
-and has two sources of error: one related to the departure point calculation and another due to the parabolic approximation.
-In particular, the PPM flux using the departure point from Equation \eqref{chp-sec-flux:departurepoint3}, 
-we have a first-order error related to the departure point computation. 
-We point out that, if the velocity is constant, then no error is obtained
-using the PPM flux, except for the approximation $q_{PP}$ to $q$.
