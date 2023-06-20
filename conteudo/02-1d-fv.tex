@@ -109,7 +109,7 @@ $(\Delta x, \Delta t, \lambda)$-discretization, as well as the concept of grid f
 	\centering
 	\includegraphics[width=1\linewidth]{1d_grid}
 	\caption{Illustration of a $\Delta x$-grid with $N=4$ cells in its interior (in black) 
-	 and 4 ghost cells (in red).
+	 and 4 ghost cells (in gray).
 	 The edges are denoted by squares and the cell centroids are denoted using circles.\label{chp2-sec1-grid1d}}
 \end{figure}
 
@@ -142,8 +142,9 @@ Next, we introduce the definitions of grid functions at cell centroids and edges
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1\linewidth]{1d_grid_function}
-	\caption{Illustration of $\Delta x$-grid function $Q$ and $u$ and its ghost cell
-		values (in red) assuming periodicity.\label{chp2-sec1-grid1d-function}}
+	\caption{Illustration of $\Delta x$-grid function $Q$ (black circles) 
+		and $u$ (blue squares) and its ghost cell
+		values (in gray) assuming periodicity.\label{chp2-sec1-grid1d-function}}
 \end{figure}
 The definition of a $\Delta x$-grid wind is based on the Arakawa grids \citep{arakawa:1977}.
 Given $Q \in \mathbb{C}^{N}$, we define the $p$-norm as

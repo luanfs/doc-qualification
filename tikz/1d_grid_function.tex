@@ -6,9 +6,9 @@
 \tikzset{every label/.style={font=\footnotesize,inner sep=1.5pt}}
 
 \newcommand{\pc}[4][]{\node[circle, fill, label={below:#4},#1] at (#2) (#3) {}}
-\newcommand{\pcghost}[4][]{\node[circle, fill=red, label={below:#4},#1] at (#2) (#3) {}}
-\newcommand{\pu}[4][]{\node[rectangle, fill, label={above:#4},#1] at (#2) (#3) {}}
-\newcommand{\pughost}[4][]{\node[rectangle, fill=red, label={above:#4},#1] at (#2) (#3) {}}
+\newcommand{\pcghost}[4][]{\node[circle, fill=gray, label={below:#4},#1] at (#2) (#3) {}}
+\newcommand{\pu}[4][]{\node[rectangle, fill=blue, label={above:#4},#1] at (#2) (#3) {}}
+\newcommand{\pughost}[4][]{\node[rectangle, fill=gray, label={above:#4},#1] at (#2) (#3) {}}
 \newcommand{\nx}{4} %number of cells in x direction
 \newcommand{\nghost}{2} %number of ghost cells in x direction
 \newcommand{\xmin}{0}  %grid start
