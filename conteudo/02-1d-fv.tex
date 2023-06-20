@@ -26,7 +26,7 @@ as flux-form Semi-Lagrangian schemes, and they allow for time steps beyond the
 Courant-Friedrichs-Lewy (CFL) condition while preserving the total mass.
 FV-SL schemes have been explored in the literature since the work of  \citet{leveque:1985},
 which extended the finite-volume schemes from \citet{godunov:1959}  to accommodate larger time steps.
-This approach has been further investigated in the literature (c.f, e.g. . \citep{lin:1996,leonard:1996}).
+This approach has been further investigated in the literature (c.f, e.g. . \citet{lin:1996,leonard:1996}).
 
 To introduce the FV-SL schemes, we begin by discretizing the spatial and temporal domains into uniform grids.
 Subsequently, the FV-SL schemes involve three steps.
@@ -161,7 +161,7 @@ Using a similar notation as in \citet{engwirda:2016}, we define the stencil and 
 	$\mathcal{S}_{i+\frac{1}{2}} = \{i-r+1, \ldots, i-1, i, i+1, \ldots, i+s\}$.
 \end{definition}
 \begin{definition}[Grid function restricted to a stencil]
-	For a $\Delta x$-grid, a $(r, s)$-stencil $\mathcal{S}_{i+\frac{1}{2}}$,
+	For a $\Delta x$-grid, a stencil $\mathcal{S}_{i+\frac{1}{2}}$,
 	 and a $\Delta x$-grid function $Q$, we define $Q(\mathcal{S}_{i+\frac{1}{2}}) = (Q_k)_{k \in \mathcal{S}_{i+\frac{1}{2}}}$.
 \end{definition}
 These definitions provide the necessary notation for describing grid functions and their evaluations on stencils.
@@ -169,13 +169,13 @@ These definitions provide the necessary notation for describing grid functions a
 When computing $Q(\mathcal{S}_{i+\frac{1}{2}})$, it may be necessary to access values of $Q_i$ for $i$ outside the range $1,\ldots,N$.
 In such cases, we can consider $Q_i$ as a ghost cell value.
 Since we assume periodic boundary conditions in this chapter, this issue is resolved by assuming periodicity in the grid function $Q$.
-For example, for a $(3,3)$-stencil, we can assume $Q_{0} = Q_{N}$, $Q_{-1} = Q_{N-1}$, $Q_{-2} = Q_{N-2}$, and
+For example, for a stencil that requires three ghost cell values at the left and at the right of the domain, we can assume $Q_{0} = Q_{N}$, $Q_{-1} = Q_{N-1}$, $Q_{-2} = Q_{N-2}$, and
 $Q_{N+1}=Q_1$, $Q_{N+2}=Q_2$, $Q_{N+2}=Q_3$. The same applies to $\Delta x$-grid winds.
 Furthermore, considering functions $q, u: [a,b]\times[0,T] \to \mathbb{R}$ and a $(\Delta x,\Delta t, \lambda)$-discretization
 of $[a,b]\times[0,T]$, we introduce the grid functions $q^n \in \mathbb{C}^{N}$ and $u^n \in \mathbb{C}^{N+1}$. 
 Here, ${q}^n_{i} = {q}(x_i, t^{n})$ and $u^n_{i+\frac{1}{2}} = u(x_{i+\frac{1}{2}},t^n)$ for $n=0, \ldots, N_T$.
 These grid functions represent the discrete values of $q$ and $u$ at the cell centroids and edges, respectively,
-for each time level $t^n$.
+for each time level $t^n$ (Figure \ref{chp2-sec1-grid1d-function}).
 
 Additionally, we introduce the average value of $q$ in the $i$-th control volume at time $t$, denoted as ${Q}_i(t)$, defined by:
 \begin{equation}
@@ -919,7 +919,7 @@ for a time-averaged wind $\tilde{u}_{i+\frac{1}{2}}^n$ as explained in Section \
 The numerical flux function is then expressed as:
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux1}
-	F^{n}_{i+\frac{1}{2}} =
+	F^{n}_{i+\frac{1}{2}} = \frac{1}{\Delta t}
 	\int_{x_{i+\frac{1}{2}}-\tilde{u}^n_{i+\frac{1}{2}}\Delta t}^{x_{i+\frac{1}{2}}}
 	\tilde{q}(x;Q^n) \,dx.
 \end{equation}
@@ -933,7 +933,7 @@ $\alpha_{i+\frac{1}{2}}^n \in [0,1[$,
 we can express the numerical flux as \citep{lin:1996, chen:2017}:
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux}
-	F_{i+\frac{1}{2}}^n =  
+	F_{i+\frac{1}{2}}^n =  \frac{1}{\Delta t}
 	\begin{cases}
 	\Delta x\sum_{l=0}^{k-1} Q_{i-l} +  
     \int_{x_{i-k+\frac{1}{2}}-{\alpha}^n_{i+\frac{1}{2}}\Delta x}^{x_{i-k+\frac{1}{2}}}
@@ -982,7 +982,7 @@ and
 The numerical flux function for PPM is then defined by:
 \begin{equation}
 	\label{chp-sec-flux:numerical-flux2}
-    F_{i+\frac{1}{2}}^n =  
+    F_{i+\frac{1}{2}}^n =  \frac{1}{\Delta t}
     	\begin{cases}
     	\Delta x\sum_{l=0}^{k-1} Q_{i-l} +  
 		\Delta x {\alpha}_{i+\frac{1}{2}}^nF_{L,i+\frac{1}{2}}( {\alpha}_{i+\frac{1}{2}}^n\Delta x) & \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
@@ -1209,8 +1209,8 @@ which uses fifth-order reconstruction at the edges, leads to third-order accurac
 more accurate than the PPM-0 \citep{colella:1984} scheme, which uses fourth-order 
 reconstruction at the edges.
 Regarding the monotonic schemes, we observed that both schemes were able to avoid 
-overshoots, with PPM-L04 \citep{lin:2004} being more accurate than the scheme proposed by 
-\citep{colella:1984}.
+overshoots, with PPM-L04 \citep{lin:2004} being more accurate than the scheme
+PPM-CW84 proposed by \citet{colella:1984}.
 
 The difference between the departure point schemes became apparent when we performed a test 
 with variable velocity. The simulation using the RK1 scheme resulted in a final first-order 
