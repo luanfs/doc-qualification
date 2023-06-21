@@ -84,7 +84,7 @@ The application of PPM to solve two-dimensional problems will be addressed in Ch
 Before introducing the FV-SL schemes, let us establish some notation by introducing
 the concepts of a $\Delta x$-grid, a $\Delta t$-temporal grid, and the
 $(\Delta x, \Delta t, \lambda)$-discretization, as well as the concept of grid function/winds.
-\begin{definition}[$\Delta x$-grid]
+\begin{definition}[$\Delta x$-grid]\label{chp2-def-dxgrid}
 	For a given interval $\Omega = [a,b]$ and a positive real number $\Delta x$ such that 
     $\Delta x = (b-a)/N$ for some positive integer $N$, 
 	we say that $\Omega_{\Delta x}= \{X_i \}_{i=1}^{N}$ is a $\Delta x$-grid for $[a,b]$ if
@@ -134,11 +134,11 @@ $(\Delta x, \Delta t, \lambda)$-discretization, as well as the concept of grid f
 \end{remark}
 Next, we introduce the definitions of grid functions at cell centroids and edges.
 \begin{definition}[$\Delta x$-grid function]
-	For a $\Delta x$-grid, we say that $Q$ is a $\Delta x$-grid function if $Q = (Q_1, \ldots, Q_N) \in \mathbb{C}^N$.
+	For a $\Delta x$-grid, we say that $Q$ is a $\Delta x$-grid function if $Q = (Q_1, \ldots, Q_N) \in \mathbb{R}^N$.
 \end{definition}
 \begin{definition}[$\Delta x$-grid wind]
 	For a $\Delta x$-grid, we say that $u$ is a $\Delta x$-grid wind if
-	$u = (u_{\frac{1}{2}}, \ldots, u_{N+\frac{1}{2}}) \in \mathbb{C}^{N+1}$.
+	$u = (u_{\frac{1}{2}}, \ldots, u_{N+\frac{1}{2}}) \in \mathbb{R}^{N+1}$.
 \end{definition}
 \begin{figure}[!htb]
 	\centering
@@ -174,8 +174,8 @@ Since we assume periodic boundary conditions in this chapter, this issue is reso
 For example, for a stencil that requires three ghost cell values at the left and at the right of the domain, we can assume $Q_{0} = Q_{N}$, $Q_{-1} = Q_{N-1}$, $Q_{-2} = Q_{N-2}$, and
 $Q_{N+1}=Q_1$, $Q_{N+2}=Q_2$, $Q_{N+2}=Q_3$. The same applies to $\Delta x$-grid winds.
 Furthermore, considering functions $q, u: [a,b]\times[0,T] \to \mathbb{R}$ and a $(\Delta x,\Delta t, \lambda)$-discretization
-of $[a,b]\times[0,T]$, we introduce the grid functions $q^n \in \mathbb{C}^{N}$ and $u^n \in \mathbb{C}^{N+1}$. 
-Here, ${q}^n_{i} = {q}(x_i, t^{n})$ and $u^n_{i+\frac{1}{2}} = u(x_{i+\frac{1}{2}},t^n)$ for $n=0, \ldots, N_T$.
+of $[a,b]\times[0,T]$, we introduce the grid functions $q^n \in \mathbb{R}^{N}$ and $u^n \in \mathbb{R}^{N+1}$. 
+Here, ${q}^n_{i} = {q}(x_i, t^{n})$ and $u^n_{i+\frac{1}{2}} = u(x_{i+\frac{1}{2}},t^n)$.
 These grid functions represent the discrete values of $q$ and $u$ at the cell centroids and edges, respectively,
 for each time level $t^n$ (Figure \ref{chp2-sec1-grid1d-function}).
 
@@ -190,7 +190,7 @@ Here, $Q_i(t)$ represents the average value of $q$ in the $i$-th control volume 
 For the consideration of periodic boundary conditions, we can define spaces of periodic functions over 
 the interval $\Omega=[a,b]$ as follows:
 \begin{align*}
-	\mathcal{S}_P(\Omega) &= \{q:\mathbb{R}\times[0,+\infty[\to \mathbb{R}: q(x+b-a,t)=q(x,t), \quad \forall x \in \mathbb{R}, \quad t>0\}.
+	\mathcal{S}_P(\Omega) &= \{q:\mathbb{R}\times[0,+\infty[\to \mathbb{R}: q(x+b-a,t)=q(x,t), \quad \forall x \in \mathbb{R}, \quad t\geq0\}.
 \end{align*}
 Similarly, the space of $k$-times periodically differentiable functions $\mathcal{C}_P^k(\Omega)$ can be defined as:
 \begin{align*}
@@ -1134,7 +1134,7 @@ using a high-resolution ($N=1024$), the PPM-L04 scheme and the RK1 departure poi
 		These figures show the advected profile at  1 \eqref{chp2-sec-exp-adv2-b}, 
 		2  \eqref{chp2-sec-exp-adv2-c}, 3  \eqref{chp2-sec-exp-adv2-d}, 4  \eqref{chp2-sec-exp-adv2-e},
 		and 5  \eqref{chp2-sec-exp-adv2-f} time units.
-		We are using the PPM-L04 scheme with the RK1 departure point scheme. .\label{chp2-sec-exp-adv2}}
+		We are using the PPM-L04 scheme with the RK1 departure point scheme. \label{chp2-sec-exp-adv2}}
 \end{figure}
 To investigate the error convergence, we employ $\Delta x^{(k)}$-grids with $\Delta x^{(k)} = 1/2^k$ for 
 $k = 4, \ldots, 10$.
