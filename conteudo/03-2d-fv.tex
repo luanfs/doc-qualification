@@ -113,6 +113,16 @@ Next, we introduce the definitions of grid functions at cell centroids and C-gri
 		and a $(\Delta x\Delta y)$-C grid wind $u$ (blue squares) and $v$ (red squares) and its ghost cell
 		values (in gray) assuming biperiodicity.\label{chp3-sec1-grid2d-function}}
 \end{figure}
+Given $Q = (Q_{ij})_{i=1,\ldots,N,j=1,\ldots,M}\in \mathbb{R}^{N \times M}$, we define the $p$-norm by
+\begin{equation}
+	\label{chp3-pnorm}
+	\|r\|_{p,\Delta x \times \Delta y}=
+	\begin{cases}
+		\bigg( \sum_{i=1}^{N} \sum_{j=1}^{M}|r_{ij}|^p \bigg)^{\frac{1}{p}} & \text{if } 1\leq p < \infty,\\
+		\max_{i=1, \ldots, N,j=1,\ldots,M}{|r_{ij}|} & \text{otherwise }.
+	\end{cases}
+\end{equation}
+
 When computing stencils, we may need values of $Q_{ij}$ such that the
 indexes $i$ and $j$ are out of the range $1,\ldots, N$, $1,\ldots, M$.
 These values are called ghost cell values (Figure \ref{chp3-sec1-grid2d-function}).
@@ -158,42 +168,43 @@ the interval $\Omega$ as follows:
 \end{align*}
 Similarly, the space of $k$-times periodically differentiable functions $\mathcal{C}_P^k(\Omega)$ can be defined as:
 \begin{align*}
-	\mathcal{C}_P^k(\Omega) &= \mathcal{S}_P(\Omega)\cup \mathcal{C}^k(\mathbb{R}^2\times[0,\infty[),
+	\mathcal{C}_P^k(\Omega) &= \mathcal{S}_P(\Omega) \cap \mathcal{C}^k(\mathbb{R}^2\times[0,\infty[),
 \end{align*}
 where $\mathcal{C}^k(\mathbb{R}^2\times[0,+\infty[)$ denotes the space of functions that are $k$ 
 times continuously differentiable in both the spatial and temporal variables.
 In summary, $\mathcal{S}_P(\Omega)$ represents the space of periodic functions, and $\mathcal{C}_P^k(\Omega)$
 represents the space of $k$-times periodically differentiable functions over $\Omega$ subject to periodic boundary conditions.
 
-\subsection{The 1D advection equation}
-Let us consider a $\mathcal{C}^1$ velocity field given by
-$\boldsymbol{u}: \mathbb{R}^2 \to \mathbb{R}^2$,  $\boldsymbol{u}=(u,v)$, where
-$u$ is the velocity in $x$-direction and $v$ is the velocity in $x$ and $y$ direction. 
-The two-dimensional advection equation in the differential form in 
-a domain $\Omega \subset \mathbb{R}^2$
-associated to the velocity field $\boldsymbol{u}$ is given by:
+\subsection{The 2D advection equation}
+Let us consider a  velocity field given by $\boldsymbol{u}=(u,v)$, where
+$u$ is the velocity in $x$-direction and $v$ is the velocity in $x$ and $y$ direction
+and $u,v \in \mathcal{C}^1_P(\Omega)$.
+The two-dimensional advection equation in its differential form in 
+a domain $\Omega$ associated to the velocity field $\boldsymbol{u}$ 
+and assuming biperiodic boundary conditions is given by:
 \begin{equation}
-\label{sec-adv2d:eq1}
-\frac{\partial q}{\partial t}(x, y, t) +
-\nabla \cdot (q\boldsymbol{u})(x, y, t)
-= 0, \quad \forall (x, y, t) \in \Omega^{\mathrm{o}}
- \times ]0, +\infty[,
-\footnote{$\Omega^{\mathrm{o}}$ denotes the interior of $\Omega$. 
-	Namely, $\Omega^{\mathrm{o}} = ]a,b[ \times ]c,d[$.}
+	\label{sec-adv2d:eq1}
+	\begin{cases}
+		[{\partial_t q} + {\partial_x (uq)} +  {\partial_y (vq)}](x, y, t)
+		= 0, \quad \forall (x,y,t) \in \mathbb{R}^2\times ]0, +\infty[,\\
+		{q}(a, y, t) = {q}(b, y, t), \quad \forall y \in [c,d],  \quad \forall t\geq 0, \\
+		{q}(x, c, t) = {q}(x, d, t), \quad \forall x \in [a,b],  \quad \forall t\geq 0, \\
+		q_0(x) = q(x,y,0), \quad \forall (x,y) \in \Omega.
+	\end{cases}
 \end{equation}
-where $\nabla \cdot (q\boldsymbol{u})$ is the spatial divergence
+We denote by $\nabla \cdot (q\boldsymbol{u})$ the divergence operator:
 \begin{equation}
 	\label{sec-adv2d:eqdiv}
 	\nabla \cdot (q\boldsymbol{u})(x, y, t) =  
-	\frac{\partial (uq)}{\partial x}(x, y, t) + \frac{\partial (vq)}{\partial y}(x, y, t).
+	[{\partial_x (uq)} + {\partial_y (vq)}](x, y, t).
 \end{equation}
 We recall that we say the $u$ is \textbf{non-divergent} if $\nabla \cdot \boldsymbol{u}=0$. 
 A classical or strong solution to the two-dimensional advection equation is a 
-$\mathcal{C}^1$ function ${q}$ satisfying Equation \eqref{sec-adv2d:eq1}.
+$\mathcal{C}^1_P{(\Omega)}$ function ${q}$ satisfying Equation \eqref{sec-adv2d:eq1}.
 As we did in Section \ref{chp2-sec1}, our goal is to deduce an
 integral form of Equation \eqref{sec-adv2d:eq1}.
 Thus, let us consider  $[x_1,x_2] \times [y_1, y_2]
-\subset \Omega^{\mathrm{o}}$ and $[t_1,t_2] \subset [0, +\infty[$.
+\subset \Omega$ and $[t_1,t_2] \subset [0, +\infty[$.
 Integrating Equation $\eqref{sec-adv2d:eq1}$ over 
 $[x_1,x_2] \times [y_1, y_2]$ yields:
 \begin{align}
@@ -223,39 +234,40 @@ solution to the advection equation \eqref{sec-adv2d:eq1} if ${q}$
 satisfies the integral form \eqref{sec-adv2d:eq3}, 
 $\forall [x_1,x_2]\times[y_1,y_2] \subset \Omega^{\mathrm{o}}$ and 
 $\forall [t_1,t_2] \subset [0,+\infty[$.
-Similarly to Section \ref{chp2-sec1}, these problems are equivalent
-when  ${q}$ is a $\mathcal{C}^1$ function.
-We consider an initial condition ${q_0}$,
-${q}(x,y,0) =  {q_0}(x,y)$, $\forall (x,y) \in \Omega$.
-Boundary conditions will be assumed bi-periodic.
+We summarize the weak version of Equation \eqref{sec-adv2d:eq1} in Problem \eqref{chp3-sec2-prob1}.
+\begin{prob}
+	\label{chp3-sec2-prob1}
+	Given an initial condition ${q}_0$ and
+	a velocity function $\boldsymbol{u} = (u,v)$
+ 	we would like to find a weak solution ${q}$
+	of the two-dimensional advection equation in its integral form:
+	\begin{align*}
+		\int_{x_1}^{x_2} \int_{y_1}^{y_2}
+		{q}(x, y, t) \,dx \,dy = &\int_{x_1}^{x_2} \int_{y_1}^{y_2}
+		{q}(x, y, t) \,dx \,dy \\ \nonumber
+		&-\int_{t_1}^{t_2} \int_{y_1}^{y_2} \bigg({(uq)}(x_2, y, t)
+		-{(uq)}(x_1, y, t) \bigg) \,dy \,dt\\ \nonumber
+		&-\int_{t_1}^{t_2} \int_{x_1}^{x_2} \bigg({(vq)}(x, y_2, t)
+		-{(vq)}(x, y_1, t) \bigg) \,dx \,dt.
+	\end{align*}
+	$\forall [x_1, x_2]\times [y_1, y_2] \times[t_1, t_2] \subset \Omega \times[0,T]$, 
+	and ${q}(x, y, 0) = {q}_0(x, y)$, $\forall (x, y) \in \Omega$,
+   ${q}(a, y, t) = {q}(b, y, t), \quad \forall y \in [c,d],  \quad \forall t\geq 0,$
+   ${q}(x, c, t) = {q}(x, d, t), \quad \forall x \in [a,b],  \quad \forall t\geq 0.$
+\end{prob}
+Similarly to Section \ref{chp2-sec1}, Equation \eqref{sec-adv2d:eq1} and Problem \eqref{chp3-sec2-prob1}.
+when ${q} \in \mathcal{C}^1_P{(\Omega)}$ function.
+For Problem \ref{chp3-sec2-prob1}, the total mass in $\Omega$ is defined by: 
+\begin{equation}
+	{M}_{\Omega}(t) = \int_{\Omega} {q}(x,y,t) \,dx \,dy , \quad \forall t \in [0,T],
+\end{equation}
+and is conserved within time: 
+\begin{equation}
+	{M}_{\Omega}(t) = {M}_{\Omega}(0), \quad \forall t \in [0,T].
+\end{equation}
 
-To move in the direction of a discrete version of Equation \eqref{sec-adv2d:eq3},
-let us discretize the domain $D = \Omega \times [0,T]$ following 
-the notations of Section \ref{chp2-sec1}.
-Given a positive integer $N_T$, we define the time step 
-$\Delta t = \frac{T}{N_T}$, $t_n = n \Delta t$, for $n = 0, 1 ,\ldots, N_T$.
-The spatial discretization is constructed through an uniformly spaced partition of $\Omega$ given by:
-\begin{align}
-	[a,b] &= \bigcup_{i=1}^N X_i, 
-	\text{ where } X_i= [x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}] \text{ and } 
-	a = x_{\frac{1}{2}} < x_{\frac{3}{2}} < \ldots < x_{N-\frac{1}{2}} < x_{N+\frac{1}{2}} = b, \\
-	[c,d] &= \bigcup_{j=1}^M Y_j, 
-\text{ where } Y_j= [y_{j-\frac{1}{2}}, y_{j+\frac{1}{2}}] \text{ and } 
-	c = y_{\frac{1}{2}} < y_{\frac{3}{2}} < \ldots < y_{M-\frac{1}{2}} < y_{M+\frac{1}{2}} = d, \\
-    \Omega &=  \bigcup_{i=1}^N \bigcup_{j=1}^M \Omega_{ij}, \text{ where } \Omega_{ij} = X_i \times Y_j.
-\end{align}
-The regions $\Omega_{ij}$ are known as control volumes or cells. \index{Control volume}
-Similarly to  Chapter \ref{chp-1d-fv} we employ the notations
-$\Delta x = x_{i+\frac{1}{2}} - x_{i-\frac{1}{2}}$,
-$\Delta y = y_{j+\frac{1}{2}} - y_{j-\frac{1}{2}}$ 
-and $x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}})$
-$y_j = \frac{1}{2}(y_{j+\frac{1}{2}} + y_{j-\frac{1}{2}})$, $\forall i = 1, \ldots, N$, 
-$\forall j = 1, \ldots, M$,
-to define the control volume lengths and centroids, respectively.
-Finally, we denote by ${Q}_{ij}(t)$ as the average values of state variable at time $t$
-in the control volume $\Omega_{ij}$, that is:
-
-Substituting $t_1, t_2, x_1, x_2, y_1$ and $y_2$ by 
+Considering a $(\Delta x, \Delta y, \Delta t, \lambda)$ discretization of $D = \Omega \times [0,T]$ and
+substituting $t_1, t_2, x_1, x_2, y_1$ and $y_2$ by 
 $t_{n}, t_{n+1}, x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}, y_{j-\frac{1}{2}}, y_{j+\frac{1}{2}}$,
 respectively, in Equation \eqref{sec-adv2d:eq3}, we obtain:
 \begin{align}
@@ -273,81 +285,21 @@ respectively, in Equation \eqref{sec-adv2d:eq3}, we obtain:
 	\,dx \,dt \bigg),
 \end{align}
 where we are using the centered finite-difference notation.
-The Equation \eqref{sec-adv2d:eq5} is useful to
-motivate two-dimensional finite-volume schemes, as we shall see in the next section.
-
-\section{The finite-volume approach}
-\label{sec:fv-2d}
-This Section is basically an extension to two dimensions of the concepts presented in Section \ref{chp2-sec2-fvsl}.
-We introduce the following spaces of bi-periodic functions:
-\begin{align*}
-	\mathcal{F}(\mathbb{T}^2) &= \{q:\mathbb{R}^2 \to \mathbb{R};
-	\quad q(x+b-a,y) = q(x,y), \quad q(x,y+d-c) = q(x,y),\quad \forall (x,y) \in \mathbb{R}^2\},\\
-	\mathcal{F}(\mathbb{T}^2_{T}) &= \{q:\mathbb{R}^2\times[0,T]\to \mathbb{R};\quad q(\cdot,\cdot,t) \in \mathcal{F}(\mathbb{T}^2), \quad \forall t \in [0,T]\},\\
-	\mathcal{C}^k(\mathbb{T}^2_{T}) &= \{q\in \mathcal{C}^k(\mathbb{R}^2\times[0,T]): q \in \mathcal{F}(\mathbb{T}^2_{T})\}.
-\end{align*}
-where we are using the notation $\mathbb{T}^2_{T} = \mathbb{T}^2\times[0,T]$ and $\mathbb{T}^2 = [a,b] \times [c,d]$ denotes the torus of lengths $b-a$ and $d-c$.
-We are using the notation $\mathbb{T}^2$ since we may think of bi-periodic functions as functions defined on the torus of lengths $b-a$ and $d-c$.
-Whenever we use the notation $\mathbb{T}^2$, $a, b, c$ and $d$ will be implicitly defined.
-We also introduce the following the locally integrable periodic functions:
-\begin{align*}
-	L^p_{\text{loc}}(\Omega) &= \{q:\Omega\to \mathbb{R};\quad \int_{K} |q(x,y)|^p\,dx\,dy  < +\infty, \quad \text{for all compact sets } K \subset \Omega\},\\
-	{L}^{p}_{\text{loc}}(\mathbb{T}^2) &= \{q\in \mathcal{F}(\mathbb{T}^2): \quad  q \in L^p_{\text{loc}}(\mathbb{R}^2)\},\\
-	{L}^{p,x,y}_{\text{loc}}(\mathbb{T}^2_{T}) &= \{q\in \mathcal{F}(\mathbb{T}^2_{T}): \forall t \in [0,T], \quad q(\cdot,\cdot,t) \in L^p_{\text{loc}}(\mathbb{R}^2)\},\\
-	{L}^{p,y,t}_{\text{loc}}(\mathbb{T}^2_{T}) &= \{q\in \mathcal{F}(\mathbb{T}^2_{T}): \forall x \in \mathbb{R},\quad q(x,\cdot,\cdot) \in L^p_{\text{loc}}(\mathbb{R}\times [0,T])\},\\
-	{L}^{p,x,t}_{\text{loc}}(\mathbb{T}^2_{T}) &= \{q\in \mathcal{F}(\mathbb{T}^2_{T}): \forall y \in \mathbb{R},\quad q(\cdot,y,\cdot) \in L^p_{\text{loc}}(\mathbb{R}\times [0,T])\}.\\
-\end{align*}
-
-\subsection{Discretization of the problem}
-The problem of two-dimensional advection equation in the integral form 
-presented Section \ref{sec-adv2d} is written in a concise way in Problem \ref{chp3-sec2-prob1}.
-\begin{prob}
-	\label{chp3-sec2-prob1}
-	Given an initial condition ${q}_0\in {L}^{1}_{\text{loc}}(\mathbb{T}^2) \cap {L}^{2}_{\text{loc}}(\mathbb{T}^2)$ and
-	a velocity function $u \in {L}^{2,y,t}_{\text{loc}}(\mathbb{T}^2_{T})$ in the $x$-direction, 
-	a velocity function $v \in {L}^{2,x,t}_{\text{loc}}(\mathbb{T}^2_{T})$ in the $y$-direction, 
- 	we would like to find a weak solution 
- 	${q} \in {L}^{1,x,y}_{\text{loc}}(\mathbb{T}^1_{T}) \cap {L}^{2,x,t}_{\text{loc}}(\mathbb{T}^2_{T}) \cap {L}^{2,y,t}_{\text{loc}}(\mathbb{T}^2_{T})$
-	of the two-dimensional advection equation in the integral form:
-	\begin{align*}
-		\int_{x_1}^{x_2} \int_{y_1}^{y_2}
-		{q}(x, y, t) \,dx \,dy = &\int_{x_1}^{x_2} \int_{y_1}^{y_2}
-		{q}(x, y, t) \,dx \,dy \\ \nonumber
-		&-\int_{t_1}^{t_2} \int_{y_1}^{y_2} \bigg({(uq)}(x_2, y, t)
-		-{(uq)}(x_1, y, t) \bigg) \,dy \,dt\\ \nonumber
-		&-\int_{t_1}^{t_2} \int_{x_1}^{x_2} \bigg({(vq)}(x, y_2, t)
-		-{(vq)}(x, y_1, t) \bigg) \,dx \,dt.
-	\end{align*}
-	$\forall [x_1, x_2]\times [y_1, y_2] \times[t_1, t_2] \subset [a,b] \times [c,d] \times[0,T]$, 
-	and ${q}(x, y, 0) = {q}_0(x, y)$, $\forall (x, y) \in [a,b] \times [c,d]$.
-\end{prob}
-For Problem \ref{chp3-sec2-prob1}, the total mass in $\Omega$ is defined by: 
-\begin{equation}
-	{M}_{\Omega}(t) = \int_{\Omega} {q}(x,y,t) \,dx \,dy , \quad \forall t \in [0,T],
-\end{equation}
-and is conserved within time: 
-\begin{equation}
-	{M}_{\Omega}(t) = {M}_{\Omega}(0), \quad \forall t \in [0,T].
-\end{equation}
-considering a discretization of the domain $[a,b] \times [0,T]$. 
-
-Section \ref{sec-adv2d} introduced a version of Problem \ref{chp3-sec2-prob1}
-considering a discretization of the domain $[a,b] \times [c,d] \times[0,T]$. 
-This version is also summarized in Problem \ref{chp3-sec2-prob2}.	
+Now we can define a discretized version of Problem \ref{chp3-sec2-prob1} as Problem \ref{chp3-sec2-prob2}.
 \begin{prob}
 	\label{chp3-sec2-prob2}
 	Assume the framework of Problem \ref{chp3-sec2-prob1}
-	and that $(\mathcal{D},\mathcal{T})$ is a $(\Delta x, \Delta y, \Delta t, \lambda_x,\lambda_y)$-discretization of $[a,b]\times [c,d]\times [0,T]$.
+	and consider a $(\Delta x, \Delta y, \Delta t, \lambda)$-discretization of $\Omega\times [0,T]$.
 	Since we are in the framework of Problem \ref{chp3-sec2-prob1}, it follows that:
 	\begin{align*}
 		{Q}_{ij}(t_{n+1})  = {Q}_{ij}(t_{n})
-		&- {\lambda_x}
-		\delta _x \bigg( \frac{1}{\Delta t}
+		&- {\lambda}
+		\delta _x \bigg( \frac{1}{\Delta t \Delta y}
 		\int_{t^n}^{t^{n+1}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
 		{(uq)}(x_{i}, y, t)
 		\,dy \,dt \bigg) \\ \nonumber
-		&- {\lambda_y}
-		\delta _y \bigg( \frac{1}{\Delta t}
+		&- {\lambda}
+		\delta _y \bigg( \frac{1}{\Delta t \Delta x}
 		\int_{t^n}^{t^{n+1}} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
 		{(vq)}(x, y_{j}, t)
 		\,dx \,dt \bigg),
@@ -355,14 +307,16 @@ This version is also summarized in Problem \ref{chp3-sec2-prob2}.
 	where ${Q}_{ij}(t) = \frac{1}{\Delta x \Delta y}
 	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
 	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} {q}(x,y,t) \,dx \,dy$.
-	
 	Our problem now consists of finding the values ${Q}_{ij}(t_{n})$, 
-	$\forall i = 1, \ldots, N$, $\forall j = 1, \ldots, M$, $\forall n = 1, \ldots, N_T$,
+	$\forall i = 1, \ldots, N$, $\forall j = 1, \ldots, M$, $\forall n = 0, \ldots, N_T-1$,
     given the initial values ${Q}_{ij}(0)$, $\forall i = 1, \ldots N$, $\forall j = 1, \ldots, M$.
-	In other words, we would like to find the average values of ${q}$
-	in each control volume $\Omega_{ij}$ at the considered time instants.
+    In other words, we aim to find the average values of ${q}$ in each control volume $\Omega_{ij}$ at the specified time instances.
 \end{prob}
+It is important to note that no approximations have been made in Problems \eqref{chp3-sec2-prob1} and \eqref{chp3-sec2-prob2}. 
 
+\section{The finite-volume approach}
+\label{sec:fv-2d}
+Finally, we define the 2D-FV scheme problem as follows in Problem \ref{chp3-sec2-prob3}.
 \begin{prob}[2D-FV scheme]
 	\label{chp3-sec2-prob3}
 	Assume the framework defined in Problem \ref{chp3-sec2-prob2}.
@@ -370,7 +324,7 @@ This version is also summarized in Problem \ref{chp3-sec2-prob2}.
 	consists of a finding a scheme of the form:
 	\begin{align}
 		\label{chp3-2dfv}
-		{Q}_{ij}^{n+1} =  {Q}_{ij}^{n} - {\lambda_x} \delta_i {F}_{i,j}^{n} - {\lambda_y } \delta_j {G}_{i,j}^{n},
+		{Q}_{ij}^{n+1} =  {Q}_{ij}^{n} - {\lambda} \delta_i {F}_{ij}^{n} - {\lambda} \delta_j {G}_{ij}^{n},
 		\\ \nonumber \quad \forall i = 1, \ldots, N, \quad \forall j = 1, \ldots, M,
 		\quad \forall n = 0, \ldots, N_T-1,
 	\end{align}
@@ -380,53 +334,32 @@ This version is also summarized in Problem \ref{chp3-sec2-prob2}.
     $ \delta_j G_{ij}^n =
     {G}_{i,j+\frac{1}{2}}^{n} 
     - {G}_{i,j-\frac{1}{2}}^{n}$ 
-    and ${Q}^{n}$ is intended to be an approximation
-	of ${Q}(t_{n})$ in some sense. We define ${Q}_{ij}^{0} = {Q}_{ij}(0)$ or
+    and ${Q}^{n}\in \mathbb{R}^{N\times M}$ is intended to be an approximation
+	of ${Q}(t_{n})\in \mathbb{R}^{N\times M}$ in some sense. We define ${Q}_{ij}^{0} = {Q}_{ij}(0)$ or
 	${Q}_{ij}^{0} = {q}^0_{i,j}$.
     
-    The term ${F}_{i+\frac{1}{2}, j}^{n} = {\mathbb{F}}
-    (Q^n, \tilde{u}^n, \tilde{v}^n; i,j)
-    $ is known as numerical flux in the 
-    $x$ direction, where $\mathbb{F}$ is the numerical flux function, 
-    and it approximates
-	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}} 
+    The term ${F}_{i+\frac{1}{2}, j}^{n}$ is known as numerical flux in the 
+    $x$ direction and it approximates
+	$\frac{1}{\Delta t \Delta y}\int_{t_n}^{t_{n+1}} 
     \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
     (uq)(x_{i+\frac{1}{2}}, y, t) \,dy \,dt $,
     $\forall i = 0, 1, \ldots, N$, and 
-	${G}_{i, j+\frac{1}{2}}^{n} = 
-    {\mathbb{G}} (Q^n, \tilde{u}^n, \tilde{v}^n; i, j)$ 
-    is known as numerical flux in the 
-    $y$ direction, where $\mathbb{G}$ 
-    is the numerical flux function, and it approximates
-	$\frac{1}{\Delta t}\int_{t_n}^{t_{n+1}}  
+	${G}_{i, j+\frac{1}{2}}^{n}$ is known as numerical flux in the 
+    $y$ direction and it approximates
+	$\frac{1}{\Delta t \Delta x}\int_{t_n}^{t_{n+1}}  
     \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
     (vq)(x, y_{j+\frac{1}{2}}, t) \,dx \,dt $,
     $\forall j = 0, 1, \ldots, M$,
 	or, in other words, they estimate the time-averaged
     fluxes at the control volume $\Omega_{ij}$ boundaries.
-  	The values $\tilde{u}_{i+\frac{1}{2},j}^n$ and $\tilde{v}_{i,j+\frac{1}{2}}^n$ are related to the time-averaged velocities
-  	and depend on values of $u_{i+\frac{1}{2},j}^n$ and $v_{i,j+\frac{1}{2}}^n$.
 \end{prob}
-\begin{remark}
-	A scheme of the form from Equation \eqref{chp3-2dfv} is referred to as a 2D-FV scheme and
-	it is also known as a conservative scheme.
-\end{remark}
 \begin{remark}
 For Problem \ref{chp3-sec2-prob3}, we define the CFL number in the $x$ and $y$ direction
 by $\max \{{|u_{i+\frac{1}{2},j}^n}|\}$ and $\max \{ {|v_{i,j+\frac{1}{2}}^n}|\}$, respectively.
 The CFL number is maximum between these numbers and we say that the CFL conditions is
 satisfied if the CFL number is less than one. 
 \end{remark}
-\begin{definition}[Discrete divergence]
-	\label{chp3-def-div}
-	For Problem \ref{chp3-sec2-prob3}, we define the discrete divergence as a grid function $\mathbb{D}^n=\mathbb{D}^n(Q,\tilde{u}^n,\tilde{v}^n)$
-	given by
-	\begin{equation}
-		\label{chp3-def-div-eq}
-		\mathbb{D}_{ij}^n=\bigg( \frac{\mathbb{F}(Q,\tilde{u}^n,\tilde{v}^n;i,j) - \mathbb{F}(Q,\tilde{u}^n,\tilde{v}^n;i-1,j)}{\Delta x} \bigg) +
-				 \bigg( \frac{\mathbb{G}(Q,\tilde{u}^n,\tilde{v}^n;i,j) - \mathbb{G}(Q,\tilde{u}^n,\tilde{v}^n;i,j-1)}{\Delta y} \bigg).
-	\end{equation}
-\end{definition}
+
 For a 2D-FV the discrete total mass at the time-step $n$ is given by
 \begin{equation*}
 	M^n =  \Delta x \Delta y \sum_{i=1}^N \sum_{j=1}^M Q_{ij}^n.
@@ -445,8 +378,6 @@ where we are using that $F^n_{N+\frac{1}{2},j} = F^n_{\frac{1}{2},j}$,
 $G^n_{i,M+\frac{1}{2}} = G^n_{i,\frac{1}{2}}$ since we are assuming bi-periodic boundary
 conditions.
 
-\subsection{Convergence, consistency and stability}
-\label{chp3-CCS}
 As we mentioned in Problem \ref{chp3-sec2-prob3}, the initial condition may be assumed as $q_{ij}^0$ or $Q_{ij}(0)$. 
 For two-dimensional simulations, we are going to assume  $q_{ij}^0$ as initial data to avoid the computation of integrals.
 Furthermore, the errors will be calculated using the values $q_{ij}^n$ instead of $Q_{ij}(t_n)$.
@@ -460,84 +391,62 @@ with second order, as Proposition \ref{prop-bound-centroid-2d} shows.
 \begin{proof}
 	Just apply Theorem \ref{prop-bound-midpoint2d} for the function $q(x,y,t^n)$.	
 \end{proof}
-The notions of convergence, consistency and stability for a 2D-FV schemes
-are straightforward from these notions for 1D-FV schemes
-(see Subsections \ref{chp2-sub-CC} and \ref{chp2-sub-stability}).
-Indeed, in the context of Problem \ref{chp3-sec2-prob3}, we define the operators
-$\mathcal{H}_{\Delta x ,\Delta y,n}: \mathbb{R}^{\Delta x \times \Delta y} \to \mathbb{R}^{\Delta x \times \Delta y}$ whose $(i,j)$ entry is given by:
-\begin{align*}
-	[\mathcal{H}_{\Delta x ,\Delta y,n}(Q)]_{ij} = Q_{ij} &-{\lambda_x} \bigg( \mathbb{F}(Q,\tilde{u}^n,\tilde{v}^n;i,j) - \mathbb{F}(Q,\tilde{u}^n,\tilde{v}^n;i-1,j) \bigg) \\ \nonumber
-								 	   &-{\lambda_y} \bigg( \mathbb{G}(Q,\tilde{u}^n,\tilde{v}^n;i,j) - \mathbb{G}(Q,\tilde{u}^n,\tilde{v}^n;i,j-1) \bigg)
-\end{align*}
-for $i=1, \ldots, N$, $j=1, \ldots, M$, $n=0, \ldots, N_T-1$. The 2D-FV is then expressed as
-\begin{equation*}
-	Q^{n+1} = \mathcal{H}_{\Delta x ,\Delta y,n}(Q^n).
-\end{equation*}
-The local error truncation $\tau^n \in \mathbb{R}^{\Delta x \times \Delta y}$ is given by
-\begin{equation*}
-	Q(t^{n+1}) = \mathcal{H}_{\Delta x ,\Delta y,n}(Q(t^n)) + \Delta t \tau^n.
-\end{equation*}
-The error equation is given by
-\begin{equation}
-	E^{n+1} = \mathcal{H}_{\Delta x ,\Delta y,n}(Q(t^n)) - \mathcal{H}_{\Delta x ,\Delta y,n}(Q^n) +  \Delta t \tau^n.
-\end{equation}
-Given $r = (r_{ij})_{i=1,\ldots,N,j=1,\ldots,M}\in \mathbb{R}^{\Delta x \times \Delta y}$, we define the $p$-norm by
-\begin{equation}
-	\label{chp3-pnorm}
-	\|r\|_{p,\Delta x \times \Delta y}=
-	\begin{cases}
-		\bigg( \sum_{i=1}^{N} \sum_{j=1}^{M}|r_{ij}|^p \bigg)^{\frac{1}{p}} & \text{if } 1\leq p < \infty,\\
-		\max_{i=1, \ldots, N,j=1,\ldots,M}{|r_{ij}|} & \text{otherwise }.
-	\end{cases}
-\end{equation}
-The stability in the $p$-norm is defined as in the 1D case.
-\begin{definition}
-	A 2D-FV scheme is stable in the $p-$norm if 
+
+In order to check the consistency of 2D-FV, it is useful to use the notion of discrete divergence.
+\begin{definition}[Discrete divergence]
+	\label{chp3-def-div}
+	For Problem \ref{chp3-sec2-prob3}, we define the discrete divergence as a 
+    $(\Delta x, \Delta y)$-grid function $\mathbb{D}^n(Q^n,u^n,v^n) \in \mathbb{R}^{N\times M}$
+	given by:
 	\begin{equation}
-		\|\mathcal{H}_{\Delta x ,\Delta y,n}(Q) - \mathcal{H}_{\Delta x ,\Delta y,n}(P)\|_{p,\Delta x \times \Delta y} \leq (1+\alpha \Delta t)  \|Q-P\|_{p,\Delta x \times \Delta y},
+		\label{chp3-def-div-eq}
+		\mathbb{D}_{ij}^n(Q^n,u^n,v^n)=  \frac{1}{\Delta t}
+        \bigg(\frac{\delta_i {F}_{ij}^{n}}{\Delta x} + \frac{\delta_j {G}_{ij}^{n}}{\Delta y} \bigg).
 	\end{equation}
-	for all $Q, P \in \mathbb{R}^{\Delta x \times \Delta y}$ and $\alpha$ is a constant
-	that does not depend neither on $\Delta x$, $\Delta y$, $\Delta t$ nor on $n$.
 \end{definition}
-If a 2D-FV scheme is stable in the $p-$norm, similarly to Equation \eqref{chp2-sec2-erroreq} we have:
-\begin{align*}
-		\|E^{n+1}\|_{p,\Delta x \times \Delta y} &\leq e^{\alpha T}(\|E^0\|_{p,\Delta x \times \Delta y} + T\max_{n=1, \ldots, N_T}\|\tau^n\|_{p,\Delta x \times \Delta y}).\\
-\end{align*}
-Again, we point out that from Proposition \ref{prop-bound-centroid-2d}, we have that the initial error $E^0$ shall be second-order accurate.
-Consistency is defined as in Definition \ref{chp2-def-cons} and convergence is defined as in Definition \ref{chp2-def-conv}.
-
-The Von Neumann analysis can be applied when $\mathcal{H}_{\Delta x ,\Delta y,n}$ is linear, since we are considering periodic boundary conditions.
-The idea is the same as in the one-dimensional case, we just apply the operator $\mathcal{H}_{\Delta x ,\Delta y,n}$ on the Fourier modes to obtain
-the amplification factor.
-We introduce the nodes $\theta_i = i\frac{2\pi}{N}$, $i=1, \ldots, N$, $\Delta \theta = \frac{2\pi}{N}$,
-$\theta_i = (\theta_1, \theta_2, \ldots, \theta_N)$, $\phi_j = j\frac{2\pi}{M}$, $j=1, \ldots, M$, $\Delta \phi = \frac{2\pi}{M}$,
-$\phi = (\phi_1, \phi_2, \ldots, \phi_M)$.
-For $k_1=1, \ldots, N$, $k_2=1, \ldots, M$, the two-dimensional Fourier mode $\boldsymbol{k} = (k_1,k_2)$ from $\mathbb{C}^{N\times M}$ 
-has its $(i,j)$ entry given by $[e^{\imath \boldsymbol{k} \theta}]_{ij} = e^{\imath k_1 \theta_i}e^{\imath k_2 \phi_j}$. 
-
-Notice that if $q,u, v \in \mathcal{C}^3$, we can rewrite Equation \eqref{consistency-1d-eq2} as:
-\begin{align*}
-	\begin{split}
-		\tau_{ij}^n &= 
-		\bigg[ \frac{1}{\Delta x \Delta y \Delta t}  \int_{t^{n}}^{t^{n+1}}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
-		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} {\nabla \cdot (\boldsymbol{u}q)}(x, y, t) \,dy \,dx \,dt 
-		-\bigg( \frac{\mathbb{F}(Q,\tilde{u}^n,\tilde{v}^n;i,j) - \mathbb{F}(Q,\tilde{u}^n,\tilde{v}^n;i-1,j)}{\Delta x} \bigg) \\
-		&-\bigg( \frac{\mathbb{G}(Q,\tilde{u}^n,\tilde{v}^n;i,j) - \mathbb{G}(Q,\tilde{u}^n,\tilde{v}^n;i,j-1)}{\Delta y} \bigg)
-		\bigg].
-	\end{split}
-\end{align*}
-Using the midpoint rule for integration (Theorem \ref{prop-bound-midpoint2d}), the mean value theorem for integrals
-(Theorem \ref{anexo-numint-mv}) and recalling the discrete divergence (Definition \ref{chp3-def-div}), we have:
+With the aid of the discrete divergence, we may rewrite Equation \eqref{chp3-2dfv} as:
 \begin{align}
-	\begin{split}
-		\label{consistency-2d-eq}
-		\tau_{ij}^n 
-		&= \frac{1}{\Delta t}  \int_{t^{n}}^{t^{n+1}}
-		{\nabla \cdot (\boldsymbol{u}q)}(x_i, y_j, t)  \,dt - 
-		\mathbb{D}^n_{ij} + O(\Delta x^2) + O(\Delta y^2).
-	\end{split}
+    \label{chp3-2dfv-div}
+    {Q}^{n+1} =  {Q}^{n} - \Delta t \mathbb{D}^n(Q^n,u^n,v^n),
 \end{align}
-Therefore, in order to investigate the consistency, we may compare how well the discrete divergence approximates the divergence.
+Notice that if we replace the exact solution $Q(t^n)$ in $Q^n$ in Equation \eqref{chp3-2dfv-div}, we have
+\begin{align}
+    \label{chp3-div-tau}
+    {Q}(t^{n+1}) =  {Q}(t^{n}) - \Delta t \mathbb{D}^n(Q(t^n),u^n,v^n) - \Delta t \tau^n,
+\end{align}
+where $\tau^n \in \mathbb{R}^{N\times M}$ is the local truncation error (LTE).
+Rearranging the terms of Equation \eqref{chp3-div-tau}, we obtain:
+\begin{align}
+    \label{chp3-div-tau2}
+    \tau^n =  \frac{{Q}(t^{n+1}) - {Q}(t^{n})}{\Delta t} - \mathbb{D}^n(Q(t^n),u^n,v^n).
+\end{align}
+We define the consistency of the 2D-FV scheme as follows.
+\begin{definition}[Consistency]
+	\label{chp3-def-cons}
+	Let us consider the framework of Problem \ref{chp3-sec2-prob3}.
+	A 2D-FV scheme is said to be consist in the $p$-norm if for any sequence of
+	$(\Delta x^{(k)},\Delta y^{(k)}, \Delta t^{(k)},\lambda)$-discretizations, 
+	$k \in \mathbb{N}$, with
+    $\lim_{k\to \infty }{\Delta x^{(k)}} =\lim_{k\to \infty }{\Delta y^{(k)}}= \lim_{k\to \infty }{\Delta t^{(k)}} = 0$, we have:
+	\begin{equation*}
+		\lim_{k \to \infty}\bigg[ {\max_{1\leq n\leq N_T^{(k)}}}{\|\tau^n\|_{p,\Delta x^{(k)} \times \Delta y^{(k)}}} \bigg] = 0,
+	\end{equation*}
+	and it is said to be consistent with order $P$ in the $p-$norm if
+	\begin{equation*}
+		{\max_{1\leq n\leq N_T^{(k)}}}{\|\tau^n\|_{p,\Delta x^{(k)} \times \Delta y^{(k)}}} = O(\Delta x^P).
+	\end{equation*}
+\end{definition}
+The relationship between consistency and convergence is explained in Section \ref{chp3-CCS}.
+If $q$ satisfies Equation \eqref{sec-adv2d:eq1}, it can be observed that consistency is equivalent to the following:
+\begin{equation*}
+	{\max_{1\leq n\leq N_T^{(k)}}}{\|\delta^n - \mathbb{D}^n(Q^n,u^n,v^n)\|_{p,\Delta x^{(k)} \times \Delta y^{(k)}}} = O(\Delta x^P),
+\end{equation*}
+where we are defining the grid function $\delta^n$ of the exact divergence at the cell centers by, namely
+\begin{equation}
+\delta^n_{ij} = \nabla \cdot (\boldsymbol{u}q)(x_i,y_j,t^n).
+\end{equation}
+Therefore, we can determine whether a 2D-FV scheme is consistent by comparing the discrete divergence to the exact divergence.
+
 \section{Dimension splitting}
 \label{sec-dsplit}
 Before introducing the dimension splitting scheme from \citet{lin:1996}, it is useful to 
@@ -754,8 +663,6 @@ Recalling the definition of discrete divergence (Definition \ref{chp3-def-div}) 
 \end{equation}
 and as pointed out in Section \ref{chp3-CCS}, we may use the discrete divergence to check the scheme consistency. 
 
-
-\newpage
 \section{Numerical experiments}
 \label{sec-ds-exp}
 To assess the dimension splitting schemes introduced previously, 

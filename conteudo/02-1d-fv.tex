@@ -203,7 +203,7 @@ the interval $\Omega$ as follows:
 \end{align*}
 Similarly, the space of $k$-times periodically differentiable functions $\mathcal{C}_P^k(\Omega)$ can be defined as:
 \begin{align*}
-	\mathcal{C}_P^k(\Omega) &= \mathcal{S}_P(\Omega)\cup \mathcal{C}^k(\mathbb{R}\times[0,\infty[),
+	\mathcal{C}_P^k(\Omega) &= \mathcal{S}_P(\Omega)\cap \mathcal{C}^k(\mathbb{R}\times[0,\infty[),
 \end{align*}
 where $\mathcal{C}^k(\mathbb{R}\times[0,+\infty[)$ denotes the space of functions that are $k$ 
 times continuously differentiable in both the spatial and temporal variables.
@@ -217,7 +217,7 @@ The advection equation with periodic boundary conditions in its differential for
 \begin{equation}
 	\label{chp2-sec-adv-eq1}
 	\begin{cases}
-		{\partial_t q}(x, t) + {\partial_x (uq)}(x, t)
+		[{\partial_t q} + {\partial_x (uq)}](x, t)
 		= 0, \quad \forall (x,t) \in \mathbb{R}\times ]0, +\infty[,\\
 		{q}(a, t) = {q}(b, t), \quad \forall t\geq 0,\\
 		q_0(x) = q(x,0), \quad \forall x \in \Omega.
@@ -225,7 +225,7 @@ The advection equation with periodic boundary conditions in its differential for
 \end{equation}
 Here, $q \in \mathcal{C}_P^1{(\Omega)}$ represents the advected quantity, and $u \in \mathcal{C}_P^1{(\Omega)}$ represents the velocity.
 We will focus on Equation \eqref{chp2-sec-adv-eq1} over the domain $D = \Omega\times[0,T]$, where $T>0$ is a finite time.
-A strong or classical solution to the advection equation is defined as a function ${q}$ that is $\mathcal{C}^1$ 
+A strong or classical solution to the advection equation is defined as a function ${q}\in\mathcal{C}^1_P(\Omega)$ 
 and satisfies Equation \eqref{chp2-sec-adv-eq1}.
 In order to deduce the integral form of Equation \eqref{chp2-sec-adv-eq1}, we consider
 $[x_1, x_2]\times[t_1,t_2]\subset D$. 
@@ -273,8 +273,8 @@ This conservation of total mass property is highly desirable for numerical schem
 to approximate general conservation law solutions accurately.
 
 Applying the steps from Equation \eqref{chp2-sec-adv-eq1} to Equation \eqref{chp2-sec-adv-eq3} in reverse order,
-one can verify that if ${q}$ is a weak solution and $q$ is $\mathcal{C}^1$, then it satisfies Equation \eqref{chp2-sec-adv-eq1}.
-Therefore, Equation \eqref{chp2-sec-adv-eq1} and Problem \eqref{chp2-sec2-prob1} are equivalent when ${q}$ is $\mathcal{C}^1$.
+one can verify that if ${q}$ is a weak solution and $q \in \mathcal{C}^1_P{(\Omega)}$, then it satisfies Equation \eqref{chp2-sec-adv-eq1}.
+Therefore, Equation \eqref{chp2-sec-adv-eq1} and Problem \eqref{chp2-sec2-prob1} are equivalent when $q \in \mathcal{C}^1_P{(\Omega)}$.
 However, Problem \eqref{chp2-sec2-prob1} can be formulated for functions that are not $\mathcal{C}^1$ and have discontinuities.
 In fact, Problem \eqref{chp2-sec2-prob1} only requires that $q$ and $uq$ are locally integrable.
 

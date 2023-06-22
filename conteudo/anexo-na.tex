@@ -1070,3 +1070,74 @@ Von Neumann stability criteria when the CFL restriction is respected.
 	\caption{Amplification factor for the PPM (left) and hybrid PPM (right) schemes for different CFL numbers.}
 	\label{chp2-fig-amplification}
 \end{figure}
+
+\subsection{Convergence, consistency and stability of 2D-FV schemes}
+\label{chp3-CCS}
+The notions of convergence, consistency and stability for a 2D-FV schemes
+are straightforward from these notions for 1D-FV schemes
+(see Subsections \ref{chp2-sub-CC} and \ref{chp2-sub-stability}).
+Indeed, in the context of Problem \ref{chp3-sec2-prob3}, we define the operators
+$\mathcal{H}_{\Delta x ,\Delta y,n}: \mathbb{R}^{N \times N} \to \mathbb{R}^{N \times M}$ whose $(i,j)$ entry is given by:
+\begin{align*}
+	[\mathcal{H}_{\Delta x ,\Delta y,n}(Q)]_{ij} = Q_{ij} - \Delta t\mathbb{D}_{ij}^n
+\end{align*}
+for $i=1, \ldots, N$, $j=1, \ldots, M$, $n=0, \ldots, N_T-1$. The 2D-FV is then expressed as
+\begin{equation*}
+	Q^{n+1} = \mathcal{H}_{\Delta x ,\Delta y,n}(Q^n).
+\end{equation*}
+The local error truncation $\tau^n \in \mathbb{R}^{N \times M}$ is given by
+\begin{equation*}
+	Q(t^{n+1}) = \mathcal{H}_{\Delta x ,\Delta y,n}(Q(t^n)) + \Delta t \tau^n.
+\end{equation*}
+The error equation is given by
+\begin{equation}
+	E^{n+1} = \mathcal{H}_{\Delta x ,\Delta y,n}(Q(t^n)) - \mathcal{H}_{\Delta x ,\Delta y,n}(Q^n) +  \Delta t \tau^n.
+\end{equation}
+The stability in the $p$-norm is defined as in the 1D case.
+\begin{definition}
+	A 2D-FV scheme is stable in the $p-$norm if 
+	\begin{equation}
+		\|\mathcal{H}_{\Delta x ,\Delta y,n}(Q) - \mathcal{H}_{\Delta x ,\Delta y,n}(P)\|_{p,\Delta x \times \Delta y} \leq (1+\alpha \Delta t)  \|Q-P\|_{p,\Delta x \times \Delta y},
+	\end{equation}
+	for all $Q, P \in \mathbb{R}^{N\times M}$ and $\alpha$ is a constant
+	that does not depend neither on $\Delta x$, $\Delta y$, $\Delta t$ nor on $n$.
+\end{definition}
+If a 2D-FV scheme is stable in the $p-$norm, similarly to Equation \eqref{chp2-sec2-erroreq} we have:
+\begin{align*}
+		\|E^{n+1}\|_{p,\Delta x \times \Delta y} &\leq e^{\alpha T}(\|E^0\|_{p,\Delta x \times \Delta y} + T\max_{n=1, \ldots, N_T}\|\tau^n\|_{p,\Delta x \times \Delta y}).\\
+\end{align*}
+Again, we point out that from Proposition \ref{prop-bound-centroid-2d}, we have that the initial error $E^0$ shall be second-order accurate.
+Consistency is defined as in Definition \ref{chp2-def-cons} and convergence is defined as in Definition \ref{chp2-def-conv}.
+
+The Von Neumann analysis can be applied when $\mathcal{H}_{\Delta x ,\Delta y,n}$ is linear, since we are considering periodic boundary conditions.
+The idea is the same as in the one-dimensional case, we just apply the operator $\mathcal{H}_{\Delta x ,\Delta y,n}$ on the Fourier modes to obtain
+the amplification factor.
+We introduce the nodes $\theta_i = i\frac{2\pi}{N}$, $i=1, \ldots, N$, $\Delta \theta = \frac{2\pi}{N}$,
+$\theta_i = (\theta_1, \theta_2, \ldots, \theta_N)$, $\phi_j = j\frac{2\pi}{M}$, $j=1, \ldots, M$, $\Delta \phi = \frac{2\pi}{M}$,
+$\phi = (\phi_1, \phi_2, \ldots, \phi_M)$.
+For $k_1=1, \ldots, N$, $k_2=1, \ldots, M$, the two-dimensional Fourier mode $\boldsymbol{k} = (k_1,k_2)$ from $\mathbb{C}^{N\times M}$ 
+has its $(i,j)$ entry given by $[e^{\imath \boldsymbol{k} \theta}]_{ij} = e^{\imath k_1 \theta_i}e^{\imath k_2 \phi_j}$. 
+
+Notice that if $q,u, v \in \mathcal{C}^3$, we can rewrite the LTE as:
+\begin{align*}
+	\begin{split}
+		\tau_{ij}^n &= 
+		\bigg[ \frac{1}{\Delta x \Delta y \Delta t}  \int_{t^{n}}^{t^{n+1}}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} {\nabla \cdot (\boldsymbol{u}q)}(x, y, t) \,dy \,dx \,dt 
+        -\mathbb{D}_{ij}^n
+		\bigg].
+	\end{split}
+\end{align*}
+Using the midpoint rule for integration (Theorem \ref{prop-bound-midpoint2d}), the mean value theorem for integrals
+(Theorem \ref{anexo-numint-mv}) and recalling the discrete divergence (Definition \ref{chp3-def-div}), we have:
+\begin{align}
+	\begin{split}
+		\label{consistency-2d-eq}
+		\tau_{ij}^n 
+		&= \frac{1}{\Delta t}  \int_{t^{n}}^{t^{n+1}}
+		{\nabla \cdot (\boldsymbol{u}q)}(x_i, y_j, t)  \,dt - 
+		\mathbb{D}^n_{ij} + O(\Delta x^2) + O(\Delta y^2).
+	\end{split}
+\end{align}
+Therefore, in order to investigate the consistency, we may compare how well the discrete divergence approximates the divergence.
+
