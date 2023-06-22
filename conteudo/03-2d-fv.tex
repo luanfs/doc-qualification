@@ -106,14 +106,20 @@ Next, we introduce the definitions of grid functions at cell centroids and C-gri
 	v_{N,\frac{1}{2}}, v_{N,\frac{3}{2}}, \ldots, v_{N,M+\frac{1}{2}}).
 \end{align*}
 \end{definition}
-\begin{remark}
-	When computing stencils, we may need values of $Q_{ij}$ such that the
-	indexes $i$ and $j$ are out of the range $1,\ldots, N$, $1,\ldots, M$.
-	These values are called ghost cell values.
-	Since we are under the assumption of periodic boundary conditions, this problem
-	is overcome by assuming periodicity on the grid function $Q$. 
-	The same applies for $(\Delta x,\Delta y)$-C grid winds.
-\end{remark}
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=1\linewidth]{2d_grid_function}
+	\caption{Illustration of $(\Delta x, \Delta y)$-grid function $Q$ (black circles)
+		and a $(\Delta x\Delta y)$-C grid wind $u$ (blue squares) and $v$ (red squares) and its ghost cell
+		values (in gray) assuming biperiodicity.\label{chp3-sec1-grid2d-function}}
+\end{figure}
+When computing stencils, we may need values of $Q_{ij}$ such that the
+indexes $i$ and $j$ are out of the range $1,\ldots, N$, $1,\ldots, M$.
+These values are called ghost cell values (Figure \ref{chp3-sec1-grid2d-function}).
+Since we are under the assumption of periodic boundary conditions, this problem
+is overcome by assuming periodicity on the grid function $Q$. 
+The same applies for $(\Delta x,\Delta y)$-C grid winds.
+
 Considering a function $q:\Omega\times[0,T] \to \mathbb{R}$,
 a vector field $\boldsymbol{u}:\Omega\times[0,T] \to \mathbb{R}$, $\boldsymbol{u}=(u,v)$,
 a $(\Delta x,\Delta y, \Delta t, \lambda)$-discretization
@@ -125,6 +131,17 @@ These grid functions represent the discrete values of $q$ and $\boldsymbol{u}$
 at the cell centroids and edges, respectively,
 for each time level $t^n$ (Figure \ref{chp2-sec1-grid1d-function}).
 
+We also introduce the centered difference notation:
+\begin{align}
+	\label{sec-adv2d:eq6}
+	\delta_x {h}(x_i,y, t) = 
+	{h}(x_{i+\frac{1}{2}}, y, t) - 
+	{h}(x_{i-\frac{1}{2}}, y, t), \\
+	\delta_y {h}(x, y_j,t) = 
+    {h}(x, y_{j+\frac{1}{2}},t) - 
+    {h}(x, y_{j-\frac{1}{2}},t),
+\end{align}
+for any function $h: \Omega \times [0,T] \to \mathbb{R}$.
 Additionally, we introduce the average value of $q$ in the control volume
 $\Omega_{ij}$ at time $t$, denoted as ${Q}_{ij}(t)$, defined by:
 \begin{equation}
@@ -133,7 +150,6 @@ $\Omega_{ij}$ at time $t$, denoted as ${Q}_{ij}(t)$, defined by:
 	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{j-\frac{1}{2}}}^{y_{j-\frac{1}{2}}} {q}(x,y,t) \,dx.
 \end{equation}
 Moreover, we define the $(\Delta x, \Delta y)$-grid function of average values as $Q(t) = (Q_{ij}(t))$.
-Here, $Q_{ij}(t)$ represents the average value of $q$ in the control volume $\Omega_{ij}$ at time $t$.
 
 For the consideration of periodic boundary conditions, we can define spaces of periodic functions over 
 the interval $\Omega$ as follows:
@@ -236,8 +252,7 @@ and $x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}})$
 $y_j = \frac{1}{2}(y_{j+\frac{1}{2}} + y_{j-\frac{1}{2}})$, $\forall i = 1, \ldots, N$, 
 $\forall j = 1, \ldots, M$,
 to define the control volume lengths and centroids, respectively.
-Finally, we denote by ${Q}_{ij}(t)$ as the
-average values of state variable at time $t$
+Finally, we denote by ${Q}_{ij}(t)$ as the average values of state variable at time $t$
 in the control volume $\Omega_{ij}$, that is:
 
 Substituting $t_1, t_2, x_1, x_2, y_1$ and $y_2$ by 
@@ -257,17 +272,8 @@ respectively, in Equation \eqref{sec-adv2d:eq3}, we obtain:
 	{(vq)}(x, y_{j}, t)
 	\,dx \,dt \bigg),
 \end{align}
-where we are using the centered finite-difference notation:
-\begin{align}
-	\label{sec-adv2d:eq6}
-	\delta_x {h}(x_i,y, t) = 
-	{h}(x_{i+\frac{1}{2}}, y, t) - 
-	{h}(x_{i-\frac{1}{2}}, y, t), \\
-	\delta_y {h}(x, y_j,t) = 
-    {h}(x, y_{j+\frac{1}{2}},t) - 
-    {h}(x, y_{j-\frac{1}{2}},t),
-\end{align}
-for any function ${h}$. The Equation \eqref{sec-adv2d:eq5} is useful to
+where we are using the centered finite-difference notation.
+The Equation \eqref{sec-adv2d:eq5} is useful to
 motivate two-dimensional finite-volume schemes, as we shall see in the next section.
 
 \section{The finite-volume approach}
