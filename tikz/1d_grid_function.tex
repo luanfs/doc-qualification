@@ -21,7 +21,7 @@
 			% Grid lines
 			\FPeval{\dx}{clip((\xmax-\xmin)/\nx)}
 			\draw[gray!50, thin] (\xmin -\nghost*\dx,0) -- (\xmax+\nghost*\dx,0);
-			
+			\draw[black!100, thin] (\xmin,0) -- (\xmax,0);
 			% Interior grid centers
 			\foreach \i in {1,...,\nx}{
 				\FPeval{\xc}{clip(\xmin+(\i-0.5)*\dx)}

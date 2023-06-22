@@ -34,6 +34,12 @@
 				\draw[gray!50, thin] (\ymin -\nghost*\dy,\xp)--(\ymax+\nghost*\dy,\xp);
 			}
 
+
+			\foreach \i in {0,...,\nx}{
+				\FPeval{\xp}{clip(\xmin+\i*\dx)}					
+				\draw[black!100, thin] (\xp,\ymin)--(\xp,\ymax);
+				\draw[black!100, thin] (\ymin,\xp)--(\ymax,\xp);
+			}
 			% Interior grid centers
 			\foreach \i in {1,...,\nx}{
 				\FPeval{\xp}{clip(\xmin+(\i-0.5)*\dx)}
