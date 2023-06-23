@@ -548,14 +548,14 @@ and $\tilde{v}^n_{i,j+\frac{1}{2}})$ is the time-averaged used in the departure 
 In this work, we assume that the fluxes ${F}_{i+\frac{1}{2},j}^n(Q^n_{\times,j},\tilde{u}^n_{i+\frac{1}{2},j})$ and
 ${G}^n_{i,j+\frac{1}{2}}(Q^n_{i,\times} ,\tilde{v}^n_{i,j+\frac{1}{2}})$ are compuute using the PPM flux
 assuming that the CFL number is less than one (see Equation \eqref{chp-sec-flux:numerical-flux3}).
-We introduce the auxiliary grid functions $\mathbf{F}, \mathbf{G} \in \mathbb{R}^{N\times M}_{nu}$ given by:
+We introduce the auxiliary grid functions $\mathbf{F}, \mathbf{G} \in \mathbb{R}^{N\times M}_{\nu}$ given by:
 \begin{align*}
-	\mathbf{F}_{ij}({Q^n,\tilde{u^n}}) = -\lambda \big({F}_{i+\frac{1}{2},j}^n(Q^n_{\times,j},\tilde{u}^n_{i+\frac{1}{2},j})-
+	\mathbf{F}_{ij}({Q^n,\tilde{u}^n}) = -\lambda \big({F}_{i+\frac{1}{2},j}^n(Q^n_{\times,j},\tilde{u}^n_{i+\frac{1}{2},j})-
                                                   {F}_{i-\frac{1}{2},j}^n(Q^n_{\times,j},\tilde{u}^n_{i-\frac{1}{2},j}) \big),
 \end{align*}
 and
 \begin{align*}
-	\mathbf{G}_{ij}({Q^n,\tilde{v^n}}) = -\lambda \big({G}_{i,j+\frac{1}{2}}^n(Q^n_{i,\times},\tilde{v}^n_{i,j+\frac{1}{2}})-
+	\mathbf{G}_{ij}({Q^n,\tilde{v}^n}) = -\lambda \big({G}_{i,j+\frac{1}{2}}^n(Q^n_{i,\times},\tilde{v}^n_{i,j+\frac{1}{2}})-
                                                   {G}_{i,j-\frac{1}{2}}^n(Q^n_{i,\times},\tilde{v}^n_{i,j-\frac{1}{2}}) \big),
 \end{align*}
 which are the numerical flux update of the 1D-FV schemes in the $x$ and $y$ direction, respectively.
@@ -580,7 +580,7 @@ for $i=-\nu+1, \ldots, N+\nu$ (Figure \ref{lt-Qy}), and then we advect in the $x
 for $j=-\nu+1, \ldots, M+\nu$, (Figure \ref{lt-GQy}) and thus we have the average Lie-Trotter solution:
 \begin{align*}
 	Q^{n+1} &= \frac{(Q^{xy,n} + Q^{yx,n})}{2} \\
-    &= Q^n + \frac{1}{2}\mathbf{F}(Q^n,\tilde{u}^n) + \frac{1}{2}\mathbf{G}(Q^n,\tilde{v}^n)) + 
+    &= Q^n + \frac{1}{2}\mathbf{F}(Q^n,\tilde{u}^n) + \frac{1}{2}\mathbf{G}(Q^n,\tilde{v}^n) + 
     \frac{1}{2}\mathbf{F}\bigg(Q^n + \frac{1}{2}\mathbf{G}(Q^n, \tilde{v}^n), \tilde{u}^n\bigg)+
     \frac{1}{2}\mathbf{G}\bigg(Q^n + \frac{1}{2}\mathbf{F}(Q^n, \tilde{u}^n), \tilde{v}^n\bigg),
 \end{align*}
