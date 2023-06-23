@@ -86,6 +86,8 @@ the concepts of a $\Delta x$-grid, a $\Delta t$-temporal grid, and the
 $(\Delta x, \Delta t, \lambda)$-discretization, as well as the concept of grid function/winds.
 In this chapter, we will use the notation $\Omega=[a,b]$ to represent the interval under consideration,
 and $\nu$ to represent a non-negative integer indicating the number of ghost cell layers in each boundary.
+We also use the notations $\mathbb{R}^{N}_{\nu}:=\mathbb{R}^{N+2\nu}$ and
+$\mathbb{R}^{N+1}_{\nu}:=\mathbb{R}^{N+1+2\nu}$.
 \begin{definition}[$\Delta x$-grid]\label{chp2-def-dxgrid}
 	For a given interval $\Omega$ and a positive real number $\Delta x$ such that 
     $\Delta x = (b-a)/N$ for some positive integer $N$, 
@@ -133,16 +135,16 @@ otherwise, $i$ is considered a ghost cell index and we say the $X_i$ is a ghost 
 \end{remark}
 Next, we introduce the definitions of grid functions at cell centroids and edges.
 \begin{definition}[$\Delta x$-grid function]
-	For a $\Delta x$-grid, we say that $Q$ is a $\Delta x$-grid function if $Q = (Q_{-\nu+1}, \ldots, Q_{N+\nu}) \in \mathbb{R}^{N+2\nu}$.
+	For a $\Delta x$-grid, we say that $Q$ is a $\Delta x$-grid function if
+	$Q = (Q_{-\nu+1}, \ldots, Q_{N+\nu}) \in \mathbb{R}^{N}_{\nu}$.
 \end{definition}
 \begin{definition}[$\Delta x$-grid wind]
 	For a $\Delta x$-grid, we say that $u$ is a $\Delta x$-grid wind if
-	$u = (u_{-\nu+\frac{1}{2}}, \ldots, u_{N+\nu+\frac{1}{2}}) \in \mathbb{R}^{N+1+2\nu}$.
+	$u = (u_{-\nu+\frac{1}{2}}, \ldots, u_{N+\nu+\frac{1}{2}}) \in \mathbb{R}^{N+1}_{\nu}$.
 \end{definition}
 The definition of a $\Delta x$-grid wind is based on the Arakawa grids \citep{arakawa:1977}.
-
 Considering functions $q, u: \Omega \times[0,T] \to \mathbb{R}$ and a $(\Delta x,\Delta t, \lambda)$-discretization
-of $\Omega \times[0,T]$, we introduce the grid functions $q^n \in \mathbb{R}^{N+2\nu}_P$ and $u^n \in \mathbb{R}^{N+1+2\nu}+P$. 
+of $\Omega \times[0,T]$, we introduce the grid functions $q^n \in \mathbb{R}^{N}_{\nu}$ and $u^n \in \mathbb{R}^{N+1}_{\nu}$. 
 Here, ${q}^n_{i} = {q}(x_i, t^{n})$ and $u^n_{i+\frac{1}{2}} = u(x_{i+\frac{1}{2}},t^n)$.
 These grid functions represent the discrete values of $q$ and $u$ at the cell centroids and edges, respectively,
 for each time level $t^n$ (Figure \ref{chp2-sec1-grid1d-function}).
@@ -158,7 +160,7 @@ Similarly, we define a $\Delta x$-grid wind as periodic if it meets the followin
     u_{i-\frac{1}{2}} &= u_{N+i+\frac{1}{2}} , \quad i=-\nu, \ldots, -1,\\
     u_{i+\frac{1}{2}} &= u_{i+\frac{1}{2}-N} , \quad i=N+1, \ldots, N+\nu.
 \end{align*}
-We use the notation $\mathbb{R}^{N+1+2\nu}_{P}$ and $\mathbb{R}^{N+2\nu}_P$ to
+We use the notation $\mathbb{R}^{N}_{\nu,P}$ and $\mathbb{R}^{N+1}_{\nu,P}$ to
 represent the spaces of periodic $\Delta x$-grid functions and winds, respectively.
 \begin{figure}[!htb] 
 \centering 
@@ -168,7 +170,7 @@ and a $\Delta x$-grid wind $u$ (blue squares) and its ghost cell
 values (in gray) assuming periodicity.\label{chp2-sec1-grid1d-function}}
 \end{figure}
 
-Given $Q \in \mathbb{R}^{N+2\nu}_P$, we define the $p$-norm as
+Given $Q \in \mathbb{R}^{N}_{\nu,P}$, we define the $p$-norm as
 \begin{equation}
 	\label{chp2-sec-not1}
 	\|Q\|_{p,\Delta x}=
@@ -500,8 +502,8 @@ Finally, we define the 1D FV-SL scheme problem as follows in Problem \ref{chp2-s
 		\quad \forall i = 1, \ldots, N,
 		\quad \forall n = 0, \ldots, N_T-1,
 	\end{equation}
-	where ${Q}^{n} \in \mathbb{R}^{N+2\nu}_P$ is intended to be an approximation
-	of ${Q}(t^{n})\in \mathbb{R}^{N+2\nu}_P$ in some sense. We define
+	where ${Q}^{n} \in \mathbb{R}^{N}_{\nu,P}$ is intended to be an approximation
+	of ${Q}(t^{n})\in \mathbb{R}^{N}_{\nu,P}$ in some sense. We define
 	${Q}_{i}^{0} = {Q}_i(0)$ or ${Q}_{i}^{0} = {q}^{0}_{i}$.
 	The terms ${F}_{i\pm\frac{1}{2}}^{n}$ are known as numerical flux and are given by
 	\begin{equation}
@@ -655,12 +657,12 @@ Then we use linear interpolation in space:
         u^{n+\frac{1}{2}}_{i+\frac{1}{2}-k} & \text{if } {u}^n_{i+\frac{1}{2}} < 0,\
 	\end{cases}
 \end{equation}
-where $c_{i+\frac{1}{2}}^n = \alpha_{i+\frac{1}{2}}^n + k$, 
+where $\frac{c_{i+\frac{1}{2}}^n}{2} = \alpha_{i+\frac{1}{2}}^n + k$, 
 $k=\lfloor \frac{c_{i+\frac{1}{2}}^n}{2} \rfloor$, $\alpha_{i+\frac{1}{2}}^n \in [0,1[$, and $\lfloor \cdot \rfloor$ is
 the floor function. This scheme leads to a third-order error in the departure point estimate (see \textit{e.g.} 
 \citet[Section 7.1.2]{durran:2010}). This scheme shall be referred to as \textbf{RK2}. 
 Notice that for this scheme, we need ghost values for the velocity, depending on how large the CFL number is.
-In particular, if the CFL number is less than 1, then $k=0$ and we need the ghost values $u_{-1+\frac{1}{2}}^n$ and $u_{N+\frac{3}{2}}^n$.
+In particular, if the CFL number is less than 2, then $k=0$ and we need the ghost values $u_{-1+\frac{1}{2}}^n$ and $u_{N+\frac{3}{2}}^n$.
 Finally, the impact of the departure point approximation on the time-averaged flux is investigated in 
 Section \ref{chp2-sub-flux}.
 
@@ -678,7 +680,7 @@ splitting method developed by \citet{lin:1996}.
 Let's consider a function ${q}$ defined in $\Omega=[a,b]$ and a $\Delta x$-grid covering $\Omega$. 
 We assume that we are given the average values ${Q}_i = \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x) \,dx$ 
 for each control volume $X_i$, where $i = 1, \ldots, N$. 
-In this context, it is convenient to define the $\Delta x$-grid function $Q\in \mathbb{R}^{N+2\nu}_P$ with the entries given by $Q_i$.
+In this context, it is convenient to define the $\Delta x$-grid function $Q\in \mathbb{R}^{N}_{\nu,P}$ with the entries given by $Q_i$.
 To facilitate the discussion, we introduce the indicator function $\chi_{i}(x)$ for each control volume $X_i$, defined as:
 \begin{equation*}
 	\label{chp2-sec3-1-eq1}
@@ -923,7 +925,7 @@ This scheme is referred to as \textbf{PPM-L04}.
 \section{Flux}
 \label{chp2-sec-flux}
 Let's consider the framework outlined in Problem \ref{chp2-sec2-prob4}.
-Assuming that $Q^{n} \in \mathbb{R}^{N+2\nu}_P$ is known, our objective is to compute the values $Q^{n+1}$.
+Assuming that $Q^{n} \in \mathbb{R}^{N}_{\nu,P}$ is known, our objective is to compute the values $Q^{n+1}$.
 To accomplish this, we utilize a scheme similar to the one presented in Problem \ref{chp2-sec2-prob4},
 taking into account the presence of a reconstruction function $\tilde{q}(x;Q^n)$ as discussed in Section
 \ref{chp2-sec-recon}, and an initial estimation
@@ -1014,7 +1016,7 @@ In particular, if the CFL number is less than one, then:
     	\end{cases}
 \end{equation}
 If the monotonic scheme from \citet{lin:2004} is employed, then $F_{i+\frac{1}{2}}$ uses the stencil
-$\mathcal{S}_{i+\frac{1}{2}} = \{i-3,i-2,i-1,i,i+1,i+2,i+3\}$ and we need $\nu=4$ layers of ghost cells
+$\mathcal{S}_{i+\frac{1}{2}} = \{i-3,i-2,i-1,i,i+1,i+2,i+3\}$ and we need $\nu=4$ layers of ghost cells.
 Otherwise the stencil used by $F_{i+\frac{1}{2}}$ is given by 
 $\mathcal{S}_{i+\frac{1}{2}} = \{i-2,i-1,i,i+1,i+2\}$ for all the other schemes that we presented and $\nu=3$.
 The accuracy of this flux formulation is described in Section \ref{chp2-sub-flux}.
@@ -1094,8 +1096,7 @@ as well as the generation of new extrema, which aligns with our expectations.
 Besides that, the scheme PPM-PL07 is less dispersive than the scheme PPM-0
 
 As a second experiment, we shall investigate the how the PPM schemes behave when the velocity
-is variable. 
-We are going to consider the velocity
+is variable.  We are going to consider the velocity
 \begin{equation}
 	\label{chp2-vel2}
 	u(x,t) = u_0\cos{\bigg(\frac{\pi t}{T}\bigg)}\sin^2\bigg(\pi \bigg(x-\frac{t}{T}\bigg)\bigg) + u_1.
