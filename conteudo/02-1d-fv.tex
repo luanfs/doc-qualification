@@ -84,37 +84,35 @@ The application of PPM to solve two-dimensional problems will be addressed in Ch
 Before introducing the FV-SL schemes, let us establish some notation by introducing
 the concepts of a $\Delta x$-grid, a $\Delta t$-temporal grid, and the
 $(\Delta x, \Delta t, \lambda)$-discretization, as well as the concept of grid function/winds.
-In this chapter, we use the notation $\Omega=[a,b]$.
+In this chapter, we will use the notation $\Omega=[a,b]$ to represent the interval under consideration,
+and $\nu$ to represent a non-negative integer indicating the number of ghost cell layers in each boundary.
 \begin{definition}[$\Delta x$-grid]\label{chp2-def-dxgrid}
 	For a given interval $\Omega$ and a positive real number $\Delta x$ such that 
     $\Delta x = (b-a)/N$ for some positive integer $N$, 
-	we say that $\Omega_{\Delta x}= \{X_i \}_{i=1}^{N}$ is a $\Delta x$-grid for $\Omega$ if
+	we say that $\Omega_{\Delta x}= \{X_i \}_{i=-\nu+1}^{N+\nu}$ is a $\Delta x$-grid for $\Omega$ if
 	\begin{align*}
-        X_i = [x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}],
-	    \quad a = x_{\frac{1}{2}} < x_{\frac{3}{2}} < \ldots < x_{N-\frac{1}{2}} < x_{N+\frac{1}{2}} = b,
+        X_i = [x_{i-\frac{1}{2}},x_{i+\frac{1}{2}}] = [a+(i-1)\Delta x, a+i\Delta x],
     \end{align*}
 	and $\Delta x = x_{i+\frac{1}{2}} - x_{i-\frac{1}{2}}$. 
 	Each $X_i$ is referred to as a control volume or cell, and $x_{i-\frac{1}{2}}$ and 
 	$x_{i+\frac{1}{2}}$ are the edges of the control volume $X_i$.
 	The cell centroid is defined by
     \begin{align*}
-    x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}}),\quad \forall i = 1, \ldots, N,
+    x_i = \frac{1}{2}(x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}}),\quad \forall i = -\nu+1, \ldots, N+\nu,
     \end{align*}
 	and $\Delta x$ is the cell length.
 \end{definition}
 \begin{remark}
-	We may extend the definition of cells $X_i$ for values of $i$ outside the range $1,\ldots,N$ as $X_i = [a+(i-1)\Delta x, a+i\Delta x]$.
-	These cells are known as ghost cells (Figure \ref{chp2-sec1-grid1d}.)
+If $1 \leq i \leq N$, we refer to $i$ as an interior index;
+otherwise, $i$ is considered a ghost cell index and we say the $X_i$ is a ghost cell.
 \end{remark}
-
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1\linewidth]{1d_grid}
 	\caption{Illustration of a $\Delta x$-grid with $N=4$ cells in its interior (in black) 
-	 and 2 ghost cells (in gray).
+         and $\nu=2$ ghost cell layers (in gray).
 	 The edges are denoted by squares and the cell centroids are denoted using circles.\label{chp2-sec1-grid1d}}
 \end{figure}
-
 \begin{definition}[$\Delta t$-temporal grid]
 	For a given interval $[0,T]$ and a positive real number $\Delta t$ such that $\Delta t = T/N_T$
     for some positive integer $N_T$, we say that  $T_{\Delta T}= \{T_n\}_{n=0}^{N_T}$ a $\Delta t$-temporal grid for $[0,T]$ if
@@ -135,51 +133,61 @@ In this chapter, we use the notation $\Omega=[a,b]$.
 \end{remark}
 Next, we introduce the definitions of grid functions at cell centroids and edges.
 \begin{definition}[$\Delta x$-grid function]
-	For a $\Delta x$-grid, we say that $Q$ is a $\Delta x$-grid function if $Q = (Q_1, \ldots, Q_N) \in \mathbb{R}^N$.
+	For a $\Delta x$-grid, we say that $Q$ is a $\Delta x$-grid function if $Q = (Q_{-\nu+1}, \ldots, Q_{N+\nu}) \in \mathbb{R}^{N+2\nu}$.
 \end{definition}
 \begin{definition}[$\Delta x$-grid wind]
 	For a $\Delta x$-grid, we say that $u$ is a $\Delta x$-grid wind if
-	$u = (u_{\frac{1}{2}}, \ldots, u_{N+\frac{1}{2}}) \in \mathbb{R}^{N+1}$.
+	$u = (u_{-\nu+\frac{1}{2}}, \ldots, u_{N+\nu+\frac{1}{2}}) \in \mathbb{R}^{N+1+2\nu}$.
 \end{definition}
-\begin{figure}[!htb]
-	\centering
-	\includegraphics[width=1\linewidth]{1d_grid_function}
-	\caption{Illustration of $\Delta x$-grid function $Q$ (black circles)
-		and a $\Delta x$-grid wind $u$ (blue squares) and its ghost cell
-		values (in gray) assuming periodicity.\label{chp2-sec1-grid1d-function}}
-\end{figure}
 The definition of a $\Delta x$-grid wind is based on the Arakawa grids \citep{arakawa:1977}.
-Given $Q \in \mathbb{C}^{N}$, we define the $p$-norm as
+
+Considering functions $q, u: \Omega \times[0,T] \to \mathbb{R}$ and a $(\Delta x,\Delta t, \lambda)$-discretization
+of $\Omega \times[0,T]$, we introduce the grid functions $q^n \in \mathbb{R}^{N+2\nu}_P$ and $u^n \in \mathbb{R}^{N+1+2\nu}+P$. 
+Here, ${q}^n_{i} = {q}(x_i, t^{n})$ and $u^n_{i+\frac{1}{2}} = u(x_{i+\frac{1}{2}},t^n)$.
+These grid functions represent the discrete values of $q$ and $u$ at the cell centroids and edges, respectively,
+for each time level $t^n$ (Figure \ref{chp2-sec1-grid1d-function}).
+
+In this chapter, our focus lies on periodic grid functions.
+We define a $\Delta x$-grid function $Q$ as periodic if it satisfies the following conditions:
+\begin{align*}
+    Q_{i} &= Q_{N+i}, \quad i=-\nu+1, \ldots, 0,\\
+    Q_{i} &= Q_{i-N}, \quad i=N+1, \ldots, N+\nu.
+\end{align*}
+Similarly, we define a $\Delta x$-grid wind as periodic if it meets the following requirements:
+\begin{align*}
+    u_{i-\frac{1}{2}} &= u_{N+i+\frac{1}{2}} , \quad i=-\nu, \ldots, -1,\\
+    u_{i+\frac{1}{2}} &= u_{i+\frac{1}{2}-N} , \quad i=N+1, \ldots, N+\nu.
+\end{align*}
+We use the notation $\mathbb{R}^{N+1+2\nu}_{P}$ and $\mathbb{R}^{N+2\nu}_P$ to
+represent the spaces of periodic $\Delta x$-grid functions and winds, respectively.
+\begin{figure}[!htb] 
+\centering 
+\includegraphics[width=1\linewidth]{1d_grid_function} 
+\caption{Illustration of $\Delta x$-grid function $Q$ (black circles)
+and a $\Delta x$-grid wind $u$ (blue squares) and its ghost cell
+values (in gray) assuming periodicity.\label{chp2-sec1-grid1d-function}}
+\end{figure}
+
+Given $Q \in \mathbb{R}^{N+2\nu}_P$, we define the $p$-norm as
 \begin{equation}
 	\label{chp2-sec-not1}
 	\|Q\|_{p,\Delta x}=
 	\begin{cases}
 		\bigg( \sum_{i=1}^{N} |Q_i|^p \bigg)^{\frac{1}{p}} & \text{if } 1\leq p < \infty,\\
-		\max_{i=1, \ldots, N}{|Q_i|} & \text{otherwise }.
+		\max_{i=1, \ldots, N}{|Q_i|} & \text{otherwise },
 	\end{cases}
 \end{equation}
+which is indeed a norm for periodic grid functions.
 Using a similar notation as in \citet{engwirda:2016}, we define the stencil and a grid function evaluated on a stencil as follows.
-\begin{definition}[stencil]
+\begin{definition}[Stencil]
 	For a $\Delta x$-grid, and each $i = 0, \ldots, N$, we define a stencil as a set of the form
-	$\mathcal{S}_{i+\frac{1}{2}} = \{i-r+1, \ldots, i-1, i, i+1, \ldots, i+s\}$.
+	$\mathcal{S}_{i+\frac{1}{2}} = \{i-r+1, \ldots, i-1, i, i+1, \ldots, i+s\} \subset\{-\nu+1, \ldots, N+\nu\}$.
 \end{definition}
 \begin{definition}[Grid function restricted to a stencil]
 	For a $\Delta x$-grid, a stencil $\mathcal{S}_{i+\frac{1}{2}}$,
 	 and a $\Delta x$-grid function $Q$, we define $Q(\mathcal{S}_{i+\frac{1}{2}}) = (Q_k)_{k \in \mathcal{S}_{i+\frac{1}{2}}}$.
 \end{definition}
 These definitions provide the necessary notation for describing grid functions and their evaluations on stencils.
-
-When computing $Q(\mathcal{S}_{i+\frac{1}{2}})$, it may be necessary to access values of $Q_i$ for $i$ outside the range $1,\ldots,N$.
-In such cases, we can consider $Q_i$ as a ghost cell value.
-Since we assume periodic boundary conditions in this chapter, this issue is resolved by assuming periodicity in the grid function $Q$.
-For example, for a stencil that requires three ghost cell values at the left and at the right of the domain, we can assume $Q_{0} = Q_{N}$, $Q_{-1} = Q_{N-1}$, $Q_{-2} = Q_{N-2}$, and
-$Q_{N+1}=Q_1$, $Q_{N+2}=Q_2$, $Q_{N+2}=Q_3$. The same applies to $\Delta x$-grid winds.
-Furthermore, considering functions $q, u: \Omega \times[0,T] \to \mathbb{R}$ and a $(\Delta x,\Delta t, \lambda)$-discretization
-of $\Omega \times[0,T]$, we introduce the grid functions $q^n \in \mathbb{R}^{N}$ and $u^n \in \mathbb{R}^{N+1}$. 
-Here, ${q}^n_{i} = {q}(x_i, t^{n})$ and $u^n_{i+\frac{1}{2}} = u(x_{i+\frac{1}{2}},t^n)$.
-These grid functions represent the discrete values of $q$ and $u$ at the cell centroids and edges, respectively,
-for each time level $t^n$ (Figure \ref{chp2-sec1-grid1d-function}).
-
 To achieve a more compact notation in some situations, we introduce the centered difference notation:
 \begin{equation}
     \label{chp2-sec-adv-eq5}
@@ -193,7 +201,7 @@ Additionally, we introduce the average value of $q$ in the $i$-th control volume
 	\label{chp2-sec1-not2}
 	{Q}_i(t) = \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x,t) \,dx.
 \end{equation}
-Moreover, we define the $\Delta x$-grid function of average values as $Q(t) = (Q_1(t), Q_2(t), \ldots, Q_N(t))$.
+Moreover, we define the $\Delta x$-grid function of average values as $Q(t) = (Q_i(t))_{i=-\nu+1}^{N+\nu}$.
 Here, $Q_i(t)$ represents the average value of $q$ in the $i$-th control volume at time $t$.
 
 For the consideration of periodic boundary conditions, we can define spaces of periodic functions over 
@@ -492,8 +500,8 @@ Finally, we define the 1D FV-SL scheme problem as follows in Problem \ref{chp2-s
 		\quad \forall i = 1, \ldots, N,
 		\quad \forall n = 0, \ldots, N_T-1,
 	\end{equation}
-	where ${Q}^{n} \in \mathbb{R}^{N}$ is intended to be an approximation
-	of ${Q}(t^{n})\in \mathbb{R}^{N}$ in some sense. We define
+	where ${Q}^{n} \in \mathbb{R}^{N+2\nu}_P$ is intended to be an approximation
+	of ${Q}(t^{n})\in \mathbb{R}^{N+2\nu}_P$ in some sense. We define
 	${Q}_{i}^{0} = {Q}_i(0)$ or ${Q}_{i}^{0} = {q}^{0}_{i}$.
 	The terms ${F}_{i\pm\frac{1}{2}}^{n}$ are known as numerical flux and are given by
 	\begin{equation}
@@ -652,6 +660,7 @@ $k=\lfloor \frac{c_{i+\frac{1}{2}}^n}{2} \rfloor$, $\alpha_{i+\frac{1}{2}}^n \in
 the floor function. This scheme leads to a third-order error in the departure point estimate (see \textit{e.g.} 
 \citet[Section 7.1.2]{durran:2010}). This scheme shall be referred to as \textbf{RK2}. 
 Notice that for this scheme, we need ghost values for the velocity, depending on how large the CFL number is.
+In particular, if the CFL number is less than 1, then $k=0$ and we need the ghost values $u_{-1+\frac{1}{2}}^n$ and $u_{N+\frac{3}{2}}^n$.
 Finally, the impact of the departure point approximation on the time-averaged flux is investigated in 
 Section \ref{chp2-sub-flux}.
 
@@ -669,7 +678,7 @@ splitting method developed by \citet{lin:1996}.
 Let's consider a function ${q}$ defined in $\Omega=[a,b]$ and a $\Delta x$-grid covering $\Omega$. 
 We assume that we are given the average values ${Q}_i = \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x) \,dx$ 
 for each control volume $X_i$, where $i = 1, \ldots, N$. 
-In this context, it is convenient to define the $\Delta x$-grid function $Q=(Q_1, \ldots, Q_N) \in \mathbb{R}^{N}$.
+In this context, it is convenient to define the $\Delta x$-grid function $Q\in \mathbb{R}^{N+2\nu}_P$ with the entries given by $Q_i$.
 To facilitate the discussion, we introduce the indicator function $\chi_{i}(x)$ for each control volume $X_i$, defined as:
 \begin{equation*}
 	\label{chp2-sec3-1-eq1}
@@ -753,11 +762,11 @@ functions, as used in \citet{godunov:1959}.
 If we choose $d=1$, $\Phi_0(\xi)=1$, and $\Phi_1(\xi)=\xi$, we 
 obtain a piecewise linear reconstruction, similar to \citet{vanleer:1977}.
 For polynomial reconstruction schemes, we refer to \citet{engwirda:2016} and the references therein.
+
 \subsection{The Piecewise-Parabolic Method}
 \label{chp2-sec-ppm}
 Hereafter, we are going the focus on the piecewise parabolic method from \citet{colella:1984} that uses $d=2$, 
 $\Phi_0(\xi)=1$, $\Phi_1(\xi)=\xi$, $\Phi_1(\xi)=(1-\xi)\xi$. 
-In this case, we denote $q_{Pd}$ by $q_{PP}$.
 In order to follow the notation from \citet{colella:1984},
 we write $\alpha_{0i} = q_{L, i}$, $\alpha_{1i} = \Delta q_i$ and $\alpha_{2i} = q_{6, i}$.
 Therefore, each $q_i$ may be expressed as:
@@ -914,7 +923,7 @@ This scheme is referred to as \textbf{PPM-L04}.
 \section{Flux}
 \label{chp2-sec-flux}
 Let's consider the framework outlined in Problem \ref{chp2-sec2-prob4}.
-Assuming that $Q^{n} \in \mathbb{R}^{N}$ is known, our objective is to compute the values $Q^{n+1}$.
+Assuming that $Q^{n} \in \mathbb{R}^{N+2\nu}_P$ is known, our objective is to compute the values $Q^{n+1}$.
 To accomplish this, we utilize a scheme similar to the one presented in Problem \ref{chp2-sec2-prob4},
 taking into account the presence of a reconstruction function $\tilde{q}(x;Q^n)$ as discussed in Section
 \ref{chp2-sec-recon}, and an initial estimation
@@ -955,13 +964,13 @@ we define the following averages of the Piecewise-Parabolic approximation, as de
 Equation \eqref{chp2-sec3-1-eq2} for $Q^{n}$ \citep{colella:1984}:
 \begin{equation}
 	\label{chp-sec-flux:fL_1}
-	F_{L,i+\frac{1}{2}}(y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}-y}^{x_{i+\frac{1}{2}}}
+	F_{L,i+\frac{1}{2}}(Q^n,y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}-y}^{x_{i+\frac{1}{2}}}
 	\tilde{q}(x;Q^n)\,dx,
 \end{equation}
 and
 \begin{equation}
 	\label{chp-sec-flux:fR_1}
-	F_{R,i+\frac{1}{2}}(y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}}^{x_{i+\frac{1}{2}+y}}
+	F_{R,i+\frac{1}{2}}(Q^n,y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}}^{x_{i+\frac{1}{2}+y}}
 	\tilde{q}(x;Q^n)\,dx.
 \end{equation}
 If $y \leq \Delta x$, then both of the above integral domains
@@ -970,7 +979,7 @@ it follows from a straightforward computation using
 Equation \eqref{chp2-sec-recon-ppm-eq1} that:
 \begin{equation}
 	\label{chp-sec-flux:fL_2}
-	F_{L,i+\frac{1}{2}}(y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}-y}^{x_{i+\frac{1}{2}}}
+	F_{L,i+\frac{1}{2}}(Q^n,y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}-y}^{x_{i+\frac{1}{2}}}
 	q_{i}(x;Q^n)\,dx = 
 	q_{R,i} +\frac{(q_{6,i} - \Delta q_i)}{2\Delta x}y
 	- \frac{q_{6,i}}{3\Delta x^2}y^2,
@@ -978,7 +987,7 @@ Equation \eqref{chp2-sec-recon-ppm-eq1} that:
 and
 \begin{equation}
 	\label{chp-sec-flux:fR_2}
-	F_{R,i+\frac{1}{2}}(y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}}^{x_{i+\frac{1}{2}}+y}
+	F_{R,i+\frac{1}{2}}(Q^n,y) = \frac{1}{y} \int_{x_{i+\frac{1}{2}}}^{x_{i+\frac{1}{2}}+y}
 	q_{i+1}(x;Q^n)\,dx = 
 	q_{L,i+1} +\frac{(q_{6,i+1} + \Delta q_{i+1})}{2\Delta x}y
 	- \frac{q_{6,i+1}}{3\Delta x^2}y^2.
@@ -989,16 +998,25 @@ The numerical flux function for PPM is then defined by:
     F_{i+\frac{1}{2}}^n(Q^n,\tilde{u}_{i+\frac{1}{2}}^n)  =  \frac{1}{\Delta t}
     	\begin{cases}
     	\Delta x\sum_{l=0}^{k-1} Q_{i-l} +  
-		\Delta x {\alpha}_{i+\frac{1}{2}}^nF_{L,i+\frac{1}{2}}( {\alpha}_{i+\frac{1}{2}}^n\Delta x) & \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
+		\Delta x {\alpha}_{i+\frac{1}{2}}^nF_{L,i+\frac{1}{2}}(Q^n, {\alpha}_{i+\frac{1}{2}}^n\Delta x) & \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
     	\Delta x\sum_{l=0}^{k-1} Q_{i-l} +  
-		\Delta x{\alpha}_{i+\frac{1}{2}}^nF_{R,i+\frac{1}{2}}(-{\alpha}_{i+\frac{1}{2}}^n\Delta x) & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
+		\Delta x{\alpha}_{i+\frac{1}{2}}^nF_{R,i+\frac{1}{2}}(Q^n,-{\alpha}_{i+\frac{1}{2}}^n\Delta x) & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
     	\end{cases}
 \end{equation}
 where $\tilde{u}_{i+\frac{1}{2}}^n$ is the velocity used in the departure point estimation.
+In particular, if the CFL number is less than one, then:
+\begin{equation}
+	\label{chp-sec-flux:numerical-flux3}
+    F_{i+\frac{1}{2}}^n(Q^n,\tilde{u}_{i+\frac{1}{2}}^n)  =  
+    	\begin{cases}
+		\tilde{u}_{i+\frac{1}{2}}^nF_{L,i+\frac{1}{2}}(Q^n, \tilde{u}_{i+\frac{1}{2}}^n\Delta t) & \text{if } \tilde{u}_{i+\frac{1}{2}}^n \geq 0,\\
+	    \tilde{u}_{i+\frac{1}{2}}^nF_{R,i+\frac{1}{2}}(Q^n,-\tilde{u}_{i+\frac{1}{2}}^n\Delta t) & \text{if } \tilde{u}_{i+\frac{1}{2}}^n<0,
+    	\end{cases}
+\end{equation}
 If the monotonic scheme from \citet{lin:2004} is employed, then $F_{i+\frac{1}{2}}$ uses the stencil
-$\mathcal{S}_{i+\frac{1}{2}} = \{i-3,i-2,i-1,i,i+1,i+2,i+3\}$.
+$\mathcal{S}_{i+\frac{1}{2}} = \{i-3,i-2,i-1,i,i+1,i+2,i+3\}$ and we need $\nu=4$ layers of ghost cells
 Otherwise the stencil used by $F_{i+\frac{1}{2}}$ is given by 
-$\mathcal{S}_{i+\frac{1}{2}} = \{i-2,i-1,i,i+1,i+2\}$ for all the other schemes that we presented.
+$\mathcal{S}_{i+\frac{1}{2}} = \{i-2,i-1,i,i+1,i+2\}$ for all the other schemes that we presented and $\nu=3$.
 The accuracy of this flux formulation is described in Section \ref{chp2-sub-flux}.
 
 \section{Numerical experiments}
@@ -1042,23 +1060,23 @@ presented here will advect an initial profile for one time period.
 The departure schemes RK1 and RK2 compute the departure point exactly in this case, so we will only use the RK1 scheme.
 \begin{figure}[!htb]
   \centering
-  \begin{subfigure}{0.49\textwidth}
+  \begin{subfigure}{0.45\textwidth}
     \centering
 			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t79_N64_PPM-0_dpRK1}
 			\caption{PPM-0.\label{chp2-sec-exp-adv1-a}}
   \end{subfigure}
-  \begin{subfigure}{0.49\textwidth}
+  \begin{subfigure}{0.45\textwidth}
     \centering
 			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t79_N64_PPM-PL07_dpRK1}
 			\caption{PPM-PL07.\label{chp2-sec-exp-adv1-b}}
   \end{subfigure}
 
-  \begin{subfigure}{0.49\textwidth}
+  \begin{subfigure}{0.45\textwidth}
     \centering
 		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t79_N64_PPM-CW84_dpRK1}
     \caption{PPM-CW84.\label{chp2-sec-exp-adv1-c}}
   \end{subfigure}
-  \begin{subfigure}{0.49\textwidth}
+  \begin{subfigure}{0.45\textwidth}
     \centering
 			\includegraphics[width=1\linewidth]{1d_adv_tc2_ic4_vf1_t79_N64_PPM-L04_dpRK1}
       \caption{PPM-L04.\label{chp2-sec-exp-adv1-d}}
@@ -1161,12 +1179,12 @@ Furthermore, regardless of the departure point scheme, the PPM-PL07 scheme exhib
 Among the monotonic schemes, the PPM-L04 has a slightly smaller error compared to PPM-CW84.
 \begin{figure}[!htb]
 	\centering
-	\begin{subfigure}{0.49\textwidth}
+	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK1_normlinf_parabola_errors}
 		\caption{RK1.\label{chp2-sec-exp-adv2-error-rk1}}
 	\end{subfigure}
-	\begin{subfigure}{0.49\textwidth}
+	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK2_normlinf_parabola_errors}
 		\caption{RK2.\label{chp2-sec-exp-adv2-rk3}}
@@ -1179,20 +1197,17 @@ Among the monotonic schemes, the PPM-L04 has a slightly smaller error compared t
 
 \begin{figure}[!htb]
 	\centering
-	\begin{subfigure}{0.49\textwidth}
+	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK1_normlinf_convergence_rate}
 		\caption{RK1.\label{chp2-sec-exp-adv2-cr-rk1}}
 	\end{subfigure}
-	\begin{subfigure}{0.49\textwidth}
+	\begin{subfigure}{0.45\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{1d_adv_tc2_ic2_vf2_dpRK2_normlinf_convergence_rate}
 		\caption{RK2.\label{chp2-sec-exp-adv2-cf-rk2}}
 	\end{subfigure}
-	\caption{Convergence rate for different PPM schemes using the RK1 (left) and RK2 (right)
-		departure point scheme for the initial condition given by Equation
-		\eqref{chp2-ic2} and the variable 
-		velocity given by Equation \eqref{chp2-vel2}.\label{chp2-sec-exp-adv2-3}}
+	\caption{As in Figure \ref{chp2-sec-exp-adv2-2} but considering the convergence rate. \label{chp2-sec-exp-adv2-3}}
 \end{figure}
 
 \section{Concluding remarks}
