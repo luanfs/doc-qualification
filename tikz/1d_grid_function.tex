@@ -54,8 +54,7 @@
 				\pughost{\xc,0}{5}{$u_{\ii+\frac{1}{2}}^n = u_{\iii+\frac{1}{2}}^n$};
 
 				\FPeval{\xc}{clip(\xmin-(\nghost-\i+1)*\dx)}
-				\FPeval{\ii}{clip(\i-\nghost)}
-				\FPeval{\iii}{clip(\nx+\ii-1)}
+				\FPeval{\ii}{clip(\i-\nghost-1)}
 				\pughost{\xc,0}{5}{$u_{\ii+\frac{1}{2}}^n = u_{\iii+\frac{1}{2}}^n$};
 			}
 		\end{tikzpicture}
