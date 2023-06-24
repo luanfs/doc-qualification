@@ -160,7 +160,7 @@ Similarly, we define a $\Delta x$-grid wind as periodic if it meets the followin
     u_{i-\frac{1}{2}} &= u_{N+i+\frac{1}{2}} , \quad i=-\nu, \ldots, -1,\\
     u_{i+\frac{1}{2}} &= u_{i+\frac{1}{2}-N} , \quad i=N+1, \ldots, N+\nu.
 \end{align*}
-We use the notation $\mathbb{R}^{N}_{\nu,P}$ and $\mathbb{R}^{N+1}_{\nu,P}$ to
+We use the notation $\mathbb{P}^{N}_{\nu}$ and $\mathbb{P}^{N+1}_{\nu}$ to
 represent the spaces of periodic $\Delta x$-grid functions and winds, respectively.
 \begin{figure}[!htb] 
 \centering 
@@ -170,7 +170,7 @@ and a $\Delta x$-grid wind $u$ (blue squares) and its ghost cell
 values (in gray) assuming periodicity.\label{chp2-sec1-grid1d-function}}
 \end{figure}
 
-Given $Q \in \mathbb{R}^{N}_{\nu,P}$, we define the $p$-norm as
+Given $Q \in \mathbb{P}^{N}_{\nu}$, we define the $p$-norm as
 \begin{equation}
 	\label{chp2-sec-not1}
 	\|Q\|_{p,\Delta x}=
@@ -502,8 +502,8 @@ Finally, we define the 1D FV-SL scheme problem as follows in Problem \ref{chp2-s
 		\quad \forall i = 1, \ldots, N,
 		\quad \forall n = 0, \ldots, N_T-1,
 	\end{equation}
-	where ${Q}^{n} \in \mathbb{R}^{N}_{\nu,P}$ is intended to be an approximation
-	of ${Q}(t^{n})\in \mathbb{R}^{N}_{\nu,P}$ in some sense. We define
+	where ${Q}^{n} \in \mathbb{P}^{N}_{\nu}$ is intended to be an approximation
+	of ${Q}(t^{n})\in \mathbb{P}^{N}_{\nu}$ in some sense. We define
 	${Q}_{i}^{0} = {Q}_i(0)$ or ${Q}_{i}^{0} = {q}^{0}_{i}$.
 	The terms ${F}_{i\pm\frac{1}{2}}^{n}$ are known as numerical flux and are given by
 	\begin{equation}
@@ -680,7 +680,7 @@ splitting method developed by \citet{lin:1996}.
 Let's consider a function ${q}$ defined in $\Omega=[a,b]$ and a $\Delta x$-grid covering $\Omega$. 
 We assume that we are given the average values ${Q}_i = \frac{1}{\Delta x} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} {q}(x) \,dx$ 
 for each control volume $X_i$, where $i = 1, \ldots, N$. 
-In this context, it is convenient to define the $\Delta x$-grid function $Q\in \mathbb{R}^{N}_{\nu,P}$ with the entries given by $Q_i$.
+In this context, it is convenient to define the $\Delta x$-grid function $Q\in \mathbb{P}^{N}_{\nu}$ with the entries given by $Q_i$.
 To facilitate the discussion, we introduce the indicator function $\chi_{i}(x)$ for each control volume $X_i$, defined as:
 \begin{equation*}
 	\label{chp2-sec3-1-eq1}
@@ -925,7 +925,7 @@ This scheme is referred to as \textbf{PPM-L04}.
 \section{Flux}
 \label{chp2-sec-flux}
 Let's consider the framework outlined in Problem \ref{chp2-sec2-prob4}.
-Assuming that $Q^{n} \in \mathbb{R}^{N}_{\nu,P}$ is known, our objective is to compute the values $Q^{n+1}$.
+Assuming that $Q^{n} \in \mathbb{P}^{N}_{\nu}$ is known, our objective is to compute the values $Q^{n+1}$.
 To accomplish this, we utilize a scheme similar to the one presented in Problem \ref{chp2-sec2-prob4},
 taking into account the presence of a reconstruction function $\tilde{q}(x;Q^n)$ as discussed in Section
 \ref{chp2-sec-recon}, and an initial estimation

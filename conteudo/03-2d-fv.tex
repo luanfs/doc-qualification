@@ -1,40 +1,31 @@
 \chapter{Two-dimensional finite-volume methods}
 \label{chp-2d-fv}
-In Chapter \ref{chp-1d-fv}, we tackled the problem of solving the one-dimensional linear
-advection equation using the finite-volume method based on PPM.
-In this Chapter, we are interested in solving the two-dimensional linear
-advection equation using the finite-volume method. This step plays a key role in this work,
-since as we shall see in Chapter  \ref{chp-cs-fv}, the solution of the linear
-advection equation on the cubed-sphere boils down to solving one two-dimensional linear
-advection equations at each cube face with interpolation between the adjacent panels.
+In Chapter \ref{chp-1d-fv}, we addressed the problem of solving the one-dimensional
+linear advection equation using the finite-volume method based on PPM. In this chapter, our focus shifts to solving the two-dimensional 
+linear advection equation using the finite-volume method. This step is crucial in our work since, as we will explore in Chapter 
+\ref{chp-cs-fv}, solving the linear advection equation on the cubed-sphere relies on solving two-dimensional linear advection equations 
+at each cube face, with interpolation between adjacent panels.
 
-A natural way to derive a finite-volume method for the two-dimensional linear
-advection equation would be to extend the PPM for two dimensions. Indeed, a piecewise bi-parabolic extension of PPM
-was proposed by \citet{rancic:1992} using a semi-lagrangian temporal discretization. 
-However, the major problem of this method is its quite expensive computational cost.
-A popular alternative, and usually computationally cheaper, is to use dimension-splitting methods.
-These schemes replace two-dimensional problem with a sequence of one-dimensional problems.
-For instance, we can solve the two-dimensional linear advection equation by solving a sequence
-one-dimensional linear advection equations using the PPM  from Chapter \ref{chp-1d-fv}.
-Further, we could, in principle, use any numerical method that solves the one-dimensional linear advection. 
-A comparison between two-dimension and dimension splitting semi-lagrangian schemes on the plane has been investigated by \citet{chen:2017}
-using the PPM as the one-dimensional solver and distorted two-dimensional grids.
-Their major conclusion is that the dimension splitting schemes are more sensitive to grid distortions
-but it is computationally cheaper and more accurate than their two-dimensional methods, 
-specially considering large CFL numbers.
+A natural approach to develop a finite-volume method for the two-dimensional linear advection equation would involve extending PPM to 
+two dimensions. Indeed, \citet{rancic:1992} proposed a piecewise bi-parabolic extension of PPM using a semi-Lagrangian temporal 
+discretization. However, this method suffers from a significant drawback—its computationally expensive nature. As a popular alternative, 
+dimension-splitting methods are often used, which replace the two-dimensional problem with a sequence of one-dimensional problems. For 
+example, we can solve the two-dimensional linear advection equation by solving a series of one-dimensional linear advection equations 
+using the PPM from Chapter \ref{chp-1d-fv}. Moreover, in principle, we can employ any numerical method that solves the one-dimensional 
+linear advection equation.
 
-The main aim of this chapter is to give a detailed description of the dimension
-splitting method proposed by \citet{lin:1996}, which is currently employed in the FV3 dynamical core,
-applied to the two-dimensional linear advection equation using the one-dimensional
-finite-volume schemes from Chapter \ref{chp-1d-fv}.
-Similarly to Chapter \ref{chp-1d-fv}, we start this Chapter 
-start with a review of the two-dimensional advection equation in
-the integral form in Section \ref{sec-adv2d}, 
-and in Section \ref{sec:fv-2d} we set the framework of
-general two-dimensional finite-volumes schemes.
-Section \ref{sec-dsplit} presents the dimension splitting method and 
-numerical experiments are shown in Section \ref{sec-ds-exp}.
+A comparison between two-dimensional and dimension-splitting semi-Lagrangian schemes on a plane was investigated by \citet{chen:2017}, 
+utilizing the PPM as the one-dimensional solver and distorted two-dimensional grids. Their main conclusion was that dimension-splitting 
+schemes are more sensitive to grid distortions, but they are computationally cheaper and more accurate than two-dimensional methods, 
+particularly when dealing with large CFL numbers.
 
+The primary objective of this chapter is to provide a comprehensive explanation of the dimension splitting method proposed by 
+\citet{lin:1996}. This method is currently utilized in the FV3 dynamical core and is applied to the two-dimensional linear advection 
+equation using the one-dimensional finite-volume schemes described in Chapter \ref{chp-1d-fv}.
+Similar to Chapter \ref{chp-1d-fv}, we start this chapter with a review of the integral form of the two-dimensional advection 
+equation in Section \ref{sec-adv2d}. In Section \ref{sec:fv-2d}, we establish the framework for general two-dimensional finite-volume 
+schemes. The dimension splitting method is presented in Section \ref{sec-dsplit}, and we showcase numerical experiments in Section 
+\ref{sec-ds-exp}.
 \section{Two-dimensional advection equation in integral form}
 \label{sec-adv2d}
 
@@ -45,9 +36,9 @@ Based on definitions \ref{chp2-def-dxgrid} and \ref{chp2-def-dxtimegrid},
 we introduce the concepts of a $(\Delta x,\Delta y)$-grid and $(\Delta x, \Delta y, \Delta t, \lambda)$ discretization.
 Throughout this chapter, we will use the notation $\Omega=[a,b]\times[c,d]$
 and $\nu$ to represent a non-negative integer indicating the number of ghost cell layers in each boundary.
-We also use the notations $\mathbb{R}^{N\times M}_{\nu}:=\mathbb{R}^{N\times M+2\nu}$ and
-$\mathbb{R}^{(N+1)\times M}_{\nu}:=\mathbb{R}^{(N+1)\times M+2\nu}$,
-$\mathbb{R}^{N\times (M+1)}_{\nu}:=\mathbb{R}^{N\times (M+1)+2\nu}$.
+We also use the notations $\mathbb{R}^{N\times M}_{\nu}:=\mathbb{R}^{(N+2\nu)\times (M+2\nu)}$ and
+$\mathbb{R}^{(N+1)\times M}_{\nu}:=\mathbb{R}^{(N+1+2\nu)\times (M+2\nu)}$,
+$\mathbb{R}^{N\times (M+1)}_{\nu}:=\mathbb{R}^{(N+2\nu)\times (M+1+2\nu)}$.
 \begin{definition}[$(\Delta x,\Delta y)$-grid]
 	\label{chp2-def-2dgrid}
 	Given $\Omega$ and positive real numbers $\Delta x$ and $\Delta y$ such that $\Delta x = (b-a)/N$, 
@@ -121,7 +112,7 @@ We define a $(\Delta x, \Delta y)$-grid function $Q$ as periodic if it satisfies
     Q_{i,j} &= Q_{i,M+j}, \quad j=-\nu+1, \ldots, 0,  \quad &i = -\nu+1, \ldots, N+\nu,\\
     Q_{i,j} &= Q_{i,j-M}, \quad j=M+1, \ldots, M+\nu, \quad &i = -\nu+1, \ldots, N+\nu.
 \end{align*}
-We use the notation $\mathbb{R}^{N \times M}_{\nu,P}$ represent the spaces of periodic $(\Delta x, \Delta y)$-grid functions.
+We use the notation $\mathbb{P}^{N \times M}_{\nu}$ represent the spaces of periodic $(\Delta x, \Delta y)$-grid functions.
 Similarly, we define a $(\Delta x, \Delta y)$-grid wind $(u,v)$ as periodic if it meets the following requirements:
 \begin{align*}
     u_{i-\frac{1}{2},j} &= u_{N+i+\frac{1}{2},j} , \quad i=-\nu, \ldots, -1,   \quad &j = -\nu+1, \ldots, M+\nu,\\
@@ -343,8 +334,8 @@ Finally, we define the 2D-FV scheme problem as follows in Problem \ref{chp3-sec2
     $ \delta_j G_{ij}^n =
     {G}_{i,j+\frac{1}{2}}^{n} 
     - {G}_{i,j-\frac{1}{2}}^{n}$ 
-    and ${Q}^{n}\in \mathbb{R}^{N\times M}_{\nu,P}$ is intended to be an approximation
-	of ${Q}(t_{n})\in \mathbb{R}^{N\times M}_{\nu,P}$ in some sense. We define ${Q}_{ij}^{0} = {Q}_{ij}(0)$ or
+    and ${Q}^{n}\in \mathbb{P}^{N\times M}_{\nu}$ is intended to be an approximation
+	of ${Q}(t_{n})\in \mathbb{P}^{N\times M}_{\nu}$ in some sense. We define ${Q}_{ij}^{0} = {Q}_{ij}(0)$ or
 	${Q}_{ij}^{0} = {q}^0_{i,j}$.
     
     The term ${F}_{i+\frac{1}{2}, j}^{n}$ is known as numerical flux in the 
@@ -365,7 +356,7 @@ Finally, we define the 2D-FV scheme problem as follows in Problem \ref{chp3-sec2
 \begin{remark}
 For Problem \ref{chp3-sec2-prob3}, we define the CFL number in the $x$ and $y$ direction
 by $\max \{{|u_{i+\frac{1}{2},j}^n}|\}$ and $\max \{ {|v_{i,j+\frac{1}{2}}^n}|\}$, respectively.
-The CFL number is maximum between these numbers and we say that the CFL conditions is
+The CFL number is maximum between these numbers and we say that the CFL condition is
 satisfied if the CFL number is less than one. 
 \end{remark}
 
@@ -405,7 +396,7 @@ In order to check the consistency of 2D-FV, it is useful to use the notion of di
 \begin{definition}[Discrete divergence]
 	\label{chp3-def-div}
 	For Problem \ref{chp3-sec2-prob3}, we define the discrete divergence as a 
-    $(\Delta x, \Delta y)$-grid function $\mathbb{D}^n(Q^n,u^n,v^n) \in \mathbb{R}^{N\times M}_{\nu,P}$
+    $(\Delta x, \Delta y)$-grid function $\mathbb{D}^n(Q^n,u^n,v^n) \in \mathbb{P}^{N\times M}_{\nu}$
 	given by:
 	\begin{equation}
 		\label{chp3-def-div-eq}
@@ -424,7 +415,7 @@ Notice that if we replace the exact solution $Q(t^n)$ in $Q^n$ in Equation \eqre
     \label{chp3-div-tau}
     {Q}(t^{n+1}) =  {Q}(t^{n}) - \Delta t \mathbb{D}^n(Q(t^n),u^n,v^n) - \Delta t \tau^n,
 \end{align}
-where $\tau^n \in \mathbb{R}^{N\times M}_{\nu,P}$ is the local truncation error (LTE).
+where $\tau^n \in \mathbb{P}^{N\times M}_{\nu}$ is the local truncation error (LTE).
 Rearranging the terms of Equation \eqref{chp3-div-tau}, we obtain:
 \begin{align}
     \label{chp3-div-tau2}
@@ -451,7 +442,7 @@ If $q$ satisfies Equation \eqref{sec-adv2d:eq1}, it can be observed that consist
 \begin{equation*}
 	{\max_{1\leq n\leq N_T^{(k)}}}{\|\delta^n - \mathbb{D}^n(Q^n,u^n,v^n)\|_{p,\Delta x^{(k)} \times \Delta y^{(k)}}} = O(\Delta x^d),
 \end{equation*}
-where we are defining the grid function $\delta^n \in \mathbb{R}^{N\times M}_{\nu,P}$ of the exact divergence at the cell centers, namely
+where we are defining the grid function $\delta^n \in \mathbb{P}^{N\times M}_{\nu}$ of the exact divergence at the cell centers, namely
 \begin{equation}
 \delta^n_{ij} = \nabla \cdot (\boldsymbol{u}q)(x_i,y_j,t^n).
 \end{equation}
@@ -546,9 +537,9 @@ ${G}^n_{i,j+\frac{1}{2}}(Q^n_{i,\times},\tilde{v}^n_{i,j+\frac{1}{2}})$, respect
 where $\tilde{u}^n_{i+\frac{1}{2},j}$ is the time-averaged used in the departure point estimation in the $x$ direction
 and $\tilde{v}^n_{i,j+\frac{1}{2}})$ is the time-averaged used in the departure point estimation in the $y$ direction.
 In this work, we assume that the fluxes ${F}_{i+\frac{1}{2},j}^n(Q^n_{\times,j},\tilde{u}^n_{i+\frac{1}{2},j})$ and
-${G}^n_{i,j+\frac{1}{2}}(Q^n_{i,\times} ,\tilde{v}^n_{i,j+\frac{1}{2}})$ are compuute using the PPM flux
+${G}^n_{i,j+\frac{1}{2}}(Q^n_{i,\times} ,\tilde{v}^n_{i,j+\frac{1}{2}})$ are computed using the PPM flux
 assuming that the CFL number is less than one (see Equation \eqref{chp-sec-flux:numerical-flux3}).
-We introduce the auxiliary grid functions $\mathbf{F}, \mathbf{G} \in \mathbb{R}^{N\times M}_{\nu}$ given by:
+We introduce the auxiliary grid functions $\mathbf{F}$ and $\mathbf{G}$, both belonging to $\mathbb{R}^{N\times M}_{\nu}$, given by:
 \begin{align*}
 	\mathbf{F}_{ij}({Q^n,\tilde{u}^n}) = -\lambda \big({F}_{i+\frac{1}{2},j}^n(Q^n_{\times,j},\tilde{u}^n_{i+\frac{1}{2},j})-
                                                   {F}_{i-\frac{1}{2},j}^n(Q^n_{\times,j},\tilde{u}^n_{i-\frac{1}{2},j}) \big),
@@ -588,7 +579,7 @@ assuming that the numerical flux functions are linear in the input $Q$, we may r
 of the average Lie-Trotter splitting as \citep{lin:1996}:
 \begin{align}
 	\label{chp3-avlt}
-	Q^{n+1}_{ij} =   
+	Q^{n+1} =  Q^n+
 	\mathbf{F}\bigg(Q^n + \frac{1}{2}\mathbf{G}(Q^n, \tilde{v}^n), \tilde{u}^n \bigg) +  
 	\mathbf{G}\bigg(Q^n + \frac{1}{2}\mathbf{F}(Q^n, \tilde{u}^n), \tilde{v}^n \bigg).
 \end{align}
