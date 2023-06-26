@@ -47,129 +47,111 @@ This chapter aims to review and investigated the geometrical properties
 of the cubed-sphere. Besides that, we also aim to investigate the process
 of interpolating/extrapolating near the cube edges.
 We start with a basic review of the cubed-sphere mappings in Section \ref{cs-mappings},
-while Section \ref{cs-halodata} investigates the interpolation/extrapolation near the cube edges
-with some numerical experiments.
+while Section \ref{cs-halodata} investigates the interpolation/extrapolation near the cube
+edges with some numerical experiments.
 
 \section{Cubed-sphere mappings}
 \label{cs-mappings}
-
 \subsection{Equidistant cubed-sphere}
 \label{equidistant-cs}
-
-We consider a sphere radius $R>0$ and
-$a = \frac{R}{\sqrt{3}}$ representing the half-length of 
+We start this chapter by introducing the equidistant cubed-sphere proposed by 
+\citet{sadourny:1972}. Given $R>0$, we denote the sphere of radius $R$ 
+centered at the origin of  $\mathbb{R}^3$ as:
+\begin{equation*}
+	\mathbb{S}^2_R = \{ P = (X,Y,Z) \in \mathbb{R}^3: X^2 + Y^2 + Z^2 = R^2\}.
+\end{equation*}
+We consider a parameter $a = \frac{R}{\sqrt{3}}$ representing the half-length of 
 the cube, and the family of maps
 $\Psi_{p}: [-a,a] \times [-a,a] \to \mathbb{S}^2_R$, $p=1, \ldots, 6$,
 where:
-\begin{equation}
-	\label{chp3-eqdistant-psi1}
+\begin{equation*}
 	\Psi_{1}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(a, x, y), 
-\end{equation}
-
-\begin{equation}
-	\label{chp3-eqdistant-psi2}
+\end{equation*}
+\begin{equation*}
 	\Psi_{2}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(-x, a, y), 
-\end{equation}
-
-\begin{equation}
-	\label{chp3-eqdistant-psi3}
+\end{equation*}
+\begin{equation*}
 	\Psi_{3}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(-a, -x, y), 
-\end{equation}
-
-\begin{equation}
-	\label{chp3-eqdistant-psi4}
+\end{equation*}
+\begin{equation*}
 	\Psi_{4}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(x, -a, y), 
-\end{equation}
-
-\begin{equation}
-	\label{chp3-eqdistant-psi5}
+\end{equation*}
+\begin{equation*}
 	\Psi_{5}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(-y, x, a), 
-\end{equation}
-
-\begin{equation}
-	\label{chp3-eqdistant-psi6}
+\end{equation*}
+\begin{equation*}
 	\Psi_{6}(x,y) = \frac{R}{\sqrt{a^2 + x^2 + y^2}}(y, x, -a).
-\end{equation}
-The family of maps $\{\Psi_{p}, p = 1, \ldots, 6\}$ allow us to cover the sphere.
-Here $p$ denotes a panel, and they are defined as Figure \ref{chp4-panels} shows.
-\begin{figure}[!htb]
-	\centering
-		\includegraphics[width=0.8\linewidth]{chp4_panels}
-	\caption{Cubed-sphere panels definition. Figure taken from \citet{jung:2019}.\label{chp4-panels}}
-\end{figure}
+\end{equation*}
+The set of 6 maps $\{\Psi_{p}, p = 1, \ldots, 6\}$ allow us to cover the sphere.
+Here $p$ denotes a panel, and they are defined and orientated as Figure \ref{chp4-panels}
+shows. Then, we can represent a point on the sphere using the cubed-sphere coordinates
+$(x,y,p)$.
+
 The derivative of the maps $\Psi_p$ are given by:
-\begin{equation}
-	\label{chp3-eqdistant-dpsi1}
+\begin{equation*}
 	D\Psi_{1}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}
 	\begin{bmatrix}
 		-ax & -ay \\
 	 	 a^2+y^2  & -xy \\
 		 -xy  & a^2+x^2
 	\end{bmatrix},
-\end{equation}
-\begin{equation}
-	\label{chp3-eqdistant-dpsi2}
+\end{equation*}
+\begin{equation*}
 	D\Psi_{2}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}
 	\begin{bmatrix}
 		-(a^2+y^2) & xy \\
 		 -ax &  -ay \\
 		 -xy &  a^2+x^2
 	\end{bmatrix},
-\end{equation}
-\begin{equation}
-	\label{chp3-eqdistant-dpsi3}
+\end{equation*}
+\begin{equation*}
 	D\Psi_{3}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}
 	\begin{bmatrix}
 		 ax &  ay \\
 		-(a^2+y^2) & xy \\
 		 -xy &  a^2+x^2
 	\end{bmatrix},
-\end{equation}
-\begin{equation}
-	\label{chp3-eqdistant-dpsi4}
+\end{equation*}
+\begin{equation*}
 	D\Psi_{4}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}	
 	\begin{bmatrix}
 		 a^2+y^2 &  -xy \\
 		 ax & ay \\
 		 -xy &  a^2+x^2
 	\end{bmatrix},
-\end{equation}
-\begin{equation}
-	\label{chp3-eqdistant-dpsi5}
+\end{equation*}
+\begin{equation*}
 	D\Psi_{5}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}	
 	\begin{bmatrix}
 		 xy  & -(a^2+x^2) \\
 	 	 a^2+y^2  &  -xy \\
 		-ax & -ay
 	\end{bmatrix},
-\end{equation}
-\begin{equation}
-	\label{chp3-eqdistant-dpsi6}
+\end{equation*}
+\begin{equation*}
 	D\Psi_{6}(x,y) = \frac{R}{{(a^2 + x^2 + y^2)}^{3/2}}
 	\begin{bmatrix}
 		 -xy  &  a^2+x^2 \\
 		 a^2+y^2  &  -xy \\
 		 ax &  ay
 	\end{bmatrix}.
-\end{equation}
+\end{equation*}
 With the aid of the derivative, we may define a basis of tangent vectors 
-$\{ \boldsymbol{g}_{1}, \boldsymbol{g}_{2} \}$ on each point on the sphere by:
-\begin{equation}
-	\boldsymbol{g}_{1}(x,y;p) = D\Psi_{p}(x,y)
+$\{ \boldsymbol{g}_{x}, \boldsymbol{g}_{y} \}$ on each point on the sphere by:
+\begin{equation*}
+	\boldsymbol{g}_{x}(x,y,p) = D\Psi_{p}(x,y)
 	\begin{bmatrix}
 		 1 \\
 		 0
 	\end{bmatrix},
-	\boldsymbol{g}_{2}(x,y;p) = D\Psi_{p}(x,y)
+	\boldsymbol{g}_{y}(x,y,p) = D\Psi_{p}(x,y)
 	\begin{bmatrix}
 		 0 \\
 		 1
 	\end{bmatrix}.
-\end{equation}
-In other words, we have $\{\boldsymbol{g}_{1}(x,y;p),\boldsymbol{g}_{2}(x,y;p)\} \subset T_{\Psi_p(x,y)}
-\mathbb{S}_{R}^2$, $\forall (x,y) \in [-a,a]\times[-a,a]$ (see Appendix \ref{anexo-sph} for the definition of tangent space).
+\end{equation*}
 Notice that
-\begin{equation}
+\begin{equation*}
 	\label{chp3-eqdistant-psitensor}
 	[D\Psi_{p}(x,y)]^TD\Psi_{p}(x,y)
 	= \frac{R^2}{(a^2 + x^2 + y^2)^2}
@@ -177,73 +159,77 @@ Notice that
 		 a^2 + x^2 &  -xy \\
 		 -xy & a^2 + y^2
 	\end{bmatrix},
-\end{equation}
+\end{equation*}
 does not depend on $p$.
 Hence, it makes sense to define the matrix 
 $G_{\Psi}(x,y) = [D\Psi_{p}(x,y)]^TD\Psi_{p}(x,y)$ 
 which is known as metric tensor.
 It is easy to see that:
-\begin{equation}
+\begin{equation*}
 	\label{chp3-eqdistant-psi-metric-tensor}
 	G_{\Psi}(x,y) = 
 	\begin{bmatrix}
-		\langle \boldsymbol{g}_{1}(x,y;p), \boldsymbol{g}_{1}(x,y;p) \rangle & 
-		\langle \boldsymbol{g}_{1}(x,y;p), \boldsymbol{g}_{2}(x,y;p) \rangle \\
-		\langle \boldsymbol{g}_{1}(x,y;p), \boldsymbol{g}_{2}(x,y;p) \rangle  &
-		\langle \boldsymbol{g}_{2}(x,y;p), \boldsymbol{g}_{2}(x,y;p) \rangle 
+		\langle \boldsymbol{g}_{x}(x,y,p), \boldsymbol{g}_{x}(x,y,p) \rangle & 
+		\langle \boldsymbol{g}_{x}(x,y,p), \boldsymbol{g}_{y}(x,y,p) \rangle \\
+		\langle \boldsymbol{g}_{x}(x,y,p), \boldsymbol{g}_{y}(x,y,p) \rangle  &
+		\langle \boldsymbol{g}_{y}(x,y,p), \boldsymbol{g}_{y}(x,y,p) \rangle 
 	\end{bmatrix},
-\end{equation}
+\end{equation*}
+where $\langle \cdot, \cdot \rangle$ denotes 
+the standard inner product of $\mathbb{R}^3$,
 and that $G_{\Psi}(x,y)$ is positive-definite, 
 $\forall (x,y) \in [-a,a]\times[-a,a]$.
 The Jacobian of the metric tensor $G_{\Psi}(x,y)$ is then given by:
-\begin{equation}
+\begin{equation*}
 	\sqrt{|\det{G_{\Psi}(x,y)}|} = \frac{R^2}{(a^2+x^2+y^2)^{3/2}}a.
-\end{equation}
+\end{equation*}
+\begin{figure}[!htb]
+	\centering
+		\includegraphics[width=0.8\linewidth]{chp4_panels}
+	\caption{Cubed-sphere panels definition and orientation.
+    Figure taken from \citet{jung:2019}.\label{chp4-panels}}
+\end{figure}
+
 \subsection{Equiangular cubed-sphere}
 \label{equiangular-cs}
 Another cubed-sphere mapping is the equiangular mapping \citep{ronchi:1996},
-which leads to a more uniform grid. This mapping is a composition of equidistant mapping with
-angular coordinates.
-We consider again $a=\frac{R}{\sqrt{3}}$
-and we define the family of maps
-$\Phi_{p}: [-\frac{\pi}{4},\frac{\pi}{4}] 
-\times [-\frac{\pi}{4},\frac{\pi}{4}] 
-\to \mathbb{S}^2_R$, $p=1, \ldots, 6$,
-given by $\Phi_{p}(x,y) = \Psi_{p}(a\tan{x}, a\tan{y})$.
+which leads to a more uniform grid.
+This mapping is a composition of equidistant mapping with angular coordinates.
+We consider again $a=\frac{R}{\sqrt{3}}$ and we define the family of maps
+$\Phi_{p}: [-\frac{\pi}{4},\frac{\pi}{4}]  \times [-\frac{\pi}{4},\frac{\pi}{4}] 
+\to \mathbb{S}^2_R$, $p=1, \ldots, 6$, given by $\Phi_{p}(x,y) = \Psi_{p}(a\tan{x},
+a\tan{y})$.
 The coordinates $(a\tan{x}, a\tan{y})$ are called angular coordinates.
 By the chain rule:
-\begin{equation}
+\begin{equation*}
 	D\Phi_{p}(x,y) = a
 	D\Psi_{p}(a\tan{x}, a\tan{y})
 	\begin{bmatrix}
 		\frac{1}{\cos^2 x} & 0 \\ 
 		0 & \frac{1}{\cos^2 y} 
 	\end{bmatrix},
-\end{equation}
+\end{equation*}
 and therefore we can define the following tangent vectors
 \begin{align}
-	\boldsymbol{r}_{1}(x,y;p) = D\Phi_{p}(x,y)
+    \label{chp4-tgvectors}
+	\boldsymbol{r}_{x}(x,y,p) = D\Phi_{p}(x,y)
 	\begin{bmatrix}
 		 1 \\
 		 0
 	\end{bmatrix}
 	= \frac{a}{\cos^2 x}
-	\boldsymbol{g}_{1}(\tan{x}, \tan{y}; p)
+	\boldsymbol{g}_{x}(\tan{x}, \tan{y}, p)
 	,\\
-	\boldsymbol{r}_{2}(x, y ;p) = D\Phi_{p}(x,y)
+	\boldsymbol{r}_{y}(x, y ,p) = D\Phi_{p}(x,y)
 	\begin{bmatrix}
 		 0 \\
 		 1
 	\end{bmatrix}
 	= \frac{a}{\cos^2 y}
-	\boldsymbol{g}_{2}(\tan{x}, \tan{y}; p),
+	\boldsymbol{g}_{y}(\tan{x}, \tan{y}, p),
 \end{align}
-that is, $\{\boldsymbol{r}_{1}(x,y;p),\boldsymbol{r}_{2,p}(x,y;p)\} \subset T_{\Phi_p(x,y)}
-\mathbb{S}_{R}^2$, $\forall (x,y) \in 
-[-\frac{\pi}{4},\frac{\pi}{4}] 
-\times [-\frac{\pi}{4},\frac{\pi}{4}]$.
 Again, it makes sense to define the matrix 
-\begin{align}
+\begin{align*}
 	G_{\Phi}(x,y) &= [D\Phi_{p}(x,y)]^TD\Phi_{p}(x,y) \\
 	&= a^2
 	[D\Psi_{p}(a\tan{x},a\tan{y})]^T
@@ -252,17 +238,17 @@ Again, it makes sense to define the matrix
 		0 & \frac{1}{\cos^4 y} 
 	\end{bmatrix}
 	D\Psi_{p}(a\tan{x}, a\tan{y}),
-\end{align}
+\end{align*}
 that does not depend on $p$ and is the  metric tensor.
 It is easy to see that:
 \begin{equation}
 	\label{chp3-eqangle-phi-metric-tensor}
 	G_{\Phi}(x,y) = 
 	\begin{bmatrix}
-		\langle \boldsymbol{r}_{1}(x,y;p), \boldsymbol{r}_{1}(x,y;p) \rangle & 
-		\langle \boldsymbol{r}_{1}(x,y;p), \boldsymbol{r}_{2}(x,y;p) \rangle \\
-		\langle \boldsymbol{r}_{1}(x,y;p), \boldsymbol{r}_{2}(x,y;p) \rangle  &
-		\langle \boldsymbol{r}_{2}(x,y;p), \boldsymbol{r}_{2}(x,y;p) \rangle 
+		\langle \boldsymbol{r}_{x}(x,y,p), \boldsymbol{r}_{x}(x,y,p) \rangle & 
+		\langle \boldsymbol{r}_{x}(x,y,p), \boldsymbol{r}_{y}(x,y,p) \rangle \\
+		\langle \boldsymbol{r}_{x}(x,y,p), \boldsymbol{r}_{y}(x,y,p) \rangle  &
+		\langle \boldsymbol{r}_{y}(x,y,p), \boldsymbol{r}_{y}(x,y,p) \rangle 
 	\end{bmatrix},
 \end{equation}
 and that $G_{\Phi}(x,y)$ is positive-definite, 
@@ -278,8 +264,222 @@ The Jacobian of the metric tensor $G_{\Phi}(x,y)$ is then given by:
 		\frac{1}{(1 + \tan^2x + \tan^2y)^{3/2}}.
 	\end{split}
 \end{align}
+
+\section{Tangent vectors on the sphere}
+\label{cs-tgvectors}
+The tangent space at $P \in \mathbb{S}^2_R$ by $T_P \mathbb{S}^2$.
+It is easy to see that:
+\begin{equation*}
+	T_P\mathbb{S}^2_R = \{P_0 \in \mathbb{R}^3: \langle P,P_0\rangle = 0\}.
+\end{equation*}
+We are going to consider three ways to represent an element of $\mathbb{S}_R^2$:
+using $(X,Y,Z)$ coordinates, or using $(\lambda, \phi)$
+latitude-longitude coordinates, or, at last, using the cubed-sphere
+coordinates $(x,y,p)$, where $(x,y)$ are the cube face coordinates and 
+$p \in \{1,2,\cdots, 6\}$ stands for a cube panel.
+
+We say that a vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
+\mathbb{R}^3$ is tangent on  the sphere if
+$\boldsymbol{u}(P) \in T_P\mathbb{S}^2_R$, $\forall P \in \mathbb{S}^2_R$.
+
+\subsection{Conversions between latitude-longitude and contravariant coordinates}
+\label{anexo-sph-ll}
+We consider the latitude-longitude mapping 
+$\Psi_{ll}: [0,2\pi] \times [-\frac{\pi}{2},\frac{\pi}{2}] \to \mathbb{S}^2_R$, given by:
+\begin{align}
+	\label{ll2sph}
+	X(\lambda,\phi) &= R\cos \phi \cos \lambda,\\
+	Y(\lambda,\phi) &= R\cos \phi \sin \lambda,\\
+	Z(\lambda,\phi) &= R\sin \phi.
+\end{align}
+The derivative or Jacobian matrix of the mapping $\Psi_{ll}$ is given by:
+\begin{equation}
+	\label{dpsi}
+	D\Psi_{ll} (\lambda,\phi) = 
+	R \begin{bmatrix}
+		  -\cos \phi \sin \lambda &  -\sin \phi \cos \lambda \\
+		   \cos \phi \cos \lambda & \sin \phi \sin \lambda \\
+		  0  &  \cos \phi
+	\end{bmatrix}.
+\end{equation}
+Using this matrix columns, we can define the tangent vectors:
+\begin{equation}
+	\boldsymbol{r}_{\lambda}(\lambda,\phi) = D\Psi_{ll}(\lambda,\phi)
+	\begin{bmatrix}
+		 1 \\
+		 0
+	\end{bmatrix}, \quad
+	\boldsymbol{r}_{\phi}(\lambda,\phi) = D\Psi_{ll}(\lambda,\phi)
+	\begin{bmatrix}
+		 0 \\
+		 1
+	\end{bmatrix}.
+\end{equation}
+We normalize the vectors $\boldsymbol{r}_\lambda$ and $\boldsymbol{r}_\phi$
+and we obtain unit tangent vectors on the sphere at $\Phi_{ll}(\lambda, \phi)$:
+\begin{equation}
+	\label{latlon_tg_vectors}
+	\boldsymbol{e}_{\lambda}(\lambda,\phi) = 
+	\begin{bmatrix}
+		 -\sin \lambda \\
+		  \cos \lambda \\
+		  0
+	\end{bmatrix}, \quad
+	\boldsymbol{e}_{\phi}(\lambda,\phi) =
+	\begin{bmatrix}
+		 -\sin \phi \cos \lambda \\
+		 -\sin \phi \sin \lambda \\
+			  \cos \phi
+	\end{bmatrix}.
+\end{equation}
+Let us consider a tangent vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
+\mathbb{R}^3$ on the sphere, represented as
+\begin{equation}
+	\label{latlon-wind}
+	\boldsymbol{u}(\lambda, \phi) = 
+    u_{\lambda} (\lambda, \phi) \boldsymbol{e}_{\lambda} (\lambda, \phi) + 
+	v_{\phi} (\lambda, \phi) \boldsymbol{e}_{\phi} (\lambda, \phi). 
+\end{equation}
+Or, we may also represent this vector field using the basis 
+obtained by cubed-sphere coordinates:
+\begin{equation}
+	\label{contravariant-wind}
+	\boldsymbol{u}(x, y, p) = 
+	{u}(x, y, p) \boldsymbol{r}_{x}(x, y, p) + 
+	{v}(x, y, p) \boldsymbol{r}_{y}(x, y, p).
+\end{equation}
+This representation is known as contravariant representation.
+In order to relate the latitude-longitude representation
+with the contravariant representation, we notice that:
+\begin{align}
+	\label{basis-convertion1}
+	\boldsymbol{r}_x(x, y, p) &= 
+	\langle \boldsymbol{r}_{x} , \boldsymbol{e}_{\lambda}\rangle
+	\boldsymbol{e}_{\lambda} (\lambda, \phi)  
+	+ \langle \boldsymbol{r}_{x} , \boldsymbol{e}_{\phi}\rangle
+	\boldsymbol{e}_{\phi} (\lambda, \phi), \\
+	\label{basis-convertion2}
+	\boldsymbol{r}_y(x, y, p) &=  
+	\langle \boldsymbol{r}_{y} , \boldsymbol{e}_{\lambda}\rangle
+	  \boldsymbol{e}_{\lambda} (\lambda, \phi) 
+	+ \langle \boldsymbol{r}_{y} , \boldsymbol{e}_{\phi}\rangle
+	\boldsymbol{e}_{\phi} (\lambda, \phi), 
+\end{align}
+which holds since the vectors $\boldsymbol{e}_{\lambda}(\lambda, \phi)$ and
+$\boldsymbol{e}_{\phi}(\lambda, \phi)$ are orthogonal.
+Replacing Equations \eqref{basis-convertion1} and \eqref{basis-convertion2}
+in Equation \eqref{contravariant-wind}, we obtain the values $(u_\lambda, v_\phi)$
+in terms of the contravariant components $({u},{v})$ 
+as the following matrix equation:
+\begin{equation}
+	\label{ll-to-contravariant}
+	\begin{bmatrix}
+		 u_\lambda (\lambda, \phi) \\
+		 v_\phi (\lambda, \phi) 
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		\langle \boldsymbol{r}_x, \boldsymbol{e}_\lambda \rangle 
+		& \langle \boldsymbol{r}_y, \boldsymbol{e}_\lambda \rangle \\
+		\langle \boldsymbol{r}_x, \boldsymbol{e}_\phi \rangle 
+		& \langle \boldsymbol{r}_y, \boldsymbol{e}_\phi \rangle \\
+	\end{bmatrix}
+	\begin{bmatrix}
+		{u}(x,y,p) \\
+		{v}(x,y,p)
+	\end{bmatrix}.
+\end{equation}
+Conversely, we may express the contravariant components in terms of
+latitude-longitude components by inverting Equation \eqref{ll-to-contravariant}:
+\begin{equation}
+	\label{contravariant-to-ll}
+	\begin{bmatrix}
+		{u}(x,y,p) \\
+		{v}(x,y,p)
+	\end{bmatrix}
+	=
+	\frac{1}{\langle \boldsymbol{r}_x, \boldsymbol{e}_\lambda\rangle
+	\langle \boldsymbol{r}_y, \boldsymbol{e}_\phi \rangle
+	-\langle \boldsymbol{r}_y, \boldsymbol{e}_\lambda \rangle
+	\langle \boldsymbol{r}_x, \boldsymbol{e}_\phi \rangle}
+	\begin{bmatrix}
+		  \langle \boldsymbol{r}_y, \boldsymbol{e}_\phi \rangle 
+		&-\langle \boldsymbol{r}_y, \boldsymbol{e}_\lambda \rangle \\
+		 -\langle \boldsymbol{r}_x, \boldsymbol{e}_\phi \rangle 
+		& \langle \boldsymbol{r}_x, \boldsymbol{e}_\lambda \rangle \\
+	\end{bmatrix}
+	\begin{bmatrix}
+		 u_\lambda (\lambda, \phi) \\
+		 v_\phi (\lambda, \phi) 
+	\end{bmatrix}.
+\end{equation}
+
+\subsection{Covariant/contravariant conversion}
+\label{anexo-cov-con}
+Let us consider again a tangent vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
+\mathbb{R}^3$ on the sphere, the contravariant representation of 
+$\boldsymbol{u}$ is given by Equation \eqref{contravariant-wind}.
+The covariant components $(U,V)$ are given by:
+\begin{align}
+	\label{covariant-u}
+	U(x,y,p) = \langle \boldsymbol{u}(x,y,p) , \boldsymbol{r}_x(x,y,p)  \rangle, \\
+	\label{covariant-v}
+	V(x,y,p) = \langle \boldsymbol{u}(x,y,p) , \boldsymbol{r}_y(x,y,p)  \rangle.
+\end{align}
+Replacing Equation \eqref{contravariant-wind} in 
+Equations \eqref{covariant-u} and \eqref{covariant-v} we obtain
+the relation covariant components in terms of the
+contravariant terms:
+\begin{equation}
+	\label{contravariant-to-covariant}
+	\begin{bmatrix}
+		{U}(x,y,p) \\
+		{V}(x,y,p)
+	\end{bmatrix}
+	=
+	\begin{bmatrix}
+		  \langle \boldsymbol{r}_x, \boldsymbol{r}_x \rangle
+		& \langle \boldsymbol{r}_x, \boldsymbol{r}_y \rangle \\
+		  \langle \boldsymbol{r}_x, \boldsymbol{r}_y \rangle 
+		& \langle \boldsymbol{r}_y, \boldsymbol{r}_y \rangle \\
+	\end{bmatrix}
+	\begin{bmatrix}
+		{u} (x,y,p) \\
+		{v} (x,y,p) 
+	\end{bmatrix}.
+\end{equation}
+We may express the contravariant components in terms of 
+the covariant terms inverting Equation \eqref{contravariant-to-covariant}:
+\begin{equation}
+	\label{convariant-to-contravariant}
+	\begin{bmatrix}
+		{u}(x,y,p) \\
+		{v}(x,y,p)
+	\end{bmatrix}
+	= \frac{1}{\langle \boldsymbol{r}_x, \boldsymbol{r}_x \rangle
+               \langle \boldsymbol{r}_y, \boldsymbol{r}_y \rangle
+             - \langle \boldsymbol{r}_x, \boldsymbol{r}_y \rangle^2}
+	\begin{bmatrix}
+		  \langle \boldsymbol{r}_y, \boldsymbol{r}_y \rangle
+		& -\langle \boldsymbol{r}_x, \boldsymbol{r}_y \rangle \\
+		  -\langle \boldsymbol{r}_x, \boldsymbol{r}_y \rangle 
+		& \langle \boldsymbol{r}_x, \boldsymbol{r}_x \rangle \\
+	\end{bmatrix}
+	\begin{bmatrix}
+		{U} (x,y,p) \\
+		{V} (x,y,p) 
+	\end{bmatrix}.
+\end{equation}
+Notice that combining Equations \eqref{contravariant-to-covariant}
+and \eqref{convariant-to-contravariant} with Equations 
+\eqref{ll-to-contravariant} and \eqref{contravariant-to-ll}
+one may get relations between the latitude-longitude 
+components and the covariant components.
+
+\section{Notation}
+\label{cs-notation}
 Hereafter, we shall denote $g(x,y) = |\det{G_{\Phi}(x,y)}|$.
-\subsection{Examples}
+
 To represent the cubed-sphere grid, we consider the notation of Section \ref{sec:fv-2d}.
 We shall assume that we have a $(\Delta x, \Delta y)-$grid of $[-a,a]^2$, with $\Delta x= \Delta y$, $N=M$,
 where $a$ depends on the mapping considered.
@@ -309,6 +509,7 @@ than the equidistant cubed-sphere. As pointed out by \citet{rancic:1996}, the ra
 between the maximum and minimum cell area on the equiangular cubed-sphere is approximately 1.3,
 while the same ratio is approximately 5.2 on the equidistant cubed-sphere. 
 
+
 \section{Edges treatment}
 \label{cs-halodata}
 \subsection{Ghost cells interpolation}
@@ -317,7 +518,6 @@ Hereafter, we are going to use the notation $(x,y;p)$ for $p=1,\ldots, 6$, to re
 Let us assume that we have a function $q: \mathbb{S}^2_R \to \mathbb{R}$
 given at the cell centroids and let us denote these values by $q_{ijp} = q(x_i,y_j;p)$,
 for $i, j=1\ldots, N$, $p=1,\ldots, 6$. We wish to estimate these values outside of the range $1, \ldots, N$, that is, we wish to estimate them at ghost cell positions.
-
 
 As we pointed out before, this can be done by noticing that the ghost cells on the local
 Cartesian systems are mapped onto the geodesic of a adjacent panel, which allows us to use Lagrange interpolation to obtain the ghost cell values.
@@ -527,3 +727,5 @@ Although all schemes are second-order, the scheme ET-R96 do not seem to produce 
 	\end{subfigure}
 	\caption{As Figure in \ref{chp4-exp4} but using the PPM-L04 scheme.\label{chp4-exp5}}
 \end{figure}
+
+
