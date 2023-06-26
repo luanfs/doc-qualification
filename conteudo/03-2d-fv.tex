@@ -706,10 +706,12 @@ of the average Lie-Trotter splitting as \citep{lin:1996}:
 	\end{subfigure}
 	\caption{Similar to Figure \ref{ltxdir} but considering the Lie-Trotter splitting in reverse order.}
 \end{figure}
-The numerical flux functions defined in Chapter \ref{chp-1d-fv} are indeed linear the input $Q$ if there are monotonic constrain, 
-as we mention in Chapter \ref{chp-1d-fv}, but we are going to consider this scheme even when there are monotonic constraints since it requires fewer operations.
-Further, if we if assume that $q = \overline{q}$ is constant and $\nabla \cdot \boldsymbol{u} = 0$ then the solution
-remains constant and then, assuming also that $\boldsymbol{u}$ does not depend on $t$, then $\mathbf{F}$ and $\mathbf{G}$ are given by
+The numerical flux functions defined in Chapter \ref{chp-1d-fv} are indeed linear the 
+input $Q$ if there are no monotonic constrain, but we are going to consider this scheme
+even when there are monotonic constraints since it requires fewer operations.
+Further, if we if assume that $q = \overline{q}$ is constant and $\nabla \cdot 
+\boldsymbol{u} = 0$ then the solution remains constant and then, assuming also that
+$\boldsymbol{u}$ does not depend on $t$, then $\mathbf{F}$ and $\mathbf{G}$ are given by
 \begin{align*}
 	\mathbf{F}_{ij}(Q^n,\tilde{u}^n) = -\overline{q} \lambda {\delta_x} u(x_i,y_j),\\
 	\mathbf{G}_{ij}(Q^n,\tilde{v}^n) = -\overline{q} \lambda {\delta_y} v(x_i,y_j).
