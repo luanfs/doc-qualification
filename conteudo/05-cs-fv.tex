@@ -2,6 +2,11 @@
 \label{chp-cs-fv}
 
 \section{Advection finite-volume scheme}
+
+Consistent Treatment of Boundaries: Boundary conditions play a crucial role in maintaining mass conservation. 
+The treatment of boundaries should ensure that there is no spurious mass exchange between the model domain and the exterior. 
+Various approaches, such as using ghost cells or extrapolation methods, can be employed to enforce mass conservation at the boundaries.
+
 In this Chapter, we show how we can use the dimension splitting method
 presented in Chapter \ref{chp-2d-fv} to solve the advection
 equation on the cubed-sphere with base on \citet{putman:2007}.

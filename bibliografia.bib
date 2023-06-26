@@ -758,7 +758,7 @@ keywords = {High order scheme, Shallow water equations, Cubed-sphere grid, Advec
 abstract = {A central-upwind finite-volume (CUFV) scheme for shallow-water model on a nonorthogonal equiangular cubed-sphere grid is developed, consequently extending the 1D reconstruction CUFV transport scheme developed by us. High-order spatial discretization based on weighted essentially non-oscillatory (WENO) is considered for this effort. The CUFV method combines the alluring features of classical upwind and central schemes. This approach is particularly useful for complex computational domain such as the cubed-sphere. The continuous flux-form spherical shallow water equations in nonorthogonal curvilinear coordinates are utilized. Fluxes along the element boundaries are approximated by a Kurganov–Noelle–Petrova scheme. A fourth-order strong stability preserving Runge–Kutta time stepping scheme for time integration is employed in the present work. The numerical scheme is evaluated with standard shallow water test suite, which accentuate accuracy and conservation properties. In addition, an efficient yet inexpensive bound preserving filter with an optional positivity filter is used to remove spurious oscillations and to achieve strictly positive definite numerical solution. To tackle the discontinuities that arise at the edges of the cubed-sphere grid, we utilize a high-order 1D interpolation procedure combining cubic and quadratic interpolations.The results with the high-order scheme is compared with the results for the same tests for various schemes available in literature. Since, the scheme presented here uses local-cell information, it is expected to be scalable to high number of processors count in a distributed node high-performance computer.}
 }
 
-@article {Katta:2015b,
+@article {katta:2015b,
       author = "Kiran K. Katta and Ramachandran D. Nair and Vinod Kumar",
       title = "High-Order Finite-Volume Transport on the Cubed Sphere: Comparison between 1D and 2D Reconstruction Schemes",
       journal = "Monthly Weather Review",
@@ -772,7 +772,22 @@ abstract = {A central-upwind finite-volume (CUFV) scheme for shallow-water model
       url = "https://journals.ametsoc.org/view/journals/mwre/143/7/mwr-d-13-00176.1.xml"
 }
 
-@article{Croisille:2013,
+@article{jung:2019,
+author = {Jung, Joon-Hee and Konor, Celal S. and Randall, David},
+title = {Implementation of the Vector Vorticity Dynamical Core on Cubed Sphere for Use in the Quasi-3-D Multiscale Modeling Framework},
+journal = {Journal of Advances in Modeling Earth Systems},
+volume = {11},
+number = {3},
+pages = {560-577},
+keywords = {vector vorticity model on cubed sphere, global Q3D MMF, superparameterization},
+doi = {https://doi.org/10.1029/2018MS001517},
+url = {https://agupubs.onlinelibrary.wiley.com/doi/abs/10.1029/2018MS001517},
+eprint = {https://agupubs.onlinelibrary.wiley.com/doi/pdf/10.1029/2018MS001517},
+year = {2019}
+}
+
+
+@article{croisille:2013,
 author = {Croisille, Jean-Pierre},
 year = {2013},
 month = {10},

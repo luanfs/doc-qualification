@@ -1,44 +1,47 @@
 \chapter{Cubed-sphere grids}
 \label{chp-cs-grids}
 
-Consistent Treatment of Boundaries: Boundary conditions play a crucial role in maintaining mass conservation. 
-The treatment of boundaries should ensure that there is no spurious mass exchange between the model domain and the exterior. 
-Various approaches, such as using ghost cells or extrapolation methods, can be employed to enforce mass conservation at the boundaries.
+The cubed-sphere grid was originally proposed by \citet{sadourny:1972} and was 
+reinvestigated by \citet{ronchi:1996} and \citet{rancic:1996}. 
+As is usual for Planotic grids, we start with a Platonic solid, in this case, a cube, 
+which is circumscribed in a sphere. We then project its faces onto the sphere.
+The original cubed-sphere, called the equidistant cubed-sphere, was proposed by 
+\citet{sadourny:1972} but resulted in a non-uniform grid. 
+To address this issue, a solution was proposed by introducing angular coordinates, 
+leading to a quasi-uniform grid known as the equiangular cubed-sphere.
+The cubed sphere consists of six panels, each one having a local Cartesian coordinate 
+system. 
+This makes it easier to extend methods from the plane to the sphere. 
+In fact, \citet{putman:2007} extends the dimension splitting technique from 
+\citet{lin:1996}, as presented in Chapter \ref{chp-2d-fv}, to the cubed-sphere.
 
-The cubed-sphere grid was originally proposed by \citet{sadourny:1972}
-and was reinvestigated by \citet{ronchi:1996} and \citet{rancic:1996}.
-As is usual to Planotic grids, we start with a Platonic solid, in this case, a cube,
-circumscribed in a sphere and project its faces on the sphere.
-The original cubed-sphere proposed by \citet{sadourny:1972}, called equidistant cubed-sphere, leads to non-uniform grid;
-a solution to this problem was proposed with the introduction of angular coordinates, leading to a quasi-uniform grid
-called equiangular cubed-sphere.
-The cubed sphere then consists of six panels, each one having a local Cartesian coordinate system, which 
-make it easier to extend methods from the plane to the sphere.
-Indeed, \citet{putman:2007} extends the dimension splitting from \citet{lin:1996}, presented in
-Chapter \ref{chp-2d-fv}, to the cubed-sphere.
-
-	There are essentially two major challenges when working on the cubed-sphere:
-1) the non-orthogonal grid system; 2) the discontinuity of the coordinate system
-at the cube edges. Challenge 1) is more related to the appearance of metric terms
-in the equations, which adds more computational cost requiring, for instance, several conversions
-between contravariant/covariant components of a velocity field.
-The second challenge, perhaps the most problematic, is related to the computation
-of stencils along the cube edges, where the coordinate system is discontinuous.
-A possible way to compute the stencil at the edges is to extend the local coordinate of 
-each panel to its neighbor panels, adding ghost cells in the so-called halo region. 
-In this case, the equiangular cubed sphere has ghost cell values, 
-lying on the same geodesics containing the data from its neighbor panels,
-which allows us to use one-dimensional high-order Lagrange interpolation (for a review of this method, see \citet{zerroukat:2022}).
-This approach was already investing since the work of \citet{ronchi:1996}
-and it is widely used in the literature \citep{Croisille:2013, katta:2015,Katta:2015b,chen:2021}.
-\citet{putman:2007}, on the other hand, uses extrapolation
-at grid values near the cube edges. Another approach that avoids the need for interpolation/extrapolation
-near the edges is the conformal cubed-sphere developed by \citet{rancic:1996}. This grid
-leads to an orthogonal and continuous coordinate system near the edges, but it generates grid singularities
-near the cube corners, similar to the pole problem. An improved and more uniform conformal grid,
-called Uniform Jacobian cubed sphere, was later proposed \citet{rancic:2017}.
-Each approach is likely to generate grid imprinting and one of our goals
-this work is to investigate how much grid-imprinting each method generates.
+There are essentially two major challenges when working with the cubed-sphere grid:
+\begin{enumerate}
+\item
+The non-orthogonal grid system: This challenge is primarily related to the appearance of
+metric terms in the equations. It adds computational cost and often requires conversions
+between contravariant and covariant components of a velocity field.
+\item
+The discontinuity of the coordinate system at the cube edges: This is perhaps the most 
+problematic challenge. Computing stencils along the cube edges becomes challenging due to 
+the discontinuous nature of the coordinate system.
+\end{enumerate}
+One possible approach to compute stencils at the edges is to extend the local coordinate 
+of each panel to its neighboring panels, adding ghost cells in the halo region. In the 
+case of the equiangular cubed-sphere, ghost cell values lie on the same geodesics 
+containing the data from the neighboring panels. This allows for the use of one-dimensional
+high-order Lagrange interpolation to compute the stencils at the edges. 
+This approach has been extensively used in the literature \citep{croisille:2013, 
+katta:2015, katta:2015b, chen:2021} and was initially introduced by \citet{ronchi:1996}.
+Alternatively, \citet{putman:2007} uses extrapolation for grid values near the cube edges.
+Another approach that avoids the need for interpolation or extrapolation near the edges is 
+the conformal cubed-sphere developed by \citet{rancic:1996}. While this grid leads to an 
+orthogonal and continuous coordinate system near the edges, it generates grid singularities
+near the cube corners, similar to the pole problem. 
+An improved and more uniform conformal grid, called the Uniform Jacobian cubed sphere, was 
+later proposed by \citet{rancic:2017}.
+Each approach is likely to generate grid imprinting, and one of the goals of this work is 
+to investigate the amount of grid imprinting produced by each method.
 
 This chapter aims to review and investigated the geometrical properties
 of the cubed-sphere. Besides that, we also aim to investigate the process
@@ -92,7 +95,7 @@ Here $p$ denotes a panel, and they are defined as Figure \ref{chp4-panels} shows
 \begin{figure}[!htb]
 	\centering
 		\includegraphics[width=0.8\linewidth]{chp4_panels}
-	\caption{Cubed-sphere panels definition. Figure taken from \citet{ronchi:1996}.\label{chp4-panels}}
+	\caption{Cubed-sphere panels definition. Figure taken from \citet{jung:2019}.\label{chp4-panels}}
 \end{figure}
 The derivative of the maps $\Psi_p$ are given by:
 \begin{equation}
