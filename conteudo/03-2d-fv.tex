@@ -486,10 +486,11 @@ and
 		q^{21}(t^n) &= q^1(t^{n+1}).
 	\end{cases}
 \end{align*}
-Then we can approximate $q(t_0 + \Delta t)$ by $q^{21}(t^n + \Delta t)$ with error $O(\Delta t)$, if $A_1$ and $A_2$
-do not commute; otherwise, this method is exact.
-This approach is known as Lie-Trotter splitting. Observe the  Lie-Trotter splitting may be performed
-in a reverse order solving the sub-problems
+Then we can approximate $q(t_0 + \Delta t)$ as $q^{21}(t^n + \Delta t)$ 
+with an error of $O(\Delta t)$ if $A_1$ and $A_2$ do not commute. 
+Otherwise, this method is exact.
+This approach is known as Lie-Trotter splitting. 
+It's worth noting that the Lie-Trotter splitting can also be performed in reverse order when solving the sub-problems:
 \begin{align*}
 	\begin{cases}
 		\frac{dq^2}{dt}(t) &= A_2q(t), \quad t \in [t^n,t^{n+1}],\\
@@ -504,29 +505,28 @@ and
 	\end{cases}
 \end{align*}
 and again we estimate $q(t^{n+1})$ by $q^{12}(t^{n+1})$ with error $O(\Delta t)$.
-As observed by \citet{strang:1968}, we can consider
+As noted by \citet{strang:1968}, we can consider the following equation 
+to approximate $q(t^{n+1})$ using a second-order ($O(\Delta t^2)$) symmetric scheme:
 \begin{equation}
 	q^*(t^{n+1}) = \frac{q^{21}(t^{n+1}) + q^{12}(t^{n+1})}{2},
 \end{equation}
-which is a second-order ($O(\Delta t^2)$) symmetric scheme to approximate $q(t^{n+1})$. 
-We shall refer to this scheme as the average Lie-Trotter splitting \citep{holden:2010}.
-This process of averaging two Lie-Trotter splittings is a specific case of methods known 
-in the literature as weighted sequential splitting methods.
-Moreover, this scheme averaging process can be extended to achieve higher-order schemes
-(see, for example, \citet{jia:2011}).
-For an accuracy analysis of weighted sequential splitting methods, we refer to \citet{csomos:2005}.
+This scheme is referred to as the average Lie-Trotter splitting \citep{holden:2010}.
+The process of averaging two Lie-Trotter splittings is a specific case of methods
+known as weighted sequential splitting methods in the literature.
+Furthermore, this scheme averaging process can be extended to achieve higher-order schemes \citep{jia:2011}.
+For an analysis of the accuracy of weighted sequential splitting methods, we recommend referring to \citet{csomos:2005}.
 
-It is worth noting that one of the most commonly used second-order splitting schemes in the literature is the Strang splitting \citep{strang:1968}.
+It is worth noting that one of the most commonly used second-order splitting schemes in the literature is the Strang splitting
+\citep{strang:1968}.
 This scheme requires solving three sub-problems per time-step, with one of them at time $t_n + \frac{\Delta t}{2}$.
 In contrast, the average Lie-Trotter splitting requires solving four sub-problems per time-step.
 Consequently, the Strang splitting is computationally more efficient.
-However, as we will observe in this chapter, when applied to the linear advection equation,
+However, as we will observe in this chapter, when applied to the linear advection equation, 
 the average Lie-Trotter splitting allows for a modification that eliminates a splitting error
-that arises when considering a constant scalar field and non-divergent velocity, as noted by \citet{lin:1996}.
+arising from considering a constant scalar field and non-divergent velocity \citep{lin:1996}.
 
-To move towards to the scheme from  \citet{lin:1996}, let us consider Problem \ref{chp3-sec2-prob1}
-in its differential form (Equation \eqref{sec-adv2d:eq1}).
-We are going to consider $N+2\nu$ one-dimensional advection equations in the $x$-direction
+To move towards the scheme from \citep{lin:1996}, let us consider Problem \ref{chp3-sec2-prob1} in its differential form (Equation \eqref{sec-adv2d:eq1}).
+We are going to consider $N+2\nu$ one-dimensional advection equations in the $x$-direction:
 \begin{equation*}
 	\label{chp3-adv2deq-xdir1}
 	[{\partial_t q^x}+{\partial_x (uq^x)}](x, y_j, t)
@@ -546,18 +546,89 @@ In this work, we assume that the fluxes ${F}_{i+\frac{1}{2},j}^n(Q^n_{\times,j},
 ${G}^n_{i,j+\frac{1}{2}}(Q^n_{i,\times} ,\tilde{v}^n_{i,j+\frac{1}{2}})$ are computed using the PPM flux
 assuming that the CFL number is less than one (see Equation \eqref{chp-sec-flux:numerical-flux3}).
 
-More explicitily, we have...
+More explicitily, as in Section \ref{chp2-sec-ppm}, 
+we have a piecewise-parabolic approximation in the $x$ direction:
+\begin{align}
+	\label{chp3-ppmx-eq1}
+	\begin{cases}
+    q_{ij}^x(x;Q_{\times, j}^n) = q_{L,i,j}^x + \Delta q_{ij}^x z_i(x) + q_{6, i,j}^xz_i(x)(1-z_i(x)), \\
+	z_i(x) = \frac{x-x_{i-\frac{1}{2}}}{\Delta x},
+	\quad x \in X_i,\\
+    q_{L, i,j}^x = q_{i-\frac{i}{2},j}^n+ O(\Delta x^2),\\
+    q_{R, i,j}^x = q_{i+\frac{i}{2},j}^n+ O(\Delta x^2),\\
+	\Delta q_{ij}^x = q_{R, i,j}^x - q_{L, i,j}^x,\\
+	q_{6,i,j}^x = 6\bigg(Q_{ij}^n - \frac{(q_{L,i,j}^x + q_{R,i,j}^x)}{2}\bigg),
+	\end{cases}
+\end{align}
+for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and we also construct a piecewise-parabolic
+approximation in the $y$ direction:
+\begin{align}
+	\label{chp3-ppmy-eq2}
+	\begin{cases}
+	q_{ij}^y(y;Q_{i,\times}^n) = q_{L,i,j}^y + \Delta q_{ij}^y z_j(y) + q_{6, i,j}^yz_j(y)(1-z_j(y)),\\ 
+	z_j(y) = \frac{y-y_{j-\frac{1}{2}}}{\Delta y},
+	\quad y \in Y_j,\\
+    q_{L, i,j}^y = q_{i,j-\frac{1}{2}}^n+ O(\Delta y^2),\\
+    q_{R, i,j}^y = q_{i,j+\frac{1}{2}}^n+ O(\Delta y^2),\\
+	\Delta q_{ij}^y = q_{R, i,j}^y - q_{L, i,j}^y,\\
+	q_{6,i,j}^y = 6\bigg(Q_{ij}^n - \frac{(q_{L,i,j}^y + q_{R,i,j}^y)}{2}\bigg),
+    \end{cases}
+\end{align}
+for $i=-\nu+1, \ldots, N + \nu$, $i=1, \ldots, M$.
+The values $q_{L,i,j}^x$, $q_{R,i,j}^x$, $q_{L,i,j}^y$, and $q_{R,i,j}^y$,
+which approximate the values of $q$ at C-grid wind positions, are computed
+using one of the schemes PPM-0, PPM-PL07, PPM-CW84, or PPM-L04, as described
+in Sections \ref{chp2-sec-ppm} and \ref{chp2-sec-mono}.
+These approximations are expected to be
+second-order accurate because the given average values are computed on the
+2D control volume $\Omega_{ij}$ instead of the 1D control volumes $X_i$ or $Y_j$.
+Then, we may express the fluxes as in Equation \eqref{chp-sec-flux:numerical-flux3}, namely:
+\begin{align}
+	\label{chp3-flux-xdir}
+	F_{i+\frac{1}{2},j}^n ({Q^n_{\times,j},\tilde{u}^n_{i+\frac{1}{2},j}})= \tilde{u}^{n}_{i+\frac{1}{2},j}\times
+	\begin{cases}
+	q_{R,i,j}^x +\frac{1}{2}(q_{6,i,j}^x - \Delta q_{ij}^x){\tilde{c}_{i+\frac{1}{2},j}^{x,n}}
+    +\frac{1}{3}{q_{6,i,j}^x}(\tilde{c}_{i+\frac{1}{2},j}^{x,n})^2,
+    \quad &\text{if} \quad \tilde{u}_{i+\frac{1}{2},j}^n>0,\\
+	q_{L,i+1,j}^x - \frac{1}{2}(q_{6,i+1,j}^x + \Delta q_{i+1,j}^x){\tilde{c}_{i+\frac{1}{2},j}^{x,n}}
+    -\frac{1}{3}{q_{6,i+1,j}^x}(\tilde{c}_{i+\frac{1}{2},j}^{x,n})^2,
+    \quad &\text{if} \quad \tilde{u}_{i+\frac{1}{2},j}^n\leq0,\\
+    \end{cases}
+\end{align}
+for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and 
+\begin{align}
+	\label{chp3-flux-ydir}
+	G_{i,j+\frac{1}{2}}^n ({Q^n_{i,\times},\tilde{v}^n_{i,j+\frac{1}{2}}})= \tilde{v}^{n}_{i,j+\frac{1}{2}}\times
+	\begin{cases}
+	q_{R,i,j}^y +\frac{1}{2}(q_{6,i,j}^y - \Delta q_{ij}^y){\tilde{c}_{i,j+\frac{1}{2}}^{y,n}}
+    +\frac{1}{3}{q_{6,i,j}^y}(\tilde{c}_{i,j+\frac{1}{2}}^{y,n})^2,
+    \quad &\text{if} \quad \tilde{v}_{i+\frac{1}{2},j}^n>0,\\
+	q_{L,i,j+1}^y - \frac{1}{2}(q_{6,i,j+1}^y + \Delta q_{i,j+1}^y){\tilde{c}_{i,j+\frac{1}{2}}^{y,n}}
+    -\frac{1}{3}{q_{6,i,j+1}^y}(\tilde{c}_{i,j+\frac{1}{2}}^{y,n})^2,
+    \quad &\text{if} \quad \tilde{v}_{i,j+\frac{1}{2}}^n\leq0,\\
+    \end{cases}
+\end{align}
+for $i=-\nu+1, \ldots, N + \nu$, $j=1, \ldots, M$, and 
+\begin{align*}
+\tilde{c}_{i+\frac{1}{2},j}^{x,n} = \tilde{u}_{i+\frac{1}{2},j}^{x,n}\frac{\Delta t}{\Delta x},\\
+\tilde{c}_{i,j+\frac{1}{2}}^{y,n} = \tilde{v}_{i,j+\frac{1}{2}}^{y,n}\frac{\Delta t}{\Delta y},
+\end{align*}
+are the time-averaged CFL numbers in the $x$ and $y$ directions, respectively,
+which are assumed to have absolute value less than one.
+The time-averaged winds are computed using the RK1 and RK2 schemes from Section \ref{chp2-sec-dp}.
+When we use the PPM-L04 scheme, we set $\nu=4$; otherwise, $\nu=3$.
 
 We introduce the auxiliary grid functions $\mathbf{F}$ and $\mathbf{G}$, both belonging to $\mathbb{R}^{N\times M}_{\nu}$, given by:
 \begin{align*}
 	\mathbf{F}_{ij}({Q^n,\tilde{u}^n}) = -\lambda \big({F}_{i+\frac{1}{2},j}^n(Q^n_{\times,j},\tilde{u}^n_{i+\frac{1}{2},j})-
                                                   {F}_{i-\frac{1}{2},j}^n(Q^n_{\times,j},\tilde{u}^n_{i-\frac{1}{2},j}) \big),
 \end{align*}
-and
+for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and
 \begin{align*}
 	\mathbf{G}_{ij}({Q^n,\tilde{v}^n}) = -\lambda \big({G}_{i,j+\frac{1}{2}}^n(Q^n_{i,\times},\tilde{v}^n_{i,j+\frac{1}{2}})-
                                                   {G}_{i,j-\frac{1}{2}}^n(Q^n_{i,\times},\tilde{v}^n_{i,j-\frac{1}{2}}) \big),
 \end{align*}
+for $i=-\nu+1, \ldots, N + \nu$  $j=1, \ldots, $,
 which are the numerical flux update of the 1D-FV schemes in the $x$ and $y$ direction, respectively.
 The Lie-Trotter splitting is obtained by solving the advection in the $x$ direction
 \begin{align*}
@@ -633,15 +704,15 @@ of the average Lie-Trotter splitting as \citep{lin:1996}:
 		\includegraphics[width=1\linewidth]{2d_grid_GFQ}
 		\caption{$Q^{xy,n}$ (black circles). \label{lt-FGQy}}
 	\end{subfigure}
-	\caption{Similar to Figure \ref{ltxdir} but considering Lie-Trotter splitting in the reverse order.}
+	\caption{Similar to Figure \ref{ltxdir} but considering the Lie-Trotter splitting in reverse order.}
 \end{figure}
 The numerical flux functions defined in Chapter \ref{chp-1d-fv} are indeed linear the input $Q$ if there are monotonic constrain, 
 as we mention in Chapter \ref{chp-1d-fv}, but we are going to consider this scheme even when there are monotonic constraints since it requires fewer operations.
 Further, if we if assume that $q = \overline{q}$ is constant and $\nabla \cdot \boldsymbol{u} = 0$ then the solution
 remains constant and then, assuming also that $\boldsymbol{u}$ does not depend on $t$, then $\mathbf{F}$ and $\mathbf{G}$ are given by
 \begin{align*}
-	\mathbf{F}_{ij}(Q^n,\tilde{u}^n) = -\overline{q} \lambda_x{\delta_x} u(x_i,y_j),\\
-	\mathbf{G}_{ij}(Q^n,\tilde{v}^n) = -\overline{q} \lambda_y{\delta_y} v(x_i,y_j).
+	\mathbf{F}_{ij}(Q^n,\tilde{u}^n) = -\overline{q} \lambda {\delta_x} u(x_i,y_j),\\
+	\mathbf{G}_{ij}(Q^n,\tilde{v}^n) = -\overline{q} \lambda {\delta_y} v(x_i,y_j).
 \end{align*}
 However, if we compute the updated solution using Equation \eqref{chp3-avlt}, we have that the error is given by
 \begin{align}
