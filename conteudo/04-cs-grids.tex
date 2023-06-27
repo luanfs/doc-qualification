@@ -47,8 +47,10 @@ This chapter aims to review and investigated the geometrical properties
 of the cubed-sphere. Besides that, we also aim to investigate the process
 of interpolating/extrapolating near the cube edges.
 We start with a basic review of the cubed-sphere mappings in Section \ref{cs-mappings},
-while Section \ref{cs-halodata} investigates the interpolation/extrapolation near the cube
-edges with some numerical experiments.
+while Section \ref{cs-halodata} investigates how we can apply 1D Lagrange interpolation using the adjacent panels
+data to obtain values of a scalar/vector field on ghost cells, as well different edge
+treatments when computing stencils near to the cube edges.
+Final thoughts are presented in Section \ref{cs-conc}.
 
 \section{Cubed-sphere mappings}
 \label{cs-mappings}
@@ -475,7 +477,7 @@ and \eqref{convariant-to-contravariant} with Equations
 one may get relations between the latitude-longitude 
 components and the covariant components.
 
-\section{Notation}
+\subsection{Notation}
 \label{cs-notation}
 Let us denote by $\Sigma_p: \Omega \to \mathbb{S}^2_R$, $p=1,\ldots,6$, $\Omega=[-a,a]^2$,
 a cubed-sphere mapping like the equiangular or the equidistant mappings introduced in
@@ -660,8 +662,24 @@ Our objective is to obtain the values
 u_{i+\frac{1}{2},j,p} \quad \text{ for} \quad &i=-1, \ldots, N+1, \quad &j=-\nu+1, \ldots, 0, \quad &j=N, \ldots, N+\nu,\\
 v_{i,j+\frac{1}{2},p} \quad \text{ for} \quad &j=0, \ldots, N, \quad &i=-\nu+1, \ldots, 0,\quad &i=N, \ldots, N+\nu,
 \end{align*}
-as shown in Figure \ref{chp4-wind-interp}.
-This problem arises when we apply dimension splitting on each panel of the cubed-sphere.
+as shown in Figure \ref{chp4-wind-interp}. This problem arises when we apply the dimension splitting method on each panel of the cubed-sphere.
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{1\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_10_mercator_x}
+		\caption{Contravariant component $u$. \label{chp4-wind-interp-a}}
+	\end{subfigure}
+	\begin{subfigure}{1\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_10_mercator_y}
+		\caption{Contravariant component $v$. \label{chp4-wind-interp-b}}
+	\end{subfigure}
+	\caption{ Illustration of contravariant components $u$ (a) and $v$ (b) of a vector field at edge midpoints.
+		Ghost cell points are denoted by triangles and squares.
+		The extra points needed for the RK2 scheme are denoted by squares.\label{chp4-wind-interp}}
+\end{figure}
+
 
 This problem can be solved by using the interpolation process described earlier for a scalar field.
 To apply the interpolation process, we first need to interpolate the values of $u$ and $v$ from the
@@ -678,40 +696,42 @@ centers in the $y$ direction (see Figure \ref{chp4-wind-interp-b}).
 Once these interpolated values are computed, we convert the contravariant values $u_{ijp}, v_{ijp}$
 to their latitude-longitude components $(u_{\lambda})_{ijp}, (v_{\phi})_{ijp}$ using Equation
 \eqref{contravariant-to-ll}. This conversion avoid any coordinate system discontinuity.
+Then, we can use the ghost cell centers interpolation procedure described before for the latitude-longitude components
+to recover the wind at the ghost cell centers using any polynomial degree.
 Finally, we can use the values at the ghost cell centers to obtain the values at the ghost cell edges
 by employing a third-order interpolation once again.
 Subsequently, the contravariant components can be obtained by using Equation \eqref{ll-to-contravariant}.
 
-\begin{figure}[!htb]
-	\centering
-	\begin{subfigure}{1\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_10_mercator_x}
-		\caption{Contravariant component $u$. \label{chp4-wind-interp-a}}
-	\end{subfigure}
-	\begin{subfigure}{1\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_10_mercator_y}
-		\caption{Contravariant component $v$. \label{chp4-wind-interp-b}}
-	\end{subfigure}
-	\caption{ Illustration of contravariant components $u$ (a) and $v$ (b) of a vector field at edge midpoints.
-	Ghost cell points are denoted by triangles and squares.
-	The extra points needed for the RK2 scheme are denoted by squares.\label{chp4-wind-interp}}
-\end{figure}
-
-\newpage
 We will consider the following rotated zonal field on the unit sphere, as a numerical test, based on \citet{will:1992}:
-\begin{align*}
+\begin{align}
+	\label{chp4-wind1}
 	\begin{cases}
 		u_\lambda(\lambda,\phi,t) = u_0(\cos(\phi)\cos(\alpha) + \sin(\phi)\cos(\lambda)\sin(\alpha)),\\
 		v_\phi(\lambda,\phi,t) = -u_0\sin(\lambda)\sin(\alpha).
 	\end{cases}
-\end{align*}
+\end{align}
 Here, $u_0=\frac{2\pi}{5}$ and $\alpha= -\frac{45\pi}{180}$. We will adopt the same grids as in Section \ref{cs-interp}.
 Next, we will compute the relative errors of the contravariant components at the midpoint edges,
-as shown in Figure \ref{chp4-wind-interp-a} and Figure \ref{chp4-wind-interp-b}.
-
-
+as depicted in Figure \ref{chp4-wind-interp-a} and Figure \ref{chp4-wind-interp-b}.
+The errors are presented in Figure \ref{chp4-expvf}, along with the convergence rate for different degrees employed in the ghost cell center interpolation.
+We emphasize that, since we utilize a third-order interpolation to retrieve the wind at centers from the edges, as well as in the interpolation
+from the ghost cell centers to ghost cell edges, the maximum attainable scheme order is 4.
+Indeed, from Figure \ref{chp4-expvf}, we observe that when employing a fourth-order interpolation in the ghost cell interpolation step, the final order achieved is 4.
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_interp_vf2_normlinf_errors}
+		\caption{Error.\label{chp4-exp-vf-error}}
+	\end{subfigure}
+	\begin{subfigure}{0.45\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_interp_vf2_normlinf_convergence_rate}
+		\caption{Convergence rate.\label{chp4-exp-vf-CR}}
+	\end{subfigure}
+	\caption{Relative error convergence (a) and convergence rate (b) for the ghost cell interpolation of a vector field process for different
+	polynomial degrees, using the trigonometric function given by Equation \eqref{chp4-wind1}.\label{chp4-expvf}}
+\end{figure}
 \subsection{Edges reconstruction}
 \label{cs-recon}
 Let us consider the following problem: given the values $q_{ijp}$ we wish to find 
@@ -816,20 +836,19 @@ The difference between the edge treatments ET-S72, ET-PL07 and ET-ZA22 schemes
 may be observed in Figure \ref{chp4-exp4} and Figure \ref{chp4-exp5}, for the  PPM-PL07 and PPM-L04 reconstruction schemes, respectively.
 We notice that the cube edges appear on the error graph when we use the ET-S72 and ET-PL07 schemes. This is an example of grid imprinting.
 Although all schemes are second-order, the scheme ET-ZA22 do not seem to produce grid imprinting in the reconstruction problem.
-
-\begin{figure}[!htb]
+\begin{figure}[!ht]
 	\centering
-	\begin{subfigure}{0.49\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-PL07_etET-S72_sphere}
 		\caption{ET-S72.\label{chp4-exp4-a}}
 	\end{subfigure}
-	\begin{subfigure}{0.49\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-PL07_etET-PL07_sphere}
 		\caption{ET-PL07.\label{chp4-exp4-b}}
 	\end{subfigure}
-	\begin{subfigure}{0.49\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 	\centering
 	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-PL07_etET-ZA22_sphere}
 	\caption{ET-ZA22.\label{chp4-exp4-c}}
@@ -837,20 +856,19 @@ Although all schemes are second-order, the scheme ET-ZA22 do not seem to produce
 	\caption{Error for the edge midpoint values considering the trigonometric function (Equation \eqref{chp4-ic2})
 	with edges treatment schemes ET-S72 (a), ET-PL07 (b) and ET-ZA22 for the cubed-sphere with $N=1024$ using the reconstruction PPM-PL07.\label{chp4-exp4}}
 \end{figure}
-
-\begin{figure}[!htb]
+\begin{figure}[!ht]
 	\centering
-	\begin{subfigure}{0.49\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-L04_etET-PL07_sphere}
 		\caption{ET-S72.\label{chp4-exp5-a}}
 	\end{subfigure}
-	\begin{subfigure}{0.49\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-L04_etET-PL07_sphere}
 		\caption{ET-PL07.\label{chp4-exp5-b}}
 	\end{subfigure}
-	\begin{subfigure}{0.49\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-L04_etET-PL07_sphere}
 		\caption{ET-ZA22.\label{chp4-exp5-c}}
@@ -858,4 +876,7 @@ Although all schemes are second-order, the scheme ET-ZA22 do not seem to produce
 	\caption{As Figure in \ref{chp4-exp4} but using the PPM-L04 scheme.\label{chp4-exp5}}
 \end{figure}
 
+\newpage
+\section{Concluding remarks}
+\label{cs-conc}
 
