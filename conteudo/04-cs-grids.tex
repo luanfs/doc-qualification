@@ -265,9 +265,9 @@ The Jacobian of the metric tensor $G_{\Phi}(x,y)$ is then given by:
 	\end{split}
 \end{align}
 
-\section{Tangent vectors on the sphere}
+\subsection{Tangent vectors on the sphere}
 \label{cs-tgvectors}
-The tangent space at $P \in \mathbb{S}^2_R$ by $T_P \mathbb{S}^2$.
+The tangent space at $P \in \mathbb{S}^2_R$ is denoted by $T_P \mathbb{S}^2$.
 It is easy to see that:
 \begin{equation*}
 	T_P\mathbb{S}^2_R = \{P_0 \in \mathbb{R}^3: \langle P,P_0\rangle = 0\}.
@@ -277,12 +277,11 @@ using $(X,Y,Z)$ coordinates, or using $(\lambda, \phi)$
 latitude-longitude coordinates, or, at last, using the cubed-sphere
 coordinates $(x,y,p)$, where $(x,y)$ are the cube face coordinates and 
 $p \in \{1,2,\cdots, 6\}$ stands for a cube panel.
-
 We say that a vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
 \mathbb{R}^3$ is tangent on  the sphere if
 $\boldsymbol{u}(P) \in T_P\mathbb{S}^2_R$, $\forall P \in \mathbb{S}^2_R$.
 
-\subsection{Conversions between latitude-longitude and contravariant coordinates}
+\subsubsection{Conversions between latitude-longitude and contravariant coordinates}
 \label{anexo-sph-ll}
 We consider the latitude-longitude mapping 
 $\Psi_{ll}: [0,2\pi] \times [-\frac{\pi}{2},\frac{\pi}{2}] \to \mathbb{S}^2_R$, given by:
@@ -414,11 +413,11 @@ latitude-longitude components by inverting Equation \eqref{ll-to-contravariant}:
 	\end{bmatrix}.
 \end{equation}
 
-\subsection{Covariant/contravariant conversion}
+\subsubsection{Covariant/contravariant conversion}
 \label{anexo-cov-con}
 Let us consider again a tangent vector field $\boldsymbol{u}: \mathbb{S}^2_R \to 
-\mathbb{R}^3$ on the sphere, the contravariant representation of 
-$\boldsymbol{u}$ is given by Equation \eqref{contravariant-wind}.
+\mathbb{R}^3$ on the sphere. Its contravariant representation 
+is given by Equation \eqref{contravariant-wind}.
 The covariant components $(U,V)$ are given by:
 \begin{align}
 	\label{covariant-u}
@@ -478,16 +477,37 @@ components and the covariant components.
 
 \section{Notation}
 \label{cs-notation}
-Hereafter, we shall denote $g(x,y) = |\det{G_{\Phi}(x,y)}|$.
+Let us denote by $\Sigma_p: \Omega \to \mathbb{S}^2_R$, $p=1,\ldots,6$, $\Omega=[-a,a]^2$,
+a cubed-sphere mapping like the equiangular or the equidistant mappings introduced in
+Section \ref{cs-mappings}.
+With these mappings, we denote by ${\boldsymbol{r}_x(x,y,p),\boldsymbol{r}_y(x,y,p)}$
+the basis of tangent vectors at $(x,y,p)$.
+The metric tensor is denoted by $\sigma(x,y) =\sqrt{|\det{G_{\Sigma}(x,y,p)}|}$, where
+\begin{equation}
+	\label{chp3-sigma-metric-tensor}
+	G_{\Sigma}(x,y,p) = 
+	\begin{bmatrix}
+		\langle \boldsymbol{r}_{x}(x,y,p), \boldsymbol{r}_{x}(x,y,p) \rangle & 
+		\langle \boldsymbol{r}_{x}(x,y,p), \boldsymbol{r}_{y}(x,y,p) \rangle \\
+		\langle \boldsymbol{r}_{x}(x,y,p), \boldsymbol{r}_{y}(x,y,p) \rangle  &
+		\langle \boldsymbol{r}_{y}(x,y,p), \boldsymbol{r}_{y}(x,y,p) \rangle 
+	\end{bmatrix}.
+\end{equation}
+We will utilize the notation introduced in Section \ref{chp3-sec-not} throughout this chapter.
+The parameter $\nu$ represents a non-negative integer indicating the number of ghost cell layers in each panel boundary, called halo size.
 
-To represent the cubed-sphere grid, we consider the notation of Section \ref{sec:fv-2d}.
-We shall assume that we have a $(\Delta x, \Delta y)-$grid of $[-a,a]^2$, with $\Delta x= \Delta y$, $N=M$,
-where $a$ depends on the mapping considered.
-Similarly to Chapter \ref{chp-2d-fv}, we may extend the grid to ghost cells.
-Hence, for each $p=1, \ldots, 6$, we apply the mapping $\Psi_p$ or $\Phi_p$ on
-each local coordinate system grid to generate the cubed-sphere with $6N^2$ cells.
-In Figure \ref{chp4-cs-grid}, we depict an example of the grids generated using 
-the equidistant and equiangular mappings for $N=20$.
+To introduce the cubed-sphere, we consider a $(\Delta x, \Delta y)$-grid denoted by 
+$\Omega_{\Delta x, \Delta y} = (\Omega_{ij})_{i,j=-\nu+1,\ldots,N+\nu}$, 
+where $\Delta x = \Delta y$, and it covers the domain $\Omega$. 
+A control volume of the cubed-sphere is denoted by $\Omega_{ijp}$, defined as follows:
+\begin{equation*}
+	\Omega_{ijp} = \Sigma_p(\Omega_{ij})
+	\quad -\nu+1 \leq i, j \leq N+\nu, \quad 1 \leq p \leq 6.
+\end{equation*}
+The cubed-sphere grid refers to the collection of control volumes 
+$(\Omega_{ijp})_{i,j=-\nu+1,\ldots,N+\nu}^{p=1,\ldots,6}$. 
+In Figure \ref{chp4-cs-grid}, an example of the cubed-sphere grid is depicted,
+excluding the ghost cells. This grid is generated using the equidistant and equiangular mappings for $N=20$.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.48\textwidth}
@@ -504,28 +524,68 @@ the equidistant and equiangular mappings for $N=20$.
 		\label{chp4-cs-grid}}
 \end{figure}
 
-From Figure \ref{chp4-cs-grid}, we notice that the equiangular cubed-sphere is much more uniform
-than the equidistant cubed-sphere. As pointed out by \citet{rancic:1996}, the ratio
-between the maximum and minimum cell area on the equiangular cubed-sphere is approximately 1.3,
-while the same ratio is approximately 5.2 on the equidistant cubed-sphere. 
+From Figure \ref{chp4-cs-grid}, it is evident that the equiangular cubed-sphere
+exhibits a higher degree of uniformity compared to the equidistant cubed-sphere.
+As noted by \citet{rancic:1996}, the ratio between the maximum and minimum cell
+areas on the equiangular cubed-sphere is approximately 1.3,
+whereas the same ratio is approximately 5.2 on the equidistant cubed-sphere. 
 
+We also utilize the notation $\mathcal{CS}_N=\mathbb{R}^{(N+\nu)\times(N+\nu)\times 6}$
+to represent grid functions on the cubed-sphere at cell centers.
+Let's assume we have a function $q:\mathbb{S}^2_R\times[0,T] \to \mathbb{R}$, 
+and we have a $(\Delta x, \Delta y, \Delta t, \lambda)$-discretization of $\Omega \times [0,T]$.
+We introduce $q^n \in \mathcal{CS}^N$, which represents the grid function $q$
+evaluated at the discrete points. 
+In other words, $q^n_{ijp} = q(x_i,y_j,p,t^n)$, where $i,j=-\nu +1, \ldots, N+\nu$, and $p=1, \ldots, 6$.
+Furthermore, we use the notations $q^n_{i+\frac{1}{2},j,p} = q(x_{i+\frac{1}{2}},y_j, t^n)$ 
+for $i=-\nu, \ldots, N+\nu$ and $j=-\nu +1, \ldots, N+\nu$ to represent $q$ at the midpoint of edges in
+the $x$ direction.
+Similarly, we use $q^n_{i,j+\frac{1}{2},p} = q(x_i,y_{j+\frac{1}{2}},t^n)$ for $i=-\nu +1, \ldots, N+\nu$ and $j=-\nu, \ldots, N+\nu$ to represent $q$ at the midpoint of edges in the $y$ direction.
+When $q$ does not depend on the time variable $t$, we can omit the index $n$.
+In Figure \ref{chp4-cs-grid-function}, we depict a grid function at centers, edge midpoints in the $x$ direction
+and edge midpoints in the $y$ direction for the equiangular cubed-sphere considering
+the halo size equal to three.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_10_mercator}
+	\caption{Grid function at centers (black dots), edge midpoints in the $x$ direction (blue dots)
+        and edge midpoints in the $y$ direction (red dots) at panel 1
+        for the equiangular cubed-sphere using three layers of ghost cells and $N=10$.
+        Ghost cells of panel 1 are drawn using cyan colors.
+	\label{chp4-cs-grid-function}}
+\end{figure}
+
+We define the average values of a function $q$ with the aid of the metric tensor
+$\sigma(x,y)$ at time $t$: 
+\begin{equation*}
+	Q_{ijp}(t) = \frac{1}{|\Omega_{ijp}|}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
+	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}  q(x,y,p,t) {\sigma(x,y)}\,dx \,dy,
+\end{equation*}
+where $|\Omega_{ijp}|$ is the control volume area given by:
+\begin{equation*}
+	|\Omega_{ijp}| = \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}{\sigma(x,y)} \,dx \,dy.
+\end{equation*}
+In this context, we define $Q(t) \in \mathcal{CS}_N$ given by 
+$Q(t) = (Q_{ijp}(t))_{i,j = -\nu +1, \ldots, N+\nu}^{p=1,\ldots,6}$.
+Similar to Proposition \ref{prop-bound-centroid-2d}, we may approximate the average value using the centroid value, that is
+\begin{equation*}
+	Q_{ijp}^n - q_{ijp}^n = O(\Delta x ^2), 
+\end{equation*}
+In this work, we shall always approximate the average values since our schemes are expected to be at most second-order,
+this approximation does not deteriorate the convergence order.
 
 \section{Edges treatment}
 \label{cs-halodata}
-\subsection{Ghost cells interpolation}
+\subsection{Ghost cells scalar field interpolation}
 \label{cs-interp}
-Hereafter, we are going to use the notation $(x,y;p)$ for $p=1,\ldots, 6$, to represent a point on the sphere obtained through the equiangular cubed-sphere mapping.
-Let us assume that we have a function $q: \mathbb{S}^2_R \to \mathbb{R}$
-given at the cell centroids and let us denote these values by $q_{ijp} = q(x_i,y_j;p)$,
-for $i, j=1\ldots, N$, $p=1,\ldots, 6$. We wish to estimate these values outside of the range $1, \ldots, N$, that is, we wish to estimate them at ghost cell positions.
+Let's consider a function $q: \mathbb{S}^2_R \to \mathbb{R}$ given at the cell centroids, 
+denoted by $q_{ijp}$, where $i, j=1\ldots, N$ and $p=1,\ldots, 6$. 
+Our objective is to estimate these values at positions outside the range $1, \ldots, N$, specifically at ghost cell positions.
 
-As we pointed out before, this can be done by noticing that the ghost cells on the local
-Cartesian systems are mapped onto the geodesic of a adjacent panel, which allows us to use Lagrange interpolation to obtain the ghost cell values.
-To illustrate this process in Panel 1, in Figure \ref{chp4-cs-halodata} we depict the values of $q_{ijp}$ using green circles for Panel 1 and black circles for the other panels, for $N=8$. Assuming a halo size equal to 3, we also show the target value at ghost cell positions using yellow and magenta circles. Observe that the dashed yellow lines in Figure \ref{chp4-cs-halodata} illustrate
-how the ghost cell points lye in geodesics containing grid position from adjacent panels. Except for the magenta circles,
-all the ghost cell values may be obtained using 1D Lagrange interpolation using the surrounding black circles on the geodesic.
-This can be performed for all panels. After that, the magenta circles may be interpolated using also the values obtained in the first step of interpolation
-(see cyan circles in Figure \ref{chp4-cs-halodata}), preserving the order of accuracy of the interpolation, supposing this one is fixed. 
+To solve this problem, we will employ the strategy outlined in \citet{zerroukat:2022}. 
+As previously mentioned, the ghost cells in the local Cartesian systems are mapped onto the geodesics 
+of adjacent panels, which enables us to use Lagrange interpolation to obtain the values of ghost cells.
+
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1.0\linewidth]{gnomonic_equiangular_8_mercator}
@@ -535,6 +595,27 @@ This can be performed for all panels. After that, the magenta circles may be int
 	\label{chp4-cs-halodata}
 \end{figure}
 
+
+To illustrate this process in Panel 1, we depict the values of $q_{ijp}$ in Figure \ref{chp4-cs-halodata}. 
+The green circles represent the values in Panel 1, while the black circles 
+represent the values in the other panels, for a given $N=8$. 
+Assuming a halo size of 3, we also indicate the target values at the ghost cell 
+positions using yellow and magenta circles. 
+It is worth noting that the dashed yellow lines in Figure \ref{chp4-cs-halodata} 
+illustrate how the ghost cell points lie on geodesics containing grid positions from adjacent panels.
+With the exception of the magenta circles, all the ghost cell values can be obtained using 1D Lagrange interpolation, 
+utilizing the surrounding black circles on the geodesic. 
+This interpolation procedure can be performed for all panels. 
+Subsequently, the magenta circles can be interpolated using the values obtained in the first step of interpolation 
+(depicted as cyan circles in Figure \ref{chp4-cs-halodata}), 
+while preserving the order of accuracy of the interpolation, assuming it is fixed. 
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.8\linewidth]{gnomonic_equidistant_1024_interp_q_ic_2_mercator}
+	\caption{Trigonometric function defined by Equation \eqref{chp4-ic2}.}
+	\label{chp4-cs-ic2}
+\end{figure}
 We are going to show a numerical example of this interpolation process using a halo region of size 4 and 
 assuming the radius of the sphere is equal to one.
 We shall consider the following trigonometric function, which is the divergence of a velocity field,
@@ -546,21 +627,7 @@ as in \citet{peixoto:13} in our tests:
 	+16\sin^2(\lambda)\cos(\lambda)\cos^3(\phi)\sin(\phi)\bigg),
 	\end{split}
 \end{align}
-whose graph is depicted in Figure \ref{chp4-cs-ic2}. We are going to consider the relative error in the maximum norm and the convergence rate 
-at the ghost cell positions defined analogously as in Section \ref{sec-ds-exp}. 
-We also consider values os $N$ given by $2^k$, for $k=4, \ldots, 10$, in order to compute the error and convergence rate.
-In Figures \ref{chp4-exp2} we show the error and convergence rate for the trigonometric function (Equation \eqref{chp4-ic2}),
-respectively, considering polynomials of degrees from 0 up to 4. As both graphs show, we were able to achieve the expected order of convergence.
-Next, we shall use the ghost cell interpolation when computing the stencils from PPM edge reconstructions presented in Chapter \ref{chp-1d-fv}
-in each direction of a panel and also compare the results obtained with extrapolation.
-
-\begin{figure}[!htb]
-	\centering
-	\includegraphics[width=1\linewidth]{gnomonic_equidistant_1024_interp_q_ic_2_mercator}
-	\caption{Trigonometric function defined by Equation \eqref{chp4-ic2}.}
-	\label{chp4-cs-ic2}
-\end{figure}
-
+whose graph is depicted in Figure \ref{chp4-cs-ic2}.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.45\textwidth}
@@ -577,30 +644,18 @@ in each direction of a panel and also compare the results obtained with extrapol
 		polynomial degrees, using the trigonometric function given by Equation \eqref{chp4-ic2}.\label{chp4-exp2}}
 \end{figure}
 
+We are going to consider the relative error in the maximum norm and the convergence rate 
+at the ghost cell positions defined analogously as in Section \ref{sec-ds-exp}. 
+We also consider values os $N$ given by $2^k$, for $k=4, \ldots, 10$, in order to compute the error and convergence rate.
+In Figures \ref{chp4-exp2} we show the error and convergence rate for the trigonometric function (Equation \eqref{chp4-ic2}),
+respectively, considering polynomials of degrees from 0 up to 4. As both graphs show, we were able to achieve the expected order of convergence.
+
+\subsection{Ghost cells wind interpolation}
+\label{cs-wind-interp}
+
+\newpage
 \subsection{Edges reconstruction}
 \label{cs-recon}
-Let denote a control volume of the cubed-sphere by $\Omega_{ijp}$, that is:
-\begin{equation*}
-	\Omega_{ijp} = \Phi_p([x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}] \times [y_{j-\frac{1}{2}}, y_{j+\frac{1}{2}}]),
-	\quad 1 \leq i, j \leq N, \quad 1 \leq p \leq 6.
-\end{equation*}
-We define the average values of a function $q$ with the aid of the metric tensor $g(x,y)$ (Equation \ref{metrictensor-cs-equiangular}):
-\begin{equation*}
-	Q_{ijp} = \frac{1}{|\Omega_{ijp}|}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}  q(x,y;p) \sqrt{g(x,y)}\,dx \,dy,
-\end{equation*}
-where $|\Omega_{ijp}|$ is the control volume area given by:
-\begin{equation*}
-	|\Omega_{ijp}| = \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}\sqrt{g(x,y)} \,dx \,dy.
-\end{equation*}
-Similar to Proposition \ref{prop-bound-centroid-2d}, we may approximate the average value using the centroid value, that is
-\begin{equation*}
-	Q_{ijp} - q_{ijp} = O(\Delta x ^2), 
-\end{equation*}
-where $q_{ijp} = q(x_i,y_j; p)$, recalling that on the cubed-sphere we always assume $\Delta x = \Delta y$.
-In this work, we shall always approximate the average values since our schemes are expected to be at most second-order,
-this approximation does not deteriorate the convergence order.
-
 Let us consider the following problem: given the values $q_{ijp}$ we wish to find approximations of 
 the function $q$ at the control volume edge midpoints denoted by
 $q^{L,x}_{ijp}  \approx q_{{i-\frac{1}{2}},j,p}$,
