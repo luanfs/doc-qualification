@@ -585,7 +585,6 @@ Our objective is to estimate these values at positions outside the range $1, \ld
 To solve this problem, we will employ the strategy outlined in \citet{zerroukat:2022}. 
 As previously mentioned, the ghost cells in the local Cartesian systems are mapped onto the geodesics 
 of adjacent panels, which enables us to use Lagrange interpolation to obtain the values of ghost cells.
-
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=1.0\linewidth]{gnomonic_equiangular_8_mercator}
@@ -594,7 +593,6 @@ of adjacent panels, which enables us to use Lagrange interpolation to obtain the
 	ghost cell points at panel 1 (yellow and magenta circles) and others panels (cyan circles).}
 	\label{chp4-cs-halodata}
 \end{figure}
-
 
 To illustrate this process in Panel 1, we depict the values of $q_{ijp}$ in Figure \ref{chp4-cs-halodata}. 
 The green circles represent the values in Panel 1, while the black circles 
@@ -609,13 +607,13 @@ This interpolation procedure can be performed for all panels.
 Subsequently, the magenta circles can be interpolated using the values obtained in the first step of interpolation 
 (depicted as cyan circles in Figure \ref{chp4-cs-halodata}), 
 while preserving the order of accuracy of the interpolation, assuming it is fixed. 
-
 \begin{figure}[!htb]
 	\centering
 	\includegraphics[width=0.8\linewidth]{gnomonic_equidistant_1024_interp_q_ic_2_mercator}
 	\caption{Trigonometric function defined by Equation \eqref{chp4-ic2}.}
 	\label{chp4-cs-ic2}
 \end{figure}
+
 We are going to show a numerical example of this interpolation process using a halo region of size 4 and 
 assuming the radius of the sphere is equal to one.
 We shall consider the following trigonometric function, which is the divergence of a velocity field,
@@ -652,18 +650,78 @@ respectively, considering polynomials of degrees from 0 up to 4. As both graphs 
 
 \subsection{Ghost cells wind interpolation}
 \label{cs-wind-interp}
+Let us consider the following problem: Assume that we are given a tangent vector field of the sphere, denoted as 
+$\boldsymbol{u}:\mathbb{S}^2_R \to \mathbb{R}^3$. We also have its contravariant components at the control-volume
+midpoints, namely $u_{i+\frac{1}{2},j,p}$ for $i=0, \ldots, N$ and $j=1, \ldots, N$, as well as
+$v_{i,j+\frac{1}{2},p}$ for $i=1, \ldots, N$ and $j=0, \ldots, N$.
+
+Our objective is to obtain the values 
+\begin{align*}
+u_{i+\frac{1}{2},j,p} \quad \text{ for} \quad &i=-1, \ldots, N+1, \quad &j=-\nu+1, \ldots, 0, \quad &j=N, \ldots, N+\nu,\\
+v_{i,j+\frac{1}{2},p} \quad \text{ for} \quad &j=0, \ldots, N, \quad &i=-\nu+1, \ldots, 0,\quad &i=N, \ldots, N+\nu,
+\end{align*}
+as shown in Figure \ref{chp4-wind-interp}.
+This problem arises when we apply dimension splitting on each panel of the cubed-sphere.
+
+This problem can be solved by using the interpolation process described earlier for a scalar field.
+To apply the interpolation process, we first need to interpolate the values of $u$ and $v$ from the
+edges to the centers at the points required for the ghost cells interpolation. Specifically, we need the values:
+\begin{align*}
+	u_{1+k,j,p}, v_{1+k,j,p} \quad \text{ for} \quad &j=1, \ldots, N, \quad k=0, \ldots, \nu-1,\\
+	u_{N-k,j,p}, v_{N-k,j,p} \quad \text{ for} \quad &j=1, \ldots, N, \quad k=0, \ldots, \nu-1,\\
+	u_{i,1+k,p}, v_{i,1+k,p} \quad \text{ for} \quad &i=1, \ldots, N, \quad k=0, \ldots, \nu-1,\\
+    u_{i,N-k,p}, v_{i,N-k,p} \quad \text{ for} \quad &i=1, \ldots, N, \quad k=0, \ldots, \nu-1.\\
+\end{align*}
+We apply a third-order interpolation in the $x$ direction of each panel to interpolate $u$ from the edges to the centers
+(see Figure \ref{chp4-wind-interp-a}). Similarly, we use a third-order interpolation to obtain the values of $v$ at the 
+centers in the $y$ direction (see Figure \ref{chp4-wind-interp-b}).
+Once these interpolated values are computed, we convert the contravariant values $u_{ijp}, v_{ijp}$
+to their latitude-longitude components $(u_{\lambda})_{ijp}, (v_{\phi})_{ijp}$ using Equation
+\eqref{contravariant-to-ll}. This conversion avoid any coordinate system discontinuity.
+Finally, we can use the values at the ghost cell centers to obtain the values at the ghost cell edges
+by employing a third-order interpolation once again.
+Subsequently, the contravariant components can be obtained by using Equation \eqref{ll-to-contravariant}.
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{1\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_10_mercator_x}
+		\caption{Contravariant component $u$. \label{chp4-wind-interp-a}}
+	\end{subfigure}
+	\begin{subfigure}{1\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_10_mercator_y}
+		\caption{Contravariant component $v$. \label{chp4-wind-interp-b}}
+	\end{subfigure}
+	\caption{ Illustration of contravariant components $u$ (a) and $v$ (b) of a vector field at edge midpoints.
+	Ghost cell points are denoted by triangles and squares.
+	The extra points needed for the RK2 scheme are denoted by squares.\label{chp4-wind-interp}}
+\end{figure}
 
 \newpage
+We will consider the following rotated zonal field on the unit sphere, as a numerical test, based on \citet{will:1992}:
+\begin{align*}
+	\begin{cases}
+		u_\lambda(\lambda,\phi,t) = u_0(\cos(\phi)\cos(\alpha) + \sin(\phi)\cos(\lambda)\sin(\alpha)),\\
+		v_\phi(\lambda,\phi,t) = -u_0\sin(\lambda)\sin(\alpha).
+	\end{cases}
+\end{align*}
+Here, $u_0=\frac{2\pi}{5}$ and $\alpha= -\frac{45\pi}{180}$. We will adopt the same grids as in Section \ref{cs-interp}.
+Next, we will compute the relative errors of the contravariant components at the midpoint edges,
+as shown in Figure \ref{chp4-wind-interp-a} and Figure \ref{chp4-wind-interp-b}.
+
+
 \subsection{Edges reconstruction}
 \label{cs-recon}
-Let us consider the following problem: given the values $q_{ijp}$ we wish to find approximations of 
-the function $q$ at the control volume edge midpoints denoted by
-$q^{L,x}_{ijp}  \approx q_{{i-\frac{1}{2}},j,p}$,
-$q^{R,x}_{ijp}  \approx q_{{i+\frac{1}{2}},j,p}$,
-$q^{L,y}_{ijp}  \approx q_{i,{j-\frac{1}{2}},p}$,
-$q^{R,y}_{ijp}  \approx q_{i,{j+\frac{1}{2}},p}$, where we also using the notations
-$q_{{i+\frac{1}{2}},j,p}  \approx q(x_{i+\frac{1}{2}},y_j; p)$,
-$q_{i,{j+\frac{1}{2}},p}  \approx q(x_i,y_{j+\frac{1}{2}}; p)$.
+Let us consider the following problem: given the values $q_{ijp}$ we wish to find 
+approximations of the function $q$ at the control volume edge midpoints denoted by
+\begin{align*}
+q^{L,x}_{ijp}  \approx q_{{i-\frac{1}{2}},j,p},\quad
+q^{R,x}_{ijp}  \approx q_{{i+\frac{1}{2}},j,p},\quad
+q^{L,y}_{ijp}  \approx q_{i,{j-\frac{1}{2}},p},\quad
+q^{R,y}_{ijp}  \approx q_{i,{j+\frac{1}{2}},p}.
+\end{align*}
 These points are illustrated in Figure \ref{csgrid-rpoints} for panel 1.
 \begin{figure}[!htb]
 	\centering
@@ -673,20 +731,37 @@ These points are illustrated in Figure \ref{csgrid-rpoints} for panel 1.
 		This figure uses an equiangular cubed-sphere with $N=8$.} \label{csgrid-rpoints}
 \end{figure}
 
-We can estimate the desired values using the one-dimensional reconstruction schemes from Sections \ref{chp2-sec-recon} and \ref{chp2-sec-mono}
-by performing the PPM reconstruction in the $x$ and $y$ directions independently.
-Notice that all the schemes from Sections \ref{chp2-sec-recon} and \ref{chp2-sec-mono} are expected to be second-order accurate due to centroid point approximation.
-The major difference here is when we compute the stencil near the cube edges. 
-Unlikely the previous chapters where we assumed periodic boundary conditions, the boundary conditions are related to the adjacent panels.
-One way to overcome this problem is just to add ghost cell layers and use the process described in Section \ref{cs-interp}, hence
-all the stencils may be computed. 
-This approach shall be referred to as \textbf{ET-R96} (ET stands for edge treatment) since this approach of extending the grid lines and using Lagrange interpolation was originally proposed in \citet{ronchi:1996}.
+We can estimate the desired values by using the one-dimensional reconstruction schemes 
+described in Sections \ref{chp2-sec-recon} and \ref{chp2-sec-mono}, 
+performing PPM reconstruction independently in the $x$ and $y$ directions. 
+It is worth noting that all the schemes discussed in those sections are 
+expected to be second-order accurate due to the centroid point approximation.
 
-Another way to fill the ghost cell values used for instance in \citet{sadourny:1972}, is just to ignore the discontinuity of the coordinate 
-system and use the values of the cells in the adjacent panels as the ghost cell values. This scheme is labeled  \textbf{ET-S72}.
-An approach that avoids the use of ghost cells has been developed by \citet{putman:2007} using 
-extrapolation at the cells surrounding to the cube edge.
-We are going to describe this scheme that we shall name \textbf{ET-PL07}. This scheme uses the following extrapolations:
+However, there are differences in the computation of the stencil near the cube edges. 
+Unlike in the previous chapters, where periodic boundary conditions were assumed, 
+the boundary conditions in this context are related to the adjacent panels. 
+One way to address this issue is by adding ghost cell layers and utilizing 
+the process described in Section \ref{cs-interp} to compute the stencils. 
+This approach is referred to as \textbf{ET-ZA22} (Edge Treatment - ZA22), 
+as it extends the grid lines and employs Lagrange interpolation, 
+as described by \citet{zerroukat:2022}.
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.8\linewidth]{haloregion}
+	\caption{Different approaches for defining the halo region:
+    (a) using adjacent cell values (used in ET-S72 and ET-PL07);
+    (b) extending the panel grid lines (used in ET-ZA22). 
+    Figure taken from \citet{ross:2006} \label{chp4-haloregion}}
+\end{figure}
+
+Another approach, employed in \citet{sadourny:1972}, involves ignoring the
+discontinuity of the coordinate system and simply using the values of the cells 
+in the adjacent panels as the ghost cell values. This scheme is labeled \textbf{ET-S72} (Edge Treatment - S72).
+
+Additionally, an alternative method that avoids the use of ghost cells was developed by
+\citet{putman:2007}, which entails extrapolation at the cells surrounding the cube edge.
+We will refer to this scheme as \textbf{ET-PL07} (Edge Treatment - PL07).
+This scheme uses the following extrapolations:
 \begin{align*}
 	q^{L,x}_{1,j,p} &= \frac{1}{2}\bigg(3Q_{1,j,p} - Q_{2,j,p}\bigg),\\
 	q^{R,x}_{N,j,p} &= \frac{1}{2}\bigg(3Q_{N,j,p} - Q_{N-1,j,p}\bigg),\\
@@ -708,7 +783,7 @@ in the $x$ direction and in the $y$ direction we use the formulas
 	q^{R,y}_{i,N-1,p} &= q^{L,y}_{i,N,p}.\\
 \end{align*}
 We are going to use the trigonometric function (Equation \eqref{chp4-ic2})
-as before on the unit sphere to compare the schemes ET-R96, ET-S72 and ET-PL07. The scheme ET-R96 uses cubic polynomials.
+as before on the unit sphere to compare the schemes ET-ZA22, ET-S72 and ET-PL07. The scheme ET-ZA22 uses cubic polynomials.
 We introduce the relative errors:
 \begin{align*}
 	e_{{i-\frac{1}{2}},j,p} &= (|q_{{i-\frac{1}{2}},j,p} - q^{L,x}_{ijp}|)/|q_{{i-\frac{1}{2}},j,p}|,\\
@@ -737,48 +812,48 @@ We are going to compute $E$ for different values of $N$ as in the numerical expe
 
 In Figure \ref{chp4-exp3} we show the errors and the convergence rate using the PPM-PL07 and PPM-L04 reconstruction schemes.
 We can observe that all the schemes converge to zero with second-order.
-The difference between the edge treatments ET-S72, ET-PL07 and ET-R96 schemes
+The difference between the edge treatments ET-S72, ET-PL07 and ET-ZA22 schemes
 may be observed in Figure \ref{chp4-exp4} and Figure \ref{chp4-exp5}, for the  PPM-PL07 and PPM-L04 reconstruction schemes, respectively.
 We notice that the cube edges appear on the error graph when we use the ET-S72 and ET-PL07 schemes. This is an example of grid imprinting.
-Although all schemes are second-order, the scheme ET-R96 do not seem to produce grid imprinting in the reconstruction problem.
+Although all schemes are second-order, the scheme ET-ZA22 do not seem to produce grid imprinting in the reconstruction problem.
 
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.49\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-PL07_etET-S72_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-PL07_etET-S72_sphere}
 		\caption{ET-S72.\label{chp4-exp4-a}}
 	\end{subfigure}
 	\begin{subfigure}{0.49\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-PL07_etET-PL07_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-PL07_etET-PL07_sphere}
 		\caption{ET-PL07.\label{chp4-exp4-b}}
 	\end{subfigure}
 	\begin{subfigure}{0.49\textwidth}
 	\centering
-	\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-PL07_etET-R96_sphere}
-	\caption{ET-R96.\label{chp4-exp4-c}}
+	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-PL07_etET-ZA22_sphere}
+	\caption{ET-ZA22.\label{chp4-exp4-c}}
 \end{subfigure}
 	\caption{Error for the edge midpoint values considering the trigonometric function (Equation \eqref{chp4-ic2})
-	with edges treatment schemes ET-S72 (a), ET-PL07 (b) and ET-R96 for the cubed-sphere with $N=1024$ using the reconstruction PPM-PL07.\label{chp4-exp4}}
+	with edges treatment schemes ET-S72 (a), ET-PL07 (b) and ET-ZA22 for the cubed-sphere with $N=1024$ using the reconstruction PPM-PL07.\label{chp4-exp4}}
 \end{figure}
 
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.49\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-L04_etET-S72_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-L04_etET-PL07_sphere}
 		\caption{ET-S72.\label{chp4-exp5-a}}
 	\end{subfigure}
 	\begin{subfigure}{0.49\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-L04_etET-PL07_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-L04_etET-PL07_sphere}
 		\caption{ET-PL07.\label{chp4-exp5-b}}
 	\end{subfigure}
 	\begin{subfigure}{0.49\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_1024_recon_q_ic_2_reconPPM-L04_etET-R96_sphere}
-		\caption{ET-R96.\label{chp4-exp5-c}}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-L04_etET-PL07_sphere}
+		\caption{ET-ZA22.\label{chp4-exp5-c}}
 	\end{subfigure}
 	\caption{As Figure in \ref{chp4-exp4} but using the PPM-L04 scheme.\label{chp4-exp5}}
 \end{figure}
