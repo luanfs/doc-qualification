@@ -882,4 +882,18 @@ Although all schemes are second-order, the scheme ET-ZA22 do not seem to produce
 
 \section{Concluding remarks}
 \label{cs-conc}
+In this chapter, we reviewed cubed-sphere mappings with a special focus on the equiangular mapping,
+which leads to a more uniform cubed-sphere grid. We observed that the equiangular cubed-sphere ghost cells,
+obtained by extending the gridlines, have a nice property: their edge and center ghost points are located on a common geodesic
+that contains the edge and center points of the adjacent panels. 
+This property allows us to use 1D Lagrange interpolation to obtain the values of scalar and vector fields in the ghost cells. 
+In fact, we demonstrated the accuracy of this method through numerical examples in Sections \ref{cs-interp} and \ref{cs-wind-interp}.
+ 
+Afterward, in Section \ref{cs-recon}, we investigated different methods for computing stencils near the cube edges.
+We considered the scheme based on 1D Lagrange interpolation (ET-ZA22), a scheme that ignores the coordinate system (ET-S72),
+and a scheme based on extrapolations (ET-PL07). The scheme ET-PL07 was proposed by \citet{putman:2007} and is used in the FV3 core.
+Through numerical examples, we demonstrated that the reconstruction at cell edges using PPM schemes generates grid imprinting near
+the cubed edges when using ET-S72. This grid imprinting is reduced when we apply the extrapolation scheme ET-PL07, 
+but the error still persists to be larger on the cube edges. However, this problem is eliminated when we adopt the scheme ET-ZA22.
+Furthermore, the error produced by ET-ZA22 is the smallest observed. Therefore, we concluded that the scheme ET-ZA22 is the most accurate.
 
