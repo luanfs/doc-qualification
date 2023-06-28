@@ -8,7 +8,9 @@ at each cube face, with interpolation between adjacent panels.
 
 A natural approach to develop a finite-volume method for the two-dimensional linear advection equation would involve extending PPM to 
 two dimensions. Indeed, \citet{rancic:1992} proposed a piecewise bi-parabolic extension of PPM using a semi-Lagrangian temporal 
-discretization. However, this method suffers from a significant drawback—its computationally expensive nature. As a popular alternative, 
+discretization. 
+Further, this type of method can be extended to the cubed-sphere \citep{lauritzen:2010}.
+However, this method suffers from a significant drawback—its computationally expensive nature. As a popular alternative, 
 dimension-splitting methods are often used, which replace the two-dimensional problem with a sequence of one-dimensional problems. For 
 example, we can solve the two-dimensional linear advection equation by solving a series of one-dimensional linear advection equations 
 using the PPM from Chapter \ref{chp-1d-fv}. Moreover, in principle, we can employ any numerical method that solves the one-dimensional 
@@ -652,8 +654,8 @@ for $j=-\nu+1, \ldots, M+\nu$, (Figure \ref{lt-GQy}) and thus we have the averag
 \begin{align*}
 	Q^{n+1} &= \frac{(Q^{xy,n} + Q^{yx,n})}{2} \\
     &= Q^n + \frac{1}{2}\mathbf{F}(Q^n,\tilde{u}^n) + \frac{1}{2}\mathbf{G}(Q^n,\tilde{v}^n) + 
-    \frac{1}{2}\mathbf{F}\bigg(Q^n + \frac{1}{2}\mathbf{G}(Q^n, \tilde{v}^n), \tilde{u}^n\bigg)+
-    \frac{1}{2}\mathbf{G}\bigg(Q^n + \frac{1}{2}\mathbf{F}(Q^n, \tilde{u}^n), \tilde{v}^n\bigg),
+    \frac{1}{2}\mathbf{F}\bigg(Q^n + \mathbf{G}(Q^n, \tilde{v}^n), \tilde{u}^n\bigg)+
+    \frac{1}{2}\mathbf{G}\bigg(Q^n + \mathbf{F}(Q^n, \tilde{u}^n), \tilde{v}^n\bigg),
 \end{align*}
 assuming that the numerical flux functions are linear in the input $Q$, we may rewrite a computationally cheaper version
 of the average Lie-Trotter splitting as \citep{lin:1996}:
@@ -788,7 +790,8 @@ For the 1D schemes, we consider the FV-SL schemes PPM-0, PPM-PL07, PPM-CW84, PPM
 with the departure point schemes RK1 and RK2 as in Section \ref{chp2-sec-numerical-exp}.
 For all simulations, the CFL number is set to $0.8$, and the time integration interval 
 is $[0,5]$, which represents the period of the exact solution for all tests.
-We employ $(\Delta x^{(k)},\Delta y^{(k)})$-grids with $\Delta x^{(k)} = \Delta y^{(k)} = 1/2^k$ for $k=4, \ldots, 10$.
+We employ $(\Delta x^{(k)},\Delta y^{(k)},\lambda)$-discretizations with $\Delta x^{(k)} = \Delta y^{(k)} = 1/2^k$ for $k=4, \ldots, 10$,
+$\Delta t^{(0)} = 0.05$, $\lambda = 0.8$.
 We introduce the relative error in the maximum norm:
 \begin{equation*}
 	E_k = \max_{n=0,\ldots, N_T}

@@ -775,9 +775,10 @@ $\tau_i^n$ following \citet{leveque:2002}:
 \begin{equation}
 	\label{consistency-1d-eq1}
 	Q_i(t^{n+1}) = Q_i(t^n) - \lambda
-	\bigg(\mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}})-
-	\mathcal{F}(Q(t^n)(\mathcal{S}_{i-\frac{1}{2}}),\tilde{u}^n_{i-\frac{1}{2}}) \bigg) + \Delta t \tau_i^n.
+	\bigg({F}^n_{i+\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i+\frac{1}{2}})-
+	{F}^n_{i-\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i-\frac{1}{2}}) \bigg) + \Delta t \tau_i^n.
 \end{equation}
+We the define $\tau^n \in \mathbb{P}^{N}_{\nu}$, which represent the LTEs at the time-step $n$.
 Notice the LTE is obtained by replacing the exact solution in Equation \eqref{1d-fv-scheme}.
 Since $Q_i(t^n)$ is the exact solution of Equation \eqref{1d-fvexact-scheme}, 
 the LTE may be rewritten as
@@ -786,9 +787,9 @@ the LTE may be rewritten as
 		\label{consistency-1d-eq2}
 		\tau_{i}^n = 
 		\frac{1}{\Delta x} \bigg[  \bigg( \frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}}
-		{(uq)}(x_{i+\frac{1}{2}}, t) \,dt - \mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}} ),\tilde{u}^n_{i+\frac{1}{2}}) \bigg) +\\
+		{(uq)}(x_{i+\frac{1}{2}}, t) \,dt - \mathcal{F}^n_{i+\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i+\frac{1}{2}}) \bigg) +\\
 		\bigg( \frac{1}{\Delta t}\int_{t^{n}}^{t^{n+1}}
-		{(uq)}(x_{i-\frac{1}{2}}, t) \,dt - \mathcal{F}(Q(t^n)(\mathcal{S}_{i-\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}}) \bigg)
+		{(uq)}(x_{i-\frac{1}{2}}, t) \,dt - \mathcal{F}^n_{i-\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i-\frac{1}{2}}) \bigg)
 		\bigg].
 	\end{split}
 \end{align}
@@ -796,11 +797,6 @@ The LTE gives a measure of how well the 1D-FV scheme approximates the integral f
 of the considered conservation law. 
 Another interpretation of the LTE is that the LTE gives the error obtained after applying
 the scheme for a single time-step using the exact solution.
-The 1D-FV scheme is said to be consistent
-if the LTE converges to zero.
-
-
-We the define $\tau^n = (\tau_1^n, \ldots, \tau^n_N)$, which represent the LTEs at the time-step $n$.
 Now we can define consistency.
 \begin{definition}[Consistency]
 	\label{chp2-def-cons}
@@ -818,7 +814,7 @@ Now we can define consistency.
 	\end{equation*}
 \end{definition}
 From Equation \eqref{consistency-1d-eq2}, it follows that we basically need to ensure that 
-the numerical flux function $\mathcal{F}$ converges to the time-averaged flux at edges
+the numerical flux function $\mathcal{F}^n_{i+\frac{1}{2}}$ converges to the time-averaged flux at edges
 when $\Delta x \to 0$ in order to guarantee consistency.
 In Section \ref{chp2-sec-flux} we shall address how the numerical flux from PPM
 approximates the time-averaged flux at edges.
@@ -827,7 +823,7 @@ At last, we define the point-wise error at time-step $n$ by:
 \begin{equation*}
 	E_i^n = Q_i(t^n) - Q_i^n, \quad i=1, \ldots, N,
 \end{equation*}
-and we define the vector of errors by $E^n = (E_1^n, \ldots, E_N^n)$. 
+and we define the vector of errors by $E^n \in \mathbb{P}^{N}_{\nu}$ with entries $E_i^n$.
 \begin{definition}[Convergence]
 	\label{chp2-def-conv}
 	Let us consider the framework of Problem \ref{chp2-sec2-prob4}.
@@ -851,19 +847,19 @@ the following equation for the error:
 		E^{n+1}_i = E^n_i -
 		&\lambda
 		\bigg[
-		\bigg( \mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}} ),\tilde{u}^n_{i+\frac{1}{2}}) - \mathcal{F}(Q^n(\mathcal{S}_{i+\frac{1}{2}} ),\tilde{u}^n_{i+\frac{1}{2}}) \bigg) \\
-		&-\bigg( \mathcal{F}(Q(t^n)(\mathcal{S}_{i-\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}}) - \mathcal{F}(Q^n(\mathcal{S}_{i-\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}}) \bigg)
+		\bigg( {F}^n_{i+\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i+\frac{1}{2}}) - {F}^n_{i+\frac{1}{2}}(Q^n,\tilde{u}^n_{i+\frac{1}{2}}) \bigg) \\
+		&-\bigg( {F}^n_{i-\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i-\frac{1}{2}}) - {F}^n_{i-\frac{1}{2}}(Q^n,\tilde{u}^n_{i-\frac{1}{2}}) \bigg)
 		\bigg] 
 		+ \tau_{i}^n \Delta t .
 	\end{split}
 \end{align}
-Notice that if $q,u \in \mathcal{C}^3$, we can rewrite Equation \ref{consistency-1d-eq2} as:
+Notice that if $q,u \in \mathcal{C}^3$, we can rewrite Equation \eqref{consistency-1d-eq2} as:
 \begin{align*}
 	\begin{split}
 		\tau_{i}^n = 
 		\bigg[ \frac{1}{\Delta x \Delta t}  \int_{t^{n}}^{t^{n+1}} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
 		{\frac{\partial (uq)}{\partial x}}(x, t) \,dx \,dt - 
-		\bigg(\frac{\mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}})) -\mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}})}{\Delta x} \bigg)
+		\bigg(\frac{{F}^n_{i+\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i-\frac{1}{2}})-{F}^n_{i-\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i-\frac{1}{2}})}{\Delta x} \bigg)
 		\bigg].
 	\end{split}
 \end{align*}
@@ -877,20 +873,20 @@ we have:
 		&= 
 		\bigg[ \frac{1}{\Delta t}  \int_{t^{n}}^{t^{n+1}}
 		{\bigg(\frac{\partial (uq)}{\partial x}}(x_i, t) + \frac{\Delta x^2}{24}\frac{\partial (uq)}{\partial x}(\xi, t) \bigg) \,dt - 
-		\bigg(\frac{\mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}})) 
-			-\mathcal{F}(Q(t^n)(\mathcal{S}_{i-\frac{1}{2}}),\tilde{u}^n_{i-\frac{1}{2}})}{\Delta x} \bigg)
+		\bigg(\frac{{F}^n_{i+\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i+\frac{1}{2}})
+			-{F}^n_{i-\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i-\frac{1}{2}})}{\Delta x} \bigg)
 		\bigg] \\
 		& = 
 		\bigg[ \frac{1}{\Delta t}  \int_{t^{n}}^{t^{n+1}}
 		{\frac{\partial (uq)}{\partial x}}(x_i, t) \,dt - 
-		\bigg(\frac{\mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}})) -\mathcal{F}(Q(t^n)(\mathcal{S}_{i-\frac{1}{2}}),\tilde{u}^n_{i-\frac{1}{2}})}{\Delta x} \bigg)
+		\bigg(\frac{{F}^n_{i+\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i+\frac{1}{2}}) - {F}^n_{i-\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i-\frac{1}{2}})}{\Delta x} \bigg)
 		\bigg] +  \frac{\Delta x^2}{24}\frac{\partial^3 (uq)}{\partial x^3}(\xi, \overline{t}), 
 	\end{split}
 \end{align}
 for $\xi \in X_i$ and $\overline{t} \in [t^{n},t^{n+1}]$. Therefore, if $q,u \in \mathcal{C}^3$ the scheme is
 consistent, if and only if, $\frac{1}{\Delta t}  \int_{t^{n}}^{t^{n+1}} {\frac{\partial (uq)}{\partial x}}(x_i, t) \,dt$
 is approximated by 
-$\frac{\mathcal{F}(Q(t^n)(\mathcal{S}_{i+\frac{1}{2}}),\tilde{u}^n_{i+\frac{1}{2}})) -\mathcal{F}(Q(t^n)(\mathcal{S}_{i-\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}})}{\Delta x}$.
+$\frac{{F}^n_{i+\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i+\frac{1}{2}})) -{F}^n_{i-\frac{1}{2}}(Q(t^n),\tilde{u}^n_{i-\frac{1}{2}})}{\Delta x}$.
 This shall be very useful when we consider two-dimensional schemes, where we are going to use the discrete operators to estimate the divergence
 of velocity fields.
 
@@ -899,11 +895,11 @@ of velocity fields.
 In order to define the concept of stability, it is useful to introduce an operator
 representation of 1D-FV schemes.
 In the context of Problem \ref{chp2-sec2-prob4}, we define the operators
-$\mathcal{H}_{\Delta x,n}: \mathbb{R}^{\Delta x} \to \mathbb{R}^{\Delta x}$ whose $i$-th entry is given by:
+$\mathcal{H}_{\Delta x,n}: \mathbb{P}^{N}_{\nu} \to \mathbb{P}^{N}_{\nu}$ whose $i$-th entry is given by:
 \begin{equation}
 	[\mathcal{H}_{\Delta x,n}(Q)]_i = Q_i -
-	\lambda \bigg( \mathcal{F}(Q(\mathcal{S}_{i+\frac{1}{2}} ),\tilde{u}^n_{i+\frac{1}{2}}) 
-	- \mathcal{F}(Q(\mathcal{S}_{i-\frac{1}{2}} ),\tilde{u}^n_{i-\frac{1}{2}}) \bigg),
+	\lambda \bigg({F}^n_{i+\frac{1}{2}}(Q,\tilde{u}^n_{i+\frac{1}{2}}) 
+	- {F}^n_{i-\frac{1}{2}}(Q,\tilde{u}^n_{i-\frac{1}{2}}) \bigg),
 \end{equation}
 for $i=1, \ldots, N$, $n=0, \ldots, N_T-1$.
 Notice that the dependence on $n$ is due to the velocity that may be allowed
@@ -932,7 +928,7 @@ We define stability as follows.
 	\begin{equation}
 		\|\mathcal{H}_{\Delta x,n}(Q) - \mathcal{H}_{\Delta x,n}(P)\|_{p,\Delta x} \leq (1+\alpha \Delta t)  \|Q-P\|_{p,\Delta x},
 	\end{equation}
-	for all $Q, P \in \mathbb{R}^{\Delta x}$ and $\alpha$ is a constant
+	for all $Q, P \in \mathbb{R}^{N}_{\nu}$ and $\alpha$ is a constant
 	that does not depend neither on $\Delta x$ nor on  $\Delta t$.
 \end{definition}
 Assuming that the scheme is stable in the $p-$norm, then it follows from Equation \eqref{erroreq-1d-eq3} that:
@@ -977,21 +973,21 @@ to estimate the 2-norm of $\mathcal{H}_{\Delta x,n}$. This approach is known as 
 We define the nodes $\theta_i = i\frac{2\pi}{N}$, $i=1, \ldots, N$, $\Delta \theta = \frac{2\pi}{N}$,
 $\theta = (\theta_1, \theta_2, \ldots, \theta_N)$.
 The imaginary unit is denoted by $\imath$.
-The Fourier modes are given by:
+We define $\mathbb{C}^{N}_{\nu}$  similarly as $\mathbb{P}^{N}_{\nu}$.
+The Fourier modes $e^{\imath k \theta}] \in \mathbb{C}^{N}_{\nu}$ for $k=1, \ldots, N$, have entries are given by:
 \begin{equation*}
-	e^{\imath k \theta} = (e^{\imath k\theta_1}, e^{\imath k\theta_2}, \ldots, e^{\imath k\theta_N}) \in \mathbb{C}^N, 
+	[e^{\imath k \theta}]_i = e^{\imath k\theta_i},\quad \text{for} i=1, \ldots, N.
 \end{equation*}
-for $k=1, \ldots, N$. 
 Each $k$ is referred to wavenumber and $\theta_k$ is called  dimensionless wavenumber.
-The Fourier modes form an orthogonal basis of $\mathbb{C}^N$ with respect to the 
+The Fourier modes form an orthogonal basis of $\mathbb{C}^N_{\nu}$ with respect to the 
 inner product
 \begin{equation*}
 	\langle Q, P \rangle = \frac{1}{N}\sum_{i=1}^{N}{Q_i \overline{P_i}},
 \end{equation*}
-for $P, Q \in \mathbb{C}$ and $\overline{z}$ denotes the complex conjugate of $z$. 
-Given $Q \in \mathbb{R}^{\Delta x}$, we may may express it in terms of the Fourier modes
+for $P, Q \in \mathbb{C}^{N}_{\nu}$ and $\overline{z}$ denotes the complex conjugate of $z$. 
+Given $Q \in \mathbb{P}^{N}_{\nu}$, we may may express it in terms of the Fourier modes
 \begin{equation*}
-	Q = \sum_{k=1}^{N} a_k \exp(\imath k \theta),
+	Q = \sum_{k=1}^{N} a_k e^{\imath k \theta},
 \end{equation*}
 where $a_k \in \mathbb{C}$. The 2-norm of $Q$ is then given by:
 \begin{equation*}
@@ -1023,38 +1019,11 @@ Therefore:
 \end{equation*}
 If we show that $\max_{k=1, \ldots, N}{|\rho(k)|} \leq 1 + \alpha \Delta t$, 
 with $\alpha$ independent of $\Delta t$, $N$ and $n$, then we ensure the stability of $\mathcal{H}_{\Delta x,n}$.
-Generally speaking, the numerical flux can be written as a linear function
-\begin{equation*}
-	\mathcal{F}(Q(\mathcal{S}_{i+\frac{1}{2}}), \tilde{u}^n_{i+\frac{1}{2}}) = \sum_{l \in \mathcal{S}_{i+\frac{1}{2}}} \alpha_{l,i} Q_{l}, 
-\end{equation*}
-when no monotonicity constraint is imposed, 
-where the coefficients $\alpha_{l,i}$ depend on $\tilde{u}^n, \Delta t$ and $\Delta x$.
-We can then express $\rho$ in terms of $\alpha_{l,i}$.
-Indeed, when we apply the operator $\mathcal{H}_{\Delta x,n}$ in a Fourier mode, we get:
-\begin{align*}
-	\begin{split}
-		[\mathcal{H}_{\Delta x,n}(e^{\imath k\theta})]_i &= e^{\imath k\theta_i} - \lambda 
-		\bigg(\sum_{l \in \mathcal{S}_{i+\frac{1}{2}}} \alpha_{l,i}   e^{\imath k\theta_{l}} - 
-		\sum_{l \in \mathcal{S}_{i-\frac{1}{2}}} \alpha_{l,i-1} e^{\imath k\theta_{l-1}} \bigg)\\
-		&= e^{\imath k \theta_i}\bigg(1 - \lambda 
-		\bigg(\sum_{l \in \mathcal{S}_{i+\frac{1}{2}}} \alpha_{l,i}   e^{\imath k\theta_{l-i}} - 
-		\sum_{l \in \mathcal{S}_{i-\frac{1}{2}}} \alpha_{l,i-1} e^{\imath k\theta_{l-1-i}} \bigg) \bigg).\\
-	\end{split}
-\end{align*}
-Hence, the amplification factor has the form
-\begin{equation}
-	\label{chp2-amplification}
-	\rho(k) = 1 - \lambda
-	\bigg(\sum_{l \in \mathcal{S}_{i+\frac{1}{2}}} \alpha_{l,i}   e^{\imath k\theta_{l-i}} - 
-	\sum_{l \in \mathcal{S}_{i-\frac{1}{2}}} \alpha_{l,i-1} e^{\imath k\theta_{l-1-i}} \bigg).
-\end{equation}
-In Section \ref{chp2-sec-flux} we shall analyse $|\rho(k)|$ in terms of the PPM coefficients.
-
 
 \subsection{Flux accuracy analysis}
 \label{chp2-sub-flux}
-With the stencil coefficients, we can compute the amplification factor 
-(Equation \eqref{chp2-amplification}) for the PPM and the hybrid PPM schemes, both without monotonization.
+With the PPM operator, we can compute the amplification factor by applying it
+on each Fourier mode considering the PPM and the hybrid PPM schemes, both without monotonization.
 We assume a constant velocity equal to one and $N=100$ (number of control volumes).
 In Figure \ref{chp2-fig-amplification} we show the amplification factor for both PPM and hybrid PPM schemes
 considering different CFL numbers.
@@ -1063,6 +1032,7 @@ Besides that, the hybrid scheme is more effective when reducing the Fourier mode
 We point out that both schemes are exact when the CFL number is equal to 1.
 From this analysis, we can conclude that the PPM and hybrid PPM schemes satisfy the
 Von Neumann stability criteria when the CFL restriction is respected.
+For an analysis of stability for larger time-steps, we refer to \citet{lauritzen:2007}.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.49\linewidth]{stability_PPM-0}
@@ -1077,7 +1047,7 @@ The notions of convergence, consistency and stability for a 2D-FV schemes
 are straightforward from these notions for 1D-FV schemes
 (see Subsections \ref{chp2-sub-CC} and \ref{chp2-sub-stability}).
 Indeed, in the context of Problem \ref{chp3-sec2-prob3}, we define the operators
-$\mathcal{H}_{\Delta x ,\Delta y,n}: \mathbb{R}^{N \times N} \to \mathbb{R}^{N \times M}$ whose $(i,j)$ entry is given by:
+$\mathcal{H}_{\Delta x ,\Delta y,n}: \mathbb{R}^{N \times M} \to \mathbb{R}^{N \times M}$ whose $(i,j)$ entry is given by:
 \begin{align*}
 	[\mathcal{H}_{\Delta x ,\Delta y,n}(Q)]_{ij} = Q_{ij} - \Delta t\mathbb{D}_{ij}^n
 \end{align*}
@@ -1117,6 +1087,7 @@ $\theta_i = (\theta_1, \theta_2, \ldots, \theta_N)$, $\phi_j = j\frac{2\pi}{M}$,
 $\phi = (\phi_1, \phi_2, \ldots, \phi_M)$.
 For $k_1=1, \ldots, N$, $k_2=1, \ldots, M$, the two-dimensional Fourier mode $\boldsymbol{k} = (k_1,k_2)$ from $\mathbb{C}^{N\times M}$ 
 has its $(i,j)$ entry given by $[e^{\imath \boldsymbol{k} \theta}]_{ij} = e^{\imath k_1 \theta_i}e^{\imath k_2 \phi_j}$. 
+For an analysis of stability for the dimension splitting method, we refer to \citet{lin:1996,lauritzen:2007}.
 
 Notice that if $q,u, v \in \mathcal{C}^3$, we can rewrite the LTE as:
 \begin{align*}

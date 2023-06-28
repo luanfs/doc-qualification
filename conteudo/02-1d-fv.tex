@@ -1157,8 +1157,8 @@ using a high-resolution ($N=1024$), the PPM-L04 scheme and the RK1 departure poi
 		and 5  \eqref{chp2-sec-exp-adv2-f} time units.
 		We are using the PPM-L04 scheme with the RK1 departure point scheme. \label{chp2-sec-exp-adv2}}
 \end{figure}
-To investigate the error convergence, we employ $\Delta x^{(k)}$-grids with $\Delta x^{(k)} = 1/2^k$ for 
-$k = 4, \ldots, 10$.
+To investigate the error convergence, we employ $(\Delta x^{(k)}, \Delta t^{(k)}, \lambda)$-discretizations with $\Delta x^{(k)} = 1/2^k$ for 
+$k = 4, \ldots, 10$, $\Delta t^{(0)}=0.25$, $\lambda = 4$.
 To measure the accuracy, we consider the relative error in the maximum norm as follows:
 \begin{equation*}
 	E_k = \max_{n=0,\ldots, N_T}

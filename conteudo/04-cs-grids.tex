@@ -556,7 +556,11 @@ the halo size equal to three.
         Ghost cells of panel 1 are drawn using cyan colors.
 	\label{chp4-cs-grid-function}}
 \end{figure}
-
+For a grid function $Q$ we also use the notations:
+\begin{align*}
+	Q_{\times,j,p} &:= (Q_{-\nu+1,j,p}, \ldots, Q_{N+\nu,j,p}) \in \mathbb{R}^{N}_{\nu},\\
+	Q_{i,\times,p} &:= (Q_{i,-\nu+1,p}, \ldots, Q_{i,M+\nu,p}) \in \mathbb{R}^{N}_{\nu}.
+\end{align*}
 We define the average values of a function $q$ with the aid of the metric tensor
 $\sigma(x,y)$ at time $t$: 
 \begin{equation*}
@@ -730,7 +734,7 @@ Indeed, from Figure \ref{chp4-expvf}, we observe that when employing a fourth-or
 		\caption{Convergence rate.\label{chp4-exp-vf-CR}}
 	\end{subfigure}
 	\caption{Relative error convergence (a) and convergence rate (b) for the ghost cell interpolation of a vector field process for different
-	polynomial degrees, using the trigonometric function given by Equation \eqref{chp4-wind1}.\label{chp4-expvf}}
+	polynomial degrees, using the vectorial function given by Equation \eqref{chp4-wind1}.\label{chp4-expvf}}
 \end{figure}
 \subsection{Edges reconstruction}
 \label{cs-recon}
@@ -860,7 +864,7 @@ Although all schemes are second-order, the scheme ET-ZA22 do not seem to produce
 	\centering
 	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-L04_etET-PL07_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-L04_etET-S72_sphere}
 		\caption{ET-S72.\label{chp4-exp5-a}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
@@ -870,13 +874,12 @@ Although all schemes are second-order, the scheme ET-ZA22 do not seem to produce
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-L04_etET-PL07_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-L04_etET-ZA22_sphere}
 		\caption{ET-ZA22.\label{chp4-exp5-c}}
 	\end{subfigure}
 	\caption{As Figure in \ref{chp4-exp4} but using the PPM-L04 scheme.\label{chp4-exp5}}
 \end{figure}
 
-\newpage
 \section{Concluding remarks}
 \label{cs-conc}
 
