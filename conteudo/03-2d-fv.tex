@@ -109,13 +109,13 @@ and $q^n_{i,j+\frac{1}{2}} = q(x_i,y_{j+\frac{1}{2}}, t^n)$.
 		values (in gray) assuming biperiodicity.\label{chp3-sec1-grid2d-function}}
 \end{figure}
 
-We recall that we say the $\boldsymbol{u}$ is \textbf{non-divergent} if $\nabla \cdot \boldsymbol{u}=0$.
 We denote by $\nabla \cdot (q\boldsymbol{u})$ the divergence operator:
 \begin{equation}
 	\label{sec-adv2d:eqdiv}
 	\nabla \cdot (q\boldsymbol{u})(x, y, t) =  
 	[{\partial_x (uq)} + {\partial_y (vq)}](x, y, t).
 \end{equation}
+We recall that we say the $\boldsymbol{u}$ is \textbf{non-divergent} if $\nabla \cdot \boldsymbol{u}=0$.
 We define the $(\Delta x, \Delta y)$-grid function $\delta^n$ as
 the exact divergence of $q\boldsymbol{u}$ at the cell centers, namely
 \begin{equation}
@@ -266,8 +266,8 @@ We summarize the weak version of Equation \eqref{sec-adv2d:eq1} in Problem \eqre
    ${q}(a, y, t) = {q}(b, y, t), \quad \forall y \in [c,d],  \quad \forall t\geq 0,$
    ${q}(x, c, t) = {q}(x, d, t), \quad \forall x \in [a,b],  \quad \forall t\geq 0.$
 \end{prob}
-Similarly to Section \ref{chp2-sec1}, Equation \eqref{sec-adv2d:eq1} and Problem \eqref{chp3-sec2-prob1}.
-when ${q} \in \mathcal{C}^1_P{(\Omega)}$ function.
+Similarly to Section \ref{chp2-sec1}, Equation \eqref{sec-adv2d:eq1} and Problem \eqref{chp3-sec2-prob1} are equivalent
+when ${q}, \boldsymbol{u} \in \mathcal{C}^1_P{(\Omega)}$.
 For Problem \ref{chp3-sec2-prob1}, the total mass in $\Omega$ is defined by: 
 \begin{equation}
 	{M}_{\Omega}(t) = \int_{\Omega} {q}(x,y,t) \,dx \,dy , \quad \forall t \in [0,T],
@@ -276,7 +276,6 @@ and is conserved within time:
 \begin{equation}
 	{M}_{\Omega}(t) = {M}_{\Omega}(0), \quad \forall t \in [0,T].
 \end{equation}
-
 Considering a $(\Delta x, \Delta y, \Delta t, \lambda)$ discretization of $D = \Omega \times [0,T]$ and
 substituting $t_1, t_2, x_1, x_2, y_1$ and $y_2$ by 
 $t_{n}, t_{n+1}, x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}, y_{j-\frac{1}{2}}, y_{j+\frac{1}{2}}$,
@@ -347,7 +346,7 @@ Finally, we define the 2D-FV scheme problem as follows in Problem \ref{chp3-sec2
     - {G}_{i,j-\frac{1}{2}}^{n}$ 
     and ${Q}^{n}\in \mathbb{P}^{N\times M}_{\nu}$ is intended to be an approximation
 	of ${Q}(t_{n})\in \mathbb{P}^{N\times M}_{\nu}$ in some sense. We define ${Q}_{ij}^{0} = {Q}_{ij}(0)$ or
-	${Q}_{ij}^{0} = {q}^0_{i,j}$.
+	${Q}_{ij}^{0} = {q}^0_{ij}$.
     
     The term ${F}_{i+\frac{1}{2}, j}^{n}$ is known as numerical flux in the 
     $x$ direction and it approximates
@@ -366,11 +365,11 @@ Finally, we define the 2D-FV scheme problem as follows in Problem \ref{chp3-sec2
 \end{prob}
 \begin{remark}
 For Problem \ref{chp3-sec2-prob3}, we define the CFL number in the $x$ and $y$ direction
-by $\max \{{|u_{i+\frac{1}{2},j}^n}|\}$ and $\max \{ {|v_{i,j+\frac{1}{2}}^n}|\}$, respectively.
+by $\max \{{|u_{i+\frac{1}{2},j}^n}|\}\frac{\Delta t}{\Delta x}$ and 
+$\max \{ {|v_{i,j+\frac{1}{2}}^n}|\}\frac{\Delta t}{\Delta y}$, respectively.
 The CFL number is maximum between these numbers and we say that the CFL condition is
 satisfied if the CFL number is less than one. 
 \end{remark}
-
 For a 2D-FV the discrete total mass at the time-step $n$ is given by
 \begin{equation*}
 	M^n =  \Delta x \Delta y \sum_{i=1}^N \sum_{j=1}^M Q_{ij}^n.
@@ -597,7 +596,7 @@ Then, we may express the fluxes as in Equation \eqref{chp-sec-flux:numerical-flu
     \quad &\text{if} \quad \tilde{u}_{i+\frac{1}{2},j}^n\leq0,\\
     \end{cases}
 \end{align}
-for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and 
+for $i=0, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and 
 \begin{align}
 	\label{chp3-flux-ydir}
 	G_{i,j+\frac{1}{2}}^n ({Q^n_{i,\times},\tilde{v}^n_{i,j+\frac{1}{2}}})= \tilde{v}^{n}_{i,j+\frac{1}{2}}\times
@@ -610,7 +609,7 @@ for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and
     \quad &\text{if} \quad \tilde{v}_{i,j+\frac{1}{2}}^n\leq0,\\
     \end{cases}
 \end{align}
-for $i=-\nu+1, \ldots, N + \nu$, $j=1, \ldots, M$, and 
+for $i=-\nu+1, \ldots, N + \nu$, $j=0, \ldots, M$, and 
 \begin{align*}
 \tilde{c}_{i+\frac{1}{2},j}^{x,n} = \tilde{u}_{i+\frac{1}{2},j}^{x,n}\frac{\Delta t}{\Delta x},\\
 \tilde{c}_{i,j+\frac{1}{2}}^{y,n} = \tilde{v}_{i,j+\frac{1}{2}}^{y,n}\frac{\Delta t}{\Delta y},
@@ -790,8 +789,8 @@ For the 1D schemes, we consider the FV-SL schemes PPM-0, PPM-PL07, PPM-CW84, PPM
 with the departure point schemes RK1 and RK2 as in Section \ref{chp2-sec-numerical-exp}.
 For all simulations, the CFL number is set to $0.8$, and the time integration interval 
 is $[0,5]$, which represents the period of the exact solution for all tests.
-We employ $(\Delta x^{(k)},\Delta y^{(k)},\lambda)$-discretizations with $\Delta x^{(k)} = \Delta y^{(k)} = 1/2^k$ for $k=4, \ldots, 10$,
-$\Delta t^{(0)} = 0.05$, $\lambda = 0.8$.
+We employ $(\Delta x^{(k)},\Delta y^{(k)},\lambda)$-discretizations with $\Delta x^{(k)} = \Delta y^{(k)} = 1/2^k$,
+$\Delta t^{(k)} = 0.05/2^{k-4}$ for $k=4, \ldots, 10$, and $\lambda = 0.8$.
 We introduce the relative error in the maximum norm:
 \begin{equation*}
 	E_k = \max_{n=0,\ldots, N_T}

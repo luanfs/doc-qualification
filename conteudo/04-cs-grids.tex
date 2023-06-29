@@ -568,9 +568,10 @@ $\sigma(x,y)$ at time $t$:
 	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}  q(x,y,p,t) {\sigma(x,y)}\,dx \,dy,
 \end{equation*}
 where $|\Omega_{ijp}|$ is the control volume area given by:
-\begin{equation*}
+\begin{equation}
+	\label{chp4-area}
 	|\Omega_{ijp}| = \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}{\sigma(x,y)} \,dx \,dy.
-\end{equation*}
+\end{equation}
 In this context, we define $Q(t) \in \mathcal{CS}_N$ given by 
 $Q(t) = (Q_{ijp}(t))_{i,j = -\nu +1, \ldots, N+\nu}^{p=1,\ldots,6}$.
 Similar to Proposition \ref{prop-bound-centroid-2d}, we may approximate the average value using the centroid value, that is
