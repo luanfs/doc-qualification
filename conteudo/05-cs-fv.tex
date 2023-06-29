@@ -1,8 +1,17 @@
 \chapter{Cubed-sphere finite-volume methods}
 \label{chp-cs-fv}
-In this section, we show how we can use the dimension splitting method
-presented in Chapter \ref{chp-2d-fv} to solve the advection
-equation on the cubed-sphere with base on \citet{putman:2007}.
+In this chapter, we demonstrate the application of the dimension splitting method,
+presented in Chapter \ref{chp-2d-fv}, to solve the advection equation on the cubed-sphere based on \citet{putman:2007}.
+One significant difference is that on the cubed-sphere, special attention must be given to the stencils near the cube edges.
+Additionally, when employing ghost cell layers, the flux at the cube edges is computed twice,
+requiring treatment to ensure a unique value in order to achieve mass conservation.
+
+This chapter is organized as follows: Section \ref{chp-cs-adv} introduces the advection equation on the cubed-sphere.
+Section \ref{chp-cs-fvcs} presents its finite-volume discretization with a focus on the extension of dimension splitting (Section \ref{sec-csdsplit}) 
+as presented in Section \ref{sec-dsplit}.
+Numerical experiments are presented in Section \ref{chp-cs-numexpadv}, where we use dimension splitting to assess its
+accuracy in computing the divergence of a given vector field to check its numerical consistency, as well as to solve the advection equation.
+In particular, we explore different treatments for the cube edges. Section \ref{chp-cs-conc} presents the final thoughts.
 
 \section{Cubed-sphere advection equation its integral form}
 \label{chp-cs-adv}
@@ -160,6 +169,11 @@ A CS-FV scheme problem as follows in Problem \ref{chp5-prob3}.
 	The CFL number is maximum between these numbers and we say that the CFL condition is
 	satisfied if the CFL number is less than one. 
 \end{remark}
+As we mentioned in Problem \ref{chp5-prob3}, the initial condition may be assumed as $q_{ijp}^0$ or $Q_{ijp}(0)$.
+We are going to assume  $q_{ijp}^0$ as initial data to avoid the computation of integrals.
+Furthermore, the errors will be calculated using the values $q_{ijp}^n$ instead of $Q_{ijp}(t_n)$.
+As in Section \ref{sec:fv-2d} this approximation leads to a second-order error.
+
 As in Section \ref{sec:fv-2d}  we introduce the notion of discrete divergence,
 which allow us to check the consistency of CS-FV schemes.
 \begin{definition}[Discrete divergence]
@@ -197,13 +211,19 @@ This property is discrete version of
 \end{align*}
 which follows from the divergence theorem and the fact of the sphere has no boundary, where $\,dS$ is the surface measure of the sphere.
 
-%Consistent Treatment of Boundaries: Boundary conditions play a crucial role in maintaining mass conservation. 
-%The treatment of boundaries should ensure that there is no spurious mass exchange between the model domain and the exterior. 
-%Various approaches, such as using ghost cells or extrapolation methods, can be employed to enforce mass conservation at the boundaries.
-As we mentioned in Problem \ref{chp5-prob3}, the initial condition may be assumed as $q_{ijp}^0$ or $Q_{ijp}(0)$.
-We are going to assume  $q_{ijp}^0$ as initial data to avoid the computation of integrals.
-Furthermore, the errors will be calculated using the values $q_{ijp}^n$ instead of $Q_{ijp}(t_n)$.
-As in Section \ref{sec:fv-2d} this approximation leads to a second-order error.
+When computing the flux, if we ignore the discontinuity in the cubed sphere coordinate system and use values from adjacent panels
+(as in the ET-S72 scheme from Chapter \ref{chp-cs-grids}) to compute stencils, we can ensure mass conservation because the
+flux at points lying on the cube edge will be the same.
+However, if we consider ghost cell layers by extending the gridlines (as in the ET-ZA22 scheme from Chapter \ref{chp-cs-grids}),
+the flux is computed twice at points lying on the cube edge.
+Therefore, in this case, some modification is needed to ensure mass conservation (Figure \ref{chp5-fluxcube}).
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.5\linewidth]{flux_interface}
+	\caption{Figure that illustrates the flux being computed twice on
+		the cube edge, breaking the total mass conservation.
+		Figure taken from \citet{ross:2006}.\label{chp5-fluxcube}}
+\end{figure}
 
 \subsection{Dimension splitting}
 \label{sec-csdsplit}
@@ -242,7 +262,6 @@ where the inner advective operators $\mathbf{f}$ and $\mathbf{g}$ are given in T
 
 Now, our objective is to describe the 1D fluxes ${F}_{i+\frac{1}{2},j,p}^n$ and ${G}_{i,j+\frac{1}{2},p}^n$. 
 It is important to note that these fluxes depend on the edge treatment, as well as the computation of stencils, as we will see in the following sections.
-
 
 \subsubsection{ET-ZA22}
 We have a piecewise-parabolic approximation in the $x$ direction:
@@ -310,7 +329,7 @@ for $i=-\nu+1, \ldots, N + \nu$, $j=0, \ldots, M$.
 \subsubsection{ET-PL07}
 We have a piecewise-parabolic approximation in the $x$ direction:
 \begin{align}
-	\label{chp5-ppmx-eq1}
+	\label{chp5-ppmx-eq1-pl07}
 	\begin{cases}
 		q_{ij}^x(x;Q_{\times, j}^n) = q_{L,i,j}^x + \Delta q_{ij}^x z_i(x) + q_{6, i,j}^xz_i(x)(1-z_i(x)), \\
 		z_i(x) = \frac{x-x_{i-\frac{1}{2}}}{\Delta x},
@@ -324,7 +343,7 @@ We have a piecewise-parabolic approximation in the $x$ direction:
 for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and we also construct a piecewise-parabolic
 approximation in the $y$ direction:
 \begin{align}
-	\label{chp5-ppmy-eq2}
+	\label{chp5-ppmy-pl07}
 	\begin{cases}
 		q_{ij}^y(y;Q_{i,\times}^n) = q_{L,i,j}^y + \Delta q_{ij}^y z_j(y) + q_{6, i,j}^yz_j(y)(1-z_j(y)),\\ 
 		z_j(y) = \frac{y-y_{j-\frac{1}{2}}}{\Delta y},
@@ -345,7 +364,7 @@ second-order accurate because the given average values are computed on the
 2D control volume $\Omega_{ij}$ instead of the 1D control volumes $X_i$ or $Y_j$.
 Then, we may express the fluxes as in Equation \eqref{chp-sec-flux:numerical-flux3}, namely:
 \begin{align}
-	\label{chp5-flux-xdir}
+	\label{chp5-flux-xdir--pl07}
 	F_{i+\frac{1}{2},j}^n ({Q^n_{\times,j},\tilde{u}^n_{i+\frac{1}{2},j}})= \tilde{u}^{n}_{i+\frac{1}{2},j}\times
 	\begin{cases}
 		q_{R,i,j}^x +\frac{1}{2}(q_{6,i,j}^x - \Delta q_{ij}^x){\tilde{c}_{i+\frac{1}{2},j}^{x,n}}
@@ -358,7 +377,7 @@ Then, we may express the fluxes as in Equation \eqref{chp-sec-flux:numerical-flu
 \end{align}
 for $i=0, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and 
 \begin{align}
-	\label{chp5-flux-ydir}
+	\label{chp5-flux-ydir-pl07}
 	G_{i,j+\frac{1}{2}}^n ({Q^n_{i,\times},\tilde{v}^n_{i,j+\frac{1}{2}}})= \tilde{v}^{n}_{i,j+\frac{1}{2}}\times
 	\begin{cases}
 		q_{R,i,j}^y +\frac{1}{2}(q_{6,i,j}^y - \Delta q_{ij}^y){\tilde{c}_{i,j+\frac{1}{2}}^{y,n}}
@@ -371,3 +390,9 @@ for $i=0, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and
 \end{align}
 for $i=-\nu+1, \ldots, N + \nu$, $j=0, \ldots, M$.
 
+\section{Numerical experiments}
+\label{chp-cs-numexpadv}
+
+
+\section{Concluding remarks}
+\label{chp-cs-conc}
