@@ -197,15 +197,177 @@ This property is discrete version of
 \end{align*}
 which follows from the divergence theorem and the fact of the sphere has no boundary, where $\,dS$ is the surface measure of the sphere.
 
-Consistent Treatment of Boundaries: Boundary conditions play a crucial role in maintaining mass conservation. 
-The treatment of boundaries should ensure that there is no spurious mass exchange between the model domain and the exterior. 
-Various approaches, such as using ghost cells or extrapolation methods, can be employed to enforce mass conservation at the boundaries.
-
+%Consistent Treatment of Boundaries: Boundary conditions play a crucial role in maintaining mass conservation. 
+%The treatment of boundaries should ensure that there is no spurious mass exchange between the model domain and the exterior. 
+%Various approaches, such as using ghost cells or extrapolation methods, can be employed to enforce mass conservation at the boundaries.
 As we mentioned in Problem \ref{chp5-prob3}, the initial condition may be assumed as $q_{ijp}^0$ or $Q_{ijp}(0)$.
 We are going to assume  $q_{ijp}^0$ as initial data to avoid the computation of integrals.
 Furthermore, the errors will be calculated using the values $q_{ijp}^n$ instead of $Q_{ijp}(t_n)$.
 As in Section \ref{sec:fv-2d} this approximation leads to a second-order error.
 
-
-
 \subsection{Dimension splitting}
+\label{sec-csdsplit}
+In this section, we will utilize the operator splitting method described in Section \ref{sec-dsplit} 
+to obtain a CS-FV scheme.
+We will focus on 1D fluxes, specifically the PPM fluxes introduced in Section \ref{chp2-sec-flux},
+denoted as ${F}_{i+\frac{1}{2},j,p}^n$ and ${G}_{i,j+\frac{1}{2},p}^n$.
+To facilitate the scheme, we introduce the auxiliary grid functions $\mathbf{F}$ and $\mathbf{G}$ belonging to $\mathcal{CS}_{N}$, defined as follows:
+\begin{align*}
+	\mathbf{F}_{ijp}({Q^n,\tilde{u}^n}) = -{\lambda} \bigg({F}_{i+\frac{1}{2},j,p}^n(Q^n_{\times,j,p},\tilde{u}^n_{i+\frac{1}{2},j,p})-
+	{F}_{i-\frac{1}{2},j,p}^n(Q^n_{\times,j,p},\tilde{u}^n_{i-\frac{1}{2},j,p}) \bigg),
+\end{align*}
+for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and
+\begin{align*}
+	\mathbf{G}_{ijp}({Q^n,\tilde{v}^n}) = -{\lambda} \bigg({G}_{i,j+\frac{1}{2},p}^n(Q^n_{i,\times,p},\tilde{v}^n_{i,j+\frac{1}{2},p})-
+	{G}_{i,j-\frac{1}{2},p}^n(Q^n_{i,\times,p},\tilde{v}^n_{i,j-\frac{1}{2},p}) \bigg),
+\end{align*}
+for $i=-\nu+1, \ldots, N + \nu$  $j=1, \ldots, M$.
+The terms $\tilde{u}^n_{i+\frac{1}{2},j,p}$ and $\tilde{v}^n_{i,j+\frac{1}{2},p}$ represent the 
+time-averaged winds used in the computation of departure points in the $x$ and $y$ directions, respectively. 
+These averages are calculated using either RK1 or RK2 from Section \ref{chp2-sec-dp}. 
+To facilitate the description of the 1D fluxes ${F}_{i+\frac{1}{2},j,p}^n$ and ${G}_{i,j+\frac{1}{2},p}^n$, 
+we introduce the time-averaged CFL numbers defined as follows:
+\begin{align*}
+	\tilde{c}_{i+\frac{1}{2},j,p}^{x,n} = \tilde{u}_{i+\frac{1}{2},j,p}^{x,n}\frac{\Delta t}{\Delta x},\
+	\tilde{c}_{i,j+\frac{1}{2},p}^{y,n} = \tilde{v}_{i,j+\frac{1}{2},p}^{y,n}\frac{\Delta t}{\Delta y}.
+\end{align*}
+The discrete divergence is then obtained as:
+\begin{equation}
+	\mathbb{D}^n_{ijp} = -\frac{1}{\Delta t \sigma_{ijp}}
+	\bigg[
+	\mathbf{F}_{ijp}\bigg(Q^n + \frac{1}{2}\mathbf{g}(Q^n,\tilde{v}^n), \tilde{u}^n \bigg) 
+	+\mathbf{G}_{ijp}\bigg(Q^n + \frac{1}{2}\mathbf{f}(Q^n,\tilde{u}^n), \tilde{v}^n \bigg) \bigg],
+\end{equation}
+where the inner advective operators $\mathbf{f}$ and $\mathbf{g}$ are given in Table \ref{chp3-tab1}.
+
+Now, our objective is to describe the 1D fluxes ${F}_{i+\frac{1}{2},j,p}^n$ and ${G}_{i,j+\frac{1}{2},p}^n$. 
+It is important to note that these fluxes depend on the edge treatment, as well as the computation of stencils, as we will see in the following sections.
+
+
+\subsubsection{ET-ZA22}
+We have a piecewise-parabolic approximation in the $x$ direction:
+\begin{align}
+	\label{chp5-ppmx-eq1}
+	\begin{cases}
+		q_{ij}^x(x;Q_{\times, j}^n) = q_{L,i,j}^x + \Delta q_{ij}^x z_i(x) + q_{6, i,j}^xz_i(x)(1-z_i(x)), \\
+		z_i(x) = \frac{x-x_{i-\frac{1}{2}}}{\Delta x},
+		\quad x \in X_i,\\
+		q_{L, i,j}^x = q_{i-\frac{i}{2},j}^n+ O(\Delta x^2),\\
+		q_{R, i,j}^x = q_{i+\frac{i}{2},j}^n+ O(\Delta x^2),\\
+		\Delta q_{ij}^x = q_{R, i,j}^x - q_{L, i,j}^x,\\
+		q_{6,i,j}^x = 6\bigg(Q_{ij}^n - \frac{(q_{L,i,j}^x + q_{R,i,j}^x)}{2}\bigg),
+	\end{cases}
+\end{align}
+for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and we also construct a piecewise-parabolic
+approximation in the $y$ direction:
+\begin{align}
+	\label{chp5-ppmy-eq2}
+	\begin{cases}
+		q_{ij}^y(y;Q_{i,\times}^n) = q_{L,i,j}^y + \Delta q_{ij}^y z_j(y) + q_{6, i,j}^yz_j(y)(1-z_j(y)),\\ 
+		z_j(y) = \frac{y-y_{j-\frac{1}{2}}}{\Delta y},
+		\quad y \in Y_j,\\
+		q_{L, i,j}^y = q_{i,j-\frac{1}{2}}^n+ O(\Delta y^2),\\
+		q_{R, i,j}^y = q_{i,j+\frac{1}{2}}^n+ O(\Delta y^2),\\
+		\Delta q_{ij}^y = q_{R, i,j}^y - q_{L, i,j}^y,\\
+		q_{6,i,j}^y = 6\bigg(Q_{ij}^n - \frac{(q_{L,i,j}^y + q_{R,i,j}^y)}{2}\bigg),
+	\end{cases}
+\end{align}
+for $i=-\nu+1, \ldots, N + \nu$, $j=1, \ldots, M$.
+The values $q_{L,i,j}^x$, $q_{R,i,j}^x$, $q_{L,i,j}^y$, and $q_{R,i,j}^y$,
+which approximate the values of $q$ at C-grid wind positions, are computed
+using one of the schemes PPM-0, PPM-PL07, PPM-CW84, or PPM-L04, as described
+in Sections \ref{chp2-sec-ppm} and \ref{chp2-sec-mono}.
+These approximations are expected to be
+second-order accurate because the given average values are computed on the
+2D control volume $\Omega_{ij}$ instead of the 1D control volumes $X_i$ or $Y_j$.
+Then, we may express the fluxes as in Equation \eqref{chp-sec-flux:numerical-flux3}, namely:
+\begin{align}
+	\label{chp5-flux-xdir}
+	F_{i+\frac{1}{2},j}^n ({Q^n_{\times,j},\tilde{u}^n_{i+\frac{1}{2},j}})= \tilde{u}^{n}_{i+\frac{1}{2},j}\times
+	\begin{cases}
+		q_{R,i,j}^x +\frac{1}{2}(q_{6,i,j}^x - \Delta q_{ij}^x){\tilde{c}_{i+\frac{1}{2},j}^{x,n}}
+		+\frac{1}{3}{q_{6,i,j}^x}(\tilde{c}_{i+\frac{1}{2},j}^{x,n})^2,
+		\quad &\text{if} \quad \tilde{u}_{i+\frac{1}{2},j}^n>0,\\
+		q_{L,i+1,j}^x - \frac{1}{2}(q_{6,i+1,j}^x + \Delta q_{i+1,j}^x){\tilde{c}_{i+\frac{1}{2},j}^{x,n}}
+		-\frac{1}{3}{q_{6,i+1,j}^x}(\tilde{c}_{i+\frac{1}{2},j}^{x,n})^2,
+		\quad &\text{if} \quad \tilde{u}_{i+\frac{1}{2},j}^n\leq0,\\
+	\end{cases}
+\end{align}
+for $i=0, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and 
+\begin{align}
+	\label{chp5-flux-ydir}
+	G_{i,j+\frac{1}{2}}^n ({Q^n_{i,\times},\tilde{v}^n_{i,j+\frac{1}{2}}})= \tilde{v}^{n}_{i,j+\frac{1}{2}}\times
+	\begin{cases}
+		q_{R,i,j}^y +\frac{1}{2}(q_{6,i,j}^y - \Delta q_{ij}^y){\tilde{c}_{i,j+\frac{1}{2}}^{y,n}}
+		+\frac{1}{3}{q_{6,i,j}^y}(\tilde{c}_{i,j+\frac{1}{2}}^{y,n})^2,
+		\quad &\text{if} \quad \tilde{v}_{i+\frac{1}{2},j}^n>0,\\
+		q_{L,i,j+1}^y - \frac{1}{2}(q_{6,i,j+1}^y + \Delta q_{i,j+1}^y){\tilde{c}_{i,j+\frac{1}{2}}^{y,n}}
+		-\frac{1}{3}{q_{6,i,j+1}^y}(\tilde{c}_{i,j+\frac{1}{2}}^{y,n})^2,
+		\quad &\text{if} \quad \tilde{v}_{i,j+\frac{1}{2}}^n\leq0,\\
+	\end{cases}
+\end{align}
+for $i=-\nu+1, \ldots, N + \nu$, $j=0, \ldots, M$.
+\subsubsection{ET-PL07}
+We have a piecewise-parabolic approximation in the $x$ direction:
+\begin{align}
+	\label{chp5-ppmx-eq1}
+	\begin{cases}
+		q_{ij}^x(x;Q_{\times, j}^n) = q_{L,i,j}^x + \Delta q_{ij}^x z_i(x) + q_{6, i,j}^xz_i(x)(1-z_i(x)), \\
+		z_i(x) = \frac{x-x_{i-\frac{1}{2}}}{\Delta x},
+		\quad x \in X_i,\\
+		q_{L, i,j}^x = q_{i-\frac{i}{2},j}^n+ O(\Delta x^2),\\
+		q_{R, i,j}^x = q_{i+\frac{i}{2},j}^n+ O(\Delta x^2),\\
+		\Delta q_{ij}^x = q_{R, i,j}^x - q_{L, i,j}^x,\\
+		q_{6,i,j}^x = 6\bigg(Q_{ij}^n - \frac{(q_{L,i,j}^x + q_{R,i,j}^x)}{2}\bigg),
+	\end{cases}
+\end{align}
+for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and we also construct a piecewise-parabolic
+approximation in the $y$ direction:
+\begin{align}
+	\label{chp5-ppmy-eq2}
+	\begin{cases}
+		q_{ij}^y(y;Q_{i,\times}^n) = q_{L,i,j}^y + \Delta q_{ij}^y z_j(y) + q_{6, i,j}^yz_j(y)(1-z_j(y)),\\ 
+		z_j(y) = \frac{y-y_{j-\frac{1}{2}}}{\Delta y},
+		\quad y \in Y_j,\\
+		q_{L, i,j}^y = q_{i,j-\frac{1}{2}}^n+ O(\Delta y^2),\\
+		q_{R, i,j}^y = q_{i,j+\frac{1}{2}}^n+ O(\Delta y^2),\\
+		\Delta q_{ij}^y = q_{R, i,j}^y - q_{L, i,j}^y,\\
+		q_{6,i,j}^y = 6\bigg(Q_{ij}^n - \frac{(q_{L,i,j}^y + q_{R,i,j}^y)}{2}\bigg),
+	\end{cases}
+\end{align}
+for $i=-\nu+1, \ldots, N + \nu$, $j=1, \ldots, M$.
+The values $q_{L,i,j}^x$, $q_{R,i,j}^x$, $q_{L,i,j}^y$, and $q_{R,i,j}^y$,
+which approximate the values of $q$ at C-grid wind positions, are computed
+using one of the schemes PPM-0, PPM-PL07, PPM-CW84, or PPM-L04, as described
+in Sections \ref{chp2-sec-ppm} and \ref{chp2-sec-mono}.
+These approximations are expected to be
+second-order accurate because the given average values are computed on the
+2D control volume $\Omega_{ij}$ instead of the 1D control volumes $X_i$ or $Y_j$.
+Then, we may express the fluxes as in Equation \eqref{chp-sec-flux:numerical-flux3}, namely:
+\begin{align}
+	\label{chp5-flux-xdir}
+	F_{i+\frac{1}{2},j}^n ({Q^n_{\times,j},\tilde{u}^n_{i+\frac{1}{2},j}})= \tilde{u}^{n}_{i+\frac{1}{2},j}\times
+	\begin{cases}
+		q_{R,i,j}^x +\frac{1}{2}(q_{6,i,j}^x - \Delta q_{ij}^x){\tilde{c}_{i+\frac{1}{2},j}^{x,n}}
+		+\frac{1}{3}{q_{6,i,j}^x}(\tilde{c}_{i+\frac{1}{2},j}^{x,n})^2,
+		\quad &\text{if} \quad \tilde{u}_{i+\frac{1}{2},j}^n>0,\\
+		q_{L,i+1,j}^x - \frac{1}{2}(q_{6,i+1,j}^x + \Delta q_{i+1,j}^x){\tilde{c}_{i+\frac{1}{2},j}^{x,n}}
+		-\frac{1}{3}{q_{6,i+1,j}^x}(\tilde{c}_{i+\frac{1}{2},j}^{x,n})^2,
+		\quad &\text{if} \quad \tilde{u}_{i+\frac{1}{2},j}^n\leq0,\\
+	\end{cases}
+\end{align}
+for $i=0, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and 
+\begin{align}
+	\label{chp5-flux-ydir}
+	G_{i,j+\frac{1}{2}}^n ({Q^n_{i,\times},\tilde{v}^n_{i,j+\frac{1}{2}}})= \tilde{v}^{n}_{i,j+\frac{1}{2}}\times
+	\begin{cases}
+		q_{R,i,j}^y +\frac{1}{2}(q_{6,i,j}^y - \Delta q_{ij}^y){\tilde{c}_{i,j+\frac{1}{2}}^{y,n}}
+		+\frac{1}{3}{q_{6,i,j}^y}(\tilde{c}_{i,j+\frac{1}{2}}^{y,n})^2,
+		\quad &\text{if} \quad \tilde{v}_{i+\frac{1}{2},j}^n>0,\\
+		q_{L,i,j+1}^y - \frac{1}{2}(q_{6,i,j+1}^y + \Delta q_{i,j+1}^y){\tilde{c}_{i,j+\frac{1}{2}}^{y,n}}
+		-\frac{1}{3}{q_{6,i,j+1}^y}(\tilde{c}_{i,j+\frac{1}{2}}^{y,n})^2,
+		\quad &\text{if} \quad \tilde{v}_{i,j+\frac{1}{2}}^n\leq0,\\
+	\end{cases}
+\end{align}
+for $i=-\nu+1, \ldots, N + \nu$, $j=0, \ldots, M$.
+
