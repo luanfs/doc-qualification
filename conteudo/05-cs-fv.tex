@@ -225,6 +225,23 @@ Therefore, in this case, some modification is needed to ensure mass conservation
 		Figure taken from \citet{ross:2006}.\label{chp5-fluxcube}}
 \end{figure}
 
+One common alternative used in the literature to handle the issue of values being defined twice at points on the
+cube edges is to simply average the values (as seen in works such as \citet{ross:2006, chen:2008}).
+This approach will be explored in this chapter as one of the methods.
+
+Another alternative approach, based on Semi-Lagrangian mass corrections
+(for a review of these methods, we refer to \citet{diamantakis:2014}),
+involves computing the orthogonal projection of the grid function $\mathbb{D}^n$ onto the following space:
+\begin{equation*}
+	V_0 = \{ \delta \in \mathcal{CS}_N: \quad
+		\sum_{p=1}^6 \sum_{i,j=1}^N \mathbb{\delta}_{ijp} \sigma_{ijp} \Delta x \Delta y = 0\},
+\end{equation*}
+where $V_0$ represents the space of functions with a zero average.
+The element of $V_0$ that minimizes its distance to $\mathbb{D}^n$ in the norm 2 is given by:
+\begin{equation*}
+\mathbb{D}^{cor,n}_{ijp} = \mathbb{D}^n_{ijp} - \bigg(\frac{	\sum_{p=1}^6 \sum_{r,s=1}^N \mathbb{D}_{rsp}^n \sigma_{rsp} \Delta x \Delta y}
+ {\sum_{p=1}^6 \sum_{r,s=1}^N \sigma_{rsp}^2 \Delta x \Delta y}\bigg)\sigma_{ijp}.
+\end{equation*}
 \subsection{Dimension splitting}
 \label{sec-csdsplit}
 In this section, we will utilize the operator splitting method described in Section \ref{sec-dsplit} 
