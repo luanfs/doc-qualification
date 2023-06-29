@@ -1,88 +1,211 @@
 \chapter{Cubed-sphere finite-volume methods}
 \label{chp-cs-fv}
+In this section, we show how we can use the dimension splitting method
+presented in Chapter \ref{chp-2d-fv} to solve the advection
+equation on the cubed-sphere with base on \citet{putman:2007}.
 
-\section{Advection finite-volume scheme}
+\section{Cubed-sphere advection equation its integral form}
+\label{chp-cs-adv}
+Given a tangent velocity field $\boldsymbol{u}$ on the sphere, we denote its
+contravariant components by ${u}$ and ${v}$.
+We shall use all the notations introduced in Section \ref{cs-notation}.
+The advection equation on panel the $p$ of the cubed-sphere with initial condition $q_0$ is given by:
+\begin{equation}
+	\begin{cases}
+	\label{eq1-adv-cs}
+	\bigg[{\partial}_t{q}+
+	\frac{1}{\sigma}\bigg(
+	{\partial}_x{({u} q \sigma)}+
+	{\partial}_y{({v} q \sigma)}
+	\bigg)\bigg](x,y,p,t)
+	= 0,\\
+	q(x,y,p,0) = q_0(x,y,p),
+	\end{cases}
+\end{equation}
+$\forall (x,y) \in [-a,a]^2$, $t\in[0,T]$.
+We denote by $\nabla \cdot (q\boldsymbol{u})$ the divergence operator:
+\begin{equation}
+	\label{advcs:eqdiv}
+	\nabla \cdot (q\boldsymbol{u})(x, y, p, t) =  \frac{1}{\sigma}
+	[{\partial_x (uq\sigma)} + {\partial_y (vq\sigma)}](x, y, p, t).
+\end{equation}
+We recall that we say the $\boldsymbol{u}$ is \textbf{non-divergent} if $\nabla \cdot \boldsymbol{u}=0$.
+We define the $\mathcal{CS}_N$ grid function $\delta^n$ as
+the exact divergence of $q\boldsymbol{u}$ at the cell centers, namely
+\begin{equation}
+	\label{cs-discrete-div}
+	\delta^n_{ijp} = \nabla \cdot (\boldsymbol{u}q)(x_i,y_j,p,t^n).
+\end{equation}
+Since the metric tensor does not depend on $t$, we may rewrite Equation \eqref{eq1-adv-cs} as
+\begin{equation}
+	\label{eq2-adv-cs}
+	\bigg[{\partial}_t{(q \sigma)}+
+	{\partial}_x{({u}q \sigma)}+
+	{\partial}_y{({v}q \sigma)}
+	\bigg](x,y,p,t)
+	= 0.
+\end{equation}
+Therefore, as in Problem \eqref{chp3-sec2-prob1}, the integral form of Equation \eqref{eq1-adv-cs}
+is stated in \eqref{chp5-prob1}.
+\begin{prob}
+	\label{chp5-prob1}
+	Given an initial condition ${q}_0$ and
+	a velocity on the sphere $\boldsymbol{u}$, with contravariant components $(u,v)$ on the cubed-sphere coordinate system,
+	we would like to find a weak solution ${q}$
+	of the cubed-sphere advection equation in its integral form:
+	\begin{align*}
+		\int_{x_1}^{x_2} \int_{y_1}^{y_2}
+		{(q\sigma)}(x, y, p, t) \,dx \,dy = &\int_{x_1}^{x_2} \int_{y_1}^{y_2}
+		{(q\sigma)}(x, y, p, t) \,dx \,dy \\ \nonumber
+		&-\int_{t_1}^{t_2} \int_{y_1}^{y_2} \bigg({(uq\sigma)}(x_2, y, t)
+		-{(uq\sigma)}(x_1, y, t) \bigg) \,dy \,dt\\ \nonumber
+		&-\int_{t_1}^{t_2} \int_{x_1}^{x_2} \bigg({(vq\sigma)}(x, y_2, t)
+		-{(vq\sigma)}(x, y_1, t) \bigg) \,dx \,dt.
+	\end{align*}
+	$\forall [x_1, x_2]\times [y_1, y_2] \times[t_1, t_2] \subset \Omega \times[0,T]$, and
+	$q(x,y,p,0)=q_0(x,y,p)$.
+\end{prob}
+Similarly to Section \ref{chp2-sec1}, Equation \eqref{eq1-adv-cs} and Problem \eqref{chp5-prob1} are equivalent
+when ${q}, \boldsymbol{u} \in \mathcal{C}^1(\mathbb{S}^2_R)$.
+For Problem \ref{chp5-prob1}, the total mass in $\mathbb{S}^2_R$ is defined by: 
+\begin{equation}
+	{M}_{\mathbb{S}^2_R}(t) = \sum_{p=1}^6 \int_{\Omega} {(q\sigma)}(x,y,p,t) \,dx \,dy , \quad \forall t \in [0,T],
+\end{equation}
+and is conserved within time: 
+\begin{equation}
+	{M}_{\mathbb{S}^2_R}(t) = {M}_{\mathbb{S}^2_R}(0), \quad \forall t \in [0,T].
+\end{equation}
+We define a discretized version of Problem \ref{chp5-prob1} as Problem \ref{chp5-prob2}.
+\begin{prob}
+	\label{chp5-prob2}
+	Assume the framework of Problem \ref{chp5-prob1}
+	and consider a $(\Delta x, \Delta y, \Delta t, \lambda)$-discretization of $\Omega\times [0,T]$, with $\Delta x= \Delta y$.
+	Since we are in the framework of Problem \ref{chp5-prob1}, it follows that:
+	\begin{align*}
+		{Q}_{ijp}(t_{n+1})  = {Q}_{ijp}(t_{n})
+		&- \lambda \frac{\Delta x  \Delta y}{|\Omega_{ijp}|}
+		\delta _x \bigg( \frac{1}{\Delta t \Delta y}
+		\int_{t^n}^{t^{n+1}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
+		{(uq\sigma)}(x_{i}, y, p, t)
+		\,dy \,dt \bigg) \\ \nonumber
+		&- \lambda \frac{\Delta x  \Delta y}{|\Omega_{ijp}|}
+		\delta _y \bigg( \frac{1}{\Delta t \Delta x}
+		\int_{t^n}^{t^{n+1}} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+		{(vq\sigma)}(x, y_{j}, p, t)
+		\,dx \,dt \bigg),
+	\end{align*}
+	where
+	\begin{equation}
+	 {Q}_{ijp}(t) = \frac{1}{|\Omega_{ijp}|}
+	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} 
+	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} {(q\sigma)}(x,y,p,t) \,dx \,dy.
+	\end{equation}
+	Our problem now consists of finding the values ${Q}_{ijp}(t_{n})$, 
+	$\forall i = 1, \ldots, N$, $\forall j = 1, \ldots, M$, $\forall n = 0, \ldots, N_T-1$,
+	given the initial values ${Q}_{ijp}(0)$, $\forall i = 1, \ldots N$, $\forall j = 1, \ldots, M$.
+	In other words, we aim to find the average values of ${q}$ in each control volume $\Omega_{ijp}$ at the specified time instances.
+\end{prob}
+It is important to note that no approximations have been made in Problems \eqref{chp5-prob1} and \eqref{chp5-prob2}. 
+In practice, the term $\frac{\Delta x  \Delta y}{|\Omega_{ijp}|}$ is estimated using the second-order
+formula obtained by applying the midpoint rule in Equation \eqref{chp4-area}:
+\begin{equation}
+\frac{\Delta x  \Delta y}{|\Omega_{ijp}|}= \frac{1}{\sigma_{ijp}} + O(\Delta x^2).
+\end{equation}
+
+\section{Finite-volume on the cubed-sphere approach}
+\label{chp-cs-fvcs}
+We are ready to introduce the finite-volume scheme on the cubed-sphere (CS-FV).
+A CS-FV scheme problem as follows in Problem \ref{chp5-prob3}.
+\begin{prob}[CS-FV scheme]
+	\label{chp5-prob3}
+	Assume the framework defined in Problem \ref{chp5-prob2}.
+	The finite-volume approach of Problem \ref{chp5-prob1}
+	consists of a finding a scheme of the form:
+	\begin{align}
+		\label{chp5-csfv}
+		{Q}_{ijp}^{n+1} =  {Q}_{ijp}^{n} - \frac{\lambda}{\sigma_{ijp}}\delta_i {F}_{ijp}^{n}
+		- \frac{\lambda}{\sigma_{ijp}} \delta_j {G}_{ijp}^{n},
+		\\ \nonumber \quad \forall i = 1, \ldots, N, \quad \forall j = 1, \ldots, M, \quad p =1, \ldots, 6,
+		\quad \forall n = 0, \ldots, N_T-1,
+	\end{align}
+	where $ \delta_i F_{ijp}^n =
+	{F}_{i+\frac{1}{2},j,p}^{n} 
+	- {F}_{i-\frac{1}{2},j,p}^{n}$,
+	$ \delta_j G_{ijp}^n =
+	{G}_{i,j+\frac{1}{2},p}^{n} 
+	- {G}_{i,j-\frac{1}{2},p}^{n}$ 
+	and ${Q}^{n}\in \mathcal{CS}_N$ is intended to be an approximation
+	of ${Q}(t_{n})\in \mathcal{CS}_N$ in some sense. We define ${Q}_{ijp}^{0} = {Q}_{ijp}(0)$ or
+	${Q}_{ijp}^{0} = {q}^0_{ijp}$.
+	
+	The term ${F}_{i+\frac{1}{2}, j, p}^{n}$ is known as numerical flux in the 
+	$x$ direction and it approximates
+	$\frac{1}{\Delta t \Delta y}\int_{t_n}^{t_{n+1}} 
+	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} 
+	(uq\sigma)(x_{i+\frac{1}{2}}, y, p, t) \,dy \,dt $,
+	$\forall i = 0, 1, \ldots, N$, and 
+	${G}_{i, j+\frac{1}{2}, p}^{n}$ is known as numerical flux in the 
+	$y$ direction and it approximates
+	$\frac{1}{\Delta t \Delta x}\int_{t_n}^{t_{n+1}}  
+	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
+	(vq\sigma)(x, y_{j+\frac{1}{2}}, p, t) \,dx \,dt $,
+	$\forall j = 0, 1, \ldots, M$,
+	or, in other words, they estimate the time-averaged
+	fluxes at the control volume $\Omega_{ijp}$ boundaries.
+\end{prob}
+\begin{remark}
+	For Problem \ref{chp5-prob3}, we define the CFL number in the $x$ and $y$ direction
+	by $\max \{{|u_{i+\frac{1}{2},j}^n}|\}\frac{\Delta t}{\Delta x}$ and 
+	$\max \{ {|v_{i,j+\frac{1}{2}}^n}|\}\frac{\Delta t}{\Delta y}$, respectively.
+	The CFL number is maximum between these numbers and we say that the CFL condition is
+	satisfied if the CFL number is less than one. 
+\end{remark}
+As in Section \ref{sec:fv-2d}  we introduce the notion of discrete divergence,
+which allow us to check the consistency of CS-FV schemes.
+\begin{definition}[Discrete divergence]
+	\label{chp5-def-div}
+	For Problem \ref{chp5-prob3}, we define the discrete divergence as a 
+	$\mathcal{CS}_N$-grid function $\mathbb{D}^n(Q^n,u^n,v^n)$
+	given by:
+	\begin{equation}
+		\label{chp5-def-div-eq}
+		\mathbb{D}_{ijp}^n(Q^n,u^n,v^n)=  \frac{1}{\Delta t \sigma_{ijp}}
+		\bigg(\frac{\delta_i {F}_{ijp}^{n}}{\Delta x} + \frac{\delta_j {G}_{ijp}^{n}}{\Delta y} \bigg), 
+		\quad i = 1, \ldots, N, \quad j=1, \ldots,M.
+	\end{equation}
+\end{definition}
+With the aid of the discrete divergence, Equation \eqref{chp5-csfv} becomes:
+	\begin{equation}
+	\label{chp5-def-div-eq2}
+	Q^{n+1} = Q^n - \Delta t \mathbb{D}^n(Q^n,u^n,v^n).
+\end{equation}
+For a CS-FV scheme the discrete total mass at the time-step $n$ is given by
+\begin{equation*}
+	M^n =\sum_{p=1}^6 \sum_{i,j=1}^N Q_{ijp}^n \sigma_{ijp} \Delta x \Delta y 
+\end{equation*}
+It follows from Equation \eqref{chp5-def-div-eq2} that:
+\begin{align*}
+	M^{n+1} &= M^n  - \sum_{p=1}^6 \sum_{i,j=1}^N \mathbb{D}_{ijp}^{n} \sigma_{ijp} \Delta x \Delta y .
+\end{align*}
+Hence, to ensure mass conservation, we must ensure that
+\begin{align*}
+	\sum_{p=1}^6 \sum_{i,j=1}^N   \mathbb{D}_{ijp}^{n} \sigma_{ijp} \Delta x \Delta y = 0.
+\end{align*}
+This property is discrete version of
+\begin{align*}
+	\int_{\mathbb{S}^2_R} \nabla \cdot (\boldsymbol{u}q) \,dS = 0,
+\end{align*}
+which follows from the divergence theorem and the fact of the sphere has no boundary, where $\,dS$ is the surface measure of the sphere.
 
 Consistent Treatment of Boundaries: Boundary conditions play a crucial role in maintaining mass conservation. 
 The treatment of boundaries should ensure that there is no spurious mass exchange between the model domain and the exterior. 
 Various approaches, such as using ghost cells or extrapolation methods, can be employed to enforce mass conservation at the boundaries.
 
-In this Chapter, we show how we can use the dimension splitting method
-presented in Chapter \ref{chp-2d-fv} to solve the advection
-equation on the cubed-sphere with base on \citet{putman:2007}.
-
-We denote by $\Psi_p:[-a,a] \times [-a,a] \to \mathbb{S}^2_R$,
-$p=1, \cdots, 6,$ as a cubed-sphere mapping introduce in Chapter \ref{chp-cs-grids}.
-We introduce the notations:
-
-\begin{itemize}
-\item $(x,y;p)$ represents a point on the cubed-sphere using a cubed-sphere mapping;
-\item $[-a,a]^2 = \bigcup_{i,j=1}^N [x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}] \times [y_{j-\frac{1}{2}}, y_{j+\frac{1}{2}}]$;
-\item $\Delta x = x_{i+\frac{1}{2}}- x_{i-\frac{1}{2}},
-\Delta y = y_{j+\frac{1}{2}}- y_{j-\frac{1}{2}}$;
-\item $\Omega_{ijp} = \Psi_p([x_{i-\frac{1}{2}}, x_{i+\frac{1}{2}}] \times [y_{j-\frac{1}{2}}, y_{j+\frac{1}{2}}])$
-are the cubed-sphere control-volumes;
-\item
-	$\boldsymbol{g}_{1}(x,y;p) = D\Psi_{p}(x,y)
-	\begin{bmatrix}
-		1 \\
-		0
-	\end{bmatrix} \text{and }
-	\boldsymbol{g}_{2}(x,y;p) = D\Psi_{p}(x,y)
-	\begin{bmatrix}
-		0 \\
-		1
-	\end{bmatrix}
-	$ are the tangent vectors;
-\item
-	$	g_{\Psi}(x,y) =
-	\begin{bmatrix}
-		\langle \boldsymbol{g}_{1}(x,y;p), \boldsymbol{g}_{1}(x,y;p) \rangle &
-		\langle \boldsymbol{g}_{1}(x,y;p), \boldsymbol{g}_{2}(x,y;p) \rangle \\
-		\langle \boldsymbol{g}_{1}(x,y;p), \boldsymbol{g}_{2}(x,y;p) \rangle  &
-		\langle \boldsymbol{g}_{2}(x,y;p), \boldsymbol{g}_{2}(x,y;p) \rangle
-	\end{bmatrix}
-	$ is the metric tensor;
-\item $\sqrt{\det{g_{\Psi}(x,y) }}$ is the metric tensor Jacobian;
-\item $$|\Omega_{ijp}| = \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{i-\frac{1}{2}}}^{y_{i+\frac{1}{2}}}\sqrt{\det{g_{\Psi}(x,y) }} \,dx \,dy$$ are the control-volume areas
-
-\item $$Q_{ijp}(t) = \frac{1}{|\Omega_{ijp}|}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}  q(x,y,t;p) \sqrt{\det{g_{\Psi}(x,y) }}\,dx \,dy$$
-are the averages of $q$ on the control-volumes;
-\item $u_{i+\frac{1}{2},j,p}^n = u(x_{i+\frac{1}{2}},y_j,t_n;p);$
-\item $v_{i,j+\frac{1}{2},p}^n = v(x_i,y_{j+\frac{1}{2}},t_n;p).$
-\end{itemize}
+As we mentioned in Problem \ref{chp5-prob3}, the initial condition may be assumed as $q_{ijp}^0$ or $Q_{ijp}(0)$.
+We are going to assume  $q_{ijp}^0$ as initial data to avoid the computation of integrals.
+Furthermore, the errors will be calculated using the values $q_{ijp}^n$ instead of $Q_{ijp}(t_n)$.
+As in Section \ref{sec:fv-2d} this approximation leads to a second-order error.
 
 
-Given a tangent velocity field $\boldsymbol{u}$ on the sphere, we denote its
-contravariant components by $\tilde{u}$ and $\tilde{v}$.
-For a give a detailed discussion on contravariant representations in Appendix.
-The advection equation on panel the $p$ of the cubed-sphere is given by:
-\begin{equation*}
-	\frac{\partial}{\partial t}{q}+
-	\frac{1}{\sqrt{\det{g_{\Psi}}}}\bigg(
-	\frac{\partial}{\partial x} {(\tilde{u}\sqrt{\det{g_{\Psi}}}q)}+
-	\frac{\partial}{\partial y} {(\tilde{v}\sqrt{\det{g_{\Psi}}}q)}
-	\bigg)
-	= 0,
-\end{equation*}
-$\forall (x,y,t) \in [-a,a]^2\times[0,T]$, $q = {q}(x,y,t;p)$.
-Its integral form is given by:
-\begin{align*}
-	{Q}_{ijp}(t_{n+1})  = {Q}_{ijp}(t_{n})
-	&- \frac{\Delta t}{|\Omega_{ijp}|}
-	\delta _x \bigg( \frac{1}{\Delta t}
-	\int_{t_1}^{t_2} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}
-	{(\tilde{u}\sqrt{\det{g_{\Psi}}}q)}(x_{i}, y, t;p)
-	\,dy \,dt \bigg) \\ \nonumber
-	&- \frac{\Delta t}{|\Omega_{ijp}|}
-	\delta _y \bigg( \frac{1}{\Delta t}
-	\int_{t_1}^{t_2} \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-	{(\tilde{v}\sqrt{\det{g_{\Psi}}}q)}(x, y_{j}, t;p)
-	\,dx \,dt \bigg),
-\end{align*}
-Hence, we can use the dimension splitting presented in Chapter \ref{chp-2d-fv}
-to the variable $\sqrt{\det{g_{\Psi}}}q$.
-However, when computing the stencils near to the cube edges,
-we need to approximate the values of $q$ in the ghost cells in order to compute
-the stencils.
+
+\subsection{Dimension splitting}
