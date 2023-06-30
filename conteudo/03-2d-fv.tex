@@ -552,13 +552,13 @@ we have a piecewise-parabolic approximation in the $x$ direction:
 \begin{align}
 	\label{chp3-ppmx-eq1}
 	\begin{cases}
-    q_{ij}^x(x;Q_{\times, j}^n) = q_{L,i,j}^x + \Delta q_{ij}^x z_i(x) + q_{6, i,j}^xz_i(x)(1-z_i(x)), \\
+    q_{ij}^x(x;Q_{\times, j}^n) = q_{L,ij}^x + \Delta q_{ij}^x z_i(x) + q_{6,ij}^xz_i(x)(1-z_i(x)), \\
 	z_i(x) = \frac{x-x_{i-\frac{1}{2}}}{\Delta x},
 	\quad x \in X_i,\\
-    q_{L, i,j}^x = q_{i-\frac{i}{2},j}^n+ O(\Delta x^2),\\
-    q_{R, i,j}^x = q_{i+\frac{i}{2},j}^n+ O(\Delta x^2),\\
-	\Delta q_{ij}^x = q_{R, i,j}^x - q_{L, i,j}^x,\\
-	q_{6,i,j}^x = 6\bigg(Q_{ij}^n - \frac{(q_{L,i,j}^x + q_{R,i,j}^x)}{2}\bigg),
+    q_{L,ij}^x = q_{i-\frac{i}{2},j}^n+ O(\Delta x^2),\\
+    q_{R,ij}^x = q_{i+\frac{i}{2},j}^n+ O(\Delta x^2),\\
+	\Delta q_{ij}^x = q_{R,i,j}^x - q_{L,ij}^x,\\
+	q_{6,ij}^x = 6\bigg(Q_{ij}^n - \frac{(q_{L,ij}^x + q_{R,ij}^x)}{2}\bigg),
 	\end{cases}
 \end{align}
 for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and we also construct a piecewise-parabolic
@@ -566,17 +566,17 @@ approximation in the $y$ direction:
 \begin{align}
 	\label{chp3-ppmy-eq2}
 	\begin{cases}
-	q_{ij}^y(y;Q_{i,\times}^n) = q_{L,i,j}^y + \Delta q_{ij}^y z_j(y) + q_{6, i,j}^yz_j(y)(1-z_j(y)),\\ 
+	q_{ij}^y(y;Q_{i,\times}^n) = q_{L,ij}^y + \Delta q_{ij}^y z_j(y) + q_{6, ij}^yz_j(y)(1-z_j(y)),\\ 
 	z_j(y) = \frac{y-y_{j-\frac{1}{2}}}{\Delta y},
 	\quad y \in Y_j,\\
-    q_{L, i,j}^y = q_{i,j-\frac{1}{2}}^n+ O(\Delta y^2),\\
-    q_{R, i,j}^y = q_{i,j+\frac{1}{2}}^n+ O(\Delta y^2),\\
-	\Delta q_{ij}^y = q_{R, i,j}^y - q_{L, i,j}^y,\\
-	q_{6,i,j}^y = 6\bigg(Q_{ij}^n - \frac{(q_{L,i,j}^y + q_{R,i,j}^y)}{2}\bigg),
+    q_{L,ij}^y = q_{i,j-\frac{1}{2}}^n+ O(\Delta y^2),\\
+    q_{R,ij}^y = q_{i,j+\frac{1}{2}}^n+ O(\Delta y^2),\\
+	\Delta q_{ij}^y = q_{R,ij}^y - q_{L,ij}^y,\\
+	q_{6,ij}^y = 6\bigg(Q_{ij}^n - \frac{(q_{L,ij}^y + q_{R,ij}^y)}{2}\bigg),
     \end{cases}
 \end{align}
 for $i=-\nu+1, \ldots, N + \nu$, $j=1, \ldots, M$.
-The values $q_{L,i,j}^x$, $q_{R,i,j}^x$, $q_{L,i,j}^y$, and $q_{R,i,j}^y$,
+The values $q_{L,ij}^x$, $q_{R,ij}^x$, $q_{L,ij}^y$, and $q_{R,ij}^y$,
 which approximate the values of $q$ at C-grid wind positions, are computed
 using one of the schemes PPM-0, PPM-PL07, PPM-CW84, or PPM-L04, as described
 in Sections \ref{chp2-sec-ppm} and \ref{chp2-sec-mono}.
@@ -588,8 +588,8 @@ Then, we may express the fluxes as in Equation \eqref{chp-sec-flux:numerical-flu
 	\label{chp3-flux-xdir}
 	F_{i+\frac{1}{2},j}^n ({Q^n_{\times,j},\tilde{u}^n_{i+\frac{1}{2},j}})= \tilde{u}^{n}_{i+\frac{1}{2},j}\times
 	\begin{cases}
-	q_{R,i,j}^x +\frac{1}{2}(q_{6,i,j}^x - \Delta q_{ij}^x){\tilde{c}_{i+\frac{1}{2},j}^{x,n}}
-    +\frac{1}{3}{q_{6,i,j}^x}(\tilde{c}_{i+\frac{1}{2},j}^{x,n})^2,
+	q_{R,ij}^x +\frac{1}{2}(q_{6,ij}^x - \Delta q_{ij}^x){\tilde{c}_{i+\frac{1}{2},j}^{x,n}}
+    +\frac{1}{3}{q_{6,ij}^x}(\tilde{c}_{i+\frac{1}{2},j}^{x,n})^2,
     \quad &\text{if} \quad \tilde{u}_{i+\frac{1}{2},j}^n>0,\\
 	q_{L,i+1,j}^x - \frac{1}{2}(q_{6,i+1,j}^x + \Delta q_{i+1,j}^x){\tilde{c}_{i+\frac{1}{2},j}^{x,n}}
     -\frac{1}{3}{q_{6,i+1,j}^x}(\tilde{c}_{i+\frac{1}{2},j}^{x,n})^2,
@@ -601,8 +601,8 @@ for $i=0, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and
 	\label{chp3-flux-ydir}
 	G_{i,j+\frac{1}{2}}^n ({Q^n_{i,\times},\tilde{v}^n_{i,j+\frac{1}{2}}})= \tilde{v}^{n}_{i,j+\frac{1}{2}}\times
 	\begin{cases}
-	q_{R,i,j}^y +\frac{1}{2}(q_{6,i,j}^y - \Delta q_{ij}^y){\tilde{c}_{i,j+\frac{1}{2}}^{y,n}}
-    +\frac{1}{3}{q_{6,i,j}^y}(\tilde{c}_{i,j+\frac{1}{2}}^{y,n})^2,
+	q_{R,ij}^y +\frac{1}{2}(q_{6,ij}^y - \Delta q_{ij}^y){\tilde{c}_{i,j+\frac{1}{2}}^{y,n}}
+    +\frac{1}{3}{q_{6,ij}^y}(\tilde{c}_{i,j+\frac{1}{2}}^{y,n})^2,
     \quad &\text{if} \quad \tilde{v}_{i+\frac{1}{2},j}^n>0,\\
 	q_{L,i,j+1}^y - \frac{1}{2}(q_{6,i,j+1}^y + \Delta q_{i,j+1}^y){\tilde{c}_{i,j+\frac{1}{2}}^{y,n}}
     -\frac{1}{3}{q_{6,i,j+1}^y}(\tilde{c}_{i,j+\frac{1}{2}}^{y,n})^2,
