@@ -325,11 +325,10 @@ as in Section \ref{cs-recon}. Then, integrating the parabolas with the aid of Eq
  we may express the fluxes as:
 \begin{align}
 	\label{chp5-flux-xdir}
-	F_{i+\frac{1}{2},j,p}^n ({Q^n_{\times,j,p},\tilde{u}^n_{i+\frac{1}{2},j,p}}) &= 
+	&F_{i+\frac{1}{2},j,p}^n ({Q^n_{\times,j,p},\tilde{u}^n_{i+\frac{1}{2},j,p}}) = 
 	\int_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2},j,p}^n\Delta t}^{x_{i+\frac{1}{2}}}
-	{\psi_{ijp}^x(x;Q_{\times, j,p}^n) \,dx} = 
-	\tilde{u}^{n}_{i+\frac{1}{2},j,p} \times\\ 
-	&
+	{\psi_{ijp}^x(x;Q_{\times, j,p}^n) \,dx} =\\ 
+	&\tilde{u}^{n}_{i+\frac{1}{2},j,p} \times
 	\begin{cases}
 		\psi_{R,ijp}^x +\frac{1}{2}(\psi_{6,i,j}^x - \Delta \psi_{ijp}^x){\tilde{c}_{i+\frac{1}{2},j,p}^{x,n}}
 		+\frac{1}{3}{\psi_{6,ijp}^x}(\tilde{c}_{i+\frac{1}{2},j,p}^{x,n})^2,
@@ -342,11 +341,10 @@ as in Section \ref{cs-recon}. Then, integrating the parabolas with the aid of Eq
 for $i=0, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, $p=1,\ldots,6$ and 
 \begin{align}
 	\label{chp5-flux-ydir}
-	G_{i,j+\frac{1}{2},p}^n ({Q^n_{\times,j,p},\tilde{v}^n_{i,j+\frac{1}{2},p}}) &=
+	&G_{i,j+\frac{1}{2},p}^n ({Q^n_{\times,j,p},\tilde{v}^n_{i,j+\frac{1}{2},p}}) =
 	\int_{y_{j+\frac{1}{2}}-v_{i,j+\frac{1}{2},p}^n\Delta t}^{y_{j+\frac{1}{2}}}
-	{\psi_{ijp}^y(y;Q_{i,\times, p}^n) \,dy} = 
-	\tilde{v}^n_{i,j+\frac{1}{2},p}\times\\ 
-	&
+	{\psi_{ijp}^y(y;Q_{i,\times, p}^n) \,dy} = \\
+	&\tilde{v}^n_{i,j+\frac{1}{2},p}\times
 	\begin{cases}
 		\psi_{R,ijp}^y +\frac{1}{2}(\psi_{6,ijp}^y - \Delta \psi_{ijp}^y){\tilde{c}_{i,j+\frac{1}{2},p}^{y,n}}
 		+\frac{1}{3}{\psi_{6,ijp}^y}(\tilde{c}_{i,j+\frac{1}{2},p}^{y,n})^2,
@@ -396,11 +394,10 @@ $\sigma q_{ijp}^x$ assuming that metric tensor is constant on each integration d
 Equation \eqref{chp-sec-flux:numerical-flux1}, we get
 \begin{align}
 	\label{chp5-flux-xdir--pl07}
-	F_{i+\frac{1}{2},j,p}^n ({Q^n_{\times,j,p},\tilde{u}^n_{i+\frac{1}{2},j,p}}) &= 
+	&F_{i+\frac{1}{2},j,p}^n ({Q^n_{\times,j,p},\tilde{u}^n_{i+\frac{1}{2},j,p}}) = 
 	\int_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2},j,p}^n\Delta t}^{x_{i+\frac{1}{2}}}
-	{\sigma(x,y_j,p) q_{ijp}^x(x;Q_{\times, j,p}^n) \,dx} = 
-	{\sigma}_{i+\frac{1}{2},j,p}\tilde{u}^{n}_{i+\frac{1}{2},j,p} \times\\ 
-	&
+	{\sigma(x,y_j,p) q_{ijp}^x(x;Q_{\times, j,p}^n) \,dx} = \\
+	&{\sigma}_{i+\frac{1}{2},j,p}\tilde{u}^{n}_{i+\frac{1}{2},j,p} \times
 	\begin{cases}
 		q_{R,ijp}^x +\frac{1}{2}(q_{6,ijp}^x - \Delta q_{ijp}^x){\tilde{c}_{i+\frac{1}{2},j,p}^{x,n}}
 		+\frac{1}{3}{q_{6,ijp}^x}(\tilde{c}_{i+\frac{1}{2},j}^{x,n})^2,
@@ -413,11 +410,10 @@ Equation \eqref{chp-sec-flux:numerical-flux1}, we get
 for $i=0, \ldots, N$, $j=-\nu+1, \ldots, M+\nu$, $p=1,\ldots,6$ and 
 \begin{align}
 	\label{chp5-flux-ydir-pl07}
-	G_{i,j+\frac{1}{2},p}^n ({Q^n_{\times,j,p},\tilde{v}^n_{i,j+\frac{1}{2},p}}) &=
+	&G_{i,j+\frac{1}{2},p}^n ({Q^n_{\times,j,p},\tilde{v}^n_{i,j+\frac{1}{2},p}}) =
 	\int_{y_{j+\frac{1}{2}}-v_{i,j+\frac{1}{2},p}^n\Delta t}^{y_{j+\frac{1}{2}}}
-	{\sigma(x_i,y,p)q_{ijp}^y(y;Q_{i,\times, p}^n) \,dy} = 
-	{\sigma}_{i,j+\frac{1}{2},p} \tilde{v}^n_{i,j+\frac{1}{2},p}\times\\ 
-	&
+	{\sigma(x_i,y,p)q_{ijp}^y(y;Q_{i,\times, p}^n) \,dy} = \\
+	&{\sigma}_{i,j+\frac{1}{2},p} \tilde{v}^n_{i,j+\frac{1}{2},p}\times
 	\begin{cases}
 		q_{R,ijp}^y +\frac{1}{2}(q_{6,ijp}^y - \Delta q_{ijp}^y){\tilde{c}_{i,j+\frac{1}{2},p}^{y,n}}
 		+\frac{1}{3}{q_{6,i,j,p}^y}(\tilde{c}_{i,j+\frac{1}{2},p}^{y,n})^2,
@@ -519,7 +515,7 @@ For all velocity fields presented here, the initial condition is equal to the fi
 \end{figure}
 
 To compute the convergence, consider cubed-sphere grids with value of $N_k =  2^{k+4}$,
-for, and $\Delta t^{(k)} = \frac{\Delta t^{(k)}}{2^k}$, $k=0, \ldots, 6$, where
+and $\Delta t^{(k)} = \frac{\Delta t^{(k)}}{2^k}$, $k=0, \ldots, 6$, where
 the value of $\Delta t^{(0)}$ in Table \ref{chp5-tab2} for each VF.
 The relative error in the maximum norm is computed as
 \begin{equation}
