@@ -792,9 +792,9 @@ We employ $(\Delta x^{(k)},\Delta y^{(k)},\lambda)$-discretizations with $\Delta
 $\Delta t^{(k)} = 0.05/2^{k-4}$ for $k=4, \ldots, 10$, and $\lambda = 0.8$.
 We introduce the relative error in the maximum norm:
 \begin{equation*}
-	E_k = \max_{n=0,\ldots, N_T}
-	\frac{\| Q^n - q(t^n) \|_{\infty, \Delta x \times \Delta y}}
-	{\|q(t^n)\|_{\infty, \Delta x \times \Delta y}}.
+	E_k = 
+	\frac{\| Q^n - Q^0 \|_{\infty, \Delta x \times \Delta y}}
+	{\|Q^0\|_{\infty, \Delta x \times \Delta y}}.
 \end{equation*}
 The convergence rate is defined as in Section \ref{chp2-sec-numerical-exp}, 
 as well as the total mass variation, which is preserved with machine precision

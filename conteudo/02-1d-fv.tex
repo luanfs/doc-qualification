@@ -1161,8 +1161,8 @@ To investigate the error convergence, we employ $(\Delta x^{(k)}, \Delta t^{(k)}
  $\Delta t^{(k)}={1}/{2^{k-2}}$, for $k = 4, \ldots, 10$ and $\lambda = 4$.
 To measure the accuracy, we consider the relative error in the maximum norm as follows:
 \begin{equation*}
-	E_k = \max_{n=0,\ldots, N_T}
-	\frac{\| Q^n - Q(t^n) \|_{\infty, \Delta x}}{\|Q(t^n)\|_{\infty, \Delta x}}.
+	E_k = 
+	\frac{\| Q^{N_T} - Q^0 \|_{\infty, \Delta x}}{\|Q^0\|_{\infty, \Delta x}}.
 \end{equation*}
 The convergence rate is defined by
 \begin{equation*}
