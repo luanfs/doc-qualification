@@ -568,12 +568,13 @@ The resulting errors and convergence rates are illustrated in Figure \ref{chp5-e
 		\label{chp5-error-div}}
 \end{figure}
 From the analysis of Figure \ref{chp5-error-div}, we can observe that both Scheme 1 and Scheme 2 yield the same error,
-which is of second order. This result aligns with our expectations, as the PL07 scheme possesses the property of eliminating
+which is of second order. This result aligns with our expectations, as the PL07 splitting scheme possesses the property of eliminating
 splitting errors when $q$ is constant, regardless of the edge treatment scheme.
 Additionally, we can notice that Scheme 3 exhibits a first-order error, while Scheme 4 demonstrates a second-order error.
 Hence, we can conclude that averaging the flux at the cubed edges reduces the scheme's order, while the divergence projection maintains the order.
 Examining Figure \ref{chp5-div}, which displays the obtained errors on the sphere, it becomes evident that the averaging
 flux introduces a grid-imprinting pattern, wherein the cube edges are observable (see Figure \ref{chp5-div2}).
+The Scheme 1,2 and 3 does not present grid-imprinting pattern, but their errors have a strong discontinuity.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.3\textwidth}
