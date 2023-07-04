@@ -45,5 +45,28 @@ Additionally, we investigated two formulations of the metric tensor in the flux,
 For experiments without the metric tensor, we employed the PL07 splitting with RK1 and utilized the edge treatments ET-ZA22-PR and ET-PL07.
 It became evident that ET-ZA22-PR improved the accuracy of the method and eliminated grid imprinting.
 
-
+\newpage
 \section{Future work}
+The next steps of this work can be divided into two main aspects.
+Firstly, we propose to expand upon the analysis presented in Chapter \ref{chp-cs-fv},
+where our objective is to implement the FV3 shallow-water core on the cubed-sphere based on the approach described by \citet{lin:1997}.
+The computational implementation of this step is expected to be relatively straightforward,
+as the shallow-water model already includes flux operators that have been implemented using
+standard finite-difference operators. Our goal is to assess the accuracy of this scheme,
+investigate grid imprinting at the edges, and explore potential methods for enhancing the performance of the scheme.
+
+\begin{figure}[!htb]
+	\centering
+	\includegraphics[width=0.4\linewidth]{overlapped_cs_16_sphere.png}
+	\caption{Overlapping cubed-sphere.\label{gridoverlaped}}
+\end{figure}
+
+In our second proposal, we aim to extend the FV3 shallow-water core to the overlapping cubed-sphere grid, a grid proposed by \citet{purser:2017}, shown in Figure \ref{gridoverlaped}.
+This grid offers several advantages, including an orthogonal coordinate system and an abundance of cells at the cubed-edge,
+which enables the utilization of neighboring panel information without interpolation or extrapolation, potentially reducing grid imprinting.
+Also, the overlapping region is very small.
+The main challenge lies in effectively dealing with the overlapped region of the grid. To tackle this issue, we plan to explore methods used in the Yin-Yang grids, which also have overlapping regions and are currently implemented in the Global Environmental Multiscale (GEM) model by Canada \citep{qaddouri:2011,husain:2019}.
+Additionally, we intend to investigate existing methods developed for overlapping grids, which have been widely employed in the finite-volume literature for representing complex geometries
+(see for instance \citep{hadzic:2005}).
+This research will contribute to enhancing our understanding of overlapping grids and aid in the development of effective techniques for the overlapping cubed-sphere grid.
+
