@@ -492,6 +492,7 @@ VF2 corresponds to the non-divergent deformational flow described in \citet{nair
 and VF3 represents the divergent flow also presented in \citet{nair:2010}.
 Additionally, VF2 utilizes $k=2$ and VF3 uses $k=1$.
 For all velocity fields presented here, the initial condition is equal to the final solution after 5 time units.
+Also, we consider the unit sphere.
 
 \begin{figure}[!htb]
 	\centering
@@ -524,5 +525,76 @@ and the convergence rate is defined as
 \begin{equation*}
 	CR_k = \frac{\ln{\bigg(\frac{E_{k}}{E_{k-1}}}\bigg)}{\ln 2}, \quad \text{for} \quad k = 1, \ldots 6.
 \end{equation*}
-\section{Concluding remarks}
-\label{chp-cs-conc}
+In Table \ref{chp5-tab3}, we present all four schemes that we are considering. 
+We shall always assume that the PPM-PL07 is employed. 
+The main distinction between Scheme 1 and Scheme 2 lies in their ghost cell treatment.
+In Scheme 1, we adopt the approach proposed by \citet{putman:2007} for the ghost cell formulation,
+while Scheme 2 utilizes the ET-ZA22-PR scheme.
+Both Scheme 1 and Scheme 2 employ the splitting PL07 and the metric tensor formulation MT-PL07 
+with the RK1 departure point scheme. On the other hand, Scheme 3 and Scheme 4 utilize the splitting,
+the metric tensor formulation MT-0, and the RK2 departure point scheme.
+Scheme 1 and Scheme 2 are expected to achieve first-order accuracy, whereas schemes 3 and 4 are designed
+to attain second-order accuracy. Finally, the key difference between Scheme 3 and Scheme 4 lies in the method employed to modify the mass and ensure mass conservation.
+\begin{table}[!ht]
+	\begin{tabular}{|c|l|l|l|l|l|}
+		\hline
+		Scheme & Splitting & Departure point & Edge Treatment & Metric tensor formulation\\ \hline
+		1   & PL07 & RK1 & ET-PL07 & MT-PL07\\ \hline
+		2   & PL07 & RK1 & ET-ZA22-PR & MT-PL07\\ \hline
+		2   & AVLT & RK2 & ET-ZA22-AF & MT-0\\ \hline
+		2   & AVLT & RK2 & ET-ZA22-PR & MT-0\\ \hline
+	\end{tabular}
+	\caption{Schemes consider for this Chapter.}
+	\label{chp5-tab3} 
+\end{table}
+
+\subsection{Divergence of the rotated zonal wind}
+For our initial test, we will examine the velocity field VF1, which is non-divergent with $q=1$.
+We will calculate its discrete divergence using equation \eqref{eqdiv-split}.
+The resulting errors and convergence rates are illustrated in Figure \ref{chp5-error-div}.
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.42\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_div_vf2_normlinf_parabola_errors}
+		\caption{Error.\label{chp5-errordiv}}
+	\end{subfigure}
+	\begin{subfigure}{0.42\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_div_vf2_normlinf_convergence_rate}
+		\caption{Convergence rate.\label{chp5-crdiv}}
+	\end{subfigure}
+	\caption{Convergence of the error for the schemes from table \ref{chp5-tab3} obtained when computing the divergence of rotated zonal wind VF1.
+		\label{chp5-error-div}}
+\end{figure}
+From the analysis of Figure \ref{chp5-error-div}, we can observe that both Scheme 1 and Scheme 2 yield the same error,
+which is of second order. This result aligns with our expectations, as the PL07 scheme possesses the property of eliminating
+splitting errors when $q$ is constant, regardless of the edge treatment scheme.
+Additionally, we can notice that Scheme 3 exhibits a first-order error, while Scheme 4 demonstrates a second-order error.
+Hence, we can conclude that averaging the flux at the cubed edges reduces the scheme's order, while the divergence projection maintains the order.
+Examining Figure \ref{chp5-div}, which displays the obtained errors on the sphere, it becomes evident that the averaging
+flux introduces a grid-imprinting pattern, wherein the cube edges are observable (see Figure \ref{chp5-div2}).
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_div_error_vf2_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_sphere}
+		\caption{Scheme 1 \label{chp5-div1}}
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth}
+	\centering
+	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_div_error_vf2_SP-AVLT_PPM-PL07_RK2_ET-ZA22-AF_MT-0_sphere}
+	\caption{Scheme 3 \label{chp5-div2}}
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth}
+	\centering
+	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_div_error_vf2_SP-AVLT_PPM-PL07_RK2_ET-ZA22-PR_MT-0_sphere}
+	\caption{Scheme 4 \label{chp5-div3}}
+	\end{subfigure}
+	\caption{ Divergence error obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2}).
+		The error of scheme 2 is equal to the error of scheme 1 (Figure 2)
+		This figure considers a cubed-sphere with $N=512$. \label{chp5-div}}
+\end{figure}
+
+%\section{Concluding remarks}
+%\label{chp-cs-conc}
