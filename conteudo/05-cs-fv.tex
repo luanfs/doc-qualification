@@ -326,7 +326,7 @@ as in Section \ref{cs-recon}. Then, integrating the parabolas with the aid of Eq
 \begin{align}
 	\label{chp5-flux-xdir}
 	&F_{i+\frac{1}{2},j,p}^n ({Q^n_{\times,j,p},\tilde{u}^n_{i+\frac{1}{2},j,p}}) = 
-	\int_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2},j,p}^n\Delta t}^{x_{i+\frac{1}{2}}}
+	\int_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2},j,p}^n\Delta t}^{x_{i+\frac{1}{2}}}
 	{\psi_{ijp}^x(x;Q_{\times, j,p}^n) \,dx} =\\ 
 	&\tilde{u}^{n}_{i+\frac{1}{2},j,p} \times
 	\begin{cases}
@@ -342,7 +342,7 @@ for $i=0, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, $p=1,\ldots,6$ and
 \begin{align}
 	\label{chp5-flux-ydir}
 	&G_{i,j+\frac{1}{2},p}^n ({Q^n_{\times,j,p},\tilde{v}^n_{i,j+\frac{1}{2},p}}) =
-	\int_{y_{j+\frac{1}{2}}-v_{i,j+\frac{1}{2},p}^n\Delta t}^{y_{j+\frac{1}{2}}}
+	\int_{y_{j+\frac{1}{2}}-\tilde{v}_{i,j+\frac{1}{2},p}^n\Delta t}^{y_{j+\frac{1}{2}}}
 	{\psi_{ijp}^y(y;Q_{i,\times, p}^n) \,dy} = \\
 	&\tilde{v}^n_{i,j+\frac{1}{2},p}\times
 	\begin{cases}
@@ -395,7 +395,7 @@ Equation \eqref{chp-sec-flux:numerical-flux1}, we get
 \begin{align}
 	\label{chp5-flux-xdir--pl07}
 	&F_{i+\frac{1}{2},j,p}^n ({Q^n_{\times,j,p},\tilde{u}^n_{i+\frac{1}{2},j,p}}) = 
-	\int_{x_{i+\frac{1}{2}}-u_{i+\frac{1}{2},j,p}^n\Delta t}^{x_{i+\frac{1}{2}}}
+	\int_{x_{i+\frac{1}{2}}-\tilde{u}_{i+\frac{1}{2},j,p}^n\Delta t}^{x_{i+\frac{1}{2}}}
 	{\sigma(x,y_j,p) q_{ijp}^x(x;Q_{\times, j,p}^n) \,dx} = \\
 	&{\sigma}_{i+\frac{1}{2},j,p}\tilde{u}^{n}_{i+\frac{1}{2},j,p} \times
 	\begin{cases}
@@ -411,7 +411,7 @@ for $i=0, \ldots, N$, $j=-\nu+1, \ldots, M+\nu$, $p=1,\ldots,6$ and
 \begin{align}
 	\label{chp5-flux-ydir-pl07}
 	&G_{i,j+\frac{1}{2},p}^n ({Q^n_{\times,j,p},\tilde{v}^n_{i,j+\frac{1}{2},p}}) =
-	\int_{y_{j+\frac{1}{2}}-v_{i,j+\frac{1}{2},p}^n\Delta t}^{y_{j+\frac{1}{2}}}
+	\int_{y_{j+\frac{1}{2}}-\tilde{v}_{i,j+\frac{1}{2},p}^n\Delta t}^{y_{j+\frac{1}{2}}}
 	{\sigma(x_i,y,p)q_{ijp}^y(y;Q_{i,\times, p}^n) \,dy} = \\
 	&{\sigma}_{i,j+\frac{1}{2},p} \tilde{v}^n_{i,j+\frac{1}{2},p}\times
 	\begin{cases}
@@ -495,20 +495,19 @@ For all velocity fields presented here, the initial condition is equal to the fi
 
 \begin{figure}[!htb]
 	\centering
-	\begin{subfigure}{0.45\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_256_adv_Q_ic2_vf2_SP-AVLT_PPM-L04_RK2_ET-ZA22-PR_interp3_t0_mercator}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_ic2_vf2_SP-PL07_PPM-PL07_RK1_ET-ZA22-PR_MT-PL07_interp3_t0_sphere}
 		\caption{IC1. \label{chp5-ic1}}
 	\end{subfigure}
-	\begin{subfigure}{0.45\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_256_adv_Q_ic3_vf4_SP-AVLT_PPM-L04_RK2_ET-ZA22-PR_interp3_t0_mercator}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_ic3_vf4_SP-PL07_PPM-PL07_RK1_ET-ZA22-PR_MT-PL07_interp3_t0_sphere}
 		\caption{IC2. \label{chp5-ic2}}
 	\end{subfigure}
-
-	\begin{subfigure}{0.45\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_256_adv_Q_ic4_vf2_SP-AVLT_PPM-L04_RK2_ET-ZA22-PR_interp3_t0_mercator}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_ic4_vf2_SP-PL07_PPM-PL07_RK1_ET-ZA22-PR_MT-PL07_interp3_t0_sphere}
 		\caption{IC3. \label{chp5-ic3}}
 	\end{subfigure}
 	\caption{ Illustration of the initial conditions considered in this chapter (Table \ref{chp5-tab1}) .\label{chp5-ic}}
@@ -519,7 +518,7 @@ and $\Delta t^{(k)} = \frac{\Delta t^{(k)}}{2^k}$, $k=0, \ldots, 6$, where
 the value of $\Delta t^{(0)}$ in Table \ref{chp5-tab2} for each VF.
 The relative error in the maximum norm is computed as
 \begin{equation}
-	E_k = \frac{\max |Q_{ijp}^{N_T} - Q_{ijp}^0|}{\max {|Q_{ijp}^0|}},
+	E_k = \frac{\max |Q^{N_T} - Q^0|}{\max {|Q^0|}},
 \end{equation}
 and the convergence rate is defined as
 \begin{equation*}
