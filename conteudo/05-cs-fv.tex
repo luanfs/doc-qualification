@@ -579,7 +579,7 @@ Additionally, we can notice that Scheme 3 exhibits a first-order error, while Sc
 Hence, we can conclude that averaging the flux at the cubed edges reduces the scheme's order, while the divergence projection maintains the order.
 Examining Figure \ref{chp5-div}, which displays the obtained errors on the sphere, it becomes evident that the averaging
 flux introduces a grid-imprinting pattern, wherein the cube edges are observable (see Figure \ref{chp5-div2}).
-The Scheme 1,2 and 3 does not present grid-imprinting pattern, but their errors have a strong discontinuity on the panels.
+The Scheme 1,2 and 3 does not present grid-imprinting pattern, but their errors have a strong discontinuity on the panel edges.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.3\textwidth}
@@ -597,13 +597,32 @@ The Scheme 1,2 and 3 does not present grid-imprinting pattern, but their errors 
 	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_div_error_vf2_SP-AVLT_PPM-PL07_RK2_ET-ZA22-PR_MT-0_sphere}
 	\caption{Scheme 4 \label{chp5-div3}}
 	\end{subfigure}
-	\caption{ Divergence error obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2}).
+	\caption{ Divergence error obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2}.
 		The error of scheme 2 is equal to the error of scheme 1 (Figure 2)
 		This figure considers a cubed-sphere with $N=512$. \label{chp5-div}}
 \end{figure}
 
-\newpage
 \subsection{Advection of one Gaussian hill through the rotated zonal wind}
+As a second test case, we consider the advection of the Gaussian hill given by IC1 using 
+the rotated zonal wind VF1.
+In Figure \ref{chp5-error-adv1}, we depict the final errors obtained for 
+all schemes from Table \ref{chp5-tab2}.
+We can observe that schemes 1 and scheme 2 are first-order accurate, while schemes 3 and 4 
+are second-order accurate.
+Furthermore, it is worth noting that although scheme 3 showed to be only first-order 
+accurate in computing the divergence of VF1, the final error after simulating the advection 
+equation is second-order accurate.
+
+The major difference between schemes 1 and 2 is evident from Figures \ref{chp5-adv1-s1} and
+\ref{chp5-adv1-s2}, where we can observe that scheme 1 generates a grid imprinting pattern, 
+while scheme 2 does not.
+Similarly, scheme 3 generates grid imprinting while scheme 4 does not, 
+show in Figures \ref{chp5-adv1-s3} and \ref{chp5-adv1-s4}.
+We can conclude that the averaging of fluxes and the edge treatment ET-PL07 
+result in more grid imprinting. However, the usage of Lagrange interpolation to fill the 
+ghost cell values eliminates grid imprinting when combined with the divergence projection 
+method.
+
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.42\textwidth}
@@ -618,9 +637,9 @@ The Scheme 1,2 and 3 does not present grid-imprinting pattern, but their errors 
 	\end{subfigure}
 	\caption{Convergence of the error for the schemes from table \ref{chp5-tab3} obtained when computing the advection of IC1  with the rotated zonal wind VF1 after 5 time units.
 	Green line represents scheme 1;
-	Red line represents scheme 2;
-	Purple line represents scheme 3;
-	Blue line represents scheme 4.
+	red line represents scheme 2;
+	purple line represents scheme 3;
+	blue line represents scheme 4.
 	\label{chp5-error-adv1}}
 \end{figure}
 
@@ -648,11 +667,13 @@ The Scheme 1,2 and 3 does not present grid-imprinting pattern, but their errors 
 	\caption{Scheme 4 \label{chp5-adv1-s4}}
 \end{subfigure}
 	\caption{ Error after 5 time units obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2} with the initial condition IC1 from  table \ref{chp5-tab1} 
-		This figure considers a cubed-sphere with $N=512$. \label{chp5-adv1}}
+	This figure considers a cubed-sphere with $N=512$. \label{chp5-adv1}}
 \end{figure}
 
-\newpage
 \subsection{Steady steady}
+The third test case investigated focuses on IC3 with VF1. In this test, the exact solution 
+remains constant and does not change over time. 
+
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.42\textwidth}
@@ -667,10 +688,10 @@ The Scheme 1,2 and 3 does not present grid-imprinting pattern, but their errors 
 	\end{subfigure}
 	\caption{Convergence of the error for the schemes from table \ref{chp5-tab3} obtained when computing the advection of IC3  with the rotated zonal wind VF1 after 5 time units.
 	Green line represents scheme 1;
-	Red line represents scheme 2;
-	Purple line represents scheme 3;
-	Blue line represents scheme 4.
-		\label{chp5-error-adv2}}
+	red line represents scheme 2;
+	purple line represents scheme 3;
+	blue line represents scheme 4.
+	\label{chp5-error-adv2}}
 \end{figure}
 
 
@@ -697,8 +718,19 @@ The Scheme 1,2 and 3 does not present grid-imprinting pattern, but their errors 
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic4_vf2_SP-AVLT_PPM-PL07_RK2_ET-ZA22-PR_MT-0_interp3_t6400_sphere}
 		\caption{Scheme 4 \label{chp5-adv2-s4}}
 	\end{subfigure}
-	\caption{ Error after 5 time units obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2} with the initial condition IC1 from  table \ref{chp5-tab1} 
+	\caption{ Error after 5 time units obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2} with the initial condition IC3 from  table \ref{chp5-tab1} 
 		This figure considers a cubed-sphere with $N=512$. \label{chp5-adv2}}
 \end{figure}
+
+Figure \ref{chp5-error-adv1} illustrates 
+the final errors obtained for all schemes listed in Table \ref{chp5-tab2}. Once again, 
+schemes 1 and 2 demonstrate first-order accuracy, with scheme 2 being more accurate and 
+producing no grid imprinting, as evident in Figures \ref{chp5-adv2-s1} and 
+\ref{chp5-adv2-s2}. This further emphasizes the advantage of using Lagrange interpolation 
+for ghost cells as opposed to the PL07 treatment.
+We also observe that scheme 3 exhibits second-order accuracy, while scheme 4 demonstrates 
+third-order accuracy, surpassing its expected order. However, unlike the previous test, 
+scheme 4 also produces grid imprinting, although much lesser compared to scheme 3.
+
 %\section{Concluding remarks}
 %\label{chp-cs-conc}
