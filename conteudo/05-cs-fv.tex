@@ -565,7 +565,11 @@ The resulting errors and convergence rates are illustrated in Figure \ref{chp5-e
 		\caption{Convergence rate.\label{chp5-crdiv}}
 	\end{subfigure}
 	\caption{Convergence of the error for the schemes from table \ref{chp5-tab3} obtained when computing the divergence of rotated zonal wind VF1.
-		\label{chp5-error-div}}
+	Green line represents scheme 1;
+	Red line represents scheme 2;
+	Purple line represents scheme 3;
+	Blue line represents scheme 4.
+	\label{chp5-error-div}}
 \end{figure}
 
 From the analysis of Figure \ref{chp5-error-div}, we can observe that both Scheme 1 and Scheme 2 yield the same error,
@@ -598,5 +602,103 @@ The Scheme 1,2 and 3 does not present grid-imprinting pattern, but their errors 
 		This figure considers a cubed-sphere with $N=512$. \label{chp5-div}}
 \end{figure}
 
+\newpage
+\subsection{Advection of one Gaussian hill through the rotated zonal wind}
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.42\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_adv_tc2_ic2_vf2_normlinf_parabola_errors}
+		\caption{Error.\label{chp5-adv1-error}}
+	\end{subfigure}
+	\begin{subfigure}{0.42\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_adv_tc2_ic2_vf2_normlinf_convergence_rate}
+		\caption{Convergence rate.\label{chp5-adv1-cr}}
+	\end{subfigure}
+	\caption{Convergence of the error for the schemes from table \ref{chp5-tab3} obtained when computing the advection of IC1  with the rotated zonal wind VF1 after 5 time units.
+	Green line represents scheme 1;
+	Red line represents scheme 2;
+	Purple line represents scheme 3;
+	Blue line represents scheme 4.
+	\label{chp5-error-adv1}}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic2_vf2_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_interp3_t6400_sphere}
+		\caption{Scheme 1 \label{chp5-adv1-s1}}
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic2_vf2_SP-PL07_PPM-PL07_RK1_ET-ZA22-PR_MT-PL07_interp3_t6400_sphere}
+		\caption{Scheme 2 \label{chp5-adv1-s2}}
+	\end{subfigure}
+
+	\begin{subfigure}{0.3\textwidth}
+	\centering
+	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic2_vf2_SP-AVLT_PPM-PL07_RK2_ET-ZA22-AF_MT-0_interp3_t6400_sphere}
+	\caption{Scheme 3 \label{chp5-adv1-s3}}
+\end{subfigure}
+\begin{subfigure}{0.3\textwidth}
+	\centering
+	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic2_vf2_SP-AVLT_PPM-PL07_RK2_ET-ZA22-PR_MT-0_interp3_t6400_sphere}
+	\caption{Scheme 4 \label{chp5-adv1-s4}}
+\end{subfigure}
+	\caption{ Error after 5 time units obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2} with the initial condition IC1 from  table \ref{chp5-tab1} 
+		This figure considers a cubed-sphere with $N=512$. \label{chp5-adv1}}
+\end{figure}
+
+\newpage
+\subsection{Steady steady}
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.42\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_adv_tc2_ic4_vf2_normlinf_parabola_errors}
+		\caption{Error.\label{chp5-adv2-error}}
+	\end{subfigure}
+	\begin{subfigure}{0.42\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_adv_tc2_ic4_vf2_normlinf_convergence_rate}
+		\caption{Convergence rate.\label{chp5-adv2-cr}}
+	\end{subfigure}
+	\caption{Convergence of the error for the schemes from table \ref{chp5-tab3} obtained when computing the advection of IC3  with the rotated zonal wind VF1 after 5 time units.
+	Green line represents scheme 1;
+	Red line represents scheme 2;
+	Purple line represents scheme 3;
+	Blue line represents scheme 4.
+		\label{chp5-error-adv2}}
+\end{figure}
+
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic4_vf2_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_interp3_t6400_sphere}
+		\caption{Scheme 1 \label{chp5-adv2-s1}}
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic4_vf2_SP-PL07_PPM-PL07_RK1_ET-ZA22-PR_MT-PL07_interp3_t6400_sphere}
+		\caption{Scheme 2 \label{chp5-adv2-s2}}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic4_vf2_SP-AVLT_PPM-PL07_RK2_ET-ZA22-AF_MT-0_interp3_t6400_sphere}
+		\caption{Scheme 3 \label{chp5-adv2-s3}}
+	\end{subfigure}
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic4_vf2_SP-AVLT_PPM-PL07_RK2_ET-ZA22-PR_MT-0_interp3_t6400_sphere}
+		\caption{Scheme 4 \label{chp5-adv2-s4}}
+	\end{subfigure}
+	\caption{ Error after 5 time units obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2} with the initial condition IC1 from  table \ref{chp5-tab1} 
+		This figure considers a cubed-sphere with $N=512$. \label{chp5-adv2}}
+\end{figure}
 %\section{Concluding remarks}
 %\label{chp-cs-conc}
