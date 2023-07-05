@@ -732,5 +732,32 @@ We also observe that scheme 3 exhibits second-order accuracy, while scheme 4 dem
 third-order accuracy, surpassing its expected order. However, unlike the previous test, 
 scheme 4 also produces grid imprinting, although much lesser compared to scheme 3.
 
-%\section{Concluding remarks}
-%\label{chp-cs-conc}
+\section{Concluding remarks}
+\label{chp-cs-conc}
+In this chapter, we extended the dimension splitting technique from the plane to the 
+cubed-sphere. There were two essential differences in this case: 1) the presence of the 
+metric tensor, and 2) the treatment of the ghost cells, which now depend on the neighboring 
+panels.
+
+Regarding the metric tensor, we explored two different approaches. One approach, as used in 
+\citet{putman:2007}, involved applying the metric tensor only after integrating the PPM parabolas. 
+This approach introduced a first-order error, but it facilitated the elimination of the 
+splitting error for the PL07 scheme. The second approach incorporated the metric tensor in 
+the PPM reconstruction and introduced no first-order error, which was crucial for achieving 
+a second-order scheme.
+
+In terms of the edge treatment schemes, we observed that the ET-PL07 scheme resulted in a 
+grid-imprinting issue in the simulation. Fortunately, this grid-imprinting problem was 
+resolved when we implemented the ET-ZA22 scheme, which utilizes a third-order Lagrange 
+interpolation to determine the scalar field and wind values at ghost cell positions. 
+However, the main challenge with ET-ZA22 was devising a strategy to ensure mass 
+conservation at the cubed-edges.
+
+We noticed that employing an averaging flux approach at the cube-edges led to a reduction 
+in the scheme order and resulted in grid imprinting. As an alternative, we explored a 
+second approach based on projecting the discrete divergence onto the space of grid 
+functions with zero mass. This approach proved to be much more accurate than the averaging 
+flux method. However, in a steady test case, we observed that the divergence still caused a 
+minor grid-imprinting issue.
+
+ 
