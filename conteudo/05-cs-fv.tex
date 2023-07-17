@@ -253,12 +253,12 @@ To facilitate the scheme, we introduce the auxiliary grid functions $\mathbf{F}$
 	\mathbf{F}_{ijp}({Q^n,\tilde{u}^n}) = -{\lambda} \bigg({F}_{i+\frac{1}{2},j,p}^n(Q^n_{\times,j,p},\tilde{u}^n_{i+\frac{1}{2},j,p})-
 	{F}_{i-\frac{1}{2},j,p}^n(Q^n_{\times,j,p},\tilde{u}^n_{i-\frac{1}{2},j,p}) \bigg),
 \end{align*}
-for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, and
+for $i=1, \ldots, N$, $j=-\nu+1, \ldots, N + \nu$, and
 \begin{align*}
 	\mathbf{G}_{ijp}({Q^n,\tilde{v}^n}) = -{\lambda} \bigg({G}_{i,j+\frac{1}{2},p}^n(Q^n_{i,\times,p},\tilde{v}^n_{i,j+\frac{1}{2},p})-
 	{G}_{i,j-\frac{1}{2},p}^n(Q^n_{i,\times,p},\tilde{v}^n_{i,j-\frac{1}{2},p}) \bigg),
 \end{align*}
-for $i=-\nu+1, \ldots, N + \nu$  $j=1, \ldots, M$.
+for $i=-\nu+1, \ldots, N + \nu$  $j=1, \ldots, N$.
 The terms $\tilde{u}^n_{i+\frac{1}{2},j,p}$ and $\tilde{v}^n_{i,j+\frac{1}{2},p}$ represent the 
 time-averaged winds used in the computation of departure points in the $x$ and $y$ directions, respectively. 
 These averages are calculated using either RK1 or RK2 from Section \ref{chp2-sec-dp}. 
@@ -541,10 +541,10 @@ to attain second-order accuracy. Finally, the key difference between Scheme 3 an
 		Scheme & Splitting & Departure point & Edge Treatment & Metric tensor formulation\\ \hline
 		1   & PL07 & RK1 & ET-PL07 & MT-PL07\\ \hline
 		2   & PL07 & RK1 & ET-ZA22-PR & MT-PL07\\ \hline
-		2   & AVLT & RK2 & ET-ZA22-AF & MT-0\\ \hline
-		2   & AVLT & RK2 & ET-ZA22-PR & MT-0\\ \hline
+		3   & AVLT & RK2 & ET-ZA22-AF & MT-0\\ \hline
+		4   & AVLT & RK2 & ET-ZA22-PR & MT-0\\ \hline
 	\end{tabular}
-	\caption{Schemes consider for this Chapter.}
+	\caption{Schemes considered for this Chapter.}
 	\label{chp5-tab3} 
 \end{table}
 
