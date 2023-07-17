@@ -756,12 +756,10 @@ Therefore, these inner advective operators eliminate the splitting error for a c
 				 \frac{\Delta t}{\Delta x}(\tilde{u}_{i+\frac{1}{2},j}^n - \tilde{u}_{i-\frac{1}{2},j}^n)$ 
 		       & $\mathbf{G}_{ij}(Q^n, \tilde{v}^n) + Q_{ij}^n
 				 \frac{\Delta t}{\Delta y}(\tilde{v}_{i,j+\frac{1}{2}}^n - \tilde{v}_{i,j-\frac{1}{2}}^n)$ \\ \hline
-		PL07   & $\frac{1}{2}\bigg(-Q_{ij}^n +
-		       \frac{Q_{ij}^n + \mathbf{F}_{ij}(Q^n,\tilde{u}^n)}{1 - \frac{\Delta t}{\Delta x}\big(\tilde{u}_{i+\frac{1}{2},j}^n - \tilde{u}_{i-\frac{1}{2},j}^n\big)} 
-		       \bigg)$
-			   & $\frac{1}{2}\bigg(-Q_{ij}^n +
-			   \frac{Q_{ij}^n + \mathbf{G}_{ij}(Q^n,\tilde{v}^n)}{1 - \frac{\Delta t}{\Delta y}\big(\tilde{v}_{i,j+\frac{1}{2}}^n - \tilde{v}_{i,j-\frac{1}{2}}^n\big)}
-			   \bigg)$
+		PL07   & $-Q_{ij}^n +
+		       \frac{Q_{ij}^n + \mathbf{F}_{ij}(Q^n,\tilde{u}^n)}{1 - \frac{\Delta t}{\Delta x}\big(\tilde{u}_{i+\frac{1}{2},j}^n - \tilde{u}_{i-\frac{1}{2},j}^n\big)}$
+			   & $-Q_{ij}^n +
+			   \frac{Q_{ij}^n + \mathbf{G}_{ij}(Q^n,\tilde{v}^n)}{1 - \frac{\Delta t}{\Delta y}\big(\tilde{v}_{i,j+\frac{1}{2}}^n - \tilde{v}_{i,j-\frac{1}{2}}^n\big)}$
 			   \\ \hline
 	\end{tabular}
 \caption{Expression of the inner advective operators considered in this work.
