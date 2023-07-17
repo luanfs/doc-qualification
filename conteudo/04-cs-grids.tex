@@ -33,6 +33,7 @@ containing the data from the neighboring panels. This allows for the use of one-
 high-order Lagrange interpolation to compute the stencils at the edges. 
 This approach has been extensively used in the literature \citep{croisille:2013, 
 katta:2015, katta:2015b, chen:2021} and was initially introduced by \citet{ronchi:1996}.
+This approach is referred to as duo grid, as named by \citet{chen:2021}.
 Alternatively, \citet{putman:2007} uses extrapolation for grid values near the cube edges.
 Another approach that avoids the need for interpolation or extrapolation near the edges is 
 the conformal cubed-sphere developed by \citet{rancic:1996}. While this grid leads to an 
@@ -561,22 +562,22 @@ For a grid function $Q$ we also use the notations:
 	Q_{\times,j,p} &:= (Q_{-\nu+1,j,p}, \ldots, Q_{N+\nu,j,p}) \in \mathbb{R}^{N}_{\nu},\\
 	Q_{i,\times,p} &:= (Q_{i,-\nu+1,p}, \ldots, Q_{i,M+\nu,p}) \in \mathbb{R}^{N}_{\nu}.
 \end{align*}
-We define the average values of a function $q$ with the aid of the metric tensor
-$\sigma(x,y)$ at time $t$: 
-\begin{equation*}
-	Q_{ijp}(t) = \frac{1}{|\Omega_{ijp}|}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}  q(x,y,p,t) {\sigma(x,y)}\,dx \,dy,
-\end{equation*}
-where $|\Omega_{ijp}|$ is the control volume area given by:
+$|\Omega_{ijp}|$ is the control volume area given by:
 \begin{equation}
 	\label{chp4-area}
 	|\Omega_{ijp}| = \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}{\sigma(x,y)} \,dx \,dy.
 \end{equation}
+We define the average values of a function $q$ with the aid of the metric tensor
+$\sigma(x,y)$ at time $t$: 
+\begin{equation*}
+	Q_{ijp}(t) = \frac{1}{\Delta x \Delta y}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
+	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}  q(x,y,p,t) {\sigma(x,y)}\,dx \,dy,
+\end{equation*}
 In this context, we define $Q(t) \in \mathcal{CS}_N$ given by 
 $Q(t) = (Q_{ijp}(t))_{i,j = -\nu +1, \ldots, N+\nu}^{p=1,\ldots,6}$.
 Similar to Proposition \ref{prop-bound-centroid-2d}, we may approximate the average value using the centroid value, that is
 \begin{equation*}
-	Q_{ijp}^n - q_{ijp}^n = O(\Delta x ^2), 
+	Q_{ijp}^n - \sigma_{ijp}q_{ijp}^n = O(\Delta x ^2), 
 \end{equation*}
 In this work, we shall always approximate the average values since our schemes are expected to be at most second-order,
 this approximation does not deteriorate the convergence order.
@@ -589,7 +590,8 @@ Let's consider a function $q: \mathbb{S}^2_R \to \mathbb{R}$ given at the cell c
 denoted by $q_{ijp}$, where $i, j=1\ldots, N$ and $p=1,\ldots, 6$. 
 Our objective is to estimate these values at positions outside the range $1, \ldots, N$, specifically at ghost cell positions.
 
-To solve this problem, we will employ the strategy outlined in \citet{zerroukat:2022}. 
+To solve this problem, we will employ the strategy outlined in \citet{zerroukat:2022}, 
+named duo grid by \citet{chen:2021}.
 As previously mentioned, the ghost cells in the local Cartesian systems are mapped onto the geodesics 
 of adjacent panels, which enables us to use Lagrange interpolation to obtain the values of ghost cells.
 \begin{figure}[!htb]
@@ -767,7 +769,7 @@ Unlike in the previous chapters, where periodic boundary conditions were assumed
 the boundary conditions in this context are related to the adjacent panels. 
 One way to address this issue is by adding ghost cell layers and utilizing 
 the process described in Section \ref{cs-interp} to compute the stencils. 
-This approach is referred to as \textbf{ET-ZA22} (Edge Treatment - ZA22), 
+This approach is referred to as \textbf{ET-DG} (Edge Treatment - duo grid), 
 as it extends the grid lines and employs Lagrange interpolation, 
 as described by \citet{zerroukat:2022}.
 \begin{figure}[!htb]
@@ -775,7 +777,7 @@ as described by \citet{zerroukat:2022}.
 	\includegraphics[width=0.8\linewidth]{haloregion}
 	\caption{Different approaches for defining the halo region:
     (a) using adjacent cell values (used in ET-S72 and ET-PL07);
-    (b) extending the panel grid lines (used in ET-ZA22). 
+    (b) extending the panel grid lines (used in ET-DG). 
     Figure taken from \citet{ross:2006}.\label{chp4-haloregion}}
 \end{figure}
 
@@ -808,7 +810,7 @@ in the $x$ direction and in the $y$ direction we use the formulas
 	q^{R,y}_{i,N-1,p} &= q^{L,y}_{i,N,p}.\\
 \end{align*}
 We are going to use the trigonometric function (Equation \eqref{chp4-ic2})
-as before on the unit sphere to compare the schemes ET-ZA22, ET-S72 and ET-PL07. The scheme ET-ZA22 uses cubic polynomials.
+as before on the unit sphere to compare the schemes ET-DG, ET-S72 and ET-PL07. The scheme ET-DG uses cubic polynomials.
 We introduce the relative errors:
 \begin{align*}
 	e_{{i-\frac{1}{2}},j,p} &= (|q_{{i-\frac{1}{2}},j,p} - q^{L,x}_{ijp}|)/|q_{{i-\frac{1}{2}},j,p}|,\\
@@ -837,10 +839,10 @@ We are going to compute $E$ for different values of $N$ as in the numerical expe
 
 In Figure \ref{chp4-exp3} we show the errors and the convergence rate using the PPM-PL07 and PPM-L04 reconstruction schemes.
 We can observe that all the schemes converge to zero with second-order.
-The difference between the edge treatments ET-S72, ET-PL07 and ET-ZA22 schemes
+The difference between the edge treatments ET-S72, ET-PL07 and ET-DG schemes
 may be observed in Figure \ref{chp4-exp4} and Figure \ref{chp4-exp5}, for the  PPM-PL07 and PPM-L04 reconstruction schemes, respectively.
 We notice that the cube edges appear on the error graph when we use the ET-S72 and ET-PL07 schemes. This is an example of grid imprinting.
-Although all schemes are second-order, the scheme ET-ZA22 do not seem to produce grid imprinting in the reconstruction problem.
+Although all schemes are second-order, the scheme ET-DG do not seem to produce grid imprinting in the reconstruction problem.
 \begin{figure}[!ht]
 	\centering
 	\begin{subfigure}{0.3\textwidth}
@@ -855,11 +857,11 @@ Although all schemes are second-order, the scheme ET-ZA22 do not seem to produce
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 	\centering
-	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-PL07_etET-ZA22_sphere}
-	\caption{ET-ZA22.\label{chp4-exp4-c}}
+	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-PL07_etET-DG_sphere}
+	\caption{ET-DG.\label{chp4-exp4-c}}
 \end{subfigure}
 	\caption{Error for the edge midpoint values considering the trigonometric function (Equation \eqref{chp4-ic2})
-	with edges treatment schemes ET-S72 (a), ET-PL07 (b) and ET-ZA22 for the cubed-sphere with $N=1024$ using the reconstruction PPM-PL07.\label{chp4-exp4}}
+	with edges treatment schemes ET-S72 (a), ET-PL07 (b) and ET-DG for the cubed-sphere with $N=1024$ using the reconstruction PPM-PL07.\label{chp4-exp4}}
 \end{figure}
 \begin{figure}[!ht]
 	\centering
@@ -875,8 +877,8 @@ Although all schemes are second-order, the scheme ET-ZA22 do not seem to produce
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-L04_etET-ZA22_sphere}
-		\caption{ET-ZA22.\label{chp4-exp5-c}}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_1024_recon_q_ic_2_reconPPM-L04_etET-DG_sphere}
+		\caption{ET-DG.\label{chp4-exp5-c}}
 	\end{subfigure}
 	\caption{As Figure in \ref{chp4-exp4} but using the PPM-L04 scheme.\label{chp4-exp5}}
 \end{figure}
@@ -891,10 +893,10 @@ This property allows us to use 1D Lagrange interpolation to obtain the values of
 In fact, we demonstrated the accuracy of this method through numerical examples in Sections \ref{cs-interp} and \ref{cs-wind-interp}.
  
 Afterward, in Section \ref{cs-recon}, we investigated different methods for computing stencils near the cube edges.
-We considered the scheme based on 1D Lagrange interpolation (ET-ZA22), a scheme that ignores the coordinate system (ET-S72),
+We considered the scheme based on 1D Lagrange interpolation (ET-DG), a scheme that ignores the coordinate system (ET-S72),
 and a scheme based on extrapolations (ET-PL07). The scheme ET-PL07 was proposed by \citet{putman:2007} and is used in the FV3 core.
 Through numerical examples, we demonstrated that the reconstruction at cell edges using PPM schemes generates grid imprinting near
 the cubed edges when using ET-S72. This grid imprinting is reduced when we apply the extrapolation scheme ET-PL07, 
-but the error still persists to be larger on the cube edges. However, this problem is eliminated when we adopt the scheme ET-ZA22.
-Furthermore, the error produced by ET-ZA22 is the smallest observed. Therefore, we concluded that the scheme ET-ZA22 is the most accurate.
+but the error still persists to be larger on the cube edges. However, this problem is eliminated when we adopt the scheme ET-DG.
+Furthermore, the error produced by ET-DG is the smallest observed. Therefore, we concluded that the scheme ET-DG is the most accurate.
 
