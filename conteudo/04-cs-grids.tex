@@ -570,14 +570,14 @@ $|\Omega_{ijp}|$ is the control volume area given by:
 We define the average values of a function $q$ with the aid of the metric tensor
 $\sigma(x,y)$ at time $t$: 
 \begin{equation*}
-	Q_{ijp}(t) = \frac{1}{\Delta x \Delta y}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
+	Q_{ijp}(t) = \frac{1}{|\Omega_{ijp}|}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
 	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}  q(x,y,p,t) {\sigma(x,y)}\,dx \,dy,
 \end{equation*}
 In this context, we define $Q(t) \in \mathcal{CS}_N$ given by 
 $Q(t) = (Q_{ijp}(t))_{i,j = -\nu +1, \ldots, N+\nu}^{p=1,\ldots,6}$.
 Similar to Proposition \ref{prop-bound-centroid-2d}, we may approximate the average value using the centroid value, that is
 \begin{equation*}
-	Q_{ijp}^n - \sigma_{ijp}q_{ijp}^n = O(\Delta x ^2), 
+	Q_{ijp}^n - q_{ijp}^n = O(\Delta x ^2), 
 \end{equation*}
 In this work, we shall always approximate the average values since our schemes are expected to be at most second-order,
 this approximation does not deteriorate the convergence order.
