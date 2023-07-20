@@ -29,21 +29,23 @@ while the AVLT splitting achieves second-order when employed with the RK2 scheme
 In Chapter \ref{chp-cs-grids}, we explored cubed-sphere mappings, particularly the equiangular mapping, which generates a more uniform grid.
 A key feature of equiangular cubed-sphere ghost cells is that their edge and center ghost points align with a common geodesic, alongside adjacent panel points.
 This property enables us to employ 1D Lagrange interpolation for obtaining field values in the ghost cells, as demonstrated through numerical examples.
-We compared this ghost cell treatment, referred to as ET-ZA22, with an extrapolation method called ET-PL07 proposed by \citet{putman:2007},
+We compared this ghost cell treatment, referred to as ET-DG, with an extrapolation method called ET-PL07 proposed by \citet{putman:2007},
 as well as a scheme that disregards panel discontinuities.
-We observed that among these methods, only ET-ZA22, utilizing edge reconstruction from PPM, avoided the creation of grid-imprinting patterns.
+We observed that among these methods, only ET-DG, utilizing edge reconstruction from PPM, avoided the creation of grid-imprinting patterns.
 The PL07 scheme exhibited second-order accuracy but generated significant grid imprinting patterns.
 
 In Chapter \ref{chp-cs-fv}, we extended the dimension splitting technique from Chapter \ref{chp-2d-fv} 
 to each cubed-sphere panel by incorporating the edge treatment schemes discussed in Chapter \ref{chp-cs-grids}.
-We highlighted that the ET-ZA22 scheme breaks mass conservation and proposed two approaches to address this issue:
-one involving averaging the flux at the cube edges (ET-ZA22-AF), and the other involving projecting the divergence
-onto the space of grid functions with zero mass (ET-ZA22-PR).
-Numerical experiments revealed that ET-ZA22-AF reduced the order near the edges and produced a grid imprinting pattern,
-whereas ET-ZA22-PR preserved the scheme order and eliminated any grid imprinting pattern.
+We highlighted that the ET-DG scheme breaks mass conservation and proposed two approaches to address this issue:
+one involving averaging the flux at the cube edges (MF-AF), and the other involving projecting the divergence
+onto the space of grid functions with zero mass (MF-PR).
+Numerical experiments revealed that MF-AF reduced the order near the edges and produced a grid imprinting pattern,
+whereas MF-PR preserved the scheme order and eliminated any grid imprinting pattern.
+We also showed theoretically that the MF-AF reduces the local truncation error by one order at the cube interfaces, leading to the observed grid imprinting.
+Further, we also proved that the MF-PR preserves the order of the original divergence.
 Additionally, we investigated two formulations of the metric tensor in the flux, one with its incorporation in the PPM reconstruction (MT-0) and the other without it (MT-PL07).
-For experiments without the metric tensor, we employed the PL07 splitting with RK1 and utilized the edge treatments ET-ZA22-PR and ET-PL07.
-It became evident that ET-ZA22-PR improved the accuracy of the method and reduced grid imprinting. However, in the steady test case, we notice that the ET-ZA22-PR may still
+For experiments with the metric tensor formulation MT-PL07, we employed the PL07 splitting with RK1 and utilized the edge treatments ET-DG (with MF-PR)  and ET-PL07.
+It became evident that ET-DG and MF-PR improved the accuracy of the method and reduced grid imprinting. However, in the steady test case, we notice that the MF-PR may still
 generate a small grid-imprinting.
 
 \newpage
@@ -69,6 +71,4 @@ Also, the overlapping region is very small.
 The main challenge lies in effectively dealing with the overlapped region of the grid. To tackle this issue, we plan to explore methods used in the Yin-Yang grids, which also have overlapping regions and are currently implemented in the Global Environmental Multiscale (GEM) model by Canada \citep{qaddouri:2011,husain:2019}.
 Additionally, we intend to investigate existing methods developed for overlapping grids, which have been widely employed in the finite-volume literature for representing complex geometries
 (see for instance \citet{hadzic:2005}).
-This research will contribute to enhancing our understanding of overlapping grids and aid in the development of effective techniques for the overlapping cubed-sphere grid.
-
-These future work ideas, as well as all the results presented here, are intended to be defended during the qualification exam in August 2023.
+This research will aid the development of effective techniques for overlapping cubed-sphere grids.

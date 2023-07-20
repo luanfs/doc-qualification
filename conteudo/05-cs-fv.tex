@@ -211,10 +211,12 @@ This property is discrete version of
 \end{align*}
 which follows from the divergence theorem and the fact of the sphere has no boundary, where $\,dS$ is the surface measure of the sphere.
 
+\subsection{Mass fixer}
+\label{mf}
 When computing the flux, if we ignore the discontinuity in the cubed sphere coordinate system and use values from adjacent panels
 (as in the ET-S72 scheme from Chapter \ref{chp-cs-grids}) to compute stencils, we can ensure mass conservation because the
 flux at points lying on the cube edge will be the same.
-However, if we consider ghost cell layers by extending the gridlines (as in the ET-ZA22 scheme from Chapter \ref{chp-cs-grids}),
+However, if we consider ghost cell layers by extending the gridlines (as in the ET-DG scheme from Chapter \ref{chp-cs-grids}),
 the flux is computed twice at points lying on the cube edge.
 Therefore, in this case, some modification is needed to ensure mass conservation (Figure \ref{chp5-fluxcube}).
 \begin{figure}[!htb]
@@ -225,10 +227,70 @@ Therefore, in this case, some modification is needed to ensure mass conservation
 		Figure taken from \citet{ross:2006}.\label{chp5-fluxcube}}
 \end{figure}
 
+\subsubsection{Average flux at cube interfaces}
+\label{mf-av}
 One common alternative used in the literature to handle the issue of values being defined twice at points on the
 cube edges is to simply average the values (as seen in works such as \citet{ross:2006, chen:2008}).
-This approach will be explored in this chapter as one of the methods.
+This approach will be explored in this chapter as one of the mass fixers and is referred to as \textbf{MF-AF}
+(AF representing average flux and MF representing mass fixer).
 
+In order to investigate the impact of using the average flux, consider the Figure \ref{chp5-fluxcube} and let us
+denote by $Q^n_{1,j,p_1}$ the average value at the first cell on grid 1 and
+$Q^n_{N,j,p_2}$ the average value at the first cell on grid 2.
+Also, we denote the numerical flux functions from grid 1 by $F_{i+\frac{1}{2},j,p_1}$ and $G_{i,j+\frac{1}{2},p_1}$, 
+and the fluxes from grid 2 is given by $F_{i+\frac{1}{2},j,p_2}$ and $G_{i,j+\frac{1}{2},p_2}$.
+Therefore, the average values depicted in Figure  \ref{chp5-fluxcube} are updated as follows:
+\begin{align}
+	Q_{1,j,p_1}^{n+1} &= Q_{1,j,p_1}^n - \frac{\Delta t}{\sigma_{1,j,p_1}} \bigg(
+	\frac{F_{1+\frac{1}{2},j,p_1}-F_{\frac{1}{2},j,p_1}}{\Delta x}+
+	 \frac{G_{1,j+\frac{1}{2},p_1}-G_{1,j-\frac{1}{2},p_1}}{\Delta y} \bigg), \label{mf-av-eq1}\\
+	Q_{N,j,p_2}^{n+1} &= Q_{N,j,p_2}^n - \frac{\Delta t}{\sigma_{N,j,p_2}} \bigg(
+	\frac{F_{N+\frac{1}{2},j,p_2}-F_{N-\frac{1}{2},j,p_2}}{\Delta x}+
+	\frac{G_{N,j+\frac{1}{2},p_2}-G_{N,j-\frac{1}{2},p_2}}{\Delta y} \bigg).
+\end{align}
+We also shall assume the following regarding the numerical fluxes consistency:
+\begin{align*}
+	F_{i+\frac{1}{2},j,p} = \frac{1}{\Delta t \Delta x}
+	\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} \int_{t^n}^{t^{n+1}} u\sigma q (x_{i+\frac{1}{2}},y,t)\,dt \,dy + O(\Delta x^P),\\
+	G_{i,j+\frac{1}{2},j,p} = \frac{1}{\Delta t \Delta y}
+	\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}} \int_{t^n}^{t^{n+1}} v\sigma q (x,y_{j+\frac{1}{2}},t)\,dt \,dx + O(\Delta x^P),\\
+\end{align*}
+for any panel $p$.
+That is, they are consistent with order $P$.
+In particular, at the cube interfaces, we have:
+\begin{equation}
+\label{mf-av-order}
+F_{N+\frac{1}{2},j,p_2}-F_{\frac{1}{2},j,p_1} = O(\Delta x^P).
+\end{equation}
+The average flux at the cube interface is denoted by:
+\begin{equation}
+ F^{*}_{\frac{1}{2},j,p_1} = \frac{F_{\frac{1}{2},j,p_1}+F_{N+\frac{1}{2},j,p_2}}{2}.
+\end{equation}
+Then, if we replace $F^{*}_{\frac{1}{2},j,p_1}$ by $F_{\frac{1}{2},j,p_1}$ in Equation \eqref{mf-av-eq1}, we obtain:
+\begin{align*}
+	Q_{1,j,p_1}^{n+1} &= Q_{1,j,p_1}^n - \frac{\Delta t}{\sigma_{1,j,p_1}} \bigg(
+    \frac{F_{1+\frac{1}{2},j,p_1}-F_{\frac{1}{2},j,p_1}^*}{\Delta x}+
+    \frac{G_{1,j+\frac{1}{2},p_1}-G_{1,j-\frac{1}{2},p_1}}{\Delta y} \bigg)\\
+	&= 
+	Q_{1,j,p_1}^n - \frac{\Delta t}{\sigma_{1,j,p_1}} \bigg(
+	\frac{F_{1+\frac{1}{2},j,p_1}-F_{\frac{1}{2},j,p_1}}{\Delta x}+
+	\frac{G_{1,j+\frac{1}{2},p_1}-G_{1,j-\frac{1}{2},p_1}}{\Delta y} \bigg)
+	+\frac{\Delta t}{\sigma_{1,j,p_1}} 
+\frac{(F_{\frac{1}{2},j,p_1}-F_{N+\frac{1}{2},j,p_2})}{2\Delta x}
+\end{align*}
+Therefore, it follows from Equation \eqref{mf-av-order} that:
+\begin{align*}
+	\frac{\sigma_{1,j,p_1} \big(Q_{1,j,p_1}^{n+1}- Q_{1,j,p_1}^n\big)}{\Delta t} +
+	\bigg(
+	\frac{F_{1+\frac{1}{2},j,p_1}-F_{\frac{1}{2},j,p_1}}{\Delta x}+
+	\frac{G_{1,j+\frac{1}{2},p_1}-G_{1,j-\frac{1}{2},p_1}}{\Delta y} \bigg)
+	= O(\Delta x^{P-1}).
+\end{align*}
+Hence, the average flux reduces the local truncation
+error order by one at the cube interfaces and we expect higher errors at this region.
+In particular, if $P=1$, the local truncation error does not converge to zero.
+\subsubsection{Average flux at cube interfaces}
+\label{mf-pr}
 Another alternative approach, based on Semi-Lagrangian mass corrections
 (for a review of these methods, we refer to \citet{diamantakis:2014}),
 involves computing the orthogonal projection of the grid function $\mathbb{D}^n$ onto the following space:
@@ -242,6 +304,8 @@ The element of $V_0$ that minimizes its distance to $\mathbb{D}^n$ in the norm 2
 \mathbb{D}^{cor,n}_{ijp} = \mathbb{D}^n_{ijp} - \bigg(\frac{	\sum_{p=1}^6 \sum_{r,s=1}^N \mathbb{D}_{rsp}^n \sigma_{rsp} \Delta x \Delta y}
  {\sum_{p=1}^6 \sum_{r,s=1}^N \sigma_{rsp}^2 \Delta x \Delta y}\bigg)\sigma_{ijp}.
 \end{equation*}
+When employing the projection scheme, we refer to it as \textbf{MF-PR} (PR representing projection).
+
 \section{Dimension splitting}
 \label{sec-csdsplit}
 In this section, we will utilize the operator splitting method described in Section \ref{sec-dsplit} 
@@ -300,7 +364,7 @@ Then, we have a piecewise-parabolic approximation in the $x$ direction:
 		q_{L,ijp}^x = q_{i-\frac{i}{2},j,p}^n+ O(\Delta x^2),\quad
 		q_{R,ijp}^x = q_{i+\frac{i}{2},j,p}^n+ O(\Delta x^2),\\
 		\Delta \psi_{ijp}^x = \psi_{R, ijp}^x - \psi_{L, ijp}^x,\quad
-		\psi_{6,ijp}^x = 6\bigg(\sigma_{ijp}Q_{ijp}^n - \frac{(\psi_{L,ijp}^x + \psi_{R,ij}p^x)}{2}\bigg),
+		\psi_{6,ijp}^x = 6\bigg(\sigma_{ijp}Q_{ijp}^n - \frac{(\psi_{L,ijp}^x + \psi_{R,ijp}^x)}{2}\bigg),
 	\end{cases}
 \end{align}
 for $i=1, \ldots, N$, $j=-\nu+1, \ldots, M + \nu$, $p=1,\ldots,6$,
@@ -428,12 +492,10 @@ This flux formulation is referred to as \textbf{MT-PL07} and introduces a first-
 error because of the assumption of a constant metric tensor on each integration domain.
 
 \subsection{Flux at edges treatment}
-If we choose the ET-ZA22 scheme, we will calculate the required wind values for ghost positions as
+If we choose the ET-DG scheme, we will calculate the required wind values for ghost positions as
 described in Section \ref{cs-wind-interp}.
 However, this scheme requires modifying the flux at the edges to maintain mass conservation.
 To achieve this, we will apply the mass fixer schemes discussed earlier.
-When using the averaging flux scheme, we denote the scheme as \textbf{ET-ZA22-AF} (AF representing averaging flux).
-When employing the projection scheme, we refer to it as \textbf{ET-ZA22-PR} (PR representing projection).
 Using these flux values, we can compute the discrete divergence (Equation \eqref{eqdiv-split}) for the interior cells and update the solution for the next time step.
 
 On the other hand, if we utilize the ET-PL07 scheme, we will populate the scalar field and velocity field contravariant
@@ -453,8 +515,8 @@ the velocity fields (VF) considered.
 	\begin{tabular}{|c|l|l|}
 		\hline
 		IC name & \multicolumn{1}{c|}{$q_0$} \\ \hline
-		IC1   & $\exp(-b_0((X-X_0)^2+ (Y-Y_0)^2 + (Z-Z_0)^2))$ \\ \hline
-        IC2   & $\exp(-b_0[(X-X_1)^2+ (Y-Y_1)^2 + (Z-Z_1)^2 + (X-X_2)^2+ (Y-Y_2)^2 + (Z-Z_2)^2]$ \\ \hline
+		IC1   & $\exp(b_0((X-X_0)^2+ (Y-Y_0)^2 + (Z-Z_0)^2))$ \\ \hline
+        IC2   & $\exp(b_0[(X-X_1)^2+ (Y-Y_1)^2 + (Z-Z_1)^2] + \exp(b_0[(X-X_2)^2+ (Y-Y_2)^2 + (Z-Z_2)^2])$ \\ \hline
 		IC3   & $1+ \cos(\lambda)\cos(\phi)\sin(\alpha) - \sin(\phi)\cos(\alpha)$, \\ \hline
 	\end{tabular}
 	\caption{Initial conditions considered in the numerical experiments (Figure \ref{chp5-ic}).}
@@ -470,7 +532,7 @@ the velocity fields (VF) considered.
 		VF2   & $k\sin^2(\lambda_p+\pi)\sin(2\phi)\cos(\frac{\pi t}{T})+\frac{2\pi}{T}\cos\phi$ 
 		& $k\sin(2(\lambda_p+\pi))\cos(\phi)\cos(\frac{\pi t}{T})$& 0.0125  \\ \hline
 		VF3   & $-k\sin^2(\frac{\lambda+\pi}{2})\sin(2\phi)\cos^2(\phi)\cos(\frac{\pi t}{T}),$ 
-		& $\frac{k}{2}\sin(\lambda+\pi)\cos^3(\phi)\cos(\frac{\pi t}{T})$ & 0.0125 \\ \hline
+		& $\frac{k}{2}\sin(\lambda+\pi)\cos^3(\phi)\cos(\frac{\pi t}{T})$ & 0.00625 \\ \hline
 	\end{tabular}
 	\caption{Velocity fields considered in the numerical experiments and its initial time step $\Delta t^{(0)}$.}
 	\label{chp5-tab2}
@@ -480,8 +542,8 @@ In Table \ref{chp5-tab1}, $(X_0,Y_0,Z_0)$, $(X_1,Y_1,Z_1)$ and $(X_2,Y_2,Z_2)$ a
 $(\lambda_0,\phi_0) = (\frac{\pi}{4},\frac{\pi}{6})$,
 $(\lambda_1,\phi_1) = (-\frac{\pi}{6},0)$ and
 $(\lambda_2,\phi_2) = ( \frac{\pi}{6},0)$.
-IC1 represents a Gaussian hill centered at a cube corner and we set $b_0 = 10$.
-IC2 represents two Gaussian hills as suggested by \citet{nair:2010} and we set $b_0 = 5$.
+IC1 represents a Gaussian hill centered at a cube corner and we set $b_0 = -10$.
+IC2 represents two Gaussian hills as suggested by \citet{nair:2010} and we set $b_0 = -5$.
 IC3 is based on the steady flow presented in \citet{will:1992} and we adopt $\alpha=-\frac{45\pi}{180}$.
 The initial conditions are shown in Figure \ref{chp5-ic}.
 
@@ -529,25 +591,27 @@ In Table \ref{chp5-tab3}, we present all four schemes that we are considering.
 We shall always assume that the PPM-PL07 is employed. 
 The main distinction between Scheme 1 and Scheme 2 lies in their ghost cell treatment.
 In Scheme 1, we adopt the approach proposed by \citet{putman:2007} for the ghost cell formulation,
-while Scheme 2 utilizes the ET-ZA22-PR scheme.
+while Scheme 2 utilizes the MF-PR scheme.
 Both Scheme 1 and Scheme 2 employ the splitting PL07 and the metric tensor formulation MT-PL07 
 with the RK1 departure point scheme. On the other hand, Scheme 3 and Scheme 4 utilize the splitting,
 the metric tensor formulation MT-0, and the RK2 departure point scheme.
-Scheme 1 and Scheme 2 are expected to achieve first-order accuracy, whereas schemes 3 and 4 are designed
-to attain second-order accuracy. Finally, the key difference between Scheme 3 and Scheme 4 lies in the method employed to modify the mass and ensure mass conservation.
+Scheme 1 and Scheme 2 are expected to achieve first-order accuracy, and so is schemes 3, since as we have seen in Section \ref{mf},
+the local truncation error when using MF-AF is reduced by one at the cube interfaces.
+Scheme 4 is designed
+to attain second-order accuracy. Finally, the key difference between Scheme 3 and Scheme 4 lies in the mass fixer.
 \begin{table}[!ht]
 	\begin{tabular}{|c|l|l|l|l|l|}
 		\hline
-		Scheme & Splitting & Departure point & Edge Treatment & Metric tensor formulation\\ \hline
-		1   & PL07 & RK1 & ET-PL07 & MT-PL07\\ \hline
-		2   & PL07 & RK1 & ET-ZA22-PR & MT-PL07\\ \hline
-		3   & AVLT & RK2 & ET-ZA22-AF & MT-0\\ \hline
-		4   & AVLT & RK2 & ET-ZA22-PR & MT-0\\ \hline
+		Scheme & Splitting & Departure point & Edge Treatment & Mass fixer & Metric tensor\\ \hline
+		1   & PL07 & RK1 & ET-PL07 & None & MT-PL07\\ \hline
+		2   & PL07 & RK1 & ET-PL07 & None & MT-PL07\\ \hline
+		3   & AVLT & RK2 & ET-DG & AF & MT-0\\ \hline
+		4   & AVLT & RK2 & ET-DG & PR & MT-0\\ \hline
 	\end{tabular}
 	\caption{Schemes considered for this Chapter.}
 	\label{chp5-tab3} 
 \end{table}
-
+\iffalse
 \subsection{Divergence of the rotated zonal wind}
 For our initial test, we will examine the velocity field VF1, which is non-divergent with $q=1$.
 We will calculate its discrete divergence using equation \eqref{eqdiv-split}.
@@ -623,6 +687,7 @@ result in more grid imprinting. However, the usage of Lagrange interpolation to 
 ghost cell values eliminates grid imprinting when combined with the divergence projection 
 method.
 
+
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.42\textwidth}
@@ -641,29 +706,29 @@ method.
 
 \begin{figure}[!htb]
 	\centering
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.4\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic2_vf2_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_interp3_t6400_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_MF-0_interp3_t1600_sphere}
 		\caption{Scheme 1 \label{chp5-adv1-s1}}
 	\end{subfigure}
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.4\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic2_vf2_SP-PL07_PPM-PL07_RK1_ET-ZA22-PR_MT-PL07_interp3_t6400_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-PL07_PPM-PL07_RK1_ET-DG_MT-PL07_MF-PR_interp3_t1600_sphere}
 		\caption{Scheme 2 \label{chp5-adv1-s2}}
 	\end{subfigure}
 
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.4\textwidth}
 	\centering
-	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic2_vf2_SP-AVLT_PPM-PL07_RK2_ET-ZA22-AF_MT-0_interp3_t6400_sphere}
+	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-AF_interp3_t1600_sphere}
 	\caption{Scheme 3 \label{chp5-adv1-s3}}
 \end{subfigure}
-\begin{subfigure}{0.3\textwidth}
+\begin{subfigure}{0.4\textwidth}
 	\centering
-	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic2_vf2_SP-AVLT_PPM-PL07_RK2_ET-ZA22-PR_MT-0_interp3_t6400_sphere}
+	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-PR_interp3_t1600_sphere}
 	\caption{Scheme 4 \label{chp5-adv1-s4}}
 \end{subfigure}
 	\caption{ Error after 5 time units obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2} with the initial condition IC1 from  table \ref{chp5-tab1} 
-	This figure considers a cubed-sphere with $N=512$. \label{chp5-adv1}}
+	This figure considers a cubed-sphere with $N=128$. \label{chp5-adv1}}
 \end{figure}
 
 \subsection{Steady steady}
@@ -689,30 +754,119 @@ remains constant and does not change over time.
 
 \begin{figure}[!htb]
 	\centering
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.35\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic4_vf2_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_interp3_t6400_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic4_vf1_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_MF-0_interp3_t1600_sphere}
 		\caption{Scheme 1 \label{chp5-adv2-s1}}
 	\end{subfigure}
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.35\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic4_vf2_SP-PL07_PPM-PL07_RK1_ET-ZA22-PR_MT-PL07_interp3_t6400_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic4_vf1_SP-PL07_PPM-PL07_RK1_ET-DG_MT-PL07_MF-PR_interp3_t1600_sphere}
 		\caption{Scheme 2 \label{chp5-adv2-s2}}
 	\end{subfigure}
 	
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.35\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic4_vf2_SP-AVLT_PPM-PL07_RK2_ET-ZA22-AF_MT-0_interp3_t6400_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic4_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-AF_interp3_t1600_sphere}
 		\caption{Scheme 3 \label{chp5-adv2-s3}}
 	\end{subfigure}
-	\begin{subfigure}{0.3\textwidth}
+	\begin{subfigure}{0.35\textwidth}
 		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic4_vf2_SP-AVLT_PPM-PL07_RK2_ET-ZA22-PR_MT-0_interp3_t6400_sphere}
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic4_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-PR_interp3_t1600_sphere}
 		\caption{Scheme 4 \label{chp5-adv2-s4}}
 	\end{subfigure}
 	\caption{ Error after 5 time units obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2} with the initial condition IC3 from  table \ref{chp5-tab1} 
-		This figure considers a cubed-sphere with $N=512$. \label{chp5-adv2}}
+		This figure considers a cubed-sphere with $N=128$. \label{chp5-adv2}}
 \end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.42\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_adv_tc2_ic3_vf3_normlinf_parabola_errors}
+		\caption{Error.\label{chp5-adv3-error}}
+	\end{subfigure}
+	\begin{subfigure}{0.42\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_adv_tc2_ic3_vf3_normlinf_convergence_rate}
+		\caption{Convergence rate.\label{chp5-adv3-cr}}
+	\end{subfigure}
+	\caption{Convergence of the error for the schemes from table \ref{chp5-tab3} obtained when computing the advection of IC2  with the rotated zonal wind VF3 after 5 time units.
+		\label{chp5-error-adv3}}
+\end{figure}
+
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.35\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic3_vf2_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_MF-0_interp3_t3200_sphere}
+		\caption{Scheme 1 \label{chp5-adv3-s1}}
+	\end{subfigure}
+	\begin{subfigure}{0.35\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic3_vf2_SP-PL07_PPM-PL07_RK1_ET-DG_MT-PL07_MF-PR_interp3_t3200_sphere}
+		\caption{Scheme 2 \label{chp5-adv3-s2}}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.35\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic3_vf2_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-AF_interp3_t3200_sphere}
+		\caption{Scheme 3 \label{chp5-adv3-s3}}
+	\end{subfigure}
+	\begin{subfigure}{0.35\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic3_vf2_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-PR_interp3_t3200_sphere}
+		\caption{Scheme 4 \label{chp5-adv3-s4}}
+	\end{subfigure}
+	\caption{ Error after 5 time units obtained for all schemes from table using the VF3 velocity field from table \ref{chp5-tab2} with the initial condition IC2 from  table \ref{chp5-tab1} 
+		This figure considers a cubed-sphere with $N=128$. \label{chp5-adv3}}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.42\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_adv_tc2_ic3_vf3_normlinf_parabola_errors}
+		\caption{Error.\label{chp5-adv4-error}}
+	\end{subfigure}
+	\begin{subfigure}{0.42\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{cs_adv_tc2_ic3_vf3_normlinf_convergence_rate}
+		\caption{Convergence rate.\label{chp5-adv4-cr}}
+	\end{subfigure}
+	\caption{Convergence of the error for the schemes from table \ref{chp5-tab3} obtained when computing the advection of IC2  with the rotated zonal wind VF3 after 5 time units.
+		\label{chp5-error-adv4}}
+\end{figure}
+
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.35\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic3_vf3_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_MF-0_interp3_t6400_sphere}
+		\caption{Scheme 1 \label{chp5-adv4-s1}}
+	\end{subfigure}
+	\begin{subfigure}{0.35\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic3_vf3_SP-PL07_PPM-PL07_RK1_ET-DG_MT-PL07_MF-PR_interp3_t6400_sphere}
+		\caption{Scheme 2 \label{chp5-adv4-s2}}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.35\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic3_vf3_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-AF_interp3_t6400_sphere}
+		\caption{Scheme 3 \label{chp5-adv4-s3}}
+	\end{subfigure}
+	\begin{subfigure}{0.35\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic3_vf3_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-PR_interp3_t6400_sphere}
+		\caption{Scheme 4 \label{chp5-adv4-s4}}
+	\end{subfigure}
+	\caption{ Error after 5 time units obtained for all schemes from table using the VF3 velocity field from table \ref{chp5-tab2} with the initial condition IC2 from  table \ref{chp5-tab1} 
+		This figure considers a cubed-sphere with $N=128$. \label{chp5-adv4}}
+\end{figure}
+
 
 Figure \ref{chp5-error-adv1} illustrates 
 the final errors obtained for all schemes listed in Table \ref{chp5-tab2}. Once again, 
@@ -740,9 +894,9 @@ a second-order scheme.
 
 In terms of the edge treatment schemes, we observed that the ET-PL07 scheme resulted in a 
 grid-imprinting issue in the simulation. Fortunately, this grid-imprinting problem was 
-resolved when we implemented the ET-ZA22 scheme, which utilizes a third-order Lagrange 
+resolved when we implemented the ET-DG scheme, which utilizes a third-order Lagrange 
 interpolation to determine the scalar field and wind values at ghost cell positions. 
-However, the main challenge with ET-ZA22 was devising a strategy to ensure mass 
+However, the main challenge with ET-DG was devising a strategy to ensure mass 
 conservation at the cubed-edges.
 
 We noticed that employing an averaging flux approach at the cube-edges led to a reduction 
@@ -752,4 +906,4 @@ functions with zero mass. This approach proved to be much more accurate than the
 flux method. However, in a steady test case, we observed that the divergence still caused a 
 minor grid-imprinting issue.
 
- 
+\fi
