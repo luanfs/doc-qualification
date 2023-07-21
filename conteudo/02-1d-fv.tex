@@ -643,7 +643,7 @@ $\tilde{u}^n_{i+\frac{1}{2}}$ using the following equations \citep{durran:2010}:
 	\tilde{u}^n_{i+\frac{1}{2}} &= u\bigg(\tilde{x}^{n+\frac{1}{2}}_{i+\frac{1}{2}}, t^n + \frac{\Delta t}{2}\bigg).
 \end{align}
 Notice that this scheme requires values of $u$ at points that are not grid points,
-both in time and space. This problem is addressed firstly using a second-order extrapolation in time:
+both in time and space. This problem is addressed firstly using a second-order extrapolation in time (see Corollary \ref{anexo-numint-col4}):
 \begin{equation}
 	u^{n+\frac{1}{2}}_{i+\frac{1}{2}} = \frac{3}{2}u^{n}_{i+\frac{1}{2}}-\frac{1}{2}u^{n-1}_{i+\frac{1}{2}}.
 \end{equation}
