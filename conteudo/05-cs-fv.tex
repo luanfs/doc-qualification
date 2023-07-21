@@ -300,11 +300,83 @@ involves computing the orthogonal projection of the grid function $\mathbb{D}^n$
 \end{equation*}
 where $V_0$ represents the space of functions with a zero average.
 The element of $V_0$ that minimizes its distance to $\mathbb{D}^n$ in the norm 2 is given by:
-\begin{equation*}
-\mathbb{D}^{cor,n}_{ijp} = \mathbb{D}^n_{ijp} - \bigg(\frac{	\sum_{p=1}^6 \sum_{r,s=1}^N \mathbb{D}_{rsp}^n \sigma_{rsp} \Delta x \Delta y}
- {\sum_{p=1}^6 \sum_{r,s=1}^N \sigma_{rsp}^2 \Delta x \Delta y}\bigg)\sigma_{ijp}.
-\end{equation*}
+\begin{equation}
+\label{dcor-eq1}
+\mathbb{D}^{cor,n}_{ijp} = \mathbb{D}^n_{ijp} - \bigg(\frac{	\sum_{l=1}^6 \sum_{k,m=1}^N \mathbb{D}_{kml}^n \sigma_{kml} \Delta x \Delta y}
+ {\sum_{l=1}^6 \sum_{k,m=1}^N \sigma_{kml}^2 \Delta x \Delta y}\bigg)\sigma_{ijp}.
+\end{equation}
 When employing the projection scheme, we refer to it as \textbf{MF-PR} (PR representing projection).
+
+Our aim now is to investigate the accuracy of this scheme.
+Let us assume that the initial divergence approximates the exact divergence with $P$ order
+of accuracy, that is
+\begin{equation}
+\label{dcor-eq2}
+	\mathbb{D}^n_{ijp} - \mathbb{\delta}^n_{ijp} = O(\Delta x^P).
+\end{equation}
+We are interested in giving some bound to 
+$\mathbb{D}^{cor,n}_{ijp} - \mathbb{\delta}^n_{ijp}$.
+From Equations \eqref{dcor-eq1} and \eqref{dcor-eq2}, it follows that
+\begin{equation}
+	\label{dcor-eq3}
+	\mathbb{D}^{cor,n}_{ijp} - \mathbb{\delta}^n_{ijp} =
+	O(\Delta x^P) +  
+\bigg( \frac{\sum_{l=1}^6 \sum_{k,m=1}^N \mathbb{D}_{kml}^n \sigma_{kml} \Delta x \Delta y}
+{\sum_{l=1}^6 \sum_{k,m=1}^N \sigma_{kml}^2 \Delta x \Delta y}\bigg)\sigma_{ijp}. 
+\end{equation}
+Hence, it remains to estimate the expression
+\begin{equation}
+	\label{dcor-eq4}
+	\bigg( \frac{\sum_{l=1}^6 \sum_{k,m=1}^N \mathbb{D}_{kml}^n \sigma_{kml} \Delta x \Delta y}
+	{\sum_{l=1}^6 \sum_{k,m=1}^N \sigma_{kml}^2 \Delta x \Delta y}\bigg)\sigma_{ijp}.
+\end{equation}
+From the midpoint rule (Corollary \ref{anexo-mdp-2d}), we have
+\begin{align}
+	\sum_{l=1}^6 \sum_{k,m=1}^N	\mathbb \sigma_{kml}^2 {\Delta x \Delta y}  &= 
+	\sum_{l=1}^6 \sum_{k,m=1}^N
+	\int_{x_{i-{\frac{1}{2}}}}^{x_{i+{\frac{1}{2}}}}
+	\int_{y_{j-{\frac{1}{2}}}}^{y_{j+{\frac{1}{2}}}}
+	\sigma^2(x,y,l) \,dx \,dy
+	+C_1\Delta x^2,
+\label{dcor-eq5}
+\end{align}
+where $C_1$ is a constant depending on the second derivatives of $\sigma^2$.
+
+Using the divergence theorem we have
+\begin{align*}
+	\sum_{l=1}^6 \sum_{k,m=1}^N
+	\int_{x_{i-{\frac{1}{2}}}}^{x_{i+{\frac{1}{2}}}}
+	\int_{y_{j-{\frac{1}{2}}}}^{y_{j+{\frac{1}{2}}}}
+	\nabla \cdot (\boldsymbol{u} q)(x,y,l,t^n) \,dx \,dy
+	= \int_{\mathbb{S}_R} 	\nabla \cdot (\boldsymbol{u} q) \,dS = 0.\\
+\end{align*}
+With this equality, applying again the midpoint rule and Equation \eqref{dcor-eq2}, one gets:
+\begin{align}
+	\sum_{l=1}^6 \sum_{k,m=1}^N
+	\mathbb{D}_{kml}^n \sigma_{kml} {\Delta x \Delta y}  &= 
+	\sum_{l=1}^6 \sum_{k,m=1}^N
+	\mathbb{\delta }_{kml}^n \sigma_{kml}{\Delta x \Delta y} 
+	+ {\Delta x \Delta y} \sum_{l=1}^6 \sum_{k,m=1}^N O(\Delta x^P)\sigma_{kml} \nonumber\\
+	&= 
+	\sum_{l=1}^6 \sum_{k,m=1}^N
+	\int_{x_{i-{\frac{1}{2}}}}^{x_{i+{\frac{1}{2}}}}
+	\int_{y_{j-{\frac{1}{2}}}}^{y_{j+{\frac{1}{2}}}}
+	\nabla \cdot (\boldsymbol{u} q) (x,y,l,t^n) \,dx \,dy
+	+C_2\Delta x^2 	+ {\Delta x \Delta y} \sum_{l=1}^6 \sum_{k,m=1}^N O(\Delta x^P)\sigma_{kml}\nonumber \\
+	&= C_2\Delta x^2 + {\Delta x \Delta y} \sum_{l=1}^6 \sum_{k,m=1}^N O(\Delta x^P)\sigma_{kml} \nonumber \\
+	&= O(\Delta x^2) +  O(\Delta x^P). \label{dcor-eq6}
+\end{align}
+Finally, by using Equations \eqref{dcor-eq5} and \eqref{dcor-eq6} in Equation \eqref{dcor-eq4}, 
+we have from Equation \eqref{dcor-eq3} that:
+\begin{equation}
+	\label{dcor-eq7}
+	\mathbb{D}^{cor,n}_{ijp} - \mathbb{\delta}^n_{ijp} =
+	O(\Delta x^2) +  O(\Delta x^P),
+\end{equation}
+from where we conclude that the divergence projection introduces a second-order error.
+Since the schemes considered here are second-order accurate in the best situation, we
+can ensure that this divergence correction does not affect the scheme's order.
+We point out that if $\nabla \cdot (\boldsymbol{u} q)=0$, then the second-order error is removed.
 
 \section{Dimension splitting}
 \label{sec-csdsplit}
@@ -312,7 +384,7 @@ In this section, we will utilize the operator splitting method described in Sect
 to obtain a CS-FV scheme.
 We will focus on 1D fluxes, specifically the PPM fluxes introduced in Section \ref{chp2-sec-flux},
 denoted as ${F}_{i+\frac{1}{2},j,p}^n$ and ${G}_{i,j+\frac{1}{2},p}^n$.
-To facilitate the scheme, we introduce the auxiliary grid functions $\mathbf{F}$ and $\mathbf{G}$ belonging to $\mathcal{CS}_{N}$, defined as follows:
+To facilitate the notation, we introduce the auxiliary grid functions $\mathbf{F}$ and $\mathbf{G}$ belonging to $\mathcal{CS}_{N}$, defined as follows:
 \begin{align*}
 	\mathbf{F}_{ijp}({Q^n,\tilde{u}^n}) = -{\lambda} \bigg({F}_{i+\frac{1}{2},j,p}^n(Q^n_{\times,j,p},\tilde{u}^n_{i+\frac{1}{2},j,p})-
 	{F}_{i-\frac{1}{2},j,p}^n(Q^n_{\times,j,p},\tilde{u}^n_{i-\frac{1}{2},j,p}) \bigg),
@@ -611,7 +683,7 @@ to attain second-order accuracy. Finally, the key difference between Scheme 3 an
 	\caption{Schemes considered for this Chapter.}
 	\label{chp5-tab3} 
 \end{table}
-\iffalse
+
 \subsection{Divergence of the rotated zonal wind}
 For our initial test, we will examine the velocity field VF1, which is non-divergent with $q=1$.
 We will calculate its discrete divergence using equation \eqref{eqdiv-split}.
@@ -629,10 +701,6 @@ The resulting errors and convergence rates are illustrated in Figure \ref{chp5-e
 		\caption{Convergence rate.\label{chp5-crdiv}}
 	\end{subfigure}
 	\caption{Convergence of the error for the schemes from table \ref{chp5-tab3} obtained when computing the divergence of rotated zonal wind VF1.
-	Green line represents scheme 1;
-	Red line represents scheme 2;
-	Purple line represents scheme 3;
-	Blue line represents scheme 4.
 	\label{chp5-error-div}}
 \end{figure}
 
@@ -676,6 +744,32 @@ are second-order accurate.
 Furthermore, it is worth noting that although scheme 3 showed to be only first-order 
 accurate in computing the divergence of VF1, the final error after simulating the advection 
 equation is second-order accurate.
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}{0.4\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_MF-0_interp3_t1600_sphere}
+		\caption{Scheme 1 \label{chp5-adv1-s1}}
+	\end{subfigure}
+	\begin{subfigure}{0.4\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-PL07_PPM-PL07_RK1_ET-DG_MT-PL07_MF-PR_interp3_t1600_sphere}
+		\caption{Scheme 2 \label{chp5-adv1-s2}}
+	\end{subfigure}
+	
+	\begin{subfigure}{0.4\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-AF_interp3_t1600_sphere}
+		\caption{Scheme 3 \label{chp5-adv1-s3}}
+	\end{subfigure}
+	\begin{subfigure}{0.4\textwidth}
+		\centering
+		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-PR_interp3_t1600_sphere}
+		\caption{Scheme 4 \label{chp5-adv1-s4}}
+	\end{subfigure}
+	\caption{ Error after 5 time units obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2} with the initial condition IC1 from  table \ref{chp5-tab1} 
+		This figure considers a cubed-sphere with $N=128$. \label{chp5-adv1}}
+\end{figure}
 
 The major difference between schemes 1 and 2 is evident from Figures \ref{chp5-adv1-s1} and
 \ref{chp5-adv1-s2}, where we can observe that scheme 1 generates a grid imprinting pattern, 
@@ -704,32 +798,7 @@ method.
 	\label{chp5-error-adv1}}
 \end{figure}
 
-\begin{figure}[!htb]
-	\centering
-	\begin{subfigure}{0.4\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_MF-0_interp3_t1600_sphere}
-		\caption{Scheme 1 \label{chp5-adv1-s1}}
-	\end{subfigure}
-	\begin{subfigure}{0.4\textwidth}
-		\centering
-		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-PL07_PPM-PL07_RK1_ET-DG_MT-PL07_MF-PR_interp3_t1600_sphere}
-		\caption{Scheme 2 \label{chp5-adv1-s2}}
-	\end{subfigure}
 
-	\begin{subfigure}{0.4\textwidth}
-	\centering
-	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-AF_interp3_t1600_sphere}
-	\caption{Scheme 3 \label{chp5-adv1-s3}}
-\end{subfigure}
-\begin{subfigure}{0.4\textwidth}
-	\centering
-	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-PR_interp3_t1600_sphere}
-	\caption{Scheme 4 \label{chp5-adv1-s4}}
-\end{subfigure}
-	\caption{ Error after 5 time units obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2} with the initial condition IC1 from  table \ref{chp5-tab1} 
-	This figure considers a cubed-sphere with $N=128$. \label{chp5-adv1}}
-\end{figure}
 
 \subsection{Steady steady}
 The third test case investigated focuses on IC3 with VF1. In this test, the exact solution 
@@ -900,10 +969,13 @@ However, the main challenge with ET-DG was devising a strategy to ensure mass
 conservation at the cubed-edges.
 
 We noticed that employing an averaging flux approach at the cube-edges led to a reduction 
-in the scheme order and resulted in grid imprinting. As an alternative, we explored a 
-second approach based on projecting the discrete divergence onto the space of grid 
+in the scheme order and resulted in grid imprinting. This was as explained theoretically, where
+we proved that this scheme reduces the local truncation error order by one at the cube interfaces.
+As an alternative, we explored a second approach based on projecting the discrete divergence onto the space of grid 
 functions with zero mass. This approach proved to be much more accurate than the averaging 
-flux method. However, in a steady test case, we observed that the divergence still caused a 
+flux method.  Indeed, we showed theoretically that this approach leads to a second-order error, preserving the
+accuracy of schemes that are second or first order accurate, which is our case.
+However, in a steady test case, we observed that the divergence projection still caused a 
 minor grid-imprinting issue.
-
+\iffalse
 \fi

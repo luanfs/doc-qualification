@@ -287,9 +287,9 @@ on the control volume.
 	If $f \in \mathcal{C}^2([x_{i-\frac{1}{2}},x_{i+\frac{1}{2}}]\times [y_{j-\frac{1}{2}},y_{j+\frac{1}{2}}])$, then 
 	\begin{equation}
 		\frac{1}{\Delta x \Delta y}\int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
-		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}{f(x,y)\,dx \,dy}-f(x_i,y_j) = C_1 \Delta x^2 + C_2 \Delta y^2, 
+		\int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}}{f(x,y)\,dx \,dy}-f(x_i,y_j) = C \Delta x^2, 
 	\end{equation}
-	where $C_1$ and $C_2$ are constants that depend only on $f$, and $x_i = \frac{x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}}}{2}$,
+	where $C_1$ is a constants that depends only on $f$, where we assume $x_i = \frac{x_{i+\frac{1}{2}} + x_{i-\frac{1}{2}}}{2}$,
 	$y_i = \frac{y_{j+\frac{1}{2}} + y_{j-\frac{1}{2}}}{2}$, $\Delta x = x_{i+\frac{1}{2}}-x_{i-\frac{1}{2}}$,
 	$\Delta y= y_{j+\frac{1}{2}}-y_{j-\frac{1}{2}}$ and $\Delta x = \Delta y$.
 \end{thrm}
@@ -334,14 +334,14 @@ where $\nu_i, \theta_i\in [x_{i-\frac{1}{2}},x_{i+\frac{1}{2}}]$, recalling that
 \begin{corollary}
 	\label{anexo-mdp-2d}
 	If $f\in \mathcal{C}^2([a,b]\times[c,d])$, and $[a,b]\times[c,d]$ is written
-	as the union of $[x_{i-\frac{1}{2}},x_{i+\frac{1}{2}}] \times  [y_{j-\frac{1}{2}},y_{j+\frac{1}{2}}]$,
+	as the union of the uniformed-spaces control volumes $[x_{i-\frac{1}{2}},x_{i+\frac{1}{2}}] \times  [y_{j-\frac{1}{2}},y_{j+\frac{1}{2}}]$,
 	$i,j=1, \ldots, N$,
 	with lengths $\Delta x= \Delta y$, we have
 	\begin{equation}
-	\frac{1}{\Delta x \Delta y}\int_{a}^{b}\int_{c}^{d}
-	{f(x,y)\,dx \,dy}-\sum_{i,j=1}^Nf(x_i,y_j) = C_1 \Delta x^2, 
+	\int_{a}^{b}\int_{c}^{d}
+	{f(x,y)\,dx \,dy}-\sum_{i,j=1}^Nf(x_i,y_j) {\Delta x \Delta y} = C_1 \Delta x^2, 
 \end{equation}
-where $C_1$ and $C_2$ are constants that depend only on $f$.
+where $C_1$ depends only on $f$.
 \end{corollary}
 \begin{proof}
 Using Theorem \ref{prop-bound-midpoint2d}, we have:
@@ -351,15 +351,15 @@ Using Theorem \ref{prop-bound-midpoint2d}, we have:
 \frac{1}{\Delta x \Delta y} \sum_{i,j=1}^N
 \int_{x_{i-\frac{1}{2}}}^{x_{i+\frac{1}{2}}}
 \int_{y_{j-\frac{1}{2}}}^{y_{j+\frac{1}{2}}} {f(x,y)\,dx \,dy}\\
- &=  \frac{1}{\Delta x \Delta y}\bigg[
+ &= 
 \sum_{i,j=1}^N {f(x_i,y_j)} +
-\sum_{i,j=1}^N \bigg({\partial^2_x f(\nu_i,y_j)}\frac{\Delta x^2}{24}+{\partial^2_y f(\nu_i,y_j)\frac{\Delta y^2}{24}}\bigg)\bigg].
+\frac{\Delta x^2}{24} \sum_{i,j=1}^N  \bigg({\partial^2_x f(\nu_i,y_j)}+{\partial^2_y f(\nu_i,y_j)}\bigg).
 \end{align*}
 We notice that
 \begin{align*}
-\frac{1}{\Delta x \Delta y}
+{\Delta x \Delta y}
 \sum_{i,j=1}^N \bigg(\partial^2_x f(\nu_i,y_j)+\partial^2_y f(\nu_i,y_j)\bigg) = 
-\frac{(b-a)}{N^2}
+\frac{(b-a)(d-c)}{N^2}
 \sum_{i,j=1}^N \bigg(\partial^2_x f(\nu_i,y_j)+\partial^2_y f(\nu_i,y_j)\bigg) 
 \end{align*}
 and we also point that from the inequality
