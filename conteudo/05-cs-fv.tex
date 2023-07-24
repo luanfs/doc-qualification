@@ -306,27 +306,33 @@ The element of $V_0$ that minimizes its distance to $\mathbb{D}^n$ in the norm 2
  {\sum_{l=1}^6 \sum_{k,m=1}^N \sigma_{kml}^2 \Delta x \Delta y}\bigg)\sigma_{ijp}.
 \end{equation}
 When employing the projection scheme, we refer to it as \textbf{MF-PR} (PR representing projection).
-
 Our aim now is to investigate the accuracy of this scheme.
 Let us assume that the initial divergence approximates the exact divergence with $P$ order
-of accuracy, that is
+of accuracy satisfying
 \begin{equation}
 \label{dcor-eq2}
-	\mathbb{D}^n_{ijp} - \mathbb{\delta}^n_{ijp} = O(\Delta x^P).
+	\mathbb{D}^n_{ijp} - \mathbb{\delta}^n_{ijp} = C_{ijp}^n\Delta x^P,
 \end{equation}
-We are interested in giving some bound to 
+where the constants $C_{ijp}^n$, which usually depend on derivatives of $\nabla \cdot (\boldsymbol{u}q)$
+and are required to satisfy $C_{ijp}^n$:
+\begin{equation}
+	\label{dcor-eq3}
+	\sum_{l=1}^6 \sum_{k,m=1}^N
+	{C}^n_{kml} \Delta x^P  {\Delta x \Delta y}  = O(\Delta x^P).
+\end{equation}
+We are interested in giving some bound to
 $\mathbb{D}^{cor,n}_{ijp} - \mathbb{\delta}^n_{ijp}$.
 From Equations \eqref{dcor-eq1} and \eqref{dcor-eq2}, it follows that
 \begin{equation}
-	\label{dcor-eq3}
+	\label{dcor-eq4}
 	\mathbb{D}^{cor,n}_{ijp} - \mathbb{\delta}^n_{ijp} =
-	O(\Delta x^P) +  
+	C_{ijp}^n\Delta x^P+  
 \bigg( \frac{\sum_{l=1}^6 \sum_{k,m=1}^N \mathbb{D}_{kml}^n \sigma_{kml} \Delta x \Delta y}
 {\sum_{l=1}^6 \sum_{k,m=1}^N \sigma_{kml}^2 \Delta x \Delta y}\bigg)\sigma_{ijp}. 
 \end{equation}
 Hence, it remains to estimate the expression
 \begin{equation}
-	\label{dcor-eq4}
+	\label{dcor-eq5}
 	\bigg( \frac{\sum_{l=1}^6 \sum_{k,m=1}^N \mathbb{D}_{kml}^n \sigma_{kml} \Delta x \Delta y}
 	{\sum_{l=1}^6 \sum_{k,m=1}^N \sigma_{kml}^2 \Delta x \Delta y}\bigg)\sigma_{ijp}.
 \end{equation}
@@ -338,7 +344,7 @@ From the midpoint rule (Corollary \ref{anexo-mdp-2d}), we have
 	\int_{y_{j-{\frac{1}{2}}}}^{y_{j+{\frac{1}{2}}}}
 	\sigma^2(x,y,l) \,dx \,dy
 	+C_1\Delta x^2,
-\label{dcor-eq5}
+\label{dcor-eq6}
 \end{align}
 where $C_1$ is a constant depending on the second derivatives of $\sigma^2$.
 
@@ -350,26 +356,25 @@ Using the divergence theorem we have
 	\nabla \cdot (\boldsymbol{u} q)(x,y,l,t^n) \,dx \,dy
 	= \int_{\mathbb{S}_R} 	\nabla \cdot (\boldsymbol{u} q) \,dS = 0.\\
 \end{align*}
-With this equality, applying again the midpoint rule and Equation \eqref{dcor-eq2}, one gets:
+With this equality, applying again the midpoint rule and Equations \eqref{dcor-eq2} and \eqref{dcor-eq3}, one gets:
 \begin{align}
 	\sum_{l=1}^6 \sum_{k,m=1}^N
 	\mathbb{D}_{kml}^n \sigma_{kml} {\Delta x \Delta y}  &= 
 	\sum_{l=1}^6 \sum_{k,m=1}^N
 	\mathbb{\delta }_{kml}^n \sigma_{kml}{\Delta x \Delta y} 
-	+ {\Delta x \Delta y} \sum_{l=1}^6 \sum_{k,m=1}^N O(\Delta x^P)\sigma_{kml} \nonumber\\
+	+\sum_{l=1}^6 \sum_{k,m=1}^N C_{kml} {\Delta x}^P \sigma_{kml} {\Delta x \Delta y}  \nonumber\\
 	&= 
 	\sum_{l=1}^6 \sum_{k,m=1}^N
 	\int_{x_{i-{\frac{1}{2}}}}^{x_{i+{\frac{1}{2}}}}
 	\int_{y_{j-{\frac{1}{2}}}}^{y_{j+{\frac{1}{2}}}}
 	\nabla \cdot (\boldsymbol{u} q) (x,y,l,t^n) \,dx \,dy
-	+C_2\Delta x^2 	+ {\Delta x \Delta y} \sum_{l=1}^6 \sum_{k,m=1}^N O(\Delta x^P)\sigma_{kml}\nonumber \\
-	&= C_2\Delta x^2 + {\Delta x \Delta y} \sum_{l=1}^6 \sum_{k,m=1}^N O(\Delta x^P)\sigma_{kml} \nonumber \\
-	&= O(\Delta x^2) +  O(\Delta x^P). \label{dcor-eq6}
+ 	+O(\Delta x^2) +  O(\Delta x^P) \nonumber\\
+	&= O(\Delta x^2) +  O(\Delta x^P). \label{dcor-eq7}
 \end{align}
-Finally, by using Equations \eqref{dcor-eq5} and \eqref{dcor-eq6} in Equation \eqref{dcor-eq4}, 
-we have from Equation \eqref{dcor-eq3} that:
+Finally, by using Equations \eqref{dcor-eq6} and \eqref{dcor-eq7} in Equation \eqref{dcor-eq5}, 
+we have from Equation \eqref{dcor-eq4} that:
 \begin{equation}
-	\label{dcor-eq7}
+	\label{dcor-eq8}
 	\mathbb{D}^{cor,n}_{ijp} - \mathbb{\delta}^n_{ijp} =
 	O(\Delta x^2) +  O(\Delta x^P),
 \end{equation}
