@@ -918,6 +918,13 @@ we can conclude that the divergence projection yields a smaller error than the a
 \end{figure}
 
 \subsection{Divergent deformational flow}
+The fifth and last test case consider the divergent wind VF3 from table \ref{chp5-tab2} along with
+the initial condition IC2 from table \ref{chp5-tab1}.
+This test is also suggested by \citet{nair:2010} and the their paper shows how the solution evolves over time.
+In Figure \ref{chp5-error-adv4}, we can observe that schemes 3 and 4 surpass their expected convergence order.
+From Figure \ref{chp5-adv4}, we again notice that the only scheme that does not produce grid imprinting is Scheme 2.
+When comparing Schemes 3 (Figure \ref{chp5-adv4-s3}) and 4 (Figure \ref{chp5-adv4-s3}),
+it becomes evident that Scheme 4 produces much less grid imprinting than Scheme 3.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.42\textwidth}
@@ -992,7 +999,8 @@ As an alternative, we explored a second approach based on projecting the discret
 functions with zero mass. This approach proved to be much more accurate than the averaging 
 flux method.  Indeed, we showed theoretically that this approach leads to a second-order error, preserving the
 accuracy of schemes that are second or first order accurate, which is our case.
-However, in a steady test case, we observed that the divergence projection still caused a 
-minor grid-imprinting issue.
+All these observations were also witnessed in the numerical experiments.
+However, except in the Gaussian hill advection with the rotated zonal wind test case,
+we observed that the divergence projection still caused a minor grid-imprinting issue.
 \iffalse
 \fi
