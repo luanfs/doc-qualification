@@ -803,6 +803,15 @@ method.
 \subsection{Steady steady}
 The third test case investigated focuses on IC3 with VF1. In this test, the exact solution 
 remains constant and does not change over time. 
+Figure \ref{chp5-error-adv1} illustrates 
+the final errors obtained for all schemes listed in Table \ref{chp5-tab2}. Once again, 
+schemes 1 and 2 demonstrate first-order accuracy, with scheme 2 being more accurate and 
+producing no grid imprinting, as evident in Figures \ref{chp5-adv2-s1} and 
+\ref{chp5-adv2-s2}. This further emphasizes the advantage of using Lagrange interpolation 
+for ghost cells as opposed to the PL07 treatment.
+We also observe that scheme 3 exhibits second-order accuracy, while scheme 4 demonstrates 
+third-order accuracy, surpassing its expected order. However, unlike the previous test, 
+scheme 4 also produces grid imprinting, although much lesser compared to scheme 3.
 
 \begin{figure}[!htb]
 	\centering
@@ -823,23 +832,23 @@ remains constant and does not change over time.
 
 \begin{figure}[!htb]
 	\centering
-	\begin{subfigure}{0.35\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic4_vf1_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_MF-0_interp3_t1600_sphere}
 		\caption{Scheme 1 \label{chp5-adv2-s1}}
 	\end{subfigure}
-	\begin{subfigure}{0.35\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic4_vf1_SP-PL07_PPM-PL07_RK1_ET-DG_MT-PL07_MF-PR_interp3_t1600_sphere}
 		\caption{Scheme 2 \label{chp5-adv2-s2}}
 	\end{subfigure}
-	
-	\begin{subfigure}{0.35\textwidth}
+
+	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic4_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-AF_interp3_t1600_sphere}
 		\caption{Scheme 3 \label{chp5-adv2-s3}}
 	\end{subfigure}
-	\begin{subfigure}{0.35\textwidth}
+	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic4_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-PR_interp3_t1600_sphere}
 		\caption{Scheme 4 \label{chp5-adv2-s4}}
@@ -848,6 +857,10 @@ remains constant and does not change over time.
 		This figure considers a cubed-sphere with $N=128$. \label{chp5-adv2}}
 \end{figure}
 
+
+\subsection{Non-divergent deformational flow}
+As the fourth test case, we considered the non-divergent vector field VF2 velocity from table \ref{chp5-tab2}. 
+We used the initial condition IC2 from table \ref{chp5-tab1}, as suggested by \citet{nair:2010}, which also shows how the solution evolves with time. 
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.42\textwidth}
@@ -864,7 +877,14 @@ remains constant and does not change over time.
 		\label{chp5-error-adv3}}
 \end{figure}
 
-
+The convergence rate and errors are depicted in Figure \ref{chp5-error-adv3}.
+The behavior of the error is similar to the second test.
+The final errors are shown in Figure \ref{chp5-adv3}.
+Unlike the previous tests, we do not observe grid-imprinting in the final errors for all the schemes.
+Comparing Figure \ref{chp5-adv3-s1} with Figure \ref{chp5-adv3-s2}, we observe that the extrapolation scheme from \citet{putman:2007}
+introduces numerical dispersion, which is reduced when using the duo-grid approach.
+Additionally, upon comparing Figure \ref{chp5-adv3-s1} with Figure \ref{chp5-adv3-s2},
+we can conclude that the divergence projection yields a smaller error than the average flux approach.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.35\textwidth}
@@ -892,6 +912,7 @@ remains constant and does not change over time.
 		This figure considers a cubed-sphere with $N=512$. \label{chp5-adv3}}
 \end{figure}
 
+\subsection{Divergent deformational flow}
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.42\textwidth}
@@ -937,15 +958,6 @@ remains constant and does not change over time.
 \end{figure}
 
 
-Figure \ref{chp5-error-adv1} illustrates 
-the final errors obtained for all schemes listed in Table \ref{chp5-tab2}. Once again, 
-schemes 1 and 2 demonstrate first-order accuracy, with scheme 2 being more accurate and 
-producing no grid imprinting, as evident in Figures \ref{chp5-adv2-s1} and 
-\ref{chp5-adv2-s2}. This further emphasizes the advantage of using Lagrange interpolation 
-for ghost cells as opposed to the PL07 treatment.
-We also observe that scheme 3 exhibits second-order accuracy, while scheme 4 demonstrates 
-third-order accuracy, surpassing its expected order. However, unlike the previous test, 
-scheme 4 also produces grid imprinting, although much lesser compared to scheme 3.
 
 \section{Concluding remarks}
 \label{chp-cs-conc}
