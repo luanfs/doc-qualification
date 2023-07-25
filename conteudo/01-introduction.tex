@@ -25,19 +25,19 @@ projections that are important for government planning.
 The first global Numerical Weather Prediction models emerged in the 1960s
 with applications to weather, seasonal and climate forecasts. 
 All these applications are essentially based on the same set of Partial Differential Equations
-(PDEs) but with distinct time scales \citep{will:2007}. These PDEs are defined on the sphere
+(PDEs) but with distinct time scales \citep{stan:2008}. These PDEs are defined on the sphere
 and model the evolution of the atmospheric fluid given the initial conditions.
 One important component of global models is the dynamical core, which is responsible
-for solving the PDEs that governs the atmosphere dynamics on grid-scale. 
+for solving the PDEs that governs the atmosphere dynamics on grid-scale \citep{will:2007}. 
 The development of numerical methods for dynamical cores has been an active research area since the 1960s.
 
 Global models use the sphere as the computational domain and therefore they require a discretization
 of the sphere. 
 The first global models used the latitude-longitude grid (Figure \ref{latlon-grid}), which is
-very suitable for finite-differences schemes due to its orthogonality. The major drawback of the latitude-longitude grid
+very suitable for finite-differences schemes due to its orthogonality \citep{will:2007}. The major drawback of the latitude-longitude grid
 is the clustering of points at the poles, known as the ``pole problem'', which leads to extremely
 small time steps for explicit-in-time schemes due to the Courant-Friedrichs-Lewy (CFL) condition, 
-making these schemes computationally very expensive.
+making these schemes computationally very expensive \citep{randall:2020}.
 
 The most successful method adopted in global atmospheric dynamical cores that overcomes the CFL 
 restriction is the Semi-Implicit Semi-Lagrangian (SI-SL) scheme \citep{randall:2018}, which 
@@ -173,7 +173,7 @@ Dynamics Laboratory (GFDL) and the National Oceanic and Atmospheric Administrati
 \citep{putman:2007,harris:2013} is another example
 of new generation dynamical core based on the cubed-sphere.
 
-The FV3 model is an extension of the Finite-Volume dynamical core (FVcore)
+The FV3 dynamical core is an extension of the Finite-Volume dynamical core (FVcore)
 from latitude-longitude grids to the cubed-sphere.
 The numerical methods from FVcore started to be developed with the transport scheme from the work \citet{lin:1994},
 which is based on the piecewise linear scheme from \citet{vanleer:1977}. 
@@ -243,10 +243,11 @@ The aim of this work is to fill the gap in the literature regarding numerical st
 discrete operators that we pointed out before.
 More explicitly, the goals of this work are:
 \begin{itemize}
-  \item Investigate the occurrence of grid imprinting on the cubed-sphere using the advection equations and
+  \item Investigate the occurrence of grid-imprinting on the cubed-sphere using the advection equations and
     the shallow-water equations on the sphere;
   \item Propose improvements on the FV3 discrete operators and modifications on the cubed-sphere that alleviate
     grid imprinting;
+   \item Investigation of modifications on the cubed-sphere grid to reduce grid-imprinting using the FV3 dynamics;
   \item Investigate how we can add more mimetic properties to the FV3 discretizations.
 \end{itemize}
 
@@ -256,10 +257,10 @@ Chapter \ref{chp-1d-fv} is dedicated to review the Piecewise Parabolic Method (P
 for the one-dimensional advection equation. 
 Chapter \ref{chp-2d-fv} reviews the dimension splitting method, which allow us to use 
 one-dimensional methods, such as the PPM, to solve the two-dimensional advection equation.
-Chapter \ref{chp-cs-grids} introduces the cubed-sphere grid and shows some of its geometric 
-properties.
+Chapter \ref{chp-cs-grids} introduces the cubed-sphere grid and shows how we can compute stencils
+near to the cubed-edges using 1D Lagrange interpolation through the duogrid technique.
 Chapter \ref{chp-cs-fv} extends the ideas of Chapter \ref{chp-2d-fv} to the cubed-sphere grid.
 The dimension-splitting method on each cubed-sphere panel works as in the plane, with the addition
 of metric terms, due to non-orthogonality of the grid, and interpolation between panels
-to obtain ghost cells values needed for stencil computations. 
+to obtain ghost cells values needed for stencil computations.
 We give some future work perspectives in Chapter \ref{chp-conclusions}.
