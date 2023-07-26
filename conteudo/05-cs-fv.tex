@@ -666,16 +666,16 @@ and the convergence rate is defined as
 \end{equation*}
 In Table \ref{chp5-tab3}, we present all four schemes that we are considering. 
 We shall always assume that the PPM-PL07 is employed. 
-The main distinction between \textcolor{red}{PL07-RK1} and \textcolor{red}{PL07-RK1-DG-PR} lies in their ghost cell treatment.
-In \textcolor{red}{PL07-RK1}, we adopt the approach proposed by \citet{putman:2007} for the ghost cell formulation,
-while \textcolor{red}{PL07-RK1-DG-PR} utilizes the MF-PR scheme.
-Both \textcolor{red}{PL07-RK1} and \textcolor{red}{PL07-RK1-DG-PR} employ the splitting PL07 and the metric tensor formulation MT-PL07 
-with the RK1 departure point scheme. On the other hand, \textcolor{red}{AVLT-RK2-DG-AF} and \textcolor{red}{AVLT-RK2-DG-PR} utilize the AVLT splitting,
+The main distinction between {PL07-RK1} and {PL07-RK1-DG-PR} lies in their ghost cell treatment.
+In {PL07-RK1}, we adopt the approach proposed by \citet{putman:2007} for the ghost cell formulation,
+while {PL07-RK1-DG-PR} utilizes the MF-PR scheme.
+Both {PL07-RK1} and {PL07-RK1-DG-PR} employ the splitting PL07 and the metric tensor formulation MT-PL07 
+with the RK1 departure point scheme. On the other hand, {AVLT-RK2-DG-AF} and {AVLT-RK2-DG-PR} utilize the AVLT splitting,
 the metric tensor formulation MT-0, and the RK2 departure point scheme.
-\textcolor{red}{PL07-RK1} and \textcolor{red}{PL07-RK1-DG-PR} are expected to achieve first-order accuracy, and so is \textcolor{red}{AVLT-RK2-DG-AF}, since as we have seen in Section \ref{mf},
+{PL07-RK1} and {PL07-RK1-DG-PR} are expected to achieve first-order accuracy, and so is {AVLT-RK2-DG-AF}, since as we have seen in Section \ref{mf},
 the local truncation error when using MF-AF is reduced by one at the cube interfaces.
-\textcolor{red}{AVLT-RK2-DG-PR} is designed
-to attain second-order accuracy. Finally, the key difference between \textcolor{red}{AVLT-RK2-DG-AF} and \textcolor{red}{AVLT-RK2-DG-PR} lies in the mass fixer.
+{AVLT-RK2-DG-PR} is designed
+to attain second-order accuracy. Finally, the key difference between {AVLT-RK2-DG-AF} and {AVLT-RK2-DG-PR} lies in the mass fixer.
 \begin{table}[!ht]
 	\begin{tabular}{|c|l|l|l|l|l|}
 		\hline
@@ -709,33 +709,33 @@ The resulting errors and convergence rates are illustrated in Figure \ref{chp5-e
 	\label{chp5-error-div}}
 \end{figure}
 
-From the analysis of Figure \ref{chp5-error-div}, we can observe that both \textcolor{red}{PL07-RK1} and \textcolor{red}{PL07-RK1-DG-PR} yield the same error,
+From the analysis of Figure \ref{chp5-error-div}, we can observe that both {PL07-RK1} and {PL07-RK1-DG-PR} yield the same error,
 which is of second order. This result aligns with our expectations, as the PL07 splitting scheme possesses the property of eliminating
 splitting errors when $q$ is constant, regardless of the edge treatment scheme.
-Additionally, we can notice that \textcolor{red}{AVLT-RK2-DG-AF} exhibits a first-order error, while \textcolor{red}{AVLT-RK2-DG-PR} demonstrates a second-order error.
+Additionally, we can notice that {AVLT-RK2-DG-AF} exhibits a first-order error, while {AVLT-RK2-DG-PR} demonstrates a second-order error.
 Hence, we can conclude that averaging the flux at the cubed edges reduces the scheme's order, while the divergence projection maintains the order.
 Examining Figure \ref{chp5-div}, which displays the obtained errors on the sphere, it becomes evident that the averaging
 flux introduces a grid-imprinting pattern, wherein the cube edges are observable (see Figure \ref{chp5-div2}).
-\textcolor{red}{PL07-RK1}, \textcolor{red}{PL07-RK1-DG-PR}, \textcolor{red}{AVLT-RK2-DG-PR} and  does not present grid-imprinting pattern, but their errors have a strong discontinuity on the panel edges.
+{PL07-RK1}, {PL07-RK1-DG-PR}, {AVLT-RK2-DG-PR} and  does not present grid-imprinting pattern, but their errors have a strong discontinuity on the panel edges.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_div_error_vf1_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_MF-0_sphere}
-		\caption{\textcolor{red}{PL07-RK1} \label{chp5-div1}}
+		\caption{{PL07-RK1} \label{chp5-div1}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 	\centering
 	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_div_error_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-AF_sphere}
-	\caption{\textcolor{red}{AVLT-RK2-DG-AF} \label{chp5-div2}}
+	\caption{{AVLT-RK2-DG-AF} \label{chp5-div2}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 	\centering
 	\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_div_error_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-PR_sphere}
-	\caption{\textcolor{red}{AVLT-RK2-DG-PR} \label{chp5-div3}}
+	\caption{{AVLT-RK2-DG-PR} \label{chp5-div3}}
 	\end{subfigure}
 	\caption{ Divergence error obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2}.
-		The error of textcolor{red}{PL07-RK1-DG-PR} is equal to the error of \textcolor{red}{PL07-RK1} (Figure 2)
+		The error of {PL07-RK1-DG-PR} is equal to the error of {PL07-RK1} (Figure 2)
 		This figure considers a cubed-sphere with $N=512$. \label{chp5-div}}
 \end{figure}
 
@@ -744,9 +744,9 @@ As a second test case, we consider the advection of the Gaussian hill given by I
 the rotated zonal wind VF1.
 In Figure \ref{chp5-error-adv1}, we depict the final errors obtained for 
 all schemes from Table \ref{chp5-tab2}.
-We can observe that schemes 1 and \textcolor{red}{PL07-RK1-DG-PR} are first-order accurate, while schemes 
-\textcolor{red}{AVLT-RK2-DG-AF}  and  \textcolor{red}{AVLT-RK2-DG-PR} are second-order accurate.
-Furthermore, it is worth noting that although \textcolor{red}{AVLT-RK2-DG-AF} showed to be only first-order 
+We can observe that schemes 1 and {PL07-RK1-DG-PR} are first-order accurate, while schemes 
+{AVLT-RK2-DG-AF}  and {AVLT-RK2-DG-PR} are second-order accurate.
+Furthermore, it is worth noting that although {AVLT-RK2-DG-AF} showed to be only first-order 
 accurate in computing the divergence of VF1, the final error after simulating the advection 
 equation is second-order accurate.
 \begin{figure}[!htb]
@@ -754,32 +754,32 @@ equation is second-order accurate.
 	\begin{subfigure}{0.4\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_MF-0_interp3_t1600_sphere}
-		\caption{\textcolor{red}{PL07-RK1} \label{chp5-adv1-s1}}
+		\caption{{PL07-RK1} \label{chp5-adv1-s1}}
 	\end{subfigure}
 	\begin{subfigure}{0.4\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-PL07_PPM-PL07_RK1_ET-DG_MT-PL07_MF-PR_interp3_t1600_sphere}
-		\caption{\textcolor{red}{PL07-RK1-DG-PR} \label{chp5-adv1-s2}}
+		\caption{{PL07-RK1-DG-PR} \label{chp5-adv1-s2}}
 	\end{subfigure}
 	
 	\begin{subfigure}{0.4\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-AF_interp3_t1600_sphere}
-		\caption{\textcolor{red}{AVLT-RK2-DG-AF} \label{chp5-adv1-s3}}
+		\caption{{AVLT-RK2-DG-AF} \label{chp5-adv1-s3}}
 	\end{subfigure}
 	\begin{subfigure}{0.4\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic2_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-PR_interp3_t1600_sphere}
-		\caption{\textcolor{red}{AVLT-RK2-DG-PR} \label{chp5-adv1-s4}}
+		\caption{{AVLT-RK2-DG-PR} \label{chp5-adv1-s4}}
 	\end{subfigure}
 	\caption{ Error after 5 time units obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2} with the initial condition IC1 from  table \ref{chp5-tab1} 
 		This figure considers a cubed-sphere with $N=128$. \label{chp5-adv1}}
 \end{figure}
 
-The major difference between schemes \textcolor{red}{PL07-RK1} and \textcolor{red}{PL07-RK1-DG-PR} is evident from Figures \ref{chp5-adv1-s1} and
-\ref{chp5-adv1-s2}, where we can observe that \textcolor{red}{PL07-RK1} generates a grid imprinting pattern, 
-while \textcolor{red}{PL07-RK1-DG-PR} does not.
-Similarly, \textcolor{red}{AVLT-RK2-DG-AF} generates grid imprinting while \textcolor{red}{AVLT-RK2-DG-PR} does not, 
+The major difference between schemes {PL07-RK1} and {PL07-RK1-DG-PR} is evident from Figures \ref{chp5-adv1-s1} and
+\ref{chp5-adv1-s2}, where we can observe that {PL07-RK1} generates a grid imprinting pattern, 
+while {PL07-RK1-DG-PR} does not.
+Similarly, {AVLT-RK2-DG-AF} generates grid imprinting while {AVLT-RK2-DG-PR} does not, 
 show in Figures \ref{chp5-adv1-s3} and \ref{chp5-adv1-s4}.
 We can conclude that the averaging of fluxes and the edge treatment ET-PL07 
 result in more grid imprinting. However, the usage of Lagrange interpolation to fill the 
@@ -809,13 +809,13 @@ The third test case investigated focuses on IC3 with VF1. In this test, the exac
 remains constant and does not change over time. 
 Figure \ref{chp5-error-adv1} illustrates 
 the final errors obtained for all schemes listed in Table \ref{chp5-tab2}. Once again, 
-schemes \textcolor{red}{PL07-RK1} and \textcolor{red}{PL07-RK1-DG-PR} demonstrate first-order accuracy, with \textcolor{red}{PL07-RK1-DG-PR} being more accurate and 
+schemes {PL07-RK1} and {PL07-RK1-DG-PR} demonstrate first-order accuracy, with {PL07-RK1-DG-PR} being more accurate and 
 producing no grid imprinting, as evident in Figures \ref{chp5-adv2-s1} and 
 \ref{chp5-adv2-s2}. This further emphasizes the advantage of using Lagrange interpolation 
 for ghost cells as opposed to the PL07 treatment.
-We also observe that \textcolor{red}{AVLT-RK2-DG-AF} exhibits second-order accuracy, while \textcolor{red}{AVLT-RK2-DG-PR} demonstrates 
+We also observe that {AVLT-RK2-DG-AF} exhibits second-order accuracy, while {AVLT-RK2-DG-PR} demonstrates 
 third-order accuracy, surpassing its expected order. However, unlike the previous test, 
-\textcolor{red}{AVLT-RK2-DG-PR} also produces grid imprinting, although much lesser compared to \textcolor{red}{AVLT-RK2-DG-AF}.
+{AVLT-RK2-DG-PR} also produces grid imprinting, although much lesser compared to {AVLT-RK2-DG-AF}.
 
 \begin{figure}[!htb]
 	\centering
@@ -839,23 +839,23 @@ third-order accuracy, surpassing its expected order. However, unlike the previou
 	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic4_vf1_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_MF-0_interp3_t1600_sphere}
-		\caption{\textcolor{red}{PL07-RK1} \label{chp5-adv2-s1}}
+		\caption{{PL07-RK1} \label{chp5-adv2-s1}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic4_vf1_SP-PL07_PPM-PL07_RK1_ET-DG_MT-PL07_MF-PR_interp3_t1600_sphere}
-		\caption{\textcolor{red}{PL07-RK1-DG-PR} \label{chp5-adv2-s2}}
+		\caption{{PL07-RK1-DG-PR} \label{chp5-adv2-s2}}
 	\end{subfigure}
 
 	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic4_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-AF_interp3_t1600_sphere}
-		\caption{\textcolor{red}{AVLT-RK2-DG-AF} \label{chp5-adv2-s3}}
+		\caption{{AVLT-RK2-DG-AF} \label{chp5-adv2-s3}}
 	\end{subfigure}
 	\begin{subfigure}{0.3\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_128_adv_Q_error_ic4_vf1_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-PR_interp3_t1600_sphere}
-		\caption{\textcolor{red}{AVLT-RK2-DG-PR} \label{chp5-adv2-s4}}
+		\caption{{AVLT-RK2-DG-PR} \label{chp5-adv2-s4}}
 	\end{subfigure}
 	\caption{ Error after 5 time units obtained for all schemes from table using the VF1 velocity field from table \ref{chp5-tab2} with the initial condition IC3 from  table \ref{chp5-tab1} 
 		This figure considers a cubed-sphere with $N=128$. \label{chp5-adv2}}
@@ -894,23 +894,23 @@ we can conclude that the divergence projection yields a smaller error than the a
 	\begin{subfigure}{0.35\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic3_vf2_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_MF-0_interp3_t12800_sphere}
-		\caption{textcolor{red}{PL07-RK1} \label{chp5-adv3-s1}}
+		\caption{{PL07-RK1} \label{chp5-adv3-s1}}
 	\end{subfigure}
 	\begin{subfigure}{0.35\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic3_vf2_SP-PL07_PPM-PL07_RK1_ET-DG_MT-PL07_MF-PR_interp3_t12800_sphere}
-		\caption{textcolor{red}{PL07-RK1-DG-PR} \label{chp5-adv3-s2}}
+		\caption{{PL07-RK1-DG-PR} \label{chp5-adv3-s2}}
 	\end{subfigure}
 	
 	\begin{subfigure}{0.35\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic3_vf2_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-AF_interp3_t12800_sphere}
-		\caption{textcolor{red}{AVLT-RK2-DG-AF} \label{chp5-adv3-s3}}
+		\caption{{AVLT-RK2-DG-AF} \label{chp5-adv3-s3}}
 	\end{subfigure}
 	\begin{subfigure}{0.35\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic3_vf2_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-PR_interp3_t12800_sphere}
-		\caption{textcolor{red}{AVLT-RK2-DG-PR} \label{chp5-adv3-s4}}
+		\caption{{AVLT-RK2-DG-PR} \label{chp5-adv3-s4}}
 	\end{subfigure}
 	\caption{ Error after 5 time units obtained for all schemes from table using the VF3 velocity field from table \ref{chp5-tab2} with the initial condition IC2 from  table \ref{chp5-tab1} 
 		This figure considers a cubed-sphere with $N=512$. \label{chp5-adv3}}
@@ -920,10 +920,10 @@ we can conclude that the divergence projection yields a smaller error than the a
 The fifth and last test case consider the divergent wind VF3 from table \ref{chp5-tab2} along with
 the initial condition IC2 from table \ref{chp5-tab1}.
 This test is also suggested by \citet{nair:2010} and the their paper shows how the solution evolves over time.
-In Figure \ref{chp5-error-adv4}, we can observe that schemes \textcolor{red}{AVLT-RK2-DG-AF} and \textcolor{red}{AVLT-RK2-DG-PR} surpass their expected convergence order.
-From Figure \ref{chp5-adv4}, we again notice that the only scheme that does not produce grid imprinting is \textcolor{red}{PL07-RK1-DG-PR}.
-When comparing schemes \textcolor{red}{AVLT-RK2-DG-AF} (Figure \ref{chp5-adv4-s3}) and \textcolor{red}{AVLT-RK2-DG-PR} (Figure \ref{chp5-adv4-s3}),
-it becomes evident that \textcolor{red}{AVLT-RK2-DG-PR} produces much less grid imprinting than \textcolor{red}{AVLT-RK2-DG-AF}.
+In Figure \ref{chp5-error-adv4}, we can observe that schemes {AVLT-RK2-DG-AF} and {AVLT-RK2-DG-PR} surpass their expected convergence order.
+From Figure \ref{chp5-adv4}, we again notice that the only scheme that does not produce grid imprinting is {PL07-RK1-DG-PR}.
+When comparing schemes {AVLT-RK2-DG-AF} (Figure \ref{chp5-adv4-s3}) and {AVLT-RK2-DG-PR} (Figure \ref{chp5-adv4-s3}),
+it becomes evident that {AVLT-RK2-DG-PR} produces much less grid imprinting than {AVLT-RK2-DG-AF}.
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}{0.42\textwidth}
@@ -946,23 +946,23 @@ it becomes evident that \textcolor{red}{AVLT-RK2-DG-PR} produces much less grid 
 	\begin{subfigure}{0.35\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic3_vf3_SP-PL07_PPM-PL07_RK1_ET-PL07_MT-PL07_MF-0_interp3_t25600_sphere}
-		\caption{\textcolor{red}{PL07-RK1} \label{chp5-adv4-s1}}
+		\caption{{PL07-RK1} \label{chp5-adv4-s1}}
 	\end{subfigure}
 	\begin{subfigure}{0.35\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic3_vf3_SP-PL07_PPM-PL07_RK1_ET-DG_MT-PL07_MF-PR_interp3_t25600_sphere}
-		\caption{\textcolor{red}{PL07-RK1-DG-PR} \label{chp5-adv4-s2}}
+		\caption{{PL07-RK1-DG-PR} \label{chp5-adv4-s2}}
 	\end{subfigure}
 	
 	\begin{subfigure}{0.35\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic3_vf3_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-AF_interp3_t25600_sphere}
-		\caption{\textcolor{red}{AVLT-RK2-DG-AF} \label{chp5-adv4-s3}}
+		\caption{{AVLT-RK2-DG-AF} \label{chp5-adv4-s3}}
 	\end{subfigure}
 	\begin{subfigure}{0.35\textwidth}
 		\centering
 		\includegraphics[width=1\linewidth]{gnomonic_equiangular_cs_512_adv_Q_error_ic3_vf3_SP-AVLT_PPM-PL07_RK2_ET-DG_MT-0_MF-PR_interp3_t25600_sphere}
-		\caption{\textcolor{red}{AVLT-RK2-DG-PR} \label{chp5-adv4-s4}}
+		\caption{{AVLT-RK2-DG-PR} \label{chp5-adv4-s4}}
 	\end{subfigure}
 	\caption{ Error after 5 time units obtained for all schemes from table using the VF3 velocity field from table \ref{chp5-tab2} with the initial condition IC2 from  table \ref{chp5-tab1} 
 		This figure considers a cubed-sphere with $N=512$. \label{chp5-adv4}}
